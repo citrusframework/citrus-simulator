@@ -1,4 +1,4 @@
-[Logo][1] Citrus Simulator
+![Logo][1] Citrus Simulator
 ================
 
 This is a standalone SOAP simulator for any kind of SOAP WebService interface.
@@ -27,26 +27,18 @@ Features
 ---------
 
 * Implements any SOAP interface (WSDL)
-
 * Powerful SOAP response simulation (dynamic identifiers, SOAP fault simulation, etc.)
-
 * Easy message definition (Citrus Java DSL)
-
 * XSD schema validation of incoming requests
-
 * Powerful header support (SOAP Action, SOAP header fragments, Http headers)
 
 Quick start
 ---------
 
 * Unpack project
-
 * Build all sources from Maven (mvn clean install)
-
 * See package com.consol.citrus.simulator.builder for sample test builder classes
-
 * Run embedded Jetty from Maven (mvn jetty:run)
-
 * Execute SimulatorClient.java and see test requests get handled by simulator
 
 Resources
@@ -55,10 +47,8 @@ Resources
 Following code resources build the simulator core logic:
 
 * Test builders: Group of Java classes (@Component Spring Bean Annotation) for all use case scenarios.
-
 * Servlet configuration (src/main/webapp/WEB-INF/citrus-servlet-context.xml): SpringWS beans defining how use cases are
 identified and mapped to test builders.
-
 * Simulator configuration (src/main/resources/META-INF/citrus-simulator-context.xml): Citrus Spring configuration for
 sending/receiving SOAP messages
 
