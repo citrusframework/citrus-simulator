@@ -47,7 +47,7 @@ public class AbstractSimulatorBuilder extends CitrusTestBuilder {
 
     protected SendSoapFaultActionDefinition sendSoapFault() {
         return (SendSoapFaultActionDefinition)
-                sendSoapFault("simInboundEndpoint")
+                sendSoapFault(simInboundEndpoint)
                     .description("Sending SOAP fault");
     }
 
