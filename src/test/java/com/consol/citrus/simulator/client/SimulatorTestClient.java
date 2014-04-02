@@ -18,10 +18,10 @@ package com.consol.citrus.simulator.client;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.CitrusTestBuilder;
-import com.consol.citrus.message.MessageSender;
+import com.consol.citrus.message.ErrorHandlingStrategy;
 import com.consol.citrus.validation.xml.DomXmlMessageValidator;
-import com.consol.citrus.ws.message.SoapReplyMessageReceiver;
-import com.consol.citrus.ws.message.WebServiceMessageSender;
+import com.consol.citrus.ws.client.WebServiceClient;
+import com.consol.citrus.ws.client.WebServiceEndpointConfiguration;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
 /**
@@ -29,25 +29,21 @@ import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
  */
 public class SimulatorTestClient {
 
-    /** Message sender/receiver components */
-    private WebServiceMessageSender soapRequestSender;
-    private SoapReplyMessageReceiver soapResponseReceiver;
+    private WebServiceClient soapEndpoint;
 
     /**
      * Default constructor
      */
     public SimulatorTestClient() throws Exception {
-        soapRequestSender = new WebServiceMessageSender();
-        soapRequestSender.setDefaultUri("http://localhost:18080/simulator");
+        WebServiceEndpointConfiguration endpointConfiguration = new WebServiceEndpointConfiguration();
+        endpointConfiguration.setDefaultUri("http://localhost:8080/simulator");
 
         SaajSoapMessageFactory messageFactory = new SaajSoapMessageFactory();
         messageFactory.afterPropertiesSet();
-        soapRequestSender.setMessageFactory(messageFactory);
-        soapRequestSender.setErrorHandlingStrategy(MessageSender.ErrorHandlingStrategy.PROPAGATE);
-        soapRequestSender.afterPropertiesSet();
+        endpointConfiguration.setMessageFactory(messageFactory);
+        endpointConfiguration.setErrorHandlingStrategy(ErrorHandlingStrategy.PROPAGATE);
 
-        soapResponseReceiver = new SoapReplyMessageReceiver();
-        soapRequestSender.setReplyMessageHandler(soapResponseReceiver);
+        soapEndpoint = new WebServiceClient(endpointConfiguration);
     }
 
     /**
@@ -57,10 +53,10 @@ public class SimulatorTestClient {
         CitrusTestBuilder testBuilder = new CitrusTestBuilder() {
             @Override
             protected void configure() {
-                send(soapRequestSender)
+                send(soapEndpoint)
                         .payload("<Hello>Say Hello!</Hello>");
 
-                receive(soapResponseReceiver)
+                receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())
                         .payload("<HelloResponse>Hi there!</HelloResponse>");
             }
@@ -76,10 +72,10 @@ public class SimulatorTestClient {
         CitrusTestBuilder testBuilder = new CitrusTestBuilder() {
             @Override
             protected void configure() {
-                send(soapRequestSender)
+                send(soapEndpoint)
                         .payload("<GoodBye>Say GoodBye!</GoodBye>");
 
-                receive(soapResponseReceiver)
+                receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())
                         .payload("<GoodByeResponse>Bye bye!</GoodByeResponse>");
             }
@@ -95,10 +91,10 @@ public class SimulatorTestClient {
         CitrusTestBuilder testBuilder = new CitrusTestBuilder() {
             @Override
             protected void configure() {
-                send(soapRequestSender)
+                send(soapEndpoint)
                         .payload("<GoodNight>Go to sleep!</GoodNight>");
 
-                receive(soapResponseReceiver)
+                receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())
                         .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                                     "<faultcode>CITRUS:SIM-1001</faultcode>\n" +
