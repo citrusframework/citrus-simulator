@@ -1,4 +1,4 @@
-![Logo][1] Citrus Simulator
+Citrus Simulator ![Logo][1]
 ================
 
 This is a standalone SOAP simulator for any kind of SOAP WebService interface.

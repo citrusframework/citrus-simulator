@@ -11,15 +11,12 @@
 	
     <context:component-scan base-package="com.consol.citrus.simulator.builder"/>
 
-    <bean id="schemaRepository" class="com.consol.citrus.xml.XsdSchemaRepository">
-        <property name="schemas">
-            <list>
-              <bean class="com.consol.citrus.xml.schema.WsdlXsdSchema">
-                <property name="wsdl" value="classpath:MyWsdlFile.wsdl"/>
-              </bean>
-            </list>
-        </property>
-    </bean>
+    <citrus:schema-repository id="schemaRepository">
+      <citrus:locations>
+        <citrus:location path="classpath:schemas/xsd/*.xsd"/>
+        <citrus:location path="classpath:schemas/wsdl/*.wsdl"/>
+      </citrus:locations>
+    </citrus:schema-repository>
     
     <bean class="com.consol.citrus.variable.GlobalVariables">
         <property name="variables">
