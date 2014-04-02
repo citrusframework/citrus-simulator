@@ -30,7 +30,7 @@
         </message>
       </receive>
 
-      <ws:send-fault with="simInboundEndpoint">
+      <ws:send-fault endpoint="simInboundEndpoint">
         <ws:fault>
           <ws:fault-code>{http://citrusframework.org}CITRUS:SIM-1001</ws:fault-code>
           <ws:fault-string>No sleep for me!</ws:fault-string>
