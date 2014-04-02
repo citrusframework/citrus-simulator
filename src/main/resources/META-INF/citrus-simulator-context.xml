@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:citrus-ws="http://www.citrusframework.org/schema/ws/config"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd
+       http://www.citrusframework.org/schema/ws/config http://www.citrusframework.org/schema/ws/config/citrus-ws-config.xsd">
+	
+    <context:component-scan base-package="com.consol.citrus.simulator.builder"/>
+
+    <bean id="schemaRepository" class="com.consol.citrus.xml.XsdSchemaRepository">
+        <property name="schemas">
+            <list>
+              <bean class="com.consol.citrus.xml.schema.WsdlXsdSchema">
+                <property name="wsdl" value="classpath:MyWsdlFile.wsdl"/>
+              </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean class="com.consol.citrus.variable.GlobalVariables">
+        <property name="variables">
+            <map>
+                <entry key="simulator.name" value="Citrus SOAP Simulator"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="namespaceContextBuilder" class="com.consol.citrus.xml.namespace.NamespaceContextBuilder">
+        <property name="namespaceMappings">
+            <props>
+              <!-- Add namespace uri to prefix mappings here for XPath evaluation -->
+            </props>
+        </property>
+    </bean>
+
+    <!-- Message Validators -->
+    <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
+
+    <!-- SOAP Message Factory -->
+    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+
+    <!-- Simulator inbound channels -->
+    <citrus:message-channel id="sim.Inbound"/>
+
+    <!-- Request receiver and respective response sender -->
+    <citrus:sync-message-channel-receiver id="simInboundReceiver"
+            channel="sim.Inbound"
+            receive-timeout="${default.timeout}"/>
+
+    <citrus:message-channel-reply-sender id="simResponseSender"
+            reply-channel-holder="simInboundReceiver"/>
+</beans>

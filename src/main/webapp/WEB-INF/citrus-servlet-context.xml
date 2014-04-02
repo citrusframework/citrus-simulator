@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd ">
+        
+  <description>Automatically loaded via ContextloaderListener in web.xml - context is shared by all servlets</description>
+
+  <context:annotation-config/>
+
+  <!-- Common properties -->
+  <context:property-placeholder location="classpath:META-INF/citrus-simulator.properties"/>
+
+  <import resource="classpath:com/consol/citrus/spring/root-application-ctx.xml"/>
+  <import resource="classpath:com/consol/citrus/functions/citrus-function-ctx.xml"/>
+  <import resource="classpath:com/consol/citrus/validation/citrus-validationmatcher-ctx.xml"/>
+  <import resource="classpath*:/META-INF/citrus-*-context.xml"/>
+
+  <bean id="loggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor">
+    <description>This interceptor logs the complete message (SOAP envelope)</description>
+  </bean>
+
+  <bean id="simulatorPayloadMapping" class="org.springframework.ws.server.endpoint.mapping.UriEndpointMapping">
+    <property name="interceptors">
+      <list>
+        <ref bean="loggingInterceptor"/>
+      </list>
+    </property>
+    <property name="defaultEndpoint" ref="simulatorEndpoint"/>
+  </bean>
+
+  <bean id="simulatorEndpoint" class="com.consol.citrus.ws.WebServiceEndpoint">
+    <property name="messageHandler">
+      <!--bean class="com.consol.citrus.simulator.handler.XmlTestExecutingMessageHandler">
+        <property name="packageName" value="com.consol.citrus.simulator.tests"/-->
+      <bean class="com.consol.citrus.dsl.handler.TestExecutingMessageHandler">
+        <property name="mappingKeyExtractor">
+          <bean class="com.consol.citrus.adapter.handler.mapping.XPathPayloadMappingKeyExtractor">
+            <property name="xpathExpression" value="local-name(/*)"/>
+          </bean>
+        </property>
+        <property name="responseMessageHandler" ref="inboundMessageHandler"/>
+      </bean>
+    </property>
+    <property name="handleMimeHeaders" value="true"/>
+  </bean>
+
+  <bean id="inboundMessageHandler" class="com.consol.citrus.adapter.handler.MessageChannelConnectingMessageHandler">
+    <property name="channelName" value="sim.Inbound"/>
+    <property name="replyTimeout" value="${default.timeout}"/>
+  </bean>
+</beans>
