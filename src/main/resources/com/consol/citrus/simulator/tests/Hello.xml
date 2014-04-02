@@ -20,23 +20,19 @@
         <message>Validate Hello request</message>
       </echo>
 
-      <receive with="simInboundReceiver">
+      <receive endpoint="simInboundEndpoint">
         <message>
-          <data>
-            <![CDATA[
-              <Hello>Say Hello!</Hello>
-            ]]>
-          </data>
+          <payload>
+              <Hello xmlns="http://citrusframework.org/schemas/hello">Say Hello!</Hello>
+          </payload>
         </message>
       </receive>
 
-      <send with="simResponseSender">
+      <send endpoint="simInboundEndpoint">
         <message>
-          <data>
-            <![CDATA[
-              <HelloResponse>Hi there!</HelloResponse>
-            ]]>
-          </data>
+          <payload>
+              <HelloResponse xmlns="http://citrusframework.org/schemas/hello">Hi there!</HelloResponse>
+          </payload>
         </message>
       </send>
     </actions>

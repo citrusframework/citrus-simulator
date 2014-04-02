@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd ">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
         
   <description>Automatically loaded via ContextloaderListener in web.xml - context is shared by all servlets</description>
 
@@ -36,18 +38,25 @@
         <property name="packageName" value="com.consol.citrus.simulator.tests"/-->
       <bean class="com.consol.citrus.dsl.handler.TestExecutingMessageHandler">
         <property name="mappingKeyExtractor">
-          <bean class="com.consol.citrus.adapter.handler.mapping.XPathPayloadMappingKeyExtractor">
-            <property name="xpathExpression" value="local-name(/*)"/>
-          </bean>
+          <ref bean="simulatorMappingKeyExtractor"/>
         </property>
-        <property name="responseMessageHandler" ref="inboundMessageHandler"/>
+        <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
       </bean>
     </property>
-    <property name="handleMimeHeaders" value="true"/>
+    <property name="handleMimeHeaders" value="${handle.mime.headers}"/>
   </bean>
 
-  <bean id="inboundMessageHandler" class="com.consol.citrus.adapter.handler.MessageChannelConnectingMessageHandler">
-    <property name="channelName" value="sim.Inbound"/>
-    <property name="replyTimeout" value="${default.timeout}"/>
+  <!-- Mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
+  <bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.adapter.handler.mapping.XPathPayloadMappingKeyExtractor">
+    <property name="xpathExpression" value="local-name(/*)"/>
   </bean>
+
+  <!-- Incoming message is handled by this adapter, by default send request to message channel -->
+  <citrus:channel-endpoint-adapter id="simulatorInboundAdapter"
+                                   channel-name="simulator.inbound"
+                                   polling-interval="250"
+                                   timeout="${default.timeout}"/>
+
+  <!-- SOAP Message Factory -->
+  <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
 </beans>

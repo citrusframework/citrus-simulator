@@ -29,9 +29,13 @@ public class HelloBuilder extends AbstractSimulatorBuilder {
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<Hello>Say Hello!</Hello>");
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                     "</Hello>");
 
         sendSOAPResponse()
-            .payload("<HelloResponse>Hi there!</HelloResponse>");
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                     "</HelloResponse>");
     }
 }

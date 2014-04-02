@@ -20,23 +20,19 @@
         <message>Validate GoodBye request</message>
       </echo>
 
-      <receive with="simInboundReceiver">
+      <receive endpoint="simInboundEndpoint">
         <message>
-          <data>
-            <![CDATA[
-              <GoodBye>Say GoodBye!</GoodBye>
-            ]]>
-          </data>
+          <payload>
+              <GoodBye xmlns="http://citrusframework.org/schemas/hello">Say GoodBye!</GoodBye>
+          </payload>
         </message>
       </receive>
 
-      <send with="simResponseSender">
+      <send endpoint="simInboundEndpoint">
         <message>
-          <data>
-            <![CDATA[
-              <GoodByeResponse>Bye bye!</GoodByeResponse>
-            ]]>
-          </data>
+          <payload>
+              <GoodByeResponse xmlns="http://citrusframework.org/schemas/hello">Bye bye!</GoodByeResponse>
+          </payload>
         </message>
       </send>
     </actions>

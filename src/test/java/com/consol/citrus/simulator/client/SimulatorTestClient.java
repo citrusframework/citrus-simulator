@@ -54,11 +54,15 @@ public class SimulatorTestClient {
             @Override
             protected void configure() {
                 send(soapEndpoint)
-                        .payload("<Hello>Say Hello!</Hello>");
+                        .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Say Hello!" +
+                                 "</Hello>");
 
                 receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())
-                        .payload("<HelloResponse>Hi there!</HelloResponse>");
+                        .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Hi there!" +
+                                 "</HelloResponse>");
             }
         };
 
@@ -73,11 +77,15 @@ public class SimulatorTestClient {
             @Override
             protected void configure() {
                 send(soapEndpoint)
-                        .payload("<GoodBye>Say GoodBye!</GoodBye>");
+                        .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Say GoodBye!" +
+                                 "</GoodBye>");
 
                 receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())
-                        .payload("<GoodByeResponse>Bye bye!</GoodByeResponse>");
+                        .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Bye bye!" +
+                                 "</GoodByeResponse>");
             }
         };
 
@@ -92,7 +100,9 @@ public class SimulatorTestClient {
             @Override
             protected void configure() {
                 send(soapEndpoint)
-                        .payload("<GoodNight>Go to sleep!</GoodNight>");
+                        .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Go to sleep!" +
+                                 "</GoodNight>");
 
                 receive(soapEndpoint)
                         .validator(new DomXmlMessageValidator())

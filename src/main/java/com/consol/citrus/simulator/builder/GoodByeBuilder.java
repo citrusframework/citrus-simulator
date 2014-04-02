@@ -29,9 +29,13 @@ public class GoodByeBuilder extends AbstractSimulatorBuilder {
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<GoodBye>Say GoodBye!</GoodBye>");
+            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say GoodBye!" +
+                     "</GoodBye>");
 
         sendSOAPResponse()
-            .payload("<GoodByeResponse>Bye bye!</GoodByeResponse>");
+            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Bye bye!" +
+                     "</GoodByeResponse>");
     }
 }

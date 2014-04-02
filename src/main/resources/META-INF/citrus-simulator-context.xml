@@ -2,29 +2,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:citrus="http://www.citrusframework.org/schema/config"
-       xmlns:citrus-ws="http://www.citrusframework.org/schema/ws/config"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd
-       http://www.citrusframework.org/schema/ws/config http://www.citrusframework.org/schema/ws/config/citrus-ws-config.xsd">
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
 	
-    <context:component-scan base-package="com.consol.citrus.simulator.builder"/>
+    <context:component-scan base-package="com.consol.citrus.simulator"/>
 
     <citrus:schema-repository id="schemaRepository">
       <citrus:locations>
-        <citrus:location path="classpath:schemas/xsd/*.xsd"/>
-        <citrus:location path="classpath:schemas/wsdl/*.wsdl"/>
+        <citrus:location path="classpath:META-INF/schemas/*.xsd"/>
+        <citrus:location path="classpath:META-INF/schemas/*.wsdl"/>
       </citrus:locations>
     </citrus:schema-repository>
     
-    <bean class="com.consol.citrus.variable.GlobalVariables">
-        <property name="variables">
-            <map>
-                <entry key="simulator.name" value="Citrus SOAP Simulator"/>
-            </map>
-        </property>
-    </bean>
+    <citrus:global-variables>
+        <citrus:variable name="simulator.name" value="Citrus SOAP Simulator"/>
+    </citrus:global-variables>
 
     <bean id="namespaceContextBuilder" class="com.consol.citrus.xml.namespace.NamespaceContextBuilder">
         <property name="namespaceMappings">
@@ -37,17 +31,11 @@
     <!-- Message Validators -->
     <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
 
-    <!-- SOAP Message Factory -->
-    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
-
     <!-- Simulator inbound channels -->
-    <citrus:message-channel id="sim.Inbound"/>
+    <citrus:channel id="simulator.inbound"/>
 
     <!-- Request receiver and respective response sender -->
-    <citrus:sync-message-channel-receiver id="simInboundReceiver"
-            channel="sim.Inbound"
-            receive-timeout="${default.timeout}"/>
-
-    <citrus:message-channel-reply-sender id="simResponseSender"
-            reply-channel-holder="simInboundReceiver"/>
+    <citrus:channel-sync-endpoint id="simInboundEndpoint"
+            channel="simulator.inbound"
+            timeout="${default.timeout}"/>
 </beans>

@@ -29,10 +29,12 @@ public class GoodNightBuilder extends AbstractSimulatorBuilder {
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<GoodNight>Go to sleep!</GoodNight>");
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Go to sleep!" +
+                     "</GoodNight>");
 
-        sendSoapFault("simResponseSender")
-                .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
-                .faultString("No sleep for me!");
+        sendSoapFault()
+            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
+            .faultString("No sleep for me!");
     }
 }

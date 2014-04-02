@@ -22,17 +22,15 @@
         <message>Validate GoodNight request</message>
       </echo>
 
-      <receive with="simInboundReceiver">
+      <receive endpoint="simInboundEndpoint">
         <message>
-          <data>
-            <![CDATA[
-              <GoodNight>Go to sleep!</GoodNight>
-            ]]>
-          </data>
+          <payload>
+              <GoodNight xmlns="http://citrusframework.org/schemas/hello">Go to sleep!</GoodNight>
+          </payload>
         </message>
       </receive>
 
-      <ws:send-fault with="simResponseSender">
+      <ws:send-fault with="simInboundEndpoint">
         <ws:fault>
           <ws:fault-code>{http://citrusframework.org}CITRUS:SIM-1001</ws:fault-code>
           <ws:fault-string>No sleep for me!</ws:fault-string>

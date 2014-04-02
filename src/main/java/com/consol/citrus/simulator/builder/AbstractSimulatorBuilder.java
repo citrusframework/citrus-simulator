@@ -16,9 +16,9 @@
 
 package com.consol.citrus.simulator.builder;
 
+import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.CitrusTestBuilder;
-import com.consol.citrus.dsl.definition.ReceiveMessageActionDefinition;
-import com.consol.citrus.dsl.definition.SendMessageActionDefinition;
+import com.consol.citrus.dsl.definition.*;
 import com.consol.citrus.message.MessageReceiver;
 import com.consol.citrus.message.MessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +30,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class AbstractSimulatorBuilder extends CitrusTestBuilder {
 
     @Autowired
-    @Qualifier("simInboundReceiver")
-    protected MessageReceiver simInboundReceiver;
-
-    @Autowired
-    @Qualifier("simResponseSender")
-    protected MessageSender simResponseSender;
+    @Qualifier("simInboundEndpoint")
+    protected ChannelSyncEndpoint simInboundEndpoint;
 
     protected ReceiveMessageActionDefinition receiveSOAPRequest() {
         return (ReceiveMessageActionDefinition)
-                receive(simInboundReceiver)
+                receive(simInboundEndpoint)
                     .description("Received SOAP request");
     }
 
     protected SendMessageActionDefinition sendSOAPResponse() {
         return (SendMessageActionDefinition)
-                send(simResponseSender)
+                send(simInboundEndpoint)
                     .description("Sending SOAP response");
+    }
+
+    protected SendSoapFaultActionDefinition sendSoapFault() {
+        return (SendSoapFaultActionDefinition)
+                sendSoapFault("simInboundEndpoint")
+                    .description("Sending SOAP fault");
     }
 
 }
