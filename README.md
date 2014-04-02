@@ -1,4 +1,5 @@
-![Citrus Simulator][1]
+[1] Citrus Simulator
+================
 
 This is a standalone SOAP simulator for any kind of SOAP WebService interface.
 WebService clients invoke the server endpoint and the simulator answers with predefined response
@@ -67,6 +68,6 @@ Information
 For more information on Citrus see [www.citrusframework.org][2], including
 a complete [reference manual][3].
 
- [1]: http://www.citrusframework.org/reference/html/images/citrus_logo.jpg "Citrus"
+ [1]: http://www.citrusframework.org/images/brand_logo.jpg "Citrus"
  [2]: http://www.citrusframework.org
  [3]: http://www.citrusframework.org/reference/html/
