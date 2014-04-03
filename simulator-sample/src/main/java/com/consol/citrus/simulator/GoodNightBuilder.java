@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.builder;
+package com.consol.citrus.simulator;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,20 +22,19 @@ import org.springframework.stereotype.Component;
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodBye")
+@Component("GoodNight")
 @Scope("prototype")
-public class GoodByeBuilder extends AbstractSimulatorBuilder {
+public class GoodNightBuilder extends AbstractSimulatorBuilder {
 
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                     "</GoodBye>");
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Go to sleep!" +
+                     "</GoodNight>");
 
-        sendSOAPResponse()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                     "</GoodByeResponse>");
+        sendSoapFault()
+            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
+            .faultString("No sleep for me!");
     }
 }

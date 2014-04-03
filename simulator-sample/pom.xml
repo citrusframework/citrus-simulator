@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.consol.citrus</groupId>
+    <artifactId>citrus-simulator</artifactId>
+    <version>0.2</version>
+  </parent>
+
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-simulator-sample</artifactId>
+  <version>${project.version}</version>
+
+  <packaging>war</packaging>
+
+  <properties>
+    <simulator.port>8080</simulator.port>
+    <simulator.stop.port>8088</simulator.stop.port>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-war</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>com.consol.citrus</groupId>
+              <artifactId>citrus-simulator-war</artifactId>
+              <type>war</type>
+            </overlay>
+            <overlay>
+              <!-- empty groupId/artifactId represents the current build -->
+            </overlay>
+          </overlays>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${simulator.port}</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <stopKey>simStop</stopKey>
+          <stopPort>${simulator.stop.port}</stopPort>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

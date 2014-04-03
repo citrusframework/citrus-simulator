@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.builder;
+package com.consol.citrus.simulator;
 
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.CitrusTestBuilder;

@@ -38,6 +38,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         ServletRegistration.Dynamic dispatcherServlet = servletContext.addServlet("citrus", new MessageDispatcherServlet());
         dispatcherServlet.setLoadOnStartup(1);
+        dispatcherServlet.addMapping("/");
         dispatcherServlet.addMapping("/simulator");
         dispatcherServlet.addMapping("/simulator/*");
         dispatcherServlet.setInitParameter("contextConfigLocation", "");
@@ -50,6 +51,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         ServletRegistration.Dynamic resourceServlet = servletContext.addServlet("resource", new StaticResourceServlet());
         resourceServlet.setLoadOnStartup(1000);
         resourceServlet.addMapping("/about");
+        resourceServlet.addMapping("/about/*");
 
         servletContext.addListener(new ContextLoaderListener(appContext));
 
