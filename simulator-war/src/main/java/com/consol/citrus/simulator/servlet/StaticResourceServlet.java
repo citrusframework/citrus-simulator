@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.servlet;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,11 +35,19 @@ public class StaticResourceServlet extends AbstractSimulatorServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Template template = compileHandlebarsTemplate(req.getRequestURI());
+        Template template = compileHandlebarsTemplate(getTemplateName(req.getRequestURI()));
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("contextPath", req.getContextPath());
 
         template.apply(Context.newContext(model), resp.getWriter());
+    }
+
+    private String getTemplateName(String requestURI) {
+        if (StringUtils.hasText(requestURI) && requestURI.endsWith("/")) {
+            return requestURI.substring(0, requestURI.length() - 1);
+        } else {
+            return requestURI;
+        }
     }
 }

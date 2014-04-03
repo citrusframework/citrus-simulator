@@ -38,7 +38,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         ServletRegistration.Dynamic dispatcherServlet = servletContext.addServlet("citrus", new MessageDispatcherServlet());
         dispatcherServlet.setLoadOnStartup(1);
-        dispatcherServlet.addMapping("/");
         dispatcherServlet.addMapping("/simulator");
         dispatcherServlet.addMapping("/simulator/*");
         dispatcherServlet.setInitParameter("contextConfigLocation", "");
@@ -50,13 +49,13 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         ServletRegistration.Dynamic resourceServlet = servletContext.addServlet("resource", new StaticResourceServlet());
         resourceServlet.setLoadOnStartup(1000);
-        resourceServlet.addMapping("/about");
-        resourceServlet.addMapping("/about/*");
+        resourceServlet.addMapping("/info");
+        resourceServlet.addMapping("/info/*");
 
         servletContext.addListener(new ContextLoaderListener(appContext));
 
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setEncoding(System.getProperty("file.encoding", "UTF-8"));
         encodingFilter.setForceEncoding(true);
         FilterRegistration.Dynamic filter = servletContext.addFilter("encoding-filter", encodingFilter);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
