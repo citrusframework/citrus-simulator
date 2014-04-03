@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator;
 
+import com.consol.citrus.simulator.servlet.SimulatorRunServlet;
 import com.consol.citrus.simulator.servlet.SimulatorStatusServlet;
 import com.consol.citrus.simulator.servlet.StaticResourceServlet;
 import org.springframework.web.WebApplicationInitializer;
@@ -46,6 +47,11 @@ public class WebAppInitializer implements WebApplicationInitializer {
         statusServlet.setLoadOnStartup(1000);
         statusServlet.addMapping("/status");
         statusServlet.addMapping("/status/*");
+
+        ServletRegistration.Dynamic runServlet = servletContext.addServlet("run", new SimulatorRunServlet());
+        runServlet.setLoadOnStartup(1000);
+        runServlet.addMapping("/run");
+        runServlet.addMapping("/run/*");
 
         ServletRegistration.Dynamic resourceServlet = servletContext.addServlet("resource", new StaticResourceServlet());
         resourceServlet.setLoadOnStartup(1000);

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Citrus Simulator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Citrus Simulator Status">
+    <meta name="author" content="ConSol Software GmbH">
+
+    <link rel="shortcut icon" href="../webapp/images/favicon.ico">
+
+    <link href="{{contextPath}}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{contextPath}}/css/datepicker.css" rel="stylesheet">
+    <script src="{{contextPath}}/javascript/jquery.min.js"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('a.msg-template').click(function(event) {
+          $('#payload').val($('#' + event.currentTarget.text).text());
+        });
+
+        $('a.msg-custom').click(function(event) {
+          $('#payload').val('');
+        });
+
+        $('input.useCaseTrigger').click(function(event) {
+          // display templates matching current use case trigger
+          $('ul.nav-tabs').find('li').hide();
+          $('ul.nav-tabs').find('li.default').show();
+          $('ul.nav-tabs').find('li.' + $(this).attr('value')).show();
+          $('ul.nav-tabs').find('li.default').find('a').click();
+
+          // hide filtered form fields and display those which match current use case trigger
+          $('.filtered').hide();
+          $('.filtered.' + $(this).attr('value')).show();
+        });
+
+        $('input.useCaseTrigger.default').click();
+
+        $('input.datefield').attr('data-date-format', 'yyyy-mm-dd');
+        $('input.datefield').datepicker().on('changeDate', function() {
+                      $(this).datepicker('hide');
+                      return false;
+                  });
+
+        $('input.datefield').change(function() {
+                      $(this).datepicker('setValue', $(this).val());
+                      return false;
+                  });
+      });
+    </script>
+
+    <style>
+      body {
+        padding-top: 60px;
+      }
+
+      ul.test-params {
+        list-style: none;
+        margin: 0;
+      }
+
+      ul.nav-tabs {
+        font-size: 13px;
+      }
+
+      ul.nav-tabs > li > a {
+        padding-right: 8px;
+        padding-left: 8px;
+      }
+
+      textarea {
+        font-family: Courier New;
+        font-size: 14px;
+        color: #08c;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" id="nav-brand" href="{{contextPath}}/status">Simulator</a>
+          <div class="nav-collapse">
+            <ul id="header-nav" class="nav">
+              <li><a href="{{contextPath}}/status">Status</a></li>
+              <li class="active"><a href="{{contextPath}}/run">Run</a></li>
+              <li><a href="{{contextPath}}/info">About</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1 class="page-header">Run UseCase<small>Start new simulator use case</small></h1>
+
+      <form action="run" method="POST" class="form-horizontal">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label">UseCase</label>
+            <div class="controls">
+              {{#each useCaseList}}
+              <label class="radio">
+                <input type="radio" name="useCase" class="useCaseTrigger {{#if this.default}}default{{/if}}" value="{{key}}">
+                {{this.displayName}}
+              </label>
+              {{/each}}
+            </div>
+          </div>
+
+          {{#each parameter}}
+          <div class="control-group{{#if useCaseFilter}} filtered {{useCaseFilter}}{{/if}}">
+            <label class="control-label">{{displayName}}</label>
+            <div class="controls">
+              {{#if options}}
+              <select id="{{id}}" class="span6" name="{{id}}">
+                {{#each options}}
+                <option value="{{this}}">{{this}}</option>
+                {{/each}}
+              </select>
+              {{/if}}
+              {{#unless options}}
+              <input id="{{id}}" class="span6{{#if fieldType}} {{fieldType}}{{/if}}" name="{{id}}" type="text" value="{{value}}"/>
+              {{/unless}}
+            </div>
+          </div>
+          {{/each}}
+
+          <div class="control-group">
+            <label class="control-label">Payload</label>
+            <div class="controls">
+              <div class="tabbable tabs-below">
+                <div class="tab-content">
+                  <div class="tab-pane active">
+                    <textarea id="payload" rows="15" class="span10" name="payload" type="text" placeholder="Copy payload here!"></textarea>
+                    {{#each messageTemplates}}
+                    <pre id="{{name}}" style="display: none;">{{payload}}</pre>
+                    {{/each}}
+                  </div>
+                </div>
+                <ul class="nav nav-tabs">
+                  <li class="default active"><a href="#Palyoad" class="msg-custom" data-toggle="tab">Custom</a></li>
+                  {{#each messageTemplates}}
+                  <li class="{{triggerType}}" style="display: none;"><a href="#Payload" class="msg-template" data-toggle="tab">{{name}}</a></li>
+                  {{/each}}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="controls">
+              <button id="button-start" class="btn btn-primary" type="submit">Start UseCase</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+
+      {{#if result}}
+      <h3>Results</h3>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th width="180px">Params</th>
+          <th width="450px">Error Message</th>
+          <th width="80px">Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#with result}}
+        {{#if cause}}
+        <tr>
+          <td>{{testName}}</td>
+          <td><ul class="test-params">{{#each parameters}}<li>{{this}}<li/>{{/each}}</ul></td>
+          <td>{{cause}}</td>
+          <td><span class="label label-important">{{result}}</span></td></tr>
+        {{/if}}
+        {{#unless cause}}
+        <tr>
+          <td>{{testName}}</td>
+          <td><ul class="test-params">{{#each parameters}}<li>{{this}}<li/>{{/each}}</ul></td>
+          <td></td>
+          <td><span class="label label-success">{{result}}</span></td></tr>
+        {{/unless}}
+        {{/with}}
+        </tbody>
+      </table>
+      {{/if}}
+    </div>
+
+    <script src="{{contextPath}}/javascript/bootstrap.min.js"></script>
+    <script src="{{contextPath}}/javascript/bootstrap-datepicker.js"></script>
+  </body>
+
+</html>

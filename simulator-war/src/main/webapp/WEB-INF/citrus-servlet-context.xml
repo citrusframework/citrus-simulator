@@ -57,6 +57,17 @@
                                    polling-interval="250"
                                    timeout="${default.timeout}"/>
 
+  <!-- Simulator configuration -->
+  <bean id="simulatorConfiguraiton" class="com.consol.citrus.simulator.config.SimulatorConfiguration">
+    <property name="defaultTimeout" value="${default.timeout}"/>
+    <property name="templatePath" value="${default.template.path}"/>
+    <property name="defaultBuilder" value="${default.builder.name}"/>
+    <property name="templateValidation" value="${simulator.template.validation}"/>
+  </bean>
+
+  <!-- Test builder service executes test builders manually -->
+  <bean id="testBuilderService" class="com.consol.citrus.simulator.service.DefaultTestBuilderService"/>
+
   <!-- SOAP Message Factory -->
   <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
 </beans>
