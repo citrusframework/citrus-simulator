@@ -19,8 +19,6 @@ package com.consol.citrus.simulator;
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.CitrusTestBuilder;
 import com.consol.citrus.dsl.definition.*;
-import com.consol.citrus.message.MessageReceiver;
-import com.consol.citrus.message.MessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -29,25 +27,26 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public class AbstractSimulatorBuilder extends CitrusTestBuilder {
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     @Qualifier("simInboundEndpoint")
-    protected ChannelSyncEndpoint simInboundEndpoint;
+    protected ChannelSyncEndpoint simInbound;
 
     protected ReceiveMessageActionDefinition receiveSOAPRequest() {
         return (ReceiveMessageActionDefinition)
-                receive(simInboundEndpoint)
+                receive(simInbound)
                     .description("Received SOAP request");
     }
 
     protected SendMessageActionDefinition sendSOAPResponse() {
         return (SendMessageActionDefinition)
-                send(simInboundEndpoint)
+                send(simInbound)
                     .description("Sending SOAP response");
     }
 
     protected SendSoapFaultActionDefinition sendSoapFault() {
         return (SendSoapFaultActionDefinition)
-                sendSoapFault(simInboundEndpoint)
+                sendSoapFault(simInbound)
                     .description("Sending SOAP fault");
     }
 

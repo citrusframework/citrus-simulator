@@ -12,12 +12,12 @@
   <context:annotation-config/>
 
   <!-- Common properties -->
-  <context:property-placeholder location="classpath:META-INF/citrus-simulator.properties"/>
+  <context:property-placeholder location="classpath*:META-INF/citrus-*.properties"/>
 
   <import resource="classpath:com/consol/citrus/spring/root-application-ctx.xml"/>
   <import resource="classpath:com/consol/citrus/functions/citrus-function-ctx.xml"/>
   <import resource="classpath:com/consol/citrus/validation/citrus-validationmatcher-ctx.xml"/>
-  <import resource="classpath*:/META-INF/citrus-simulator-context.xml"/>
+  <import resource="classpath*:/META-INF/citrus-*-context.xml"/>
 
   <bean id="loggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor">
     <description>This interceptor logs the complete message (SOAP envelope)</description>
