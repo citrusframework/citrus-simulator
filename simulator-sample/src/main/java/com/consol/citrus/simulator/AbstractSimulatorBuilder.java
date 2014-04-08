@@ -35,19 +35,19 @@ public class AbstractSimulatorBuilder extends CitrusTestBuilder {
     protected ReceiveMessageActionDefinition receiveSOAPRequest() {
         return (ReceiveMessageActionDefinition)
                 receive(simInbound)
-                    .description("Received SOAP request");
+                    .description("Received Simulator SOAP request");
     }
 
     protected SendMessageActionDefinition sendSOAPResponse() {
         return (SendMessageActionDefinition)
                 send(simInbound)
-                    .description("Sending SOAP response");
+                    .description("Sending Simulator SOAP response");
     }
 
     protected SendSoapFaultActionDefinition sendSoapFault() {
         return (SendSoapFaultActionDefinition)
                 sendSoapFault(simInbound)
-                    .description("Sending SOAP fault");
+                    .description("Sending Simulator SOAP fault");
     }
 
 }

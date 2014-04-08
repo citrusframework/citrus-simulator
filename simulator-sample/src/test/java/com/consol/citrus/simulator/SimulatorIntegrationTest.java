@@ -42,7 +42,8 @@ public class SimulatorIntegrationTest extends TestNGCitrusTestBuilder {
         send(soapClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>");
+                         "</Hello>")
+                .header("citrus_soap_action", "hello");
 
         receive(soapClient)
                 .validator(new DomXmlMessageValidator())
@@ -60,7 +61,8 @@ public class SimulatorIntegrationTest extends TestNGCitrusTestBuilder {
         send(soapClient)
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>");
+                         "</GoodBye>")
+                .header("citrus_soap_action", "goodBye");
 
         receive(soapClient)
                 .validator(new DomXmlMessageValidator())
@@ -77,7 +79,8 @@ public class SimulatorIntegrationTest extends TestNGCitrusTestBuilder {
         send(soapClient)
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
-                         "</GoodNight>");
+                         "</GoodNight>")
+                .header("citrus_soap_action", "goodNight");
 
         receive(soapClient)
                 .validator(new DomXmlMessageValidator())

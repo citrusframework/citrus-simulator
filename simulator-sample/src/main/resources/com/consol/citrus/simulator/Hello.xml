@@ -26,6 +26,9 @@
               <Hello xmlns="http://citrusframework.org/schemas/hello">Say Hello!</Hello>
           </payload>
         </message>
+        <header>
+          <element name="citrus_soap_action" value="hello"/>
+        </header>
       </receive>
 
       <send endpoint="simInboundEndpoint">

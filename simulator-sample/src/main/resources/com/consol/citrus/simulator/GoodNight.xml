@@ -28,6 +28,9 @@
               <GoodNight xmlns="http://citrusframework.org/schemas/hello">Go to sleep!</GoodNight>
           </payload>
         </message>
+        <header>
+          <element name="citrus_soap_action" value="goodNight"/>
+        </header>
       </receive>
 
       <ws:send-fault endpoint="simInboundEndpoint">

@@ -34,16 +34,17 @@
 
   <bean id="simulatorEndpoint" class="com.consol.citrus.ws.WebServiceEndpoint">
     <property name="messageHandler">
-      <!--bean class="com.consol.citrus.adapter.handler.XmlTestExecutingMessageHandler">
-        <property name="packageName" value="com.consol.citrus.simulator.tests"/-->
-      <bean class="com.consol.citrus.dsl.handler.TestExecutingMessageHandler">
-        <property name="mappingKeyExtractor">
-          <ref bean="simulatorMappingKeyExtractor"/>
-        </property>
-        <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
-      </bean>
+      <ref bean="simulatorMessageHandler"/>
     </property>
     <property name="handleMimeHeaders" value="${handle.mime.headers}"/>
+  </bean>
+
+  <!-- Message handler executing the test builders -->
+  <bean id="simulatorMessageHandler" class="com.consol.citrus.dsl.handler.TestExecutingMessageHandler">
+    <property name="mappingKeyExtractor">
+      <ref bean="simulatorMappingKeyExtractor"/>
+    </property>
+    <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
   </bean>
 
   <!-- Mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
