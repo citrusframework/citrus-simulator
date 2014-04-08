@@ -4,7 +4,7 @@
               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                   http://www.citrusframework.org/schema/testcase http://www.citrusframework.org/schema/testcase/citrus-testcase.xsd">
 
-  <testcase name="GoodBye">
+  <testcase name="HelloTest">
     <meta-info>
       <author>Christoph Deppisch</author>
       <creationdate>2014-01-14</creationdate>
@@ -13,28 +13,28 @@
       <last-updated-on>2014-01-14T00:00:00</last-updated-on>
     </meta-info>
 
-    <description>Processing a GoodBye request providing proper response message.</description>
+    <description>Processing a Hello request providing proper response message.</description>
 
     <actions>
       <echo>
-        <message>Validate GoodBye request</message>
+        <message>Validate Hello request</message>
       </echo>
 
       <receive endpoint="simInboundEndpoint">
         <message>
           <payload>
-              <GoodBye xmlns="http://citrusframework.org/schemas/hello">Say GoodBye!</GoodBye>
+              <Hello xmlns="http://citrusframework.org/schemas/hello">Say Hello!</Hello>
           </payload>
         </message>
         <header>
-          <element name="citrus_soap_action" value="goodBye"/>
+          <element name="citrus_soap_action" value="Hello"/>
         </header>
       </receive>
 
       <send endpoint="simInboundEndpoint">
         <message>
           <payload>
-              <GoodByeResponse xmlns="http://citrusframework.org/schemas/hello">Bye bye!</GoodByeResponse>
+              <HelloResponse xmlns="http://citrusframework.org/schemas/hello">Hi there!</HelloResponse>
           </payload>
         </message>
       </send>

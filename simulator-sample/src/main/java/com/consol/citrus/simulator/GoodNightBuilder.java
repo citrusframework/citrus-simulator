@@ -32,7 +32,7 @@ public class GoodNightBuilder extends AbstractSimulatorBuilder {
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
-            .header("citrus_soap_action", "goodNight");
+            .header("citrus_soap_action", "GoodNight");
 
         sendSoapFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")

@@ -21,9 +21,7 @@ import com.consol.citrus.simulator.model.UseCaseParameter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
@@ -34,7 +32,8 @@ public class HelloTrigger extends AbstractUseCaseTrigger {
 
     @Override
     protected void configure() {
-        echo("${text}");
+        echo("${greeting}");
+        echo("${payload}");
     }
 
     @Override
@@ -49,11 +48,14 @@ public class HelloTrigger extends AbstractUseCaseTrigger {
 
     @Override
     public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"HELLO"});
+        return Arrays.asList(new String[] {"Hello"});
     }
 
     @Override
     public List<UseCaseParameter> getUseCaseParameter() {
-        return Collections.singletonList(new UseCaseParameter("text", "Hello Text", "Hi there").addUseCaseFilter(HelloTrigger.class));
+        List<UseCaseParameter> parameters = new ArrayList<UseCaseParameter>();
+        parameters.add(new UseCaseParameter("greeting", "Greeting Text", "Hi there!").addUseCaseFilter(HelloTrigger.class));
+
+        return parameters;
     }
 }

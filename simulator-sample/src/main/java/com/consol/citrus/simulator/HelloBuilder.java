@@ -32,7 +32,7 @@ public class HelloBuilder extends AbstractSimulatorBuilder {
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>")
-            .header("citrus_soap_action", "hello");
+            .header("citrus_soap_action", "Hello");
 
         sendSOAPResponse()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +

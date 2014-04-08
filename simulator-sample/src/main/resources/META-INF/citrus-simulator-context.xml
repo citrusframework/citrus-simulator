@@ -38,4 +38,25 @@
     <citrus:channel-sync-endpoint id="simInboundEndpoint"
             channel="simulator.inbound"
             timeout="${default.timeout}"/>
+
+    <!-- Custom mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
+    <!--bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.adapter.handler.mapping.SoapActionMappingKeyExtractor">
+      <property name="mappingKeySuffix" value="Test"/>
+    </bean-->
+
+    <!-- Custom message handler executing the test builders from XML -->
+    <!--bean id="simulatorMessageHandler" class="com.consol.citrus.adapter.handler.XmlTestExecutingMessageHandler">
+      <property name="packageName" value="com.consol.citrus.simulator"/>
+      <property name="mappingKeyExtractor">
+        <ref bean="simulatorMappingKeyExtractor"/>
+      </property>
+      <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
+    </bean-->
+
+    <!-- Incoming message is handled by this adapter, by default send request to message channel -->
+    <!--citrus:channel-endpoint-adapter id="simulatorInboundAdapter"
+                                     channel-name="simulator.inbound"
+                                     polling-interval="250"
+                                     timeout="${default.timeout}"/-->
+
 </beans>

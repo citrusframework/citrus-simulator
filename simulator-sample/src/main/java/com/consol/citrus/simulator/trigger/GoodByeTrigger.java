@@ -33,6 +33,7 @@ public class GoodByeTrigger  extends AbstractUseCaseTrigger {
     @Override
     protected void configure() {
         echo("GoodBye trigger was executed!");
+        echo("${payload}");
     }
 
     @Override
@@ -42,6 +43,6 @@ public class GoodByeTrigger  extends AbstractUseCaseTrigger {
 
     @Override
     public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[]{"GOODBYE"});
+        return Arrays.asList(new String[] {"Goodbye"});
     }
 }
