@@ -39,7 +39,7 @@
   </bean>
 
   <!-- Message handler executing the test builders -->
-  <bean id="simulatorMessageHandler" class="com.consol.citrus.dsl.handler.TestExecutingMessageHandler">
+  <bean id="simulatorMessageHandler" class="com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter">
     <property name="mappingKeyExtractor">
       <ref bean="simulatorMappingKeyExtractor"/>
     </property>
