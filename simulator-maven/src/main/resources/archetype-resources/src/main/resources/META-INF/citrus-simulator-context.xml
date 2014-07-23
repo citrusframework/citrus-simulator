@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
 
-  <context:component-scan base-package="com.consol.citrus.simulator"/>
+  <context:component-scan base-package="${package}"/>
 
   <citrus:schema-repository id="schemaRepository">
   </citrus:schema-repository>
