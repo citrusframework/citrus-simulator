@@ -27,6 +27,7 @@
   <modules>
     <module>simulator-core</module>
     <module>simulator-war</module>
+    <module>simulator-maven</module>
     <module>simulator-sample</module>
   </modules>
   

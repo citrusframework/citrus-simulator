@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
+
+  <context:component-scan base-package="com.consol.citrus.simulator"/>
+
+  <citrus:schema-repository id="schemaRepository">
+  </citrus:schema-repository>
+
+  <citrus:global-variables>
+    <citrus:variable name="simulator.name" value="Citrus Simulator"/>
+  </citrus:global-variables>
+
+  <bean id="namespaceContextBuilder" class="com.consol.citrus.xml.namespace.NamespaceContextBuilder">
+    <property name="namespaceMappings">
+      <props>
+        <!-- Add namespace uri to prefix mappings here for XPath evaluation -->
+      </props>
+    </property>
+  </bean>
+
+  <!-- Message Validators -->
+  <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
+
+  <!-- Simulator inbound channels -->
+  <citrus:channel id="simulator.inbound"/>
+
+  <!-- Request receiver and respective response sender -->
+  <citrus:channel-sync-endpoint id="simInboundEndpoint"
+                                channel="simulator.inbound"
+                                timeout="${default.timeout}"/>
+
+  <!-- Custom mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
+  <bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor">
+    <property name="xpathExpression" value="local-name(/*)"/>
+  </bean>
+
+  <!-- Custom message handler executing the test builders from XML -->
+  <bean id="simulatorMessageHandler" class="com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter">
+    <property name="mappingKeyExtractor">
+      <ref bean="simulatorMappingKeyExtractor"/>
+    </property>
+    <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
+  </bean>
+
+  <!-- Incoming message is handled by this adapter, by default send request to message channel -->
+  <citrus:channel-endpoint-adapter id="simulatorInboundAdapter"
+                                   channel-name="simulator.inbound"
+                                   polling-interval="250"
+                                   timeout="${default.timeout}"/>
+
+</beans>
