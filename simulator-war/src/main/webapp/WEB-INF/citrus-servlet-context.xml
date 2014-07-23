@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
         
-  <description>Automatically loaded via ContextloaderListener in web.xml - context is shared by all servlets</description>
+  <description>Automatically loaded via ContextLoaderListener in web.xml - context is shared by all servlets</description>
 
   <context:annotation-config/>
 
@@ -47,7 +47,7 @@
   </bean>
 
   <!-- Mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
-  <bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.adapter.handler.mapping.XPathPayloadMappingKeyExtractor">
+  <bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor">
     <property name="xpathExpression" value="local-name(/*)"/>
   </bean>
 

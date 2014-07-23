@@ -83,6 +83,13 @@
         {{/unless}}
         {{/each}}
         </tbody>
+        {{#unless results}}
+        <tfoot>
+        <tr>
+          <td colspan="4">No results yet!</td>
+        </tr>
+        </tfoot>
+        {{/unless}}
       </table>
     </div>
 
