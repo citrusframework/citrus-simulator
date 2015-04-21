@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator</artifactId>
-    <version>0.3</version>
+    <version>0.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -25,6 +25,10 @@
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-ws</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-jms</artifactId>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>

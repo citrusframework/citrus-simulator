@@ -14,10 +14,6 @@
   <!-- Common properties -->
   <context:property-placeholder location="classpath*:META-INF/citrus-*.properties"/>
 
-  <import resource="classpath:com/consol/citrus/spring/root-application-ctx.xml"/>
-  <import resource="classpath:com/consol/citrus/functions/citrus-function-ctx.xml"/>
-  <import resource="classpath:com/consol/citrus/validation/citrus-validationmatcher-ctx.xml"/>
-
   <bean id="loggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor">
     <description>This interceptor logs the complete message (SOAP envelope)</description>
   </bean>
@@ -31,25 +27,33 @@
     <property name="defaultEndpoint" ref="simulatorEndpoint"/>
   </bean>
 
-  <bean id="simulatorEndpoint" class="com.consol.citrus.ws.WebServiceEndpoint">
-    <property name="messageHandler">
-      <ref bean="simulatorMessageHandler"/>
+  <bean id="simulatorEndpoint" class="com.consol.citrus.ws.server.WebServiceEndpoint">
+    <property name="endpointAdapter">
+      <ref bean="simulatorEndpointAdapter"/>
     </property>
-    <property name="handleMimeHeaders" value="${handle.mime.headers}"/>
   </bean>
 
   <!-- Message handler executing the test builders -->
-  <bean id="simulatorMessageHandler" class="com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter">
+  <bean id="simulatorEndpointAdapter" class="com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter">
     <property name="mappingKeyExtractor">
       <ref bean="simulatorMappingKeyExtractor"/>
     </property>
-    <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
+    <property name="responseEndpointAdapter" ref="simulatorInboundAdapter"/>
   </bean>
 
   <!-- Mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
   <bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor">
     <property name="xpathExpression" value="local-name(/*)"/>
   </bean>
+
+  <!-- Simulator inbound channels -->
+  <citrus:channel id="simulator.inbound"/>
+
+  <!-- Request receiver and respective response sender -->
+  <citrus:channel-sync-endpoint id="simInboundEndpoint"
+                                channel="simulator.inbound"
+                                use-object-messages="true"
+                                timeout="${default.timeout}"/>
 
   <!-- Incoming message is handled by this adapter, by default send request to message channel -->
   <citrus:channel-endpoint-adapter id="simulatorInboundAdapter"
@@ -71,5 +75,6 @@
   <!-- SOAP Message Factory -->
   <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
 
+  <bean id="citrusBaseConfig" class="com.consol.citrus.config.CitrusBaseConfig"/>
   <import resource="classpath*:/META-INF/citrus-*-context.xml"/>
 </beans>

@@ -18,6 +18,8 @@ package com.consol.citrus.simulator.servlet;
 
 import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCase;
+import com.consol.citrus.context.TestContext;
+import com.consol.citrus.message.Message;
 import com.consol.citrus.report.*;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
@@ -121,11 +123,11 @@ public abstract class AbstractSimulatorServlet extends HttpServlet implements Te
     }
 
     @Override
-    public void onInboundMessage(String message) {
+    public void onInboundMessage(Message message, TestContext context) {
     }
 
     @Override
-    public void onOutboundMessage(String message) {
+    public void onOutboundMessage(Message message, TestContext context) {
     }
 }
 

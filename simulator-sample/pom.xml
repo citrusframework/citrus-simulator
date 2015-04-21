@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator</artifactId>
-    <version>0.3</version>
+    <version>0.5</version>
   </parent>
 
   <groupId>com.consol.citrus</groupId>
@@ -26,11 +26,18 @@
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-war</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
       <type>war</type>
     </dependency>
   </dependencies>

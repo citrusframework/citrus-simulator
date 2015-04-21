@@ -14,7 +14,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jetty.version>8.1.15.v20140411</jetty.version>
-    <citrus.simulator.version>0.3</citrus.simulator.version>
+    <citrus.simulator.version>0.5</citrus.simulator.version>
     <simulator.port>8080</simulator.port>
     <simulator.stop.port>8088</simulator.stop.port>
   </properties>

@@ -20,24 +20,12 @@
         <citrus:variable name="simulator.name" value="Citrus SOAP Simulator"/>
     </citrus:global-variables>
 
-    <bean id="namespaceContextBuilder" class="com.consol.citrus.xml.namespace.NamespaceContextBuilder">
-        <property name="namespaceMappings">
-            <props>
-              <!-- Add namespace uri to prefix mappings here for XPath evaluation -->
-            </props>
-        </property>
-    </bean>
+    <citrus:namespace-context>
+        <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
+    </citrus:namespace-context>
 
     <!-- Message Validators -->
     <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
-
-    <!-- Simulator inbound channels -->
-    <citrus:channel id="simulator.inbound"/>
-
-    <!-- Request receiver and respective response sender -->
-    <citrus:channel-sync-endpoint id="simInboundEndpoint"
-            channel="simulator.inbound"
-            timeout="${default.timeout}"/>
 
     <!-- Custom mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
     <!--bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.adapter.handler.mapping.SoapActionMappingKeyExtractor">
@@ -45,13 +33,21 @@
     </bean-->
 
     <!-- Custom message handler executing the test builders from XML -->
-    <!--bean id="simulatorMessageHandler" class="com.consol.citrus.adapter.handler.XmlTestExecutingMessageHandler">
+    <!--bean id="simulatorEndpointAdapter" class="com.consol.citrus.endpoint.adapter.XmlTestExecutingEndpointAdapter">
       <property name="packageName" value="com.consol.citrus.simulator"/>
       <property name="mappingKeyExtractor">
         <ref bean="simulatorMappingKeyExtractor"/>
       </property>
-      <property name="responseMessageHandler" ref="simulatorInboundAdapter"/>
+      <property name="responseEndpointAdapter" ref="simulatorInboundAdapter"/>
     </bean-->
+
+    <!-- Simulator inbound channels -->
+    <!--citrus:channel id="simulator.inbound"/-->
+
+    <!-- Request receiver and respective response sender -->
+    <!--citrus:channel-sync-endpoint id="simInboundEndpoint"
+                                  channel="simulator.inbound"
+                                  timeout="${default.timeout}"/-->
 
     <!-- Incoming message is handled by this adapter, by default send request to message channel -->
     <!--citrus:channel-endpoint-adapter id="simulatorInboundAdapter"

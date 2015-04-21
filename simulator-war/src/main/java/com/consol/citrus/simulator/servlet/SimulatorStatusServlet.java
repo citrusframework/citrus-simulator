@@ -78,12 +78,12 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
 
     @Override
     public void onTestStart(TestCase test) {
-        runningTests.put(StringUtils.arrayToCommaDelimitedString(test.getParameters()), new TestResult(test.getName(), TestResult.RESULT.SUCCESS, test.getParameters()));
+        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), new TestResult(test.getName(), TestResult.RESULT.SUCCESS, test.getParameters()));
     }
 
     @Override
     public void onTestFinish(TestCase test) {
-        runningTests.remove(StringUtils.arrayToCommaDelimitedString(test.getParameters()));
+        runningTests.remove(StringUtils.arrayToCommaDelimitedString(getParameters(test)));
     }
 
     @Override
@@ -106,10 +106,19 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
     public void onTestActionStart(TestCase testCase, TestAction testAction) {
         if (!testAction.getClass().equals(SleepAction.class)) {
             LOG.debug(testCase.getName() + "(" +
-                    StringUtils.arrayToCommaDelimitedString(testCase.getParameters()) + ") - " +
+                    StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
                     testAction.getName() + ": " +
                     (StringUtils.hasText(testAction.getDescription()) ? testAction.getDescription() : ""));
         }
+    }
+
+    private String[] getParameters(TestCase test) {
+        List<String> parameterStrings = new ArrayList<String>();
+        for (Map.Entry<String, Object> param : test.getParameters().entrySet()) {
+            parameterStrings.add(param.getKey() + "=" + param.getValue());
+        }
+
+        return parameterStrings.toArray(new String[parameterStrings.size()]);
     }
 
     /**

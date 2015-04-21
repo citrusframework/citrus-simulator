@@ -6,15 +6,15 @@
   
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator</artifactId>
-  <version>0.3</version>
+  <version>0.5</version>
   <name>citrus-simulator</name>
 
   <packaging>pom</packaging>
   
   <properties>
-    <project.version>0.3</project.version>
+    <project.version>0.5</project.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <citrus.version>1.4.1</citrus.version>
+    <citrus.version>2.1</citrus.version>
     <spring.version>3.2.2.RELEASE</spring.version>
     <spring.ws.version>2.1.2.RELEASE</spring.ws.version>
     <aspectj.version>1.7.1</aspectj.version>
@@ -42,6 +42,11 @@
       <dependency>
         <groupId>com.consol.citrus</groupId>
         <artifactId>citrus-ws</artifactId>
+        <version>${citrus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.consol.citrus</groupId>
+        <artifactId>citrus-jms</artifactId>
         <version>${citrus.version}</version>
       </dependency>
       <dependency>
