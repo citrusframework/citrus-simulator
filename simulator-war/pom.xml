@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator</artifactId>
-    <version>0.5</version>
+    <version>0.6</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -32,29 +32,28 @@
   </dependencies>
 
   <build>
+    <finalName>citrus-simulator</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <warName>citrus-simulator</warName>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>${simulator.port}</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+          <httpConnector>
+            <port>${simulator.port}</port>
+            <idleTimeout>60000</idleTimeout>
+          </httpConnector>
           <stopKey>simStop</stopKey>
           <stopPort>${simulator.stop.port}</stopPort>
         </configuration>

@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator</artifactId>
-    <version>0.5</version>
+    <version>0.6</version>
   </parent>
 
   <groupId>com.consol.citrus</groupId>
@@ -17,6 +17,8 @@
   <packaging>war</packaging>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <simulator.port>8080</simulator.port>
     <simulator.stop.port>8088</simulator.stop.port>
   </properties>
@@ -45,21 +47,42 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.19.1</version>
         <configuration>
-          <skip>true</skip>
+          <systemProperties>
+            <property>
+              <name>javax.xml.parsers.SAXParserFactory</name>
+              <value>org.apache.xerces.jaxp.SAXParserFactoryImpl</value>
+            </property>
+            <property>
+              <name>user.language</name>
+              <value>en</value>
+            </property>
+          </systemProperties>
+          <forkMode>once</forkMode>
+          <failIfNoTests>false</failIfNoTests>
+          <excludes>
+            <exclude>**/IT*.java</exclude>
+            <exclude>**/*IT.java</exclude>
+          </excludes>
+          <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.19.1</version>
         <executions>
           <execution>
-            <id>simulator-integration-tests</id>
-            <phase>integration-test</phase>
+            <id>integration-tests</id>
             <goals>
-              <goal>test</goal>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
+              <failIfNoTests>false</failIfNoTests>
             </configuration>
           </execution>
         </executions>
@@ -84,14 +107,14 @@
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>start-simulator</id>
             <phase>pre-integration-test</phase>
             <goals>
-              <goal>run</goal>
+              <goal>deploy-war</goal>
             </goals>
             <configuration>
               <daemon>true</daemon>
@@ -109,12 +132,10 @@
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>${simulator.port}</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+          <httpConnector>
+            <port>${simulator.port}</port>
+            <idleTimeout>60000</idleTimeout>
+          </httpConnector>
           <stopKey>simStop</stopKey>
           <stopPort>${simulator.stop.port}</stopPort>
         </configuration>

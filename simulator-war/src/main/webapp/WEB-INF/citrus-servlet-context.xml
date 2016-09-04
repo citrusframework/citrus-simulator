@@ -70,11 +70,11 @@
   </bean>
 
   <!-- Test builder service executes test builders manually -->
-  <bean id="testBuilderService" class="com.consol.citrus.simulator.service.DefaultTestBuilderService"/>
+  <bean id="useCaseService" class="com.consol.citrus.simulator.service.DefaultUseCaseService"/>
 
   <!-- SOAP Message Factory -->
   <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
 
-  <bean id="citrusBaseConfig" class="com.consol.citrus.config.CitrusBaseConfig"/>
+  <bean id="citrusSpringConfig" class="com.consol.citrus.config.CitrusSpringConfig"/>
   <import resource="classpath*:/META-INF/citrus-*-context.xml"/>
 </beans>

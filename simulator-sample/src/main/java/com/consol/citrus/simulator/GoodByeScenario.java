@@ -22,21 +22,21 @@ import org.springframework.stereotype.Component;
 /**
  * @author Christoph Deppisch
  */
-@Component("Hello")
+@Component("GoodBye")
 @Scope("prototype")
-public class HelloBuilder extends AbstractSimulatorBuilder {
+public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>")
-            .header("citrus_soap_action", "Hello");
+            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say GoodBye!" +
+                     "</GoodBye>")
+            .header("citrus_soap_action", "GoodBye");
 
         sendSOAPResponse()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>");
+            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Bye bye!" +
+                     "</GoodByeResponse>");
     }
 }

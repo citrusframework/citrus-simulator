@@ -24,9 +24,6 @@
         <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
     </citrus:namespace-context>
 
-    <!-- Message Validators -->
-    <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
-
     <!-- Custom mapping key extractor reads mapping key from incoming message and maps to existing builder implementation -->
     <!--bean id="simulatorMappingKeyExtractor" class="com.consol.citrus.adapter.handler.mapping.SoapActionMappingKeyExtractor">
       <property name="mappingKeySuffix" value="Test"/>

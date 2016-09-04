@@ -19,7 +19,7 @@ package com.consol.citrus.simulator.servlet;
 import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCase;
 import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.report.TestResult;
+import com.consol.citrus.TestResult;
 import com.consol.citrus.report.TestResults;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
@@ -64,12 +64,12 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (StringUtils.hasText(req.getQueryString()) && req.getQueryString().contains("clear=true")) {
-            testResults.clear();
+            testResults = new TestResults();
         }
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("running", runningTests);
-        model.put("results", reverseOrder(testResults));
+        model.put("results", testResults);
         model.put("contextPath", req.getContextPath());
 
         Context context = Context.newContext(model);
@@ -78,7 +78,7 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
 
     @Override
     public void onTestStart(TestCase test) {
-        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), new TestResult(test.getName(), TestResult.RESULT.SUCCESS, test.getParameters()));
+        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getParameters()));
     }
 
     @Override
@@ -88,14 +88,14 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
 
     @Override
     public void onTestSuccess(TestCase test) {
-        TestResult result = new TestResult(test.getName(), TestResult.RESULT.SUCCESS, test.getParameters());
+        TestResult result = TestResult.success(test.getName(), test.getParameters());
         testResults.addResult(result);
         LOG.info(result.toString());
     }
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-        TestResult result = new TestResult(test.getName(), TestResult.RESULT.FAILURE, cause, test.getParameters());
+        TestResult result = TestResult.failed(test.getName(), cause, test.getParameters());
         testResults.addResult(result);
 
         LOG.info(result.toString());
@@ -119,17 +119,6 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
         }
 
         return parameterStrings.toArray(new String[parameterStrings.size()]);
-    }
-
-    /**
-     * Reverses the order of the provided test results
-     */
-    private TestResults reverseOrder(TestResults testResults) {
-        TestResults reversed = new TestResults();
-        for (int i = testResults.size(); i > 0; i--) {
-            reversed.add(testResults.get(i-1));
-        }
-        return reversed;
     }
 
 }

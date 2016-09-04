@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator;
 
-import com.consol.citrus.dsl.TestNGCitrusTestBuilder;
-import com.consol.citrus.dsl.annotations.CitrusTest;
+import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.validation.xml.DomXmlMessageValidator;
 import com.consol.citrus.ws.client.WebServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * @author Christoph Deppisch
  */
 @Test
-public class SimulatorIntegrationTest extends TestNGCitrusTestBuilder {
+public class SimulatorIT extends TestNGCitrusTestDesigner {
 
     /** Test SOAP client */
     @SuppressWarnings("SpringJavaAutowiringInspection")

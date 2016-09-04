@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.model;
 
-import com.consol.citrus.dsl.CitrusTestBuilder;
+import com.consol.citrus.dsl.design.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Christoph Deppisch
  */
-public abstract class AbstractUseCaseTrigger extends CitrusTestBuilder implements UseCaseTrigger {
+public abstract class AbstractUseCaseTrigger extends ExecutableTestDesignerComponent implements UseCaseTrigger {
 
     @Override
     public String getDisplayName() {

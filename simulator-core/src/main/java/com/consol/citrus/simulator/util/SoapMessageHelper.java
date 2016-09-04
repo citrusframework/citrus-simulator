@@ -97,7 +97,7 @@ public class SoapMessageHelper {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             soapMessage.writeTo(bos);
 
-            return new SoapMessage(new String(bos.toByteArray()), message.copyHeaders());
+            return new SoapMessage(new String(bos.toByteArray()), message.getHeaders());
         } catch (Exception e) {
             throw new CitrusRuntimeException("Failed to create SOAP message from payload resource", e);
         }

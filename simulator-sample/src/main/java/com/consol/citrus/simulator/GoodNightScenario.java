@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("GoodNight")
 @Scope("prototype")
-public class GoodNightBuilder extends AbstractSimulatorBuilder {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {

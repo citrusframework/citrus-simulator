@@ -72,7 +72,7 @@ public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, Dispos
                 TestContext context = testContextFactory.getObject();
                 Message message = jmsEndpoint.createConsumer().receive(context, jmsEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    Message request = new SoapMessage(soapMessageHelper.getSoapBody(message), message.copyHeaders());
+                    Message request = new SoapMessage(soapMessageHelper.getSoapBody(message), message.getHeaders());
                     Message response = endpointAdapter.handleMessage(request);
 
                     if (response != null && jmsEndpoint instanceof JmsSyncEndpoint) {

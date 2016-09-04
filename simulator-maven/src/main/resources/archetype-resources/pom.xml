@@ -13,8 +13,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.version>8.1.15.v20140411</jetty.version>
-    <citrus.simulator.version>0.5</citrus.simulator.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <jetty.version>9.2.15.v20160210</jetty.version>
+    <citrus.simulator.version>0.6</citrus.simulator.version>
     <simulator.port>8080</simulator.port>
     <simulator.stop.port>8088</simulator.stop.port>
   </properties>
@@ -38,7 +39,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>3.0.0</version>
         <configuration>
           <overlays>
             <overlay>
@@ -55,19 +56,17 @@
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty.version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>${simulator.port}</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+          <httpConnector>
+            <port>${simulator.port}</port>
+            <idleTimeout>60000</idleTimeout>
+          </httpConnector>
           <stopKey>simStop</stopKey>
           <stopPort>${simulator.stop.port}</stopPort>
         </configuration>

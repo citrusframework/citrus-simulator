@@ -12,3 +12,4 @@ bin
 .codepro
 .pmd
 test-output
+overlays

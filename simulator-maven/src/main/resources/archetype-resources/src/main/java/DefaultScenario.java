@@ -5,15 +5,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import com.consol.citrus.dsl.CitrusTestBuilder;
+import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
 import com.consol.citrus.endpoint.Endpoint;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("DefaultBuilder")
+@Component("DefaultScenario")
 @Scope("prototype")
-public class DefaultBuilder extends CitrusTestBuilder {
+public class DefaultScenario extends ExecutableTestDesignerComponent {
 
     @Autowired
     @Qualifier("simInboundEndpoint")
@@ -21,12 +21,10 @@ public class DefaultBuilder extends CitrusTestBuilder {
 
     @Override
     protected void configure() {
-
-        echo("Default builder was triggered");
+        echo("Default scenario was triggered");
 
         receive(simInbound);
 
         echo("Received SOAP request");
-
     }
 }

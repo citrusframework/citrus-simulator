@@ -16,14 +16,13 @@
 
 package com.consol.citrus.simulator.servlet;
 
-import com.consol.citrus.dsl.CitrusTestBuilder;
+import com.consol.citrus.TestResult;
+import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
+import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.exceptions.TestCaseFailedException;
-import com.consol.citrus.report.TestResult;
 import com.consol.citrus.simulator.config.SimulatorConfiguration;
-import com.consol.citrus.simulator.model.MessageTemplate;
-import com.consol.citrus.simulator.model.UseCaseParameter;
-import com.consol.citrus.simulator.model.UseCaseTrigger;
-import com.consol.citrus.simulator.service.TestBuilderService;
+import com.consol.citrus.simulator.model.*;
+import com.consol.citrus.simulator.service.UseCaseService;
 import com.consol.citrus.util.FileUtils;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
@@ -51,14 +50,14 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
     private Template runTemplate;
 
     /** Service for executing test builders */
-    private TestBuilderService<CitrusTestBuilder> testBuilderService;
+    private UseCaseService<Executable> useCaseService;
     private SimulatorConfiguration simulatorConfiguration;
 
     @Override
     public void init() throws ServletException {
         super.init();
 
-        testBuilderService = getApplicationContext().getBean(TestBuilderService.class);
+        useCaseService = getApplicationContext().getBean(UseCaseService.class);
         simulatorConfiguration = getApplicationContext().getBean(SimulatorConfiguration.class);
         runTemplate = compileHandlebarsTemplate("run");
     }
@@ -72,16 +71,16 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String useCaseName = req.getParameter("useCase");
-        CitrusTestBuilder testBuilder = getApplicationContext().getBean(useCaseName, CitrusTestBuilder.class);
+        ExecutableTestDesignerComponent testDesigner = getApplicationContext().getBean(useCaseName, ExecutableTestDesignerComponent.class);
 
         Map<String, Object> formParameters = getFormParameter(req);
 
         TestResult testResult;
         try {
-            testBuilderService.run(testBuilder, formParameters, getApplicationContext());
-            testResult = new TestResult(testBuilder.getClass().getSimpleName(), TestResult.RESULT.SUCCESS, testBuilder.getTestCase().getParameters());
+            useCaseService.run(testDesigner, formParameters, getApplicationContext());
+            testResult = TestResult.success(testDesigner.getClass().getSimpleName(), testDesigner.getTestCase().getParameters());
         } catch (TestCaseFailedException e) {
-            testResult = new TestResult(testBuilder.getClass().getSimpleName(), TestResult.RESULT.FAILURE, e.getCause(), testBuilder.getTestCase().getParameters());
+            testResult = TestResult.failed(testDesigner.getClass().getSimpleName(), e.getCause(), testDesigner.getTestCase().getParameters());
         }
 
         Map<String, Object> model = buildViewModel(req);
@@ -99,7 +98,7 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
      * @return
      */
     private Map<String, Object> getFormParameter(HttpServletRequest req) {
-        List<UseCaseParameter> defaultParameters = testBuilderService.getUseCaseParameter();
+        List<UseCaseParameter> defaultParameters = useCaseService.getUseCaseParameter();
         Map<String, Object> formParameters = new LinkedHashMap<String, Object>(defaultParameters.size());
         for (UseCaseParameter parameterEntry : defaultParameters) {
             String formParameter = req.getParameter(parameterEntry.getId());
@@ -127,7 +126,7 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
 
         model.put("useCaseList", useCaseTriggers);
         model.put("messageTemplates", getMessageTemplates(useCaseTriggers.values()));
-        model.put("parameter", testBuilderService.getUseCaseParameter());
+        model.put("parameter", useCaseService.getUseCaseParameter());
         model.put("contextPath", req.getContextPath());
 
         return model;
