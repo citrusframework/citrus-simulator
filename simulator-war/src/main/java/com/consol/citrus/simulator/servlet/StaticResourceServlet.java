@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.servlet;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
+import com.github.jknack.handlebars.context.*;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
@@ -40,7 +41,11 @@ public class StaticResourceServlet extends AbstractSimulatorServlet {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("contextPath", req.getContextPath());
 
-        template.apply(Context.newContext(model), resp.getWriter());
+        template.apply(Context.newBuilder(model).resolver(
+                MapValueResolver.INSTANCE,
+                JavaBeanValueResolver.INSTANCE,
+                FieldValueResolver.INSTANCE
+        ).build(), resp.getWriter());
     }
 
     private String getTemplateName(String requestURI) {

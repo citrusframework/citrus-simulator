@@ -108,7 +108,7 @@
             <div class="controls">
               {{#each useCaseList}}
               <label class="radio">
-                <input type="radio" name="useCase" class="useCaseTrigger {{#if this.default}}default{{/if}}" value="{{key}}">
+                <input type="radio" name="useCase" class="useCaseTrigger {{#if this.default}}default{{/if}}" value="{{@key}}">
                 {{this.displayName}}
               </label>
               {{/each}}

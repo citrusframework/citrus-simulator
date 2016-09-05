@@ -16,13 +16,12 @@
 
 package com.consol.citrus.simulator.servlet;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
+import com.consol.citrus.*;
 import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.TestResult;
 import com.consol.citrus.report.TestResults;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
+import com.github.jknack.handlebars.context.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -67,12 +66,24 @@ public class SimulatorStatusServlet extends AbstractSimulatorServlet {
             testResults = new TestResults();
         }
 
+        final List<TestResult> results = new ArrayList<>();
+        testResults.doWithResults(new TestResults.ResultCallback() {
+            @Override
+            public void doWithResult(TestResult result) {
+                results.add(0, result);
+            }
+        });
+
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("running", runningTests);
-        model.put("results", testResults);
+        model.put("results", results);
         model.put("contextPath", req.getContextPath());
 
-        Context context = Context.newContext(model);
+        Context context = Context.newBuilder(model).resolver(
+                MapValueResolver.INSTANCE,
+                JavaBeanValueResolver.INSTANCE,
+                FieldValueResolver.INSTANCE
+        ).build();
         statusTemplate.apply(context, resp.getWriter());
     }
 

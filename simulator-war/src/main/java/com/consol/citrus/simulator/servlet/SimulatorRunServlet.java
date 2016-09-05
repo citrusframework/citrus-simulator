@@ -26,6 +26,7 @@ import com.consol.citrus.simulator.service.UseCaseService;
 import com.consol.citrus.util.FileUtils;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
+import com.github.jknack.handlebars.context.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -64,7 +65,11 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Context context = Context.newContext(buildViewModel(req));
+        Context context = Context.newBuilder(buildViewModel(req)).resolver(
+                MapValueResolver.INSTANCE,
+                JavaBeanValueResolver.INSTANCE,
+                FieldValueResolver.INSTANCE
+        ).build();
         runTemplate.apply(context, resp.getWriter());
     }
 
@@ -86,7 +91,11 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
         Map<String, Object> model = buildViewModel(req);
         model.put("result", testResult);
 
-        Context context = Context.newContext(model);
+        Context context = Context.newBuilder(model).resolver(
+                MapValueResolver.INSTANCE,
+                JavaBeanValueResolver.INSTANCE,
+                FieldValueResolver.INSTANCE
+        ).build();
         runTemplate.apply(context, resp.getWriter());
     }
 
