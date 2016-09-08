@@ -26,7 +26,7 @@
   <dependencies>
     <dependency>
       <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-core</artifactId>
+      <artifactId>citrus-simulator-api</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-war</artifactId>
+      <artifactId>citrus-simulator-web</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <type>war</type>
@@ -95,7 +95,7 @@
           <overlays>
             <overlay>
               <groupId>com.consol.citrus</groupId>
-              <artifactId>citrus-simulator-war</artifactId>
+              <artifactId>citrus-simulator-web</artifactId>
               <type>war</type>
             </overlay>
             <overlay>

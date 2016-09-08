@@ -12,9 +12,9 @@
   </parent>
 
   <groupId>com.consol.citrus</groupId>
-  <artifactId>citrus-simulator-core</artifactId>
+  <artifactId>citrus-simulator-api</artifactId>
   <version>${project.version}</version>
-  <name>citrus-simulator-core</name>
+  <name>citrus-simulator-api</name>
 
   <dependencies>
     <!-- Citrus -->

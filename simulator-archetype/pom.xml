@@ -11,8 +11,8 @@
   </parent>
 
   <groupId>com.consol.citrus</groupId>
-  <artifactId>citrus-simulator-maven</artifactId>
-  <name>citrus-simulator-maven</name>
+  <artifactId>citrus-simulator-archetype</artifactId>
+  <name>citrus-simulator-archetype</name>
   <description>Basic archetype for Citrus simulator project</description>
 
 </project>

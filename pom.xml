@@ -25,9 +25,9 @@
   </properties>
 
   <modules>
-    <module>simulator-core</module>
-    <module>simulator-war</module>
-    <module>simulator-maven</module>
+    <module>simulator-api</module>
+    <module>simulator-web</module>
+    <module>simulator-archetype</module>
     <module>simulator-sample</module>
   </modules>
   
