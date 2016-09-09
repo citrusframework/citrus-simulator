@@ -14,9 +14,6 @@
     </citrus:locations>
   </citrus:schema-repository>
 
-  <!-- Message Validators -->
-  <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
-
   <!-- SOAP Message Factory -->
   <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
 

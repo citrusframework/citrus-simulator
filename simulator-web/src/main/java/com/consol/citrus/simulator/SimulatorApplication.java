@@ -31,6 +31,7 @@ import org.springframework.context.annotation.*;
 @EnableAutoConfiguration
 @Configuration
 @Import(CitrusSpringConfig.class)
+@ImportResource(locations = "classpath*:citrus-simulator*-context.xml")
 public class SimulatorApplication extends SpringBootServletInitializer {
 
     @Override

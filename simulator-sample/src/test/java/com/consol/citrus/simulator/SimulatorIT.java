@@ -18,7 +18,6 @@ package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.validation.xml.DomXmlMessageValidator;
 import com.consol.citrus.ws.client.WebServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
@@ -46,7 +45,6 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
                 .header("citrus_soap_action", "Hello");
 
         receive(soapClient)
-                .validator(new DomXmlMessageValidator())
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
                          "</HelloResponse>");
@@ -65,7 +63,6 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
                 .header("citrus_soap_action", "GoodBye");
 
         receive(soapClient)
-                .validator(new DomXmlMessageValidator())
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
                          "</GoodByeResponse>");
@@ -83,7 +80,7 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
                 .header("citrus_soap_action", "GoodNight");
 
         receive(soapClient)
-                .validator(new DomXmlMessageValidator())
+                .schemaValidation(false)
                 .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                             "<faultcode>CITRUS:SIM-1001</faultcode>\n" +
                             "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +

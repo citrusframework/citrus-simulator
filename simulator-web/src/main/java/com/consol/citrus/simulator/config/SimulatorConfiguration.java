@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,15 +30,19 @@ public class SimulatorConfiguration {
     /** Logger */
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    private String templatePath = "com/consol/citrus/simulator/templates";
+    @Value(value = "${citrus.simulator.template.path:classpath:com/consol/citrus/simulator/templates}")
+    private String templatePath;
 
-    /** Default test builder chosen in case of unknown use case */
-    private String defaultBuilder = "DEFAULT_BUILDER";
+    @Value(value = "${citrus.simulator.default.scenario:DEFAULT_SCENARIO}")
+    /** Default test scenario chosen in case of unknown use case */
+    private String defaultScenario;
 
+    @Value(value = "${citrus.simulator.timeout:5000}")
     /** Default timeout when waiting for incoming messages */
-    private Long defaultTimeout = 5000L;
+    private Long defaultTimeout;
 
-    /** property that en/disables template validation, default value is true */
+    @Value(value = "${citrus.simulator.template.validation:true}")
+    /** Property that en/disables template validation, default value is true */
     private boolean templateValidation = true;
 
     /**
@@ -59,21 +64,21 @@ public class SimulatorConfiguration {
     }
 
     /**
-     * Gets the default builder name.
+     * Gets the default scenario name.
      *
      * @return
      */
-    public String getDefaultBuilder() {
-        return defaultBuilder;
+    public String getDefaultScenario() {
+        return defaultScenario;
     }
 
     /**
-     * Sets the default builder name.
+     * Sets the default scenario name.
      *
-     * @param defaultBuilder
+     * @param defaultScenario
      */
-    public void setDefaultBuilder(String defaultBuilder) {
-        this.defaultBuilder = defaultBuilder;
+    public void setDefaultScenario(String defaultScenario) {
+        this.defaultScenario = defaultScenario;
     }
 
     /**
