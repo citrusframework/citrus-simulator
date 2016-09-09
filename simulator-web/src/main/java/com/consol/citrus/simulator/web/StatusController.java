@@ -17,11 +17,8 @@
 package com.consol.citrus.simulator.web;
 
 import com.consol.citrus.TestResult;
-import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.report.TestResults;
-import com.consol.citrus.simulator.config.SimulatorConfiguration;
 import com.consol.citrus.simulator.listener.SimulatorStatusListener;
-import com.consol.citrus.simulator.service.UseCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,13 +36,6 @@ public class StatusController {
 
     @Autowired
     private SimulatorStatusListener statusListener;
-
-    @Autowired
-    /** Service for executing test builders */
-    private UseCaseService<Executable> useCaseService;
-
-    @Autowired
-    private SimulatorConfiguration simulatorConfiguration;
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Model model, @RequestParam(name = "clear", required = false, defaultValue = "false") boolean clear) {
