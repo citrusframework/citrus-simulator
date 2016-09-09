@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.model;
+package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.dsl.design.*;
+import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
 
 import java.util.Collections;
 import java.util.List;

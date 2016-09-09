@@ -17,7 +17,7 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.dsl.endpoint.Executable;
-import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.scenario.ScenarioParameter;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;

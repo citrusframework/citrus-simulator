@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.model;
+package com.consol.citrus.simulator.scenario;
 
 import org.springframework.beans.factory.BeanNameAware;
 

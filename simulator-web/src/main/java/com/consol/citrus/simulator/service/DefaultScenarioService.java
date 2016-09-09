@@ -19,8 +19,8 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.model.ScenarioStarter;
+import com.consol.citrus.simulator.scenario.ScenarioParameter;
+import com.consol.citrus.simulator.scenario.ScenarioStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class DefaultScenarioService implements ScenarioService {
 
     @Override
     public List<ScenarioParameter> getScenarioParameter() {
-        List<ScenarioParameter> allParameters = new ArrayList<ScenarioParameter>();
+        List<ScenarioParameter> allParameters = new ArrayList<>();
 
         for (ScenarioStarter scenarioStarter : scenarioStarters) {
             allParameters.addAll(scenarioStarter.getScenarioParameter());

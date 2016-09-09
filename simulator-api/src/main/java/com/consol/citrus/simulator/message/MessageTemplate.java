@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.model;
+package com.consol.citrus.simulator.message;
 
+import com.consol.citrus.simulator.scenario.ScenarioStarter;
 import org.springframework.stereotype.Component;
 
 /**
