@@ -30,7 +30,7 @@ public class SimulatorConfiguration {
     /** Logger */
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Value(value = "${citrus.simulator.template.path:classpath:com/consol/citrus/simulator/templates}")
+    @Value(value = "${citrus.simulator.template.path:com/consol/citrus/simulator/templates}")
     private String templatePath;
 
     @Value(value = "${citrus.simulator.default.scenario:DEFAULT_SCENARIO}")
@@ -43,7 +43,7 @@ public class SimulatorConfiguration {
 
     @Value(value = "${citrus.simulator.template.validation:true}")
     /** Property that en/disables template validation, default value is true */
-    private boolean templateValidation = true;
+    private boolean templateValidation;
 
     /**
      * Gets the template path property.
