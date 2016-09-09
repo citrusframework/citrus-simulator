@@ -32,12 +32,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -66,9 +67,9 @@ public class RunController implements ApplicationContextAware {
         return "run";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String run(Model model, @RequestParam(name = "useCase") String useCaseName, HttpEntity req) {
-        ExecutableTestDesignerComponent testDesigner = applicationContext.getBean(useCaseName, ExecutableTestDesignerComponent.class);
+    @RequestMapping(method = RequestMethod.POST, headers = "content-type=application/x-www-form-urlencoded")
+    public String run(Model model, HttpServletRequest req) {
+        ExecutableTestDesignerComponent testDesigner = applicationContext.getBean(req.getParameter("useCase"), ExecutableTestDesignerComponent.class);
 
         Map<String, Object> formParameters = getFormParameter(req);
 
@@ -93,21 +94,19 @@ public class RunController implements ApplicationContextAware {
      * @param req
      * @return
      */
-    private Map<String, Object> getFormParameter(HttpEntity req) {
+    private Map<String, Object> getFormParameter(HttpServletRequest req) {
         List<UseCaseParameter> defaultParameters = useCaseService.getUseCaseParameter();
         Map<String, Object> formParameters = new LinkedHashMap<String, Object>(defaultParameters.size());
         for (UseCaseParameter parameterEntry : defaultParameters) {
-            List<String> formParameter = req.getHeaders().get(parameterEntry.getId());
-            if (!CollectionUtils.isEmpty(formParameter)) {
-                formParameters.put(parameterEntry.getId(), formParameter.get(0));
+            String formParameter = req.getParameter(parameterEntry.getId());
+            if (StringUtils.hasText(formParameter)) {
+                formParameters.put(parameterEntry.getId(), formParameter);
             } else {
                 formParameters.put(parameterEntry.getId(), parameterEntry.getValue());
             }
         }
 
-        if (req.getHeaders().containsKey("payload")) {
-            formParameters.put("payload", req.getHeaders().get("payload").get(0));
-        }
+        formParameters.put("payload", req.getParameter("payload"));
 
         return formParameters;
     }

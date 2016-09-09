@@ -36,7 +36,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/status">Simulator</a>
+          <a class="navbar-brand" href="/">Simulator</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -62,37 +62,37 @@
         </tr>
         </thead>
         <tbody>
-        {{#running}}
+        {{#each running}}
         <tr>
           <td>{{testName}}</td>
-          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td><ul class="test-params">{{#each parameters}}<li>{{this}}<li/>{{/each}}</ul></td>
           <td></td>
           <td><span class="label label-warning">RUNNING</span></td></tr>
-        {{/running}}
-        {{#results}}
-        {{#cause}}
+        {{/each}}
+        {{#each results}}
+        {{#if cause}}
         <tr>
           <td>{{testName}}</td>
-          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td><ul class="test-params">{{#each parameters}}<li>{{this}}<li/>{{/each}}</ul></td>
           <td>{{cause}}</td>
           <td><span class="label label-important">{{result}}</span></td></tr>
-        {{/cause}}
-        {{^cause}}
+        {{/if}}
+        {{#unless cause}}
         <tr>
           <td>{{testName}}</td>
-          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td><ul class="test-params">{{#each parameters}}<li>{{this}}<li/>{{/each}}</ul></td>
           <td></td>
           <td><span class="label label-success">{{result}}</span></td></tr>
-        {{/cause}}
-        {{/results}}
+        {{/unless}}
+        {{/each}}
         </tbody>
-        {{^results}}
+        {{#unless results}}
         <tfoot>
         <tr>
           <td colspan="4">No results yet!</td>
         </tr>
         </tfoot>
-        {{/results}}
+        {{/unless}}
       </table>
     </div>
   </body>
