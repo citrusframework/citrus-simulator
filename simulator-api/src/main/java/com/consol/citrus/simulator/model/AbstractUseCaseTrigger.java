@@ -26,6 +26,14 @@ import java.util.List;
  */
 public abstract class AbstractUseCaseTrigger extends ExecutableTestDesignerComponent implements UseCaseTrigger {
 
+    /** This triggers name */
+    private String name;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String getDisplayName() {
         return getClass().getSimpleName();
@@ -44,5 +52,15 @@ public abstract class AbstractUseCaseTrigger extends ExecutableTestDesignerCompo
     @Override
     public List<UseCaseParameter> getUseCaseParameter() {
         return Collections.emptyList();
+    }
+
+    /**
+     * Sets the beanName property.
+     *
+     * @param beanName
+     */
+    @Override
+    public void setBeanName(String beanName) {
+        this.name = beanName;
     }
 }

@@ -13,7 +13,6 @@
 
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator-api</artifactId>
-  <version>${project.version}</version>
   <name>citrus-simulator-api</name>
 
   <dependencies>
@@ -33,25 +32,6 @@
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-java-dsl</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.jknack</groupId>
-      <artifactId>handlebars</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.github.jknack</groupId>
-      <artifactId>handlebars-springmvc</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
     </dependency>
   </dependencies>
 

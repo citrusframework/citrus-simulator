@@ -22,7 +22,7 @@
 
   <!-- Test SOAP client -->
   <citrus-ws:client id="simulatorClient"
-                    request-url="http://localhost:8080/simulator"
+                    request-url="http://localhost:8080/ws/simulator"
                     fault-strategy="propagateError"/>
 
 </beans>

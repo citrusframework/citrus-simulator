@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -36,14 +37,15 @@ import java.util.*;
  *
  * @author Christoph Deppisch
  */
+@Service
 public class DefaultUseCaseService<T extends Executable> implements UseCaseService<T> {
 
     /** Logger */
     private static final Logger log = LoggerFactory.getLogger(DefaultUseCaseService.class);
 
     /** List of available use case triggers */
-    @Autowired
-    private List<UseCaseTrigger> useCaseTriggers;
+    @Autowired(required = false)
+    private List<UseCaseTrigger> useCaseTriggers = new ArrayList<>();
 
     @Override
     public final void run(T testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext) {

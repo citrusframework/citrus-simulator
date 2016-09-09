@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.model;
 
+import org.springframework.beans.factory.BeanNameAware;
+
 import java.util.List;
 
 /**
@@ -26,7 +28,13 @@ import java.util.List;
  * User is able to call these test builders manually through servlet user interfaces.
  * @author Christoph Deppisch
  */
-public interface UseCaseTrigger {
+public interface UseCaseTrigger extends BeanNameAware {
+
+    /**
+     * Get name of trigger usually the Spring bean name.
+     * @return
+     */
+    String getName();
 
     /**
      * Get name of trigger for display in GUI.

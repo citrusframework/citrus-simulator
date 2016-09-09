@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Citrus Simulator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Citrus Simulator Status">
+    <meta name="author" content="ConSol Software GmbH">
+
+    <link rel="shortcut icon" href="../webapp/images/favicon.ico">
+
+    <link type="text/css" rel="stylesheet" media="screen" href="/webjars/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" media="screen" href="/webjars/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+    <script type="text/javascript" src="/webjars/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <style>
+      body {
+        padding-top: 60px;
+      }
+
+      ul.test-params {
+        list-style: none;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/status">Simulator</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/status">Status</a></li>
+            <li><a href="/run">Run</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1 class="page-header">Status <small>Latest simulator activities</small></h1>
+      <h3>Results <div class="pull-right"><a href="/status?clear=true" class="btn">Clear</a>&nbsp;<a href="/status" class="btn">Reload</a></div></h3>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th width="180px">Params</th>
+          <th width="450px">Error Message</th>
+          <th width="80px">Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#running}}
+        <tr>
+          <td>{{testName}}</td>
+          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td></td>
+          <td><span class="label label-warning">RUNNING</span></td></tr>
+        {{/running}}
+        {{#results}}
+        {{#cause}}
+        <tr>
+          <td>{{testName}}</td>
+          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td>{{cause}}</td>
+          <td><span class="label label-important">{{result}}</span></td></tr>
+        {{/cause}}
+        {{^cause}}
+        <tr>
+          <td>{{testName}}</td>
+          <td><ul class="test-params">{{#parameters}}<li>{{this}}<li/>{{/parameters}}</ul></td>
+          <td></td>
+          <td><span class="label label-success">{{result}}</span></td></tr>
+        {{/cause}}
+        {{/results}}
+        </tbody>
+        {{^results}}
+        <tfoot>
+        <tr>
+          <td colspan="4">No results yet!</td>
+        </tr>
+        </tfoot>
+        {{/results}}
+      </table>
+    </div>
+  </body>
+
+</html>

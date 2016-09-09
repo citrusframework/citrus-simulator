@@ -18,10 +18,12 @@ package com.consol.citrus.simulator.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Christoph Deppisch
  */
+@Component
 public class SimulatorConfiguration {
 
     /** Logger */

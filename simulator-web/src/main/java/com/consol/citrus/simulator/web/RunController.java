@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2014 the original author or authors.
+ * Copyright 2006-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.servlet;
+package com.consol.citrus.simulator.web;
 
 import com.consol.citrus.TestResult;
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
@@ -24,79 +24,66 @@ import com.consol.citrus.simulator.config.SimulatorConfiguration;
 import com.consol.citrus.simulator.model.*;
 import com.consol.citrus.simulator.service.UseCaseService;
 import com.consol.citrus.util.FileUtils;
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.context.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
 /**
- * Servlet implementation enables user to run a simulator use case and wait for messages to be exchanged.
  * @author Christoph Deppisch
  */
-public class SimulatorRunServlet extends AbstractSimulatorServlet {
+@Controller
+@RequestMapping("/run")
+public class RunController implements ApplicationContextAware {
 
     /** Logger */
-    private static final Logger log = LoggerFactory.getLogger(SimulatorRunServlet.class);
+    private static Logger LOG = LoggerFactory.getLogger(RunController.class);
 
-    /** Handlebars */
-    private Template runTemplate;
-
+    @Autowired
     /** Service for executing test builders */
     private UseCaseService<Executable> useCaseService;
+
+    @Autowired
     private SimulatorConfiguration simulatorConfiguration;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
+    private ApplicationContext applicationContext;
 
-        useCaseService = getApplicationContext().getBean(UseCaseService.class);
-        simulatorConfiguration = getApplicationContext().getBean(SimulatorConfiguration.class);
-        runTemplate = compileHandlebarsTemplate("run");
+    @RequestMapping(method = RequestMethod.GET)
+    public String get(Model model) {
+        buildViewModel(model);
+        return "run";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Context context = Context.newBuilder(buildViewModel(req)).resolver(
-                MapValueResolver.INSTANCE,
-                JavaBeanValueResolver.INSTANCE,
-                FieldValueResolver.INSTANCE
-        ).build();
-        runTemplate.apply(context, resp.getWriter());
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String useCaseName = req.getParameter("useCase");
-        ExecutableTestDesignerComponent testDesigner = getApplicationContext().getBean(useCaseName, ExecutableTestDesignerComponent.class);
+    @RequestMapping(method = RequestMethod.POST)
+    public String run(Model model, @RequestParam(name = "useCase") String useCaseName, HttpEntity req) {
+        ExecutableTestDesignerComponent testDesigner = applicationContext.getBean(useCaseName, ExecutableTestDesignerComponent.class);
 
         Map<String, Object> formParameters = getFormParameter(req);
 
         TestResult testResult;
         try {
-            useCaseService.run(testDesigner, formParameters, getApplicationContext());
+            useCaseService.run(testDesigner, formParameters, applicationContext);
             testResult = TestResult.success(testDesigner.getClass().getSimpleName(), testDesigner.getTestCase().getParameters());
         } catch (TestCaseFailedException e) {
             testResult = TestResult.failed(testDesigner.getClass().getSimpleName(), e.getCause(), testDesigner.getTestCase().getParameters());
         }
 
-        Map<String, Object> model = buildViewModel(req);
-        model.put("result", testResult);
+        buildViewModel(model);
+        model.addAttribute("result", testResult);
 
-        Context context = Context.newBuilder(model).resolver(
-                MapValueResolver.INSTANCE,
-                JavaBeanValueResolver.INSTANCE,
-                FieldValueResolver.INSTANCE
-        ).build();
-        runTemplate.apply(context, resp.getWriter());
+        return "run";
     }
 
     /**
@@ -106,39 +93,23 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
      * @param req
      * @return
      */
-    private Map<String, Object> getFormParameter(HttpServletRequest req) {
+    private Map<String, Object> getFormParameter(HttpEntity req) {
         List<UseCaseParameter> defaultParameters = useCaseService.getUseCaseParameter();
         Map<String, Object> formParameters = new LinkedHashMap<String, Object>(defaultParameters.size());
         for (UseCaseParameter parameterEntry : defaultParameters) {
-            String formParameter = req.getParameter(parameterEntry.getId());
-            if (formParameter != null) {
-                formParameters.put(parameterEntry.getId(), formParameter);
+            List<String> formParameter = req.getHeaders().get(parameterEntry.getId());
+            if (!CollectionUtils.isEmpty(formParameter)) {
+                formParameters.put(parameterEntry.getId(), formParameter.get(0));
             } else {
                 formParameters.put(parameterEntry.getId(), parameterEntry.getValue());
             }
         }
 
-        formParameters.put("payload", req.getParameter("payload"));
+        if (req.getHeaders().containsKey("payload")) {
+            formParameters.put("payload", req.getHeaders().get("payload").get(0));
+        }
 
         return formParameters;
-    }
-
-    /**
-     * Builds default view model for this servlet's handlebars view template.
-     * @param req
-     * @return
-     */
-    private Map<String, Object> buildViewModel(HttpServletRequest req) {
-        Map<String, Object> model = new HashMap<String, Object>();
-
-        Map<String, UseCaseTrigger> useCaseTriggers = getApplicationContext().getBeansOfType(UseCaseTrigger.class);
-
-        model.put("useCaseList", useCaseTriggers);
-        model.put("messageTemplates", getMessageTemplates(useCaseTriggers.values()));
-        model.put("parameter", useCaseService.getUseCaseParameter());
-        model.put("contextPath", req.getContextPath());
-
-        return model;
     }
 
     private List<MessageTemplate> getMessageTemplates(Collection<UseCaseTrigger> useCaseTriggers) {
@@ -152,7 +123,7 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
                             FileUtils.readToString(getFileResource(templateName)),
                             trigger.getClass()));
                 } catch (IOException e) {
-                    log.warn("Failed to load message template", e);
+                    LOG.warn("Failed to load message template", e);
                 }
             }
         }
@@ -167,5 +138,23 @@ public class SimulatorRunServlet extends AbstractSimulatorServlet {
      */
     protected Resource getFileResource(String fileName) {
         return new ClassPathResource(simulatorConfiguration.getTemplatePath() + "/" + fileName + ".xml");
+    }
+
+    /**
+     * Builds default view model for this controllers view template.
+     * @param model
+     * @return
+     */
+    private void buildViewModel(Model model) {
+        Map<String, UseCaseTrigger> useCaseTriggers = applicationContext.getBeansOfType(UseCaseTrigger.class);
+
+        model.addAttribute("useCaseList", useCaseTriggers.values());
+        model.addAttribute("messageTemplates", getMessageTemplates(useCaseTriggers.values()));
+        model.addAttribute("parameter", useCaseService.getUseCaseParameter());
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
