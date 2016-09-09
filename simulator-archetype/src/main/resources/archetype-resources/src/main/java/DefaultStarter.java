@@ -1,6 +1,6 @@
 package ${package};
 
-import com.consol.citrus.simulator.model.AbstractUseCaseTrigger;
+import com.consol.citrus.simulator.model.AbstractScenarioStarter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -9,13 +9,13 @@ import java.util.*;
 /**
  * @author Christoph Deppisch
  */
-@Component("DefaultTrigger")
+@Component("DefaultStarter")
 @Scope("prototype")
-public class DefaultTrigger extends AbstractUseCaseTrigger {
+public class DefaultStarter extends AbstractScenarioStarter {
 
     @Override
     protected void configure() {
-        echo("Default trigger was executed");
+        echo("Default starter was executed");
     }
 
     @Override

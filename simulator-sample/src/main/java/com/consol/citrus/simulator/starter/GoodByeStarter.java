@@ -14,28 +14,35 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator;
+package com.consol.citrus.simulator.starter;
 
+import com.consol.citrus.simulator.model.AbstractScenarioStarter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodNight")
+@Component("GoodByeStarter")
 @Scope("prototype")
-public class GoodNightScenario extends AbstractSimulatorScenario {
+public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
     protected void configure() {
-        receiveSOAPRequest()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
-            .header("citrus_soap_action", "GoodNight");
+        echo("GoodBye starter was executed!");
+        echo("${payload}");
+    }
 
-        sendSoapFault()
-            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
-            .faultString("No sleep for me!");
+    @Override
+    public String getDisplayName() {
+        return "GoodBye";
+    }
+
+    @Override
+    public List<String> getMessageTemplates() {
+        return Arrays.asList(new String[] {"Goodbye"});
     }
 }

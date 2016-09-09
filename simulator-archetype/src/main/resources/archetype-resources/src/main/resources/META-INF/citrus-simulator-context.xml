@@ -21,7 +21,4 @@
       <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
   </citrus:namespace-context>
 
-  <!-- Message Validators -->
-  <bean id="xmlMessageValidator" class="com.consol.citrus.validation.xml.DomXmlMessageValidator"/>
-
 </beans>

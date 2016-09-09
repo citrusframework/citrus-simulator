@@ -21,7 +21,7 @@ public class DefaultScenario extends ExecutableTestDesignerComponent {
 
     @Override
     protected void configure() {
-        echo("Default scenario was triggered");
+        echo("Default scenario was started");
 
         receive(simInbound);
 

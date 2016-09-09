@@ -14,48 +14,53 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.trigger;
+package com.consol.citrus.simulator.model;
 
-import com.consol.citrus.simulator.model.AbstractUseCaseTrigger;
-import com.consol.citrus.simulator.model.UseCaseParameter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.consol.citrus.dsl.design.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("HelloTrigger")
-@Scope("prototype")
-public class HelloTrigger extends AbstractUseCaseTrigger {
+public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComponent implements ScenarioStarter {
+
+    /** This starter's name */
+    private String name;
 
     @Override
-    protected void configure() {
-        echo("${greeting}");
-        echo("${payload}");
+    public String getName() {
+        return name;
     }
 
     @Override
     public String getDisplayName() {
-        return "Hello";
+        return getClass().getSimpleName();
     }
 
     @Override
     public boolean isDefault() {
-        return true;
+        return false;
     }
 
     @Override
     public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"Hello"});
+        return Collections.emptyList();
     }
 
     @Override
-    public List<UseCaseParameter> getUseCaseParameter() {
-        List<UseCaseParameter> parameters = new ArrayList<UseCaseParameter>();
-        parameters.add(new UseCaseParameter("greeting", "Greeting Text", "Hi there!").addUseCaseFilter(HelloTrigger.class));
+    public List<ScenarioParameter> getScenarioParameter() {
+        return Collections.emptyList();
+    }
 
-        return parameters;
+    /**
+     * Sets the beanName property.
+     *
+     * @param beanName
+     */
+    @Override
+    public void setBeanName(String beanName) {
+        this.name = beanName;
     }
 }

@@ -18,11 +18,10 @@ package com.consol.citrus.simulator.web;
 
 import com.consol.citrus.TestResult;
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
-import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.exceptions.TestCaseFailedException;
 import com.consol.citrus.simulator.config.SimulatorConfiguration;
 import com.consol.citrus.simulator.model.*;
-import com.consol.citrus.simulator.service.UseCaseService;
+import com.consol.citrus.simulator.service.ScenarioService;
 import com.consol.citrus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class RunController implements ApplicationContextAware {
 
     @Autowired
     /** Service for executing test builders */
-    private UseCaseService<Executable> useCaseService;
+    private ScenarioService scenarioService;
 
     @Autowired
     private SimulatorConfiguration simulatorConfiguration;
@@ -69,13 +68,13 @@ public class RunController implements ApplicationContextAware {
 
     @RequestMapping(method = RequestMethod.POST, headers = "content-type=application/x-www-form-urlencoded")
     public String run(Model model, HttpServletRequest req) {
-        ExecutableTestDesignerComponent testDesigner = applicationContext.getBean(req.getParameter("useCase"), ExecutableTestDesignerComponent.class);
+        ExecutableTestDesignerComponent testDesigner = applicationContext.getBean(req.getParameter("scenario"), ExecutableTestDesignerComponent.class);
 
         Map<String, Object> formParameters = getFormParameter(req);
 
         TestResult testResult;
         try {
-            useCaseService.run(testDesigner, formParameters, applicationContext);
+            scenarioService.run(testDesigner, formParameters, applicationContext);
             testResult = TestResult.success(testDesigner.getClass().getSimpleName(), testDesigner.getTestCase().getParameters());
         } catch (TestCaseFailedException e) {
             testResult = TestResult.failed(testDesigner.getClass().getSimpleName(), e.getCause(), testDesigner.getTestCase().getParameters());
@@ -95,9 +94,9 @@ public class RunController implements ApplicationContextAware {
      * @return
      */
     private Map<String, Object> getFormParameter(HttpServletRequest req) {
-        List<UseCaseParameter> defaultParameters = useCaseService.getUseCaseParameter();
+        List<ScenarioParameter> defaultParameters = scenarioService.getScenarioParameter();
         Map<String, Object> formParameters = new LinkedHashMap<String, Object>(defaultParameters.size());
-        for (UseCaseParameter parameterEntry : defaultParameters) {
+        for (ScenarioParameter parameterEntry : defaultParameters) {
             String formParameter = req.getParameter(parameterEntry.getId());
             if (StringUtils.hasText(formParameter)) {
                 formParameters.put(parameterEntry.getId(), formParameter);
@@ -111,16 +110,16 @@ public class RunController implements ApplicationContextAware {
         return formParameters;
     }
 
-    private List<MessageTemplate> getMessageTemplates(Collection<UseCaseTrigger> useCaseTriggers) {
+    private List<MessageTemplate> getMessageTemplates(Collection<ScenarioStarter> scenarioStarters) {
         List<MessageTemplate> templates = new ArrayList<MessageTemplate>();
 
-        for (UseCaseTrigger trigger : useCaseTriggers) {
-            for (String templateName : trigger.getMessageTemplates()) {
+        for (ScenarioStarter starter : scenarioStarters) {
+            for (String templateName : starter.getMessageTemplates()) {
 
                 try {
                     templates.add(new MessageTemplate(templateName,
                             FileUtils.readToString(getFileResource(templateName)),
-                            trigger.getClass()));
+                            starter.getClass()));
                 } catch (IOException e) {
                     LOG.warn("Failed to load message template", e);
                 }
@@ -145,11 +144,11 @@ public class RunController implements ApplicationContextAware {
      * @return
      */
     private void buildViewModel(Model model) {
-        Map<String, UseCaseTrigger> useCaseTriggers = applicationContext.getBeansOfType(UseCaseTrigger.class);
+        Map<String, ScenarioStarter> starters = applicationContext.getBeansOfType(ScenarioStarter.class);
 
-        model.addAttribute("useCaseList", useCaseTriggers.values());
-        model.addAttribute("messageTemplates", getMessageTemplates(useCaseTriggers.values()));
-        model.addAttribute("parameter", useCaseService.getUseCaseParameter());
+        model.addAttribute("starterList", starters.values());
+        model.addAttribute("messageTemplates", getMessageTemplates(starters.values()));
+        model.addAttribute("parameter", scenarioService.getScenarioParameter());
     }
 
     @Override

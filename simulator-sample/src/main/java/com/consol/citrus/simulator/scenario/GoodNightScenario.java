@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator;
+package com.consol.citrus.simulator.scenario;
 
+import com.consol.citrus.simulator.AbstractSimulatorScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("Hello")
+@Component("GoodNight")
 @Scope("prototype")
-public class HelloScenario extends AbstractSimulatorScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
         receiveSOAPRequest()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>")
-            .header("citrus_soap_action", "Hello");
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Go to sleep!" +
+                     "</GoodNight>")
+            .header("citrus_soap_action", "GoodNight");
 
-        sendSOAPResponse()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>");
+        sendSoapFault()
+            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
+            .faultString("No sleep for me!");
     }
 }

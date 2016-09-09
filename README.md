@@ -9,19 +9,19 @@ Message processing
 ---------
 
 First of all the simulator identifies the request operation called on the endpoint and maps to the test logic defined
-for this use case scenario.
+for this simulator scenario.
 
-There are multiple ways to identify the simulator use case form incoming request messages:
+There are multiple ways to identify the simulator scenario form incoming request messages:
 
-* Message-Type: Each request message type (XML root QName) results in a separate simulator use case
-* SOAP Action: Each SOAP action value defines a simulator use case
-* Message Header: Any SOAP or Http message header value specifies a new simulator use case
-* XPath payload: An XPath expression is evaluated on the message payload to identify the use case
+* Message-Type: Each request message type (XML root QName) results in a separate simulator scenario
+* SOAP Action: Each SOAP action value defines a simulator scenario
+* Message Header: Any SOAP or Http message header value specifies a new simulator scenario
+* XPath payload: An XPath expression is evaluated on the message payload to identify the scenario
 
-Once the simulator use case is identified the respective test logic builder is executed. The Citrus test logic provides
+Once the simulator scenario is identified the respective test logic builder is executed. The Citrus test logic provides
 proper SOAP response messages as a result to the calling client. The response messages can hold dynamic values and the
 simulator is able to perform complex testing logic. The test logic is built in Java classes that use the Citrus test
-DSL for defining the simulator use case steps.
+DSL for defining the simulator scenario steps.
 
 Features
 ---------
@@ -46,8 +46,8 @@ Resources
 
 Following code resources build the simulator core logic:
 
-* Test builders: Group of Java classes (@Component Spring Bean Annotation) for all use case scenarios.
-* Servlet configuration (src/main/webapp/WEB-INF/citrus-servlet-context.xml): SpringWS beans defining how use cases are
+* Test builders: Group of Java classes (@Component Spring Bean Annotation) for all scenario scenarios.
+* Servlet configuration (src/main/webapp/WEB-INF/citrus-servlet-context.xml): SpringWS beans defining how scenarios are
 identified and mapped to test builders.
 * Simulator configuration (src/main/resources/META-INF/citrus-simulator-context.xml): Citrus Spring configuration for
 sending/receiving SOAP messages

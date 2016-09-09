@@ -14,53 +14,48 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.model;
+package com.consol.citrus.simulator.starter;
 
-import com.consol.citrus.dsl.design.*;
+import com.consol.citrus.simulator.model.AbstractScenarioStarter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
  */
-public abstract class AbstractUseCaseTrigger extends ExecutableTestDesignerComponent implements UseCaseTrigger {
-
-    /** This triggers name */
-    private String name;
+@Component("HelloStarter")
+@Scope("prototype")
+public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
-    public String getName() {
-        return name;
+    protected void configure() {
+        echo("${greeting}");
+        echo("${payload}");
     }
 
     @Override
     public String getDisplayName() {
-        return getClass().getSimpleName();
+        return "Hello";
     }
 
     @Override
     public boolean isDefault() {
-        return false;
+        return true;
     }
 
     @Override
     public List<String> getMessageTemplates() {
-        return Collections.emptyList();
+        return Arrays.asList(new String[] {"Hello"});
     }
 
     @Override
-    public List<UseCaseParameter> getUseCaseParameter() {
-        return Collections.emptyList();
-    }
+    public List<ScenarioParameter> getScenarioParameter() {
+        List<ScenarioParameter> parameters = new ArrayList<ScenarioParameter>();
+        parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
 
-    /**
-     * Sets the beanName property.
-     *
-     * @param beanName
-     */
-    @Override
-    public void setBeanName(String beanName) {
-        this.name = beanName;
+        return parameters;
     }
 }

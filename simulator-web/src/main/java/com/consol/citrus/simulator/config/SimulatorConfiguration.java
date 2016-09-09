@@ -34,7 +34,7 @@ public class SimulatorConfiguration {
     private String templatePath;
 
     @Value(value = "${citrus.simulator.default.scenario:DEFAULT_SCENARIO}")
-    /** Default test scenario chosen in case of unknown use case */
+    /** Default test scenario chosen in case of unknown scenario */
     private String defaultScenario;
 
     @Value(value = "${citrus.simulator.timeout:5000}")

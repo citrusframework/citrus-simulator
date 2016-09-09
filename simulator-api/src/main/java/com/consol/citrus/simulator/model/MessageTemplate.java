@@ -24,18 +24,18 @@ import org.springframework.stereotype.Component;
 public class MessageTemplate {
     private String name;
     private String payload;
-    private Class<? extends UseCaseTrigger> triggerType;
+    private Class<? extends ScenarioStarter> starterType;
 
     /**
      * Default constructor using all fields.
      * @param name
      * @param payload
-     * @param triggerType
+     * @param starterType
      */
-    public MessageTemplate(String name, String payload, Class<? extends UseCaseTrigger> triggerType) {
+    public MessageTemplate(String name, String payload, Class<? extends ScenarioStarter> starterType) {
         this.name = name;
         this.payload = payload;
-        this.triggerType = triggerType;
+        this.starterType = starterType;
     }
 
     public String getName() {
@@ -54,7 +54,7 @@ public class MessageTemplate {
         this.payload = payload;
     }
 
-    public String getTriggerType() {
-        return triggerType.getAnnotation(Component.class).value();
+    public String getStarterType() {
+        return starterType.getAnnotation(Component.class).value();
     }
 }

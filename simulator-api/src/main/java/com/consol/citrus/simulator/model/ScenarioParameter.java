@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Christoph Deppisch
  */
-public class UseCaseParameter {
+public class ScenarioParameter {
 
     private final String id;
     private final String displayName;
@@ -33,14 +33,14 @@ public class UseCaseParameter {
     private List<String> options;
 
     private String fieldType;
-    private String useCaseFilter;
+    private String scenarioFilter;
 
     /**
      * Constructor using form field id and value.
      * @param id
      * @param value
      */
-    public UseCaseParameter(String id, String value) {
+    public ScenarioParameter(String id, String value) {
         this(id, id, value);
     }
 
@@ -50,7 +50,7 @@ public class UseCaseParameter {
      * @param displayName
      * @param value
      */
-    public UseCaseParameter(String id, String displayName, String value) {
+    public ScenarioParameter(String id, String displayName, String value) {
         this.id = id;
         this.displayName = displayName;
         this.value = value;
@@ -63,7 +63,7 @@ public class UseCaseParameter {
      * @param value
      * @param options
      */
-    public UseCaseParameter(String id, String displayName, String value, List<String> options) {
+    public ScenarioParameter(String id, String displayName, String value, List<String> options) {
         this(id, displayName, value);
         this.options = options;
     }
@@ -84,20 +84,20 @@ public class UseCaseParameter {
         return options;
     }
 
-    public String getUseCaseFilter() {
-        return useCaseFilter;
+    public String getScenarioFilter() {
+        return scenarioFilter;
     }
 
     /**
-     * Adds use case filter which resides in conditional display of parameter field in Html form.
-     * @param triggerType
+     * Adds scenario filter which resides in conditional display of parameter field in Html form.
+     * @param starterType
      * @return
      */
-    public UseCaseParameter addUseCaseFilter(Class<? extends UseCaseTrigger> triggerType) {
-        if (StringUtils.hasText(useCaseFilter)) {
-            this.useCaseFilter += " " + triggerType.getAnnotation(Component.class).value();
+    public ScenarioParameter addScenarioFilter(Class<? extends ScenarioStarter> starterType) {
+        if (StringUtils.hasText(scenarioFilter)) {
+            this.scenarioFilter += " " + starterType.getAnnotation(Component.class).value();
         } else {
-            this.useCaseFilter = triggerType.getAnnotation(Component.class).value();
+            this.scenarioFilter = starterType.getAnnotation(Component.class).value();
         }
 
         return this;
@@ -112,7 +112,7 @@ public class UseCaseParameter {
      * @param fieldType
      * @return
      */
-    public UseCaseParameter addFieldType(FieldType fieldType) {
+    public ScenarioParameter addFieldType(FieldType fieldType) {
         if (StringUtils.hasText(this.fieldType)) {
             this.fieldType += " " + fieldType.getCssClass();
         } else {

@@ -14,35 +14,30 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.trigger;
+package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.simulator.model.AbstractUseCaseTrigger;
+import com.consol.citrus.simulator.AbstractSimulatorScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodByeTrigger")
+@Component("Hello")
 @Scope("prototype")
-public class GoodByeTrigger  extends AbstractUseCaseTrigger {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
-        echo("GoodBye trigger was executed!");
-        echo("${payload}");
-    }
+        receiveSOAPRequest()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                     "</Hello>")
+            .header("citrus_soap_action", "Hello");
 
-    @Override
-    public String getDisplayName() {
-        return "GoodBye";
-    }
-
-    @Override
-    public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"Goodbye"});
+        sendSOAPResponse()
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                     "</HelloResponse>");
     }
 }

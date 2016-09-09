@@ -19,8 +19,8 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.simulator.model.UseCaseParameter;
-import com.consol.citrus.simulator.model.UseCaseTrigger;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,24 +38,24 @@ import java.util.*;
  * @author Christoph Deppisch
  */
 @Service
-public class DefaultUseCaseService<T extends Executable> implements UseCaseService<T> {
+public class DefaultScenarioService implements ScenarioService {
 
     /** Logger */
-    private static final Logger log = LoggerFactory.getLogger(DefaultUseCaseService.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultScenarioService.class);
 
-    /** List of available use case triggers */
+    /** List of available scenario starters */
     @Autowired(required = false)
-    private List<UseCaseTrigger> useCaseTriggers = new ArrayList<>();
+    private List<ScenarioStarter> scenarioStarters = new ArrayList<>();
 
     @Override
-    public final void run(T testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext) {
+    public final void run(Executable testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext) {
         log.info("Executing test executable: " + testExecutable.getClass().getName());
 
         if (testExecutable instanceof ApplicationContextAware) {
             ((ApplicationContextAware) testExecutable).setApplicationContext(applicationContext);
         }
 
-        prepareTestExecutable(testExecutable);
+        prepare(testExecutable);
         addParameters(testExecutable, parameter);
 
         testExecutable.execute();
@@ -66,7 +66,7 @@ public class DefaultUseCaseService<T extends Executable> implements UseCaseServi
      * @param testExecutable
      * @param parameter
      */
-    protected void addParameters(T testExecutable, Map<String, Object> parameter) {
+    protected void addParameters(Executable testExecutable, Map<String, Object> parameter) {
         for (Map.Entry<String, Object> paramEntry : parameter.entrySet()) {
             if (testExecutable instanceof TestDesigner) {
                 ((TestDesigner) testExecutable).variable(paramEntry.getKey(), paramEntry.getValue());
@@ -82,15 +82,15 @@ public class DefaultUseCaseService<T extends Executable> implements UseCaseServi
      * Prepare test executable instance before execution. Subclasses can add custom preparation steps in here.
      * @param testExecutable
      */
-    protected void prepareTestExecutable(T testExecutable) {
+    protected void prepare(Executable testExecutable) {
     }
 
     @Override
-    public List<UseCaseParameter> getUseCaseParameter() {
-        List<UseCaseParameter> allParameters = new ArrayList<UseCaseParameter>();
+    public List<ScenarioParameter> getScenarioParameter() {
+        List<ScenarioParameter> allParameters = new ArrayList<ScenarioParameter>();
 
-        for (UseCaseTrigger useCaseTrigger : useCaseTriggers) {
-            allParameters.addAll(useCaseTrigger.getUseCaseParameter());
+        for (ScenarioStarter scenarioStarter : scenarioStarters) {
+            allParameters.addAll(scenarioStarter.getScenarioParameter());
         }
 
         return allParameters;
