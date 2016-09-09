@@ -34,7 +34,7 @@ import java.util.*;
 public class SimulatorStatusListener extends AbstractTestListener implements TestActionListener {
 
     /** Logger */
-    private static final Logger LOG = LoggerFactory.getLogger("SimStatusLogger");
+    private static final Logger LOG = LoggerFactory.getLogger(SimulatorStatusListener.class);
 
     /** Currently running test */
     private Map<String, TestResult> runningTests = new LinkedHashMap<>();
