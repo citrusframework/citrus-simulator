@@ -29,12 +29,12 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
-        receiveJmsRequest()
+        receiveRestRequest()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
-        sendJmsResponse()
+        sendRestResponse()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

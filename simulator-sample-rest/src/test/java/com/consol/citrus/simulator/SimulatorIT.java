@@ -18,7 +18,7 @@ package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import com.consol.citrus.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
@@ -28,21 +28,22 @@ import org.testng.annotations.Test;
 @Test
 public class SimulatorIT extends TestNGCitrusTestDesigner {
 
-    /** Test JMS endpoint */
+    /** Test Http REST client */
     @Autowired
-    private JmsSyncEndpoint jmsSyncEndpoint;
+    private HttpClient simulatorClient;
 
     /**
      * Sends a hello request to server expecting positive response message.
      */
     @CitrusTest
     public void testHelloRequest() {
-        send(jmsSyncEndpoint)
+        send(simulatorClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>");
+                         "</Hello>")
+                .header("citrus_soap_action", "Hello");
 
-        receive(jmsSyncEndpoint)
+        receive(simulatorClient)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
                          "</HelloResponse>");
@@ -54,12 +55,13 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        send(jmsSyncEndpoint)
+        send(simulatorClient)
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>");
+                         "</GoodBye>")
+                .header("citrus_soap_action", "GoodBye");
 
-        receive(jmsSyncEndpoint)
+        receive(simulatorClient)
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
                          "</GoodByeResponse>");

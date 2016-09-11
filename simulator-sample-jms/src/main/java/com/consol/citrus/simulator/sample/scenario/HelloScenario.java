@@ -32,8 +32,7 @@ public class HelloScenario extends AbstractSimulatorScenario {
         receiveJmsRequest()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
-                     "</Hello>")
-            .header("citrus_soap_action", "Hello");
+                     "</Hello>");
 
         sendJmsResponse()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +

@@ -23,20 +23,20 @@ import org.springframework.stereotype.Component;
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodBye")
+@Component("Hello")
 @Scope("prototype")
-public class GoodByeScenario extends AbstractSimulatorScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
-        receiveJmsRequest()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                     "</GoodBye>");
+        receiveRestRequest()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                     "</Hello>");
 
-        sendJmsResponse()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                     "</GoodByeResponse>");
+        sendRestResponse()
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                     "</HelloResponse>");
     }
 }

@@ -14,29 +14,35 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.scenario;
+package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.model.AbstractScenarioStarter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodBye")
+@Component("GoodByeStarter")
 @Scope("prototype")
-public class GoodByeScenario extends AbstractSimulatorScenario {
+public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
     protected void configure() {
-        receiveJmsRequest()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                     "</GoodBye>");
+        echo("GoodBye starter was executed!");
+        echo("${payload}");
+    }
 
-        sendJmsResponse()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                     "</GoodByeResponse>");
+    @Override
+    public String getDisplayName() {
+        return "GoodBye";
+    }
+
+    @Override
+    public List<String> getMessageTemplates() {
+        return Arrays.asList(new String[] {"Goodbye"});
     }
 }
