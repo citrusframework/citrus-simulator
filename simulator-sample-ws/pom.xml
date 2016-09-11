@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>com.consol.citrus</groupId>
-  <artifactId>citrus-simulator-sample</artifactId>
+  <artifactId>citrus-simulator-sample-ws</artifactId>
   <packaging>war</packaging>
 
   <properties>

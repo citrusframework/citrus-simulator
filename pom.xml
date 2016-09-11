@@ -29,7 +29,7 @@
     <module>simulator-api</module>
     <module>simulator-web</module>
     <module>simulator-archetype</module>
-    <module>simulator-sample</module>
+    <module>simulator-sample-ws</module>
     <module>simulator-jms-sample</module>
   </modules>
   
