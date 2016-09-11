@@ -26,7 +26,6 @@ import com.consol.citrus.message.Message;
 import com.consol.citrus.messaging.Producer;
 import com.consol.citrus.messaging.ReplyProducer;
 import com.consol.citrus.simulator.exception.SimulatorException;
-import com.consol.citrus.simulator.util.SoapMessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -41,7 +40,7 @@ import org.springframework.core.task.TaskExecutor;
 public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean {
 
     /** Logger */
-    private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
 
     @Autowired
     private TestContextFactory testContextFactory;
@@ -81,9 +80,9 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 // ignore timeout and continue listening for request messages.
                 continue;
             } catch (SimulatorException e) {
-                LOG.error("Failed to process message", e);
+                LOG.error("Failed to process message", e.getMessage());
             } catch (Exception e) {
-                LOG.error("Unexpected error while processing", e);
+                LOG.error("Unexpected error while processing", e.getMessage());
             }
         }
     }

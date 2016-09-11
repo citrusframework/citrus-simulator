@@ -20,7 +20,7 @@
         <message>Validate Hello request</message>
       </echo>
 
-      <receive endpoint="simInboundEndpoint">
+      <receive endpoint="simulatorWsInboundEndpoint">
         <message>
           <payload>
               <Hello xmlns="http://citrusframework.org/schemas/hello">Say Hello!</Hello>
@@ -31,7 +31,7 @@
         </header>
       </receive>
 
-      <send endpoint="simInboundEndpoint">
+      <send endpoint="simulatorWsInboundEndpoint">
         <message>
           <payload>
               <HelloResponse xmlns="http://citrusframework.org/schemas/hello">Hi there!</HelloResponse>

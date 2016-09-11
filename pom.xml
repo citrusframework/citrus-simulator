@@ -30,6 +30,7 @@
     <module>simulator-web</module>
     <module>simulator-archetype</module>
     <module>simulator-sample</module>
+    <module>simulator-jms-sample</module>
   </modules>
   
   <dependencyManagement>

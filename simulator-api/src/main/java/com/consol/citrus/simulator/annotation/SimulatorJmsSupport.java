@@ -1,15 +1,24 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
+import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
+import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
+import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.*;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
 import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.connection.SingleConnectionFactory;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * @author Christoph Deppisch
  */
+@Configuration
 public class SimulatorJmsSupport {
 
     @Autowired(required = false)
@@ -20,17 +29,23 @@ public class SimulatorJmsSupport {
             System.getProperty("citrus.simulator.jms.destination", "Citrus.Simulator.Inbound");
 
     @Bean(name = "simulatorJmsEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller() {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
-            endpointPoller =new SimulatorSoapEndpointPoller();
+            endpointPoller = new SimulatorSoapEndpointPoller();
         } else {
-            endpointPoller =new SimulatorEndpointPoller();
+            endpointPoller = new SimulatorEndpointPoller();
         }
 
         endpointPoller.setTargetEndpoint(jmsEndpoint());
-        endpointPoller.setEndpointAdapter(inboundEndpointAdapter());
+        TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
+        endpointAdapter.setApplicationContext(applicationContext);
+        endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
+
+        endpointPoller.setEndpointAdapter(endpointAdapter);
+
+        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
 
         return endpointPoller;
     }
@@ -50,10 +65,13 @@ public class SimulatorJmsSupport {
     }
 
     @Bean(name = "simulatorJmsInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter() {
+    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
         ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
         endpointConfiguration.setChannel(inboundChannel());
-        return new ChannelEndpointAdapter(endpointConfiguration);
+        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
+        endpointAdapter.setApplicationContext(applicationContext);
+
+        return endpointAdapter;
     }
 
     @Bean(name = "simulatorJmsEndpoint")
@@ -61,8 +79,30 @@ public class SimulatorJmsSupport {
         JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
         JmsSyncEndpoint jmsSyncEndpoint = new JmsSyncEndpoint(endpointConfiguration);
         endpointConfiguration.setDestinationName(getDestinationName());
+        endpointConfiguration.setConnectionFactory(connectionFactory());
 
         return jmsSyncEndpoint;
+    }
+
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        if (configurer != null) {
+            return configurer.connectionFactory();
+        }
+
+        return new SingleConnectionFactory();
+    }
+
+    /**
+     * Gets the mapping key extractor.
+     * @return
+     */
+    protected MappingKeyExtractor getMappingKeyExtractor() {
+        if (configurer != null) {
+            return configurer.mappingKeyExtractor();
+        }
+
+        return new XPathPayloadMappingKeyExtractor();
     }
 
     /**

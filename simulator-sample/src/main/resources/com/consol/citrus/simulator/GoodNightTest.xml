@@ -22,7 +22,7 @@
         <message>Validate GoodNight request</message>
       </echo>
 
-      <receive endpoint="simInboundEndpoint">
+      <receive endpoint="simulatorWsInboundEndpoint">
         <message>
           <payload>
               <GoodNight xmlns="http://citrusframework.org/schemas/hello">Go to sleep!</GoodNight>
@@ -33,7 +33,7 @@
         </header>
       </receive>
 
-      <ws:send-fault endpoint="simInboundEndpoint">
+      <ws:send-fault endpoint="simulatorWsInboundEndpoint">
         <ws:fault>
           <ws:fault-code>{http://citrusframework.org}CITRUS:SIM-1001</ws:fault-code>
           <ws:fault-string>No sleep for me!</ws:fault-string>

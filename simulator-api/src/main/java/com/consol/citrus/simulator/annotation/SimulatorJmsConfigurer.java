@@ -1,9 +1,19 @@
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
+
+import javax.jms.ConnectionFactory;
+
 /**
  * @author Christoph Deppisch
  */
 public interface SimulatorJmsConfigurer {
+
+    /**
+     * Gets the jms connection factory.
+     * @return
+     */
+    ConnectionFactory connectionFactory();
 
     /**
      * Gets the jms destination to read messages from.
@@ -17,4 +27,10 @@ public interface SimulatorJmsConfigurer {
      * @return
      */
     boolean useSoapEnvelope();
+
+    /**
+     * Gets the mapping key extractor.
+     * @return
+     */
+    MappingKeyExtractor mappingKeyExtractor();
 }

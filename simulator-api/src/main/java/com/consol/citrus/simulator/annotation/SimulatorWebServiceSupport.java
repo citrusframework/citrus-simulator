@@ -70,7 +70,7 @@ public class SimulatorWebServiceSupport {
         endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter());
+        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
 
         return webServiceEndpoint;
     }
@@ -90,10 +90,13 @@ public class SimulatorWebServiceSupport {
     }
 
     @Bean(name = "simulatorWsInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter() {
+    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
         ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
         endpointConfiguration.setChannel(inboundChannel());
-        return new ChannelEndpointAdapter(endpointConfiguration);
+        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
+        endpointAdapter.setApplicationContext(applicationContext);
+
+        return endpointAdapter;
     }
 
     /**
