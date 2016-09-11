@@ -18,14 +18,15 @@ package com.consol.citrus.simulator.endpoint;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.context.TestContextFactory;
+import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.exceptions.ActionTimeoutException;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.messaging.Producer;
+import com.consol.citrus.messaging.ReplyProducer;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.util.SoapMessageHelper;
-import com.consol.citrus.ws.message.SoapMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -37,19 +38,16 @@ import org.springframework.core.task.TaskExecutor;
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, DisposableBean {
+public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean {
 
     /** Logger */
     private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHelper.class);
 
     @Autowired
-    private SoapMessageHelper soapMessageHelper;
-
-    @Autowired
     private TestContextFactory testContextFactory;
 
-    /** Jms destination that is constantly listened on */
-    private JmsEndpoint jmsEndpoint;
+    /** Endpoint destination that is constantly polled for new messages */
+    private Endpoint targetEndpoint;
 
     /** Thread running the server */
     private TaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
@@ -65,18 +63,18 @@ public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, Dispos
 
     @Override
     public void run() {
-        LOG.info(String.format("Simulator endpoint waiting for requests on JMS destination '%s'", jmsEndpoint.getEndpointConfiguration().getDestinationName()));
+        LOG.info(String.format("Simulator endpoint waiting for requests on endpoint '%s'", targetEndpoint.getName()));
 
         while (running) {
             try {
                 TestContext context = testContextFactory.getObject();
-                Message message = jmsEndpoint.createConsumer().receive(context, jmsEndpoint.getEndpointConfiguration().getTimeout());
+                Message message = targetEndpoint.createConsumer().receive(context, targetEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    Message request = new SoapMessage(soapMessageHelper.getSoapBody(message), message.getHeaders());
-                    Message response = endpointAdapter.handleMessage(request);
+                    Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
-                    if (response != null && jmsEndpoint instanceof JmsSyncEndpoint) {
-                        jmsEndpoint.createProducer().send(soapMessageHelper.createSoapMessage(response), context);
+                    Producer producer = targetEndpoint.createProducer();
+                    if (response != null && producer instanceof ReplyProducer) {
+                        producer.send(processResponseMessage(response), context);
                     }
                 }
             } catch (ActionTimeoutException e) {
@@ -88,6 +86,26 @@ public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, Dispos
                 LOG.error("Unexpected error while processing", e);
             }
         }
+    }
+
+    /**
+     * Process response message before sending back to client. This gives subclasses
+     * the opportunity to manipulate the response.
+     * @param response
+     * @return
+     */
+    protected Message processResponseMessage(Message response) {
+        return response;
+    }
+
+    /**
+     * Process request message before handling. This gives subclasses the opportunity
+     * to manipulate the request before execution.
+     * @param request
+     * @return
+     */
+    protected Message processRequestMessage(Message request) {
+        return request;
     }
 
     /**
@@ -118,11 +136,11 @@ public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, Dispos
     }
 
     /**
-     * Sets the jms endpoint to read messages from.
-     * @param jmsEndpoint
+     * Sets the target endpoint to read messages from.
+     * @param targetEndpoint
      */
-    public void setJmsEndpoint(JmsEndpoint jmsEndpoint) {
-        this.jmsEndpoint = jmsEndpoint;
+    public void setTargetEndpoint(JmsEndpoint targetEndpoint) {
+        this.targetEndpoint = targetEndpoint;
     }
 
     /**
@@ -134,7 +152,7 @@ public class SimulatorJmsEndpoint  implements InitializingBean, Runnable, Dispos
     }
 
     /**
-     * Enable/Disable auto start.
+     * Enable/disable auto start.
      * @param autoStart
      */
     public void setAutoStart(boolean autoStart) {
