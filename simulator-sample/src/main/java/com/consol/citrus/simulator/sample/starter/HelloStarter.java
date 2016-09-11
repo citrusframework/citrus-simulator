@@ -14,35 +14,48 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.starter;
+package com.consol.citrus.simulator.sample.starter;
 
 import com.consol.citrus.simulator.model.AbstractScenarioStarter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodByeStarter")
+@Component("HelloStarter")
 @Scope("prototype")
-public class GoodByeStarter extends AbstractScenarioStarter {
+public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     protected void configure() {
-        echo("GoodBye starter was executed!");
+        echo("${greeting}");
         echo("${payload}");
     }
 
     @Override
     public String getDisplayName() {
-        return "GoodBye";
+        return "Hello";
+    }
+
+    @Override
+    public boolean isDefault() {
+        return true;
     }
 
     @Override
     public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"Goodbye"});
+        return Arrays.asList(new String[] {"Hello"});
+    }
+
+    @Override
+    public List<ScenarioParameter> getScenarioParameter() {
+        List<ScenarioParameter> parameters = new ArrayList<ScenarioParameter>();
+        parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
+
+        return parameters;
     }
 }

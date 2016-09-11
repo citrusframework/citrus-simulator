@@ -141,6 +141,12 @@
           </httpConnector>
           <stopKey>simStop</stopKey>
           <stopPort>${simulator.stop.port}</stopPort>
+          <systemProperties>
+            <systemProperty>
+              <name>citrus.simulator.configuration.class</name>
+              <value>com.consol.citrus.simulator.sample.SimulatorConfig</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>

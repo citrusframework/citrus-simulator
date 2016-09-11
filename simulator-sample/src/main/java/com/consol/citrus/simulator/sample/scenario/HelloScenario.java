@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.scenario;
+package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

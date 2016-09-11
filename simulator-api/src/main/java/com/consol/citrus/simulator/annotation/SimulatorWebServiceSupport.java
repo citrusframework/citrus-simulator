@@ -14,80 +14,122 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.config;
+package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
 import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
+import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.ws.server.*;
+import org.springframework.ws.server.EndpointInterceptor;
+import org.springframework.ws.server.EndpointMapping;
+import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
-
-import java.util.Properties;
 
 /**
  * @author Christoph Deppisch
  */
 @Configuration
-public class WebServiceConfig {
+public class SimulatorWebServiceSupport {
+
+    @Autowired(required = false)
+    private SimulatorWebServiceConfigurer configurer;
 
     @Bean
     public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, "/ws/*");
+        return new ServletRegistrationBean(servlet, getDispatcherServletMapping());
     }
 
-    @Bean(name = "simulatorEndpointMapping")
+    @Bean(name = "simulatorWsEndpointMapping")
     public EndpointMapping endpointMapping(ApplicationContext applicationContext) {
         UriEndpointMapping endpointMapping = new UriEndpointMapping();
         endpointMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
-        WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
-        TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(new XPathPayloadMappingKeyExtractor());
-        webServiceEndpoint.setEndpointAdapter(endpointAdapter);
-
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter());
-
-        endpointMapping.setDefaultEndpoint(webServiceEndpoint);
-        endpointMapping.setInterceptors(new EndpointInterceptor[] { new LoggingEndpointInterceptor() });
-
-        Properties mappings = new Properties();
-        mappings.put("/ws/simulator", webServiceEndpoint);
-        endpointMapping.setMappings(mappings);
-        endpointMapping.setUsePath(true);
+        endpointMapping.setDefaultEndpoint(webServiceEndpoint(applicationContext));
+        endpointMapping.setInterceptors(interceptors());
 
         return endpointMapping;
     }
 
-    @Bean(name = "simulator.inbound")
+    @Bean(name = "simulatorWsEndpoint")
+    public MessageEndpoint webServiceEndpoint(ApplicationContext applicationContext) {
+        WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
+        TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
+        endpointAdapter.setApplicationContext(applicationContext);
+        endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
+        webServiceEndpoint.setEndpointAdapter(endpointAdapter);
+
+        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter());
+
+        return webServiceEndpoint;
+    }
+
+    @Bean(name = "simulator.ws.inbound")
     public MessageSelectingQueueChannel inboundChannel() {
         MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
         return inboundChannel;
     }
 
-    @Bean(name = "simInboundEndpoint")
+    @Bean(name = "simulatorWsInboundEndpoint")
     public ChannelEndpoint inboundChannelEndpoint() {
         ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
         inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-        inboundChannelEndpoint.getEndpointConfiguration().setChannelName("simulator.inbound");
+        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
         return inboundChannelEndpoint;
     }
 
-    @Bean(name = "simulatorInboundAdapter")
+    @Bean(name = "simulatorWsInboundAdapter")
     public ChannelEndpointAdapter inboundEndpointAdapter() {
         ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-        endpointConfiguration.setChannelName("simulator.inbound");
+        endpointConfiguration.setChannel(inboundChannel());
         return new ChannelEndpointAdapter(endpointConfiguration);
+    }
+
+    /**
+     * Gets the web service message dispatcher servlet mapping. Clients must use this
+     * context path in order to access the web service support on the simulator.
+     * @return
+     */
+    protected String getDispatcherServletMapping() {
+        if (configurer != null) {
+            return configurer.servletMapping();
+        }
+
+        return "/ws/*";
+    }
+
+    /**
+     * Gets the mapping key extractor.
+     * @return
+     */
+    protected MappingKeyExtractor getMappingKeyExtractor() {
+        if (configurer != null) {
+            return configurer.mappingKeyExtractor();
+        }
+
+        return new XPathPayloadMappingKeyExtractor();
+    }
+
+    /**
+     * Provides list of endpoint interceptors.
+     * @return
+     */
+    protected EndpointInterceptor[] interceptors() {
+        if (configurer != null) {
+            return configurer.interceptors();
+        }
+
+        return new EndpointInterceptor[] { new LoggingEndpointInterceptor() };
     }
 }

@@ -37,10 +37,10 @@ import java.util.*;
  * @author Christoph Deppisch
  */
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     /** Logger */
-    private static Logger LOG = LoggerFactory.getLogger(WebMvcConfig.class);
+    private static Logger LOG = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
     @Bean
     public ViewResolver getViewResolver() {

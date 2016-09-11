@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator;
+package com.consol.citrus.simulator.sample;
 
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.builder.*;
@@ -29,7 +29,7 @@ public class AbstractSimulatorScenario extends ExecutableTestDesignerComponent {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    @Qualifier("simInboundEndpoint")
+    @Qualifier("simulatorWsInboundEndpoint")
     protected ChannelSyncEndpoint simInbound;
 
     protected ReceiveMessageBuilder receiveSOAPRequest() {

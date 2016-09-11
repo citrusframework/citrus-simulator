@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.scenario;
+package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodBye")
+@Component("Default")
 @Scope("prototype")
-public class GoodByeScenario extends AbstractSimulatorScenario {
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {
-        receiveSOAPRequest()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                     "</GoodBye>")
-            .header("citrus_soap_action", "GoodBye");
-
         sendSOAPResponse()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                     "</GoodByeResponse>");
+                .payload("");
     }
 }
