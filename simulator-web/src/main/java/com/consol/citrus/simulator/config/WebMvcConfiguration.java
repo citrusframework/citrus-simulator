@@ -18,7 +18,8 @@ package com.consol.citrus.simulator.config;
 
 import com.consol.citrus.util.FileUtils;
 import com.github.jknack.handlebars.ValueResolver;
-import com.github.jknack.handlebars.context.*;
+import com.github.jknack.handlebars.context.JavaBeanValueResolver;
+import com.github.jknack.handlebars.context.MapValueResolver;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
