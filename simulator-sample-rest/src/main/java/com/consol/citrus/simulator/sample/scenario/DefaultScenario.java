@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.http.SimulatorRestScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
  */
 @Component("Default")
 @Scope("prototype")
-public class DefaultScenario extends AbstractSimulatorScenario {
+public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
     protected void configure() {
-        sendRestResponse()
+        sendScenarioResponse()
                 .payload("");
     }
 }

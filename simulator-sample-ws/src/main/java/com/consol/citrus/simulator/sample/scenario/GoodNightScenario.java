@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,17 +25,17 @@ import org.springframework.stereotype.Component;
  */
 @Component("GoodNight")
 @Scope("prototype")
-public class GoodNightScenario extends AbstractSimulatorScenario {
+public class GoodNightScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
-        receiveSOAPRequest()
+        receiveScenarioRequest()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .header("citrus_soap_action", "GoodNight");
 
-        sendSoapFault()
+        sendScenarioFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
     }

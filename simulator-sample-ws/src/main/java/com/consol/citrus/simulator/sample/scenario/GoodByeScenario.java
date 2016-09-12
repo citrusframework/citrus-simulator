@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,17 +25,17 @@ import org.springframework.stereotype.Component;
  */
 @Component("GoodBye")
 @Scope("prototype")
-public class GoodByeScenario extends AbstractSimulatorScenario {
+public class GoodByeScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
-        receiveSOAPRequest()
+        receiveScenarioRequest()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>")
             .header("citrus_soap_action", "GoodBye");
 
-        sendSOAPResponse()
+        sendScenarioResponse()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

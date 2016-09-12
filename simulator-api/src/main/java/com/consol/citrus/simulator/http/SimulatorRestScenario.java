@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample;
+package com.consol.citrus.simulator.http;
 
 import com.consol.citrus.channel.ChannelSyncEndpoint;
-import com.consol.citrus.dsl.builder.*;
+import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
+import com.consol.citrus.dsl.builder.SendMessageBuilder;
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Christoph Deppisch
  */
-public class AbstractSimulatorScenario extends ExecutableTestDesignerComponent {
+public class SimulatorRestScenario extends ExecutableTestDesignerComponent implements SimulatorScenario {
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    @Qualifier("simulatorJmsInboundEndpoint")
-    protected ChannelSyncEndpoint simInbound;
+    @Qualifier("simulatorRestInboundEndpoint")
+    private ChannelSyncEndpoint simInbound;
 
-    protected ReceiveMessageBuilder receiveJmsRequest() {
+    public ReceiveMessageBuilder receiveScenarioRequest() {
         return (ReceiveMessageBuilder)
                 receive(simInbound)
-                    .description("Received Simulator JMS request");
+                    .description("Received REST request");
     }
 
-    protected SendMessageBuilder sendJmsResponse() {
+    public SendMessageBuilder sendScenarioResponse() {
         return (SendMessageBuilder)
                 send(simInbound)
-                    .description("Sending Simulator JMS response");
+                    .description("Sending REST response");
     }
-
 }

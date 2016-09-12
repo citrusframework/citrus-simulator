@@ -14,40 +14,45 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample;
+package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.builder.*;
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Christoph Deppisch
  */
-public class AbstractSimulatorScenario extends ExecutableTestDesignerComponent {
+public class SimulatorWebServiceScenario extends ExecutableTestDesignerComponent implements SimulatorScenario {
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     @Qualifier("simulatorWsInboundEndpoint")
     protected ChannelSyncEndpoint simInbound;
 
-    protected ReceiveMessageBuilder receiveSOAPRequest() {
+    @Override
+    public ReceiveMessageBuilder receiveScenarioRequest() {
         return (ReceiveMessageBuilder)
                 receive(simInbound)
-                    .description("Received Simulator SOAP request");
+                    .description("Received SOAP request");
     }
 
-    protected SendMessageBuilder sendSOAPResponse() {
+    @Override
+    public SendMessageBuilder sendScenarioResponse() {
         return (SendMessageBuilder)
                 send(simInbound)
-                    .description("Sending Simulator SOAP response");
+                    .description("Sending SOAP response");
     }
 
-    protected SendSoapFaultBuilder sendSoapFault() {
+    /**
+     * Sends SOAP fault as scenario response.
+     * @return
+     */
+    public SendSoapFaultBuilder sendScenarioFault() {
         return (SendSoapFaultBuilder)
                 sendSoapFault(simInbound)
-                    .description("Sending Simulator SOAP fault");
+                    .description("Sending SOAP fault");
     }
-
 }

@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.sample.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,16 +25,16 @@ import org.springframework.stereotype.Component;
  */
 @Component("GoodBye")
 @Scope("prototype")
-public class GoodByeScenario extends AbstractSimulatorScenario {
+public class GoodByeScenario extends SimulatorJmsScenario {
 
     @Override
     protected void configure() {
-        receiveJmsRequest()
+        receiveScenarioRequest()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
-        sendJmsResponse()
+        sendScenarioResponse()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");
