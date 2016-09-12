@@ -1,12 +1,10 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
-import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.*;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
-import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
+import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +37,7 @@ public class SimulatorJmsSupport {
         }
 
         endpointPoller.setTargetEndpoint(jmsEndpoint());
-        TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
+        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
 
@@ -91,6 +89,11 @@ public class SimulatorJmsSupport {
         }
 
         return new SingleConnectionFactory();
+    }
+
+    @Bean
+    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+        return new SimulatorEndpointAdapter();
     }
 
     /**

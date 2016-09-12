@@ -17,9 +17,9 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
-import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class SimulatorWebServiceSupport {
     @Bean(name = "simulatorWsEndpoint")
     public MessageEndpoint webServiceEndpoint(ApplicationContext applicationContext) {
         WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
-        TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
+        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
@@ -97,6 +97,11 @@ public class SimulatorWebServiceSupport {
         endpointAdapter.setApplicationContext(applicationContext);
 
         return endpointAdapter;
+    }
+
+    @Bean
+    protected SimulatorEndpointAdapter simulatorEndpointAdapter() {
+        return new SimulatorEndpointAdapter();
     }
 
     /**

@@ -1,12 +1,12 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
-import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -125,7 +125,7 @@ public class SimulatorRestSupport {
         if (restController == null) {
             restController = new HttpMessageController();
 
-            TestExecutingEndpointAdapter endpointAdapter = new TestExecutingEndpointAdapter();
+            SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
             endpointAdapter.setApplicationContext(applicationContext);
             endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
 
@@ -135,6 +135,11 @@ public class SimulatorRestSupport {
         }
 
         return restController;
+    }
+
+    @Bean
+    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+        return new SimulatorEndpointAdapter();
     }
 
     /**
