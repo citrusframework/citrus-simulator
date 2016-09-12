@@ -40,8 +40,7 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
         send(simulatorClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>")
-                .header("citrus_soap_action", "Hello");
+                         "</Hello>");
 
         receive(simulatorClient)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
@@ -58,8 +57,7 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
         send(simulatorClient)
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>")
-                .header("citrus_soap_action", "GoodBye");
+                         "</GoodBye>");
 
         receive(simulatorClient)
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
