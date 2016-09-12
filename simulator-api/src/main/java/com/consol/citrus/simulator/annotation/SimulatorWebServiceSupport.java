@@ -52,30 +52,6 @@ public class SimulatorWebServiceSupport {
         return new ServletRegistrationBean(servlet, getDispatcherServletMapping());
     }
 
-    @Bean(name = "simulatorWsEndpointMapping")
-    public EndpointMapping endpointMapping(ApplicationContext applicationContext) {
-        UriEndpointMapping endpointMapping = new UriEndpointMapping();
-        endpointMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
-
-        endpointMapping.setDefaultEndpoint(webServiceEndpoint(applicationContext));
-        endpointMapping.setInterceptors(interceptors());
-
-        return endpointMapping;
-    }
-
-    @Bean(name = "simulatorWsEndpoint")
-    public MessageEndpoint webServiceEndpoint(ApplicationContext applicationContext) {
-        WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
-        webServiceEndpoint.setEndpointAdapter(endpointAdapter);
-
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
-
-        return webServiceEndpoint;
-    }
-
     @Bean(name = "simulator.ws.inbound")
     public MessageSelectingQueueChannel inboundChannel() {
         MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
@@ -98,6 +74,30 @@ public class SimulatorWebServiceSupport {
         endpointAdapter.setApplicationContext(applicationContext);
 
         return endpointAdapter;
+    }
+
+    @Bean(name = "simulatorWsEndpointMapping")
+    public EndpointMapping endpointMapping(ApplicationContext applicationContext) {
+        UriEndpointMapping endpointMapping = new UriEndpointMapping();
+        endpointMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
+
+        endpointMapping.setDefaultEndpoint(webServiceEndpoint(applicationContext));
+        endpointMapping.setInterceptors(interceptors());
+
+        return endpointMapping;
+    }
+
+    @Bean(name = "simulatorWsEndpoint")
+    public MessageEndpoint webServiceEndpoint(ApplicationContext applicationContext) {
+        WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
+        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+        endpointAdapter.setApplicationContext(applicationContext);
+        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+        webServiceEndpoint.setEndpointAdapter(endpointAdapter);
+
+        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
+
+        return webServiceEndpoint;
     }
 
     @Bean

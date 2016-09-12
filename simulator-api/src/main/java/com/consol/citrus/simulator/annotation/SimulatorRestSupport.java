@@ -47,6 +47,30 @@ public class SimulatorRestSupport {
         return filterRegistrationBean;
     }
 
+    @Bean(name = "simulator.rest.inbound")
+    public MessageSelectingQueueChannel inboundChannel() {
+        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
+        return inboundChannel;
+    }
+
+    @Bean(name = "simulatorRestInboundEndpoint")
+    public ChannelEndpoint inboundChannelEndpoint() {
+        ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
+        inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
+        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
+        return inboundChannelEndpoint;
+    }
+
+    @Bean(name = "simulatorRestInboundAdapter")
+    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
+        ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
+        endpointConfiguration.setChannel(inboundChannel());
+        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
+        endpointAdapter.setApplicationContext(applicationContext);
+
+        return endpointAdapter;
+    }
+
     @Bean(name = "simulatorRestHandlerMapping")
     public HandlerMapping handlerMapping(ApplicationContext applicationContext) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
@@ -93,28 +117,16 @@ public class SimulatorRestSupport {
         };
     }
 
-    @Bean(name = "simulator.rest.inbound")
-    public MessageSelectingQueueChannel inboundChannel() {
-        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
-        return inboundChannel;
+    @Bean
+    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+        return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorRestInboundEndpoint")
-    public ChannelEndpoint inboundChannelEndpoint() {
-        ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
-        inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-        return inboundChannelEndpoint;
-    }
-
-    @Bean(name = "simulatorRestInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
-        ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-        endpointConfiguration.setChannel(inboundChannel());
-        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
-        endpointAdapter.setApplicationContext(applicationContext);
-
-        return endpointAdapter;
+    @Bean
+    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
+        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        return simulatorMappingKeyExtractor;
     }
 
     /**
@@ -136,18 +148,6 @@ public class SimulatorRestSupport {
         }
 
         return restController;
-    }
-
-    @Bean
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
-        return new SimulatorEndpointAdapter();
-    }
-
-    @Bean
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
-        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
-        return simulatorMappingKeyExtractor;
     }
 
     /**

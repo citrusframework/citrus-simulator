@@ -26,10 +26,9 @@ import org.testng.annotations.Test;
  * @author Christoph Deppisch
  */
 @Test
-public class SimulatorIT extends TestNGCitrusTestDesigner {
+public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
     /** Test SOAP client */
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private WebServiceClient soapClient;
 
@@ -87,5 +86,16 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
                                     "No sleep for me!" +
                             "</faultstring>\n" +
                         "</SOAP-ENV:Fault>");
+
+        send(soapClient)
+                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                        "</GoodNight>")
+                .header("citrus_soap_action", "GoodNight");
+
+        receive(soapClient)
+                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Good Night!" +
+                        "</GoodNightResponse>");
     }
 }

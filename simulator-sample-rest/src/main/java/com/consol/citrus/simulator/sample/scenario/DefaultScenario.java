@@ -22,12 +22,14 @@ import com.consol.citrus.simulator.http.SimulatorRestScenario;
 /**
  * @author Christoph Deppisch
  */
-@Scenario("Default")
+@Scenario("DEFAULT_SCENARIO")
 public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
     protected void configure() {
+        receiveScenarioRequest();
+
         sendScenarioResponse()
-                .payload("");
+            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

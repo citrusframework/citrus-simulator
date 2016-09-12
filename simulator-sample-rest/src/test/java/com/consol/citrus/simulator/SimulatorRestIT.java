@@ -26,7 +26,9 @@ import org.testng.annotations.Test;
  * @author Christoph Deppisch
  */
 @Test
-public class SimulatorIT extends TestNGCitrusTestDesigner {
+public class SimulatorRestIT extends TestNGCitrusTestDesigner {
+
+    private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /** Test Http REST client */
     @Autowired
@@ -63,5 +65,58 @@ public class SimulatorIT extends TestNGCitrusTestDesigner {
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
                          "</GoodByeResponse>");
+    }
+
+    /**
+     * Sends some other request to server expecting positive default response message.
+     */
+    @CitrusTest
+    public void testDefaultRequest() {
+        send(simulatorClient)
+                .payload("<Default>" +
+                            "Should trigger default scenario" +
+                        "</Default>");
+
+        receive(simulatorClient)
+                .payload(defaultResponse);
+    }
+
+    /**
+     * Sends some intervening request to server expecting positive response message.
+     */
+    @CitrusTest
+    public void testInterveningRequest() {
+        variable("correlationId", "citrus:randomNumber(10)");
+
+        send(simulatorClient)
+                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                        "</GoodNight>")
+                .header("X-CorrelationId", "${correlationId}");
+
+        receive(simulatorClient)
+                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Good Night!" +
+                        "</GoodNightResponse>");
+
+        send(simulatorClient)
+                .payload("<InterveningRequest>In between!</InterveningRequest>");
+
+        receive(simulatorClient)
+                .payload(defaultResponse);
+
+        send(simulatorClient)
+                .payload("<InterveningRequest>In between!</InterveningRequest>")
+                .header("X-CorrelationId", "${correlationId}");
+
+        receive(simulatorClient)
+                .payload("<InterveningResponse>In between!</InterveningResponse>");
+
+        send(simulatorClient)
+                .payload("<InterveningRequest>In between!</InterveningRequest>")
+                .header("X-CorrelationId", "${correlationId}");
+
+        receive(simulatorClient)
+                .payload(defaultResponse);
     }
 }
