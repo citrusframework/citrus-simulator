@@ -31,19 +31,19 @@ public class SimulatorJmsScenario extends ExecutableTestDesignerComponent implem
 
     @Autowired
     @Qualifier("simulatorJmsInboundEndpoint")
-    protected ChannelSyncEndpoint simInbound;
+    protected ChannelSyncEndpoint simInboundEndpoint;
 
     @Override
     public ReceiveMessageBuilder receiveScenarioRequest() {
         return (ReceiveMessageBuilder)
-                receive(simInbound)
+                receive(simInboundEndpoint)
                     .description("Received JMS request");
     }
 
     @Override
     public SendMessageBuilder sendScenarioResponse() {
         return (SendMessageBuilder)
-                send(simInbound)
+                send(simInboundEndpoint)
                     .description("Sending JMS response");
     }
 }

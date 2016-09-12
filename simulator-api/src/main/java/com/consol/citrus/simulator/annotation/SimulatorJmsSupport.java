@@ -26,28 +26,6 @@ public class SimulatorJmsSupport {
     private static final String JMS_INBOUND_DESTINATION_NAME =
             System.getProperty("citrus.simulator.jms.destination", "Citrus.Simulator.Inbound");
 
-    @Bean(name = "simulatorJmsEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
-        SimulatorEndpointPoller endpointPoller;
-
-        if (configurer != null && configurer.useSoapEnvelope()) {
-            endpointPoller = new SimulatorSoapEndpointPoller();
-        } else {
-            endpointPoller = new SimulatorEndpointPoller();
-        }
-
-        endpointPoller.setTargetEndpoint(jmsEndpoint());
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
-
-        endpointPoller.setEndpointAdapter(endpointAdapter);
-
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
-
-        return endpointPoller;
-    }
-
     @Bean(name = "simulator.jms.inbound")
     public MessageSelectingQueueChannel inboundChannel() {
         MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
@@ -94,6 +72,35 @@ public class SimulatorJmsSupport {
     @Bean
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
+    }
+
+    @Bean
+    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
+        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        return simulatorMappingKeyExtractor;
+    }
+
+    @Bean(name = "simulatorJmsEndpointPoller")
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
+        SimulatorEndpointPoller endpointPoller;
+
+        if (configurer != null && configurer.useSoapEnvelope()) {
+            endpointPoller = new SimulatorSoapEndpointPoller();
+        } else {
+            endpointPoller = new SimulatorEndpointPoller();
+        }
+
+        endpointPoller.setTargetEndpoint(jmsEndpoint());
+        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+        endpointAdapter.setApplicationContext(applicationContext);
+        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+
+        endpointPoller.setEndpointAdapter(endpointAdapter);
+
+        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
+
+        return endpointPoller;
     }
 
     /**

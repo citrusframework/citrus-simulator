@@ -38,6 +38,10 @@ public class SimulatorEndpointAdapter extends TestExecutingEndpointAdapter {
 
     @Override
     public Message dispatchMessage(Message request, String mappingName) {
+        if (mappingName.equals(SimulatorMappingKeyExtractor.INTERVENING_MESSAGE_MAPPING)) {
+            return getResponseEndpointAdapter().handleMessage(request);
+        }
+
         if (getApplicationContext().containsBean(mappingName)) {
             return super.dispatchMessage(request, mappingName);
         } else {

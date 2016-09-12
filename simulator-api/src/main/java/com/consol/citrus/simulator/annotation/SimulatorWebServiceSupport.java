@@ -20,6 +20,7 @@ import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
+import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class SimulatorWebServiceSupport {
         WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
+        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
         endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
@@ -100,8 +101,15 @@ public class SimulatorWebServiceSupport {
     }
 
     @Bean
-    protected SimulatorEndpointAdapter simulatorEndpointAdapter() {
+    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
+    }
+
+    @Bean
+    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
+        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        return simulatorMappingKeyExtractor;
     }
 
     /**

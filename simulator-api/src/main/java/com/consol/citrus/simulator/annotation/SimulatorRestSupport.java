@@ -7,6 +7,7 @@ import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
+import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -127,7 +128,7 @@ public class SimulatorRestSupport {
 
             SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
             endpointAdapter.setApplicationContext(applicationContext);
-            endpointAdapter.setMappingKeyExtractor(getMappingKeyExtractor());
+            endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
 
             restController.setEndpointAdapter(endpointAdapter);
 
@@ -140,6 +141,13 @@ public class SimulatorRestSupport {
     @Bean
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
+    }
+
+    @Bean
+    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
+        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        return simulatorMappingKeyExtractor;
     }
 
     /**

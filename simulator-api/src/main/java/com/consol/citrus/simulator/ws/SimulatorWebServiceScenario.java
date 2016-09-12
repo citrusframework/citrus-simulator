@@ -30,19 +30,19 @@ public class SimulatorWebServiceScenario extends ExecutableTestDesignerComponent
 
     @Autowired
     @Qualifier("simulatorWsInboundEndpoint")
-    protected ChannelSyncEndpoint simInbound;
+    protected ChannelSyncEndpoint simInboundEndpoint;
 
     @Override
     public ReceiveMessageBuilder receiveScenarioRequest() {
         return (ReceiveMessageBuilder)
-                receive(simInbound)
+                receive(simInboundEndpoint)
                     .description("Received SOAP request");
     }
 
     @Override
     public SendMessageBuilder sendScenarioResponse() {
         return (SendMessageBuilder)
-                send(simInbound)
+                send(simInboundEndpoint)
                     .description("Sending SOAP response");
     }
 
@@ -52,7 +52,7 @@ public class SimulatorWebServiceScenario extends ExecutableTestDesignerComponent
      */
     public SendSoapFaultBuilder sendScenarioFault() {
         return (SendSoapFaultBuilder)
-                sendSoapFault(simInbound)
+                sendSoapFault(simInboundEndpoint)
                     .description("Sending SOAP fault");
     }
 }

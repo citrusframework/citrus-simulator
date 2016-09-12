@@ -31,17 +31,17 @@ public class SimulatorRestScenario extends ExecutableTestDesignerComponent imple
 
     @Autowired
     @Qualifier("simulatorRestInboundEndpoint")
-    private ChannelSyncEndpoint simInbound;
+    protected ChannelSyncEndpoint simInboundEndpoint;
 
     public ReceiveMessageBuilder receiveScenarioRequest() {
         return (ReceiveMessageBuilder)
-                receive(simInbound)
+                receive(simInboundEndpoint)
                     .description("Received REST request");
     }
 
     public SendMessageBuilder sendScenarioResponse() {
         return (SendMessageBuilder)
-                send(simInbound)
+                send(simInboundEndpoint)
                     .description("Sending REST response");
     }
 }

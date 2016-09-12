@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.scenario;
+package com.consol.citrus.simulator.message;
 
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
+import com.consol.citrus.message.Message;
+
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
-@Scenario("DEFAULT_SCENARIO")
-public class DefaultScenario extends SimulatorJmsScenario {
+public interface InterveningMessageHandler {
 
-    @Override
-    protected void configure() {
-        receiveScenarioRequest();
-
-        sendScenarioResponse()
-            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
-    }
+    boolean isHandlerFor(Message message, Map<String, Object> variables);
 }
