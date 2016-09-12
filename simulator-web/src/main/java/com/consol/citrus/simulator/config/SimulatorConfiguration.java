@@ -30,6 +30,9 @@ public class SimulatorConfiguration {
     /** Logger */
     protected Logger log = LoggerFactory.getLogger(getClass());
 
+    /** Custom configuration class name */
+    public static final String SIMULATOR_CONFIGURATION_CLASS = System.getProperty("citrus.simulator.configuration.class");
+
     @Value(value = "${citrus.simulator.template.path:com/consol/citrus/simulator/templates}")
     private String templatePath;
 

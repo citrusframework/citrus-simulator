@@ -57,6 +57,9 @@ public class RunController implements ApplicationContextAware {
     /** Service for executing test builders */
     private ScenarioService scenarioService;
 
+    @Autowired(required = false)
+    private List<ScenarioStarter> starters = new ArrayList<>();
+
     @Autowired
     private SimulatorConfiguration simulatorConfiguration;
 
@@ -146,10 +149,8 @@ public class RunController implements ApplicationContextAware {
      * @return
      */
     private void buildViewModel(Model model) {
-        Map<String, ScenarioStarter> starters = applicationContext.getBeansOfType(ScenarioStarter.class);
-
-        model.addAttribute("starterList", starters.values());
-        model.addAttribute("messageTemplates", getMessageTemplates(starters.values()));
+        model.addAttribute("starterList", starters);
+        model.addAttribute("messageTemplates", getMessageTemplates(starters));
         model.addAttribute("parameter", scenarioService.getScenarioParameter());
     }
 

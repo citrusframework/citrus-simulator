@@ -29,7 +29,9 @@
     <module>simulator-api</module>
     <module>simulator-web</module>
     <module>simulator-archetype</module>
-    <module>simulator-sample</module>
+    <module>simulator-sample-ws</module>
+    <module>simulator-sample-jms</module>
+    <module>simulator-sample-rest</module>
   </modules>
   
   <dependencyManagement>
@@ -38,6 +40,11 @@
       <dependency>
         <groupId>com.consol.citrus</groupId>
         <artifactId>citrus-core</artifactId>
+        <version>${citrus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.consol.citrus</groupId>
+        <artifactId>citrus-http</artifactId>
         <version>${citrus.version}</version>
       </dependency>
       <dependency>
