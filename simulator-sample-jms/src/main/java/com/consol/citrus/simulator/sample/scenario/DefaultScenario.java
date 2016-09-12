@@ -16,15 +16,13 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("Default")
-@Scope("prototype")
+@Scenario("Default")
 public class DefaultScenario extends SimulatorJmsScenario {
 
     @Override

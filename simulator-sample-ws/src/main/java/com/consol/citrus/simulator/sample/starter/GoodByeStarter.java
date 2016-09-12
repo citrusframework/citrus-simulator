@@ -17,8 +17,7 @@
 package com.consol.citrus.simulator.sample.starter;
 
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.consol.citrus.simulator.scenario.Starter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +25,7 @@ import java.util.List;
 /**
  * @author Christoph Deppisch
  */
-@Component("GoodByeStarter")
-@Scope("prototype")
+@Starter("GoodByeStarter")
 public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override

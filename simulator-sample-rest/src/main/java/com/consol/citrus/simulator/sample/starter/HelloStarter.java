@@ -16,18 +16,14 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
-import com.consol.citrus.simulator.scenario.ScenarioParameter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.consol.citrus.simulator.scenario.*;
 
 import java.util.*;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("HelloStarter")
-@Scope("prototype")
+@Starter("HelloStarter")
 public class HelloStarter extends AbstractScenarioStarter {
 
     @Override

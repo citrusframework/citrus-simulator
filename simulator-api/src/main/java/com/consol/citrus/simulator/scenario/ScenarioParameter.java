@@ -16,7 +16,6 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -95,9 +94,9 @@ public class ScenarioParameter {
      */
     public ScenarioParameter addScenarioFilter(Class<? extends ScenarioStarter> starterType) {
         if (StringUtils.hasText(scenarioFilter)) {
-            this.scenarioFilter += " " + starterType.getAnnotation(Component.class).value();
+            this.scenarioFilter += " " + starterType.getAnnotation(Starter.class).value();
         } else {
-            this.scenarioFilter = starterType.getAnnotation(Component.class).value();
+            this.scenarioFilter = starterType.getAnnotation(Starter.class).value();
         }
 
         return this;

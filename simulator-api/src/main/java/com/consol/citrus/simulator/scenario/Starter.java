@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.scenario;
+package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.*;
 
 /**
  * @author Christoph Deppisch
  */
-@Scenario("Default")
-public class DefaultScenario extends SimulatorWebServiceScenario {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+@Scope("prototype")
+public @interface Starter {
 
-    @Override
-    protected void configure() {
-        sendScenarioResponse()
-            .payload("");
-    }
+    /**
+     * The value indicates the logical starter name.
+     * @return the suggested starter name
+     */
+    String value();
 }

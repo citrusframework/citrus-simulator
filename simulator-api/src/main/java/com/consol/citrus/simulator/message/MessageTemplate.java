@@ -17,7 +17,7 @@
 package com.consol.citrus.simulator.message;
 
 import com.consol.citrus.simulator.scenario.ScenarioStarter;
-import org.springframework.stereotype.Component;
+import com.consol.citrus.simulator.scenario.Starter;
 
 /**
  * @author Christoph Deppisch
@@ -56,6 +56,6 @@ public class MessageTemplate {
     }
 
     public String getStarterType() {
-        return starterType.getAnnotation(Component.class).value();
+        return starterType.getAnnotation(Starter.class).value();
     }
 }

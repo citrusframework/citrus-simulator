@@ -16,15 +16,13 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Christoph Deppisch
  */
-@Component("Hello")
-@Scope("prototype")
+@Scenario("Hello")
 public class HelloScenario extends SimulatorWebServiceScenario {
 
     @Override

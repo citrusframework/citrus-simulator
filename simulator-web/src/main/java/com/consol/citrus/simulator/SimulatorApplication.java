@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.config.CitrusSpringConfig;
+import com.consol.citrus.simulator.bean.ScenarioBeanNameGenerator;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,13 +28,13 @@ import org.springframework.context.annotation.*;
 /**
  * @author Christoph Deppisch
  */
-@SpringBootApplication(
-        scanBasePackages = {
-            "com.consol.citrus.simulator.config",
-            "com.consol.citrus.simulator.listener",
-            "com.consol.citrus.simulator.service",
-            "com.consol.citrus.simulator.web",
-        })
+@SpringBootApplication
+@ComponentScan(basePackages = {
+        "com.consol.citrus.simulator.config",
+        "com.consol.citrus.simulator.listener",
+        "com.consol.citrus.simulator.service",
+        "com.consol.citrus.simulator.web",
+}, nameGenerator = ScenarioBeanNameGenerator.class)
 @Import(value = { CitrusSpringConfig.class, SimulatorImportSelector.class })
 @ImportResource(locations = "classpath*:citrus-simulator-context.xml")
 @PropertySource(value = "classpath*:citrus-simulator.properties", ignoreResourceNotFound = true)
