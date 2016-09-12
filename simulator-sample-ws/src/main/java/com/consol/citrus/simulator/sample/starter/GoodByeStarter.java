@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.model.AbstractScenarioStarter;
+import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

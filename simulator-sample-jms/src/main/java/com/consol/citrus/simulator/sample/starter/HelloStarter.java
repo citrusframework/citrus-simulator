@@ -53,7 +53,7 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public List<ScenarioParameter> getScenarioParameter() {
-        List<ScenarioParameter> parameters = new ArrayList<ScenarioParameter>();
+        List<ScenarioParameter> parameters = new ArrayList<>();
         parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
 
         return parameters;

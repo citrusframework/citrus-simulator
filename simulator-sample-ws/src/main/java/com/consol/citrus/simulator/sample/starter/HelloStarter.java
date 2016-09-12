@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.model.AbstractScenarioStarter;
-import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
+import com.consol.citrus.simulator.scenario.ScenarioParameter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +53,7 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public List<ScenarioParameter> getScenarioParameter() {
-        List<ScenarioParameter> parameters = new ArrayList<ScenarioParameter>();
+        List<ScenarioParameter> parameters = new ArrayList<>();
         parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
 
         return parameters;
