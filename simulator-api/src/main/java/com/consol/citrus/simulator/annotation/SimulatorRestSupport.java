@@ -147,7 +147,7 @@ public class SimulatorRestSupport {
             return configurer.urlMapping();
         }
 
-        return "/rest/*";
+        return "/services/rest/*";
     }
 
     /**

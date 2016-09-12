@@ -17,7 +17,7 @@
 
   <!-- Test SOAP client -->
   <citrus-http:client id="simulatorClient"
-                      request-url="http://localhost:8080/rest/simulator"
+                      request-url="http://localhost:8080/services/rest/simulator"
                       interceptors="clientLoggingInterceptors"/>
 
   <util:list id="clientLoggingInterceptors">

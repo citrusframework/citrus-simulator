@@ -12,7 +12,7 @@ public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceC
 
     @Override
     public String servletMapping() {
-        return "/ws/*";
+        return "/services/ws/*";
     }
 
     @Override

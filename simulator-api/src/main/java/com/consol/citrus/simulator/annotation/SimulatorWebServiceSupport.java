@@ -109,7 +109,7 @@ public class SimulatorWebServiceSupport {
             return configurer.servletMapping();
         }
 
-        return "/ws/*";
+        return "/services/ws/*";
     }
 
     /**

@@ -22,6 +22,6 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 
     @Override
     public String urlMapping() {
-        return "/rest/*";
+        return "/services/rest/*";
     }
 }
