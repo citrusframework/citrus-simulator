@@ -6,14 +6,14 @@
 
   <parent>
     <groupId>com.consol.citrus</groupId>
-    <artifactId>citrus-simulator</artifactId>
+    <artifactId>citrus-simulator-parent</artifactId>
     <version>0.6</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>com.consol.citrus</groupId>
-  <artifactId>citrus-simulator-api</artifactId>
-  <name>citrus-simulator-api</name>
+  <artifactId>citrus-simulator</artifactId>
+  <name>citrus-simulator</name>
 
   <dependencies>
     <!-- Spring Boot -->
