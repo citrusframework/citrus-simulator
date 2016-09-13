@@ -16,18 +16,27 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.annotation.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * @author Christoph Deppisch
  */
 @SpringBootApplication
 @SimulatorApplication
-public class Simulator {
+@EnableJms
+public class Simulator extends SimulatorJmsAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
+    }
+
+    @Override
+    public ConnectionFactory connectionFactory() {
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
     }
 }
