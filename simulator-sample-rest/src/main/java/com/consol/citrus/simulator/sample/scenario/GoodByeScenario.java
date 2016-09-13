@@ -18,11 +18,14 @@ package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodBye")
+@RequestMapping(value = "/services/rest/simulator/goodbye", method = RequestMethod.POST)
 public class GoodByeScenario extends SimulatorRestScenario {
 
     @Override

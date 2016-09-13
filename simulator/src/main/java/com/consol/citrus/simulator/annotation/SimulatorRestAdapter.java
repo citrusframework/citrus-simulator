@@ -1,8 +1,8 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
+import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -12,7 +12,7 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 
     @Override
     public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
+        return new AnnotationRequestMappingKeyExtractor();
     }
 
     @Override
@@ -22,6 +22,6 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 
     @Override
     public String urlMapping() {
-        return "/services/rest/*";
+        return "/services/rest/**";
     }
 }

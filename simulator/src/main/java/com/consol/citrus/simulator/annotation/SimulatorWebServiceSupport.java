@@ -26,8 +26,7 @@ import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
@@ -106,10 +105,20 @@ public class SimulatorWebServiceSupport {
     }
 
     @Bean
+    @DependsOn("simulatorWsInboundEndpoint")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
         SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
         return simulatorMappingKeyExtractor;
+    }
+
+    @Bean
+    public MappingKeyExtractor delegateMappingKeyExtractor() {
+        if (configurer != null) {
+            return configurer.mappingKeyExtractor();
+        }
+
+        return new XPathPayloadMappingKeyExtractor();
     }
 
     /**
@@ -123,18 +132,6 @@ public class SimulatorWebServiceSupport {
         }
 
         return "/services/ws/*";
-    }
-
-    /**
-     * Gets the mapping key extractor.
-     * @return
-     */
-    protected MappingKeyExtractor getMappingKeyExtractor() {
-        if (configurer != null) {
-            return configurer.mappingKeyExtractor();
-        }
-
-        return new XPathPayloadMappingKeyExtractor();
     }
 
     /**

@@ -7,8 +7,7 @@ import com.consol.citrus.jms.endpoint.*;
 import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.jms.connection.SingleConnectionFactory;
 
 import javax.jms.ConnectionFactory;
@@ -75,10 +74,20 @@ public class SimulatorJmsSupport {
     }
 
     @Bean
+    @DependsOn("simulatorJmsInboundEndpoint")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
         SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
         return simulatorMappingKeyExtractor;
+    }
+
+    @Bean
+    public MappingKeyExtractor delegateMappingKeyExtractor() {
+        if (configurer != null) {
+            return configurer.mappingKeyExtractor();
+        }
+
+        return new XPathPayloadMappingKeyExtractor();
     }
 
     @Bean(name = "simulatorJmsEndpointPoller")
@@ -101,18 +110,6 @@ public class SimulatorJmsSupport {
         endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
 
         return endpointPoller;
-    }
-
-    /**
-     * Gets the mapping key extractor.
-     * @return
-     */
-    protected MappingKeyExtractor getMappingKeyExtractor() {
-        if (configurer != null) {
-            return configurer.mappingKeyExtractor();
-        }
-
-        return new XPathPayloadMappingKeyExtractor();
     }
 
     /**

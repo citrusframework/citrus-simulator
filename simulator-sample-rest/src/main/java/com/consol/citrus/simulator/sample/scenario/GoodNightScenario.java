@@ -22,6 +22,8 @@ import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
 import com.consol.citrus.simulator.message.InterveningMessageHandler;
 import com.consol.citrus.simulator.scenario.Scenario;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import java.util.Map;
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
+@RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
 public class GoodNightScenario extends SimulatorRestScenario implements InterveningMessageHandler {
 
     private static final String CORRELATION_ID = "x-correlationid";

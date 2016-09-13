@@ -2,17 +2,16 @@ package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
+import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.*;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -43,7 +42,12 @@ public class SimulatorRestSupport {
     @Bean
     public FilterRegistrationBean requestCachingFilter() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new RequestCachingServletFilter());
-        filterRegistrationBean.setUrlPatterns(Collections.singleton(getUrlMapping()));
+
+        String urlMapping = getUrlMapping();
+        if (urlMapping.endsWith("**")) {
+            urlMapping = urlMapping.substring(0, urlMapping.length() - 1);
+        }
+        filterRegistrationBean.setUrlPatterns(Collections.singleton(urlMapping));
         return filterRegistrationBean;
     }
 
@@ -104,6 +108,8 @@ public class SimulatorRestSupport {
         handlerMapping.setApplicationContext(applicationContext);
         handlerMapping.afterPropertiesSet();
 
+        requestMappingHandlerAdapter.setCacheSeconds(0);
+
         return new SimpleControllerHandlerAdapter() {
             @Override
             public boolean supports(Object handler) {
@@ -123,9 +129,10 @@ public class SimulatorRestSupport {
     }
 
     @Bean
+    @DependsOn("simulatorRestInboundEndpoint")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
         SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(getMappingKeyExtractor());
+        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
         return simulatorMappingKeyExtractor;
     }
 
@@ -150,6 +157,15 @@ public class SimulatorRestSupport {
         return restController;
     }
 
+    @Bean
+    public MappingKeyExtractor delegateMappingKeyExtractor() {
+        if (configurer != null) {
+            return configurer.mappingKeyExtractor();
+        }
+
+        return new AnnotationRequestMappingKeyExtractor();
+    }
+
     /**
      * Gets the url pattern to map this Http rest controller to. Clients must use this
      * context path in order to access the Http REST support on the simulator.
@@ -160,7 +176,7 @@ public class SimulatorRestSupport {
             return configurer.urlMapping();
         }
 
-        return "/services/rest/*";
+        return "/services/rest/**";
     }
 
     /**
@@ -173,17 +189,5 @@ public class SimulatorRestSupport {
         }
 
         return new HandlerInterceptor[] { new LoggingHandlerInterceptor() };
-    }
-
-    /**
-     * Gets the mapping key extractor.
-     * @return
-     */
-    protected MappingKeyExtractor getMappingKeyExtractor() {
-        if (configurer != null) {
-            return configurer.mappingKeyExtractor();
-        }
-
-        return new XPathPayloadMappingKeyExtractor();
     }
 }

@@ -17,11 +17,6 @@
 
   <!-- Test SOAP client -->
   <citrus-http:client id="simulatorClient"
-                      request-url="http://localhost:8080/services/rest/simulator"
-                      interceptors="clientLoggingInterceptors"/>
-
-  <util:list id="clientLoggingInterceptors">
-    <bean class="com.consol.citrus.http.interceptor.LoggingClientInterceptor"/>
-  </util:list>
+                      request-url="http://localhost:8080/services/rest/simulator"/>
 
 </beans>
