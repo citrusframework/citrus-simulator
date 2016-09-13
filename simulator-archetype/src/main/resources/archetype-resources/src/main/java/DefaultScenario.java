@@ -3,7 +3,7 @@ package ${package};
 import om.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
 
-@cScenario("DefaultScenario")
+@Scenario("DefaultScenario")
 public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
