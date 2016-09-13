@@ -1,30 +1,20 @@
 package ${package};
 
-import com.sun.org.apache.regexp.internal.recompile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
-import com.consol.citrus.endpoint.Endpoint;
+import om.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.http.SimulatorRestScenario;
 
-/**
- * @author Christoph Deppisch
- */
-@Component("DefaultScenario")
-@Scope("prototype")
-public class DefaultScenario extends ExecutableTestDesignerComponent {
-
-    @Autowired
-    @Qualifier("simInboundEndpoint")
-    protected Endpoint simInbound;
+@cScenario("DefaultScenario")
+public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
     protected void configure() {
         echo("Default scenario was started");
 
-        receive(simInbound);
+        receiveScenarioRequest();
 
-        echo("Received SOAP request");
+        sendScenarioResponse()
+            .payload("OK");
+
+        echo("Received request");
     }
 }

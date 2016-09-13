@@ -7,18 +7,11 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
 
-  <context:component-scan base-package="${package}"/>
-
   <citrus:schema-repository id="schemaRepository">
   </citrus:schema-repository>
 
   <citrus:global-variables>
     <citrus:variable name="simulator.name" value="Citrus Simulator"/>
   </citrus:global-variables>
-
-  <!-- Add namespace uri to prefix mappings here for XPath evaluation -->
-  <citrus:namespace-context>
-      <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
-  </citrus:namespace-context>
 
 </beans>

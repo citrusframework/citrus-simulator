@@ -1,16 +1,11 @@
 package ${package};
 
 import com.consol.citrus.simulator.model.AbstractScenarioStarter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.consol.citrus.simulator.scenario.Starter;
 
 import java.util.*;
 
-/**
- * @author Christoph Deppisch
- */
-@Component("DefaultStarter")
-@Scope("prototype")
+@Starter("DefaultStarter")
 public class DefaultStarter extends AbstractScenarioStarter {
 
     @Override
