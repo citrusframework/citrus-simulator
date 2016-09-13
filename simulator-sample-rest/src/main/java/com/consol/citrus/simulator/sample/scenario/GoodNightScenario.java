@@ -31,7 +31,7 @@ import java.util.Map;
 @Scenario("GoodNight")
 public class GoodNightScenario extends SimulatorRestScenario implements InterveningMessageHandler {
 
-    private static final String CORRELATION_ID = "X-CorrelationId";
+    private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
     protected void configure() {
@@ -54,7 +54,7 @@ public class GoodNightScenario extends SimulatorRestScenario implements Interven
                     "</GoodNightResponse>");
 
         receiveScenarioRequest()
-                .selector("X-CorrelationId = '${correlationId}'")
+                .selector("x-correlationid = '${correlationId}'")
                 .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         sendScenarioResponse()

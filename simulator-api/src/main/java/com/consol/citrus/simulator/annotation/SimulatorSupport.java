@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator;
+package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.bean.ScenarioBeanNameGenerator;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
 
 /**
  * @author Christoph Deppisch
  */
-@SpringBootApplication
+@Configuration
 @ComponentScan(basePackages = {
         "com.consol.citrus.simulator.config",
         "com.consol.citrus.simulator.listener",
@@ -39,14 +35,5 @@ import org.springframework.context.annotation.*;
 @Import(value = { CitrusSpringConfig.class, SimulatorImportSelector.class })
 @ImportResource(locations = "classpath*:citrus-simulator-context.xml")
 @PropertySource(value = "classpath*:citrus-simulator.properties", ignoreResourceNotFound = true)
-public class SimulatorApplication extends SpringBootServletInitializer {
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(SimulatorApplication.class);
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(SimulatorApplication.class, args);
-    }
+public class SimulatorSupport {
 }

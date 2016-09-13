@@ -14,23 +14,14 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jetty.version>9.2.15.v20160210</jetty.version>
     <citrus.simulator.version>0.6</citrus.simulator.version>
-    <simulator.port>8080</simulator.port>
-    <simulator.stop.port>8088</simulator.stop.port>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-core</artifactId>
+      <artifactId>citrus-simulator-api</artifactId>
       <version>${citrus.simulator.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-war</artifactId>
-      <version>${citrus.simulator.version}</version>
-      <type>war</type>
     </dependency>
   </dependencies>
 
@@ -41,34 +32,16 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.0.0</version>
         <configuration>
-          <overlays>
-            <overlay>
-              <groupId>com.consol.citrus</groupId>
-              <artifactId>citrus-simulator-war</artifactId>
-              <type>war</type>
-            </overlay>
-            <overlay>
-              <!-- empty groupId/artifactId represents the current build -->
-            </overlay>
-          </overlays>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
 
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty.version}</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
         <configuration>
-          <webAppConfig>
-            <contextPath>/</contextPath>
-          </webAppConfig>
-          <httpConnector>
-            <port>${simulator.port}</port>
-            <idleTimeout>60000</idleTimeout>
-          </httpConnector>
-          <stopKey>simStop</stopKey>
-          <stopPort>${simulator.stop.port}</stopPort>
+          <fork>true</fork>
         </configuration>
       </plugin>
     </plugins>

@@ -2,7 +2,6 @@ package com.consol.citrus.simulator.sample;
 
 import com.consol.citrus.simulator.annotation.EnableRest;
 import com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableRest
-@ComponentScan
-public class SimulatorConfig extends SimulatorRestAdapter {
+public class RestConfig extends SimulatorRestAdapter {
 
 }

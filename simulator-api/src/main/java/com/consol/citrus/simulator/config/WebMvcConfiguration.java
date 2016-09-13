@@ -69,12 +69,12 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                     }
                 }
 
-                return UNRESOLVED;
+                return ValueResolver.UNRESOLVED;
             }
 
             @Override
             public Object resolve(Object context) {
-                return UNRESOLVED;
+                return ValueResolver.UNRESOLVED;
             }
 
             @Override

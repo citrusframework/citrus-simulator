@@ -11,8 +11,7 @@ import javax.jms.ConnectionFactory;
  */
 @Configuration
 @EnableJms
-@ComponentScan
-public class SimulatorConfig extends SimulatorJmsAdapter {
+public class JmsConfig extends SimulatorJmsAdapter {
 
     @Override
     public ConnectionFactory connectionFactory() {

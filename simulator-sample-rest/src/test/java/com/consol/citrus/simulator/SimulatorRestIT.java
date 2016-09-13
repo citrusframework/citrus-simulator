@@ -92,7 +92,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
-                .header("X-CorrelationId", "${correlationId}");
+                .header("x-correlationid", "${correlationId}");
 
         receive(simulatorClient)
                 .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
@@ -107,14 +107,14 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 
         send(simulatorClient)
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("X-CorrelationId", "${correlationId}");
+                .header("x-correlationid", "${correlationId}");
 
         receive(simulatorClient)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
         send(simulatorClient)
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("X-CorrelationId", "${correlationId}");
+                .header("x-correlationid", "${correlationId}");
 
         receive(simulatorClient)
                 .payload(defaultResponse);

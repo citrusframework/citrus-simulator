@@ -14,70 +14,22 @@
   <artifactId>citrus-simulator-sample-rest</artifactId>
   <packaging>war</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <simulator.port>8080</simulator.port>
-    <simulator.stop.port>8088</simulator.stop.port>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-api</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-web</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-web</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <type>war</type>
     </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-http</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>javax.xml.parsers.SAXParserFactory</name>
-              <value>org.apache.xerces.jaxp.SAXParserFactoryImpl</value>
-            </property>
-            <property>
-              <name>user.language</name>
-              <value>en</value>
-            </property>
-          </systemProperties>
-          <forkMode>once</forkMode>
-          <failIfNoTests>false</failIfNoTests>
-          <excludes>
-            <exclude>**/IT*.java</exclude>
-            <exclude>**/*IT.java</exclude>
-          </excludes>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
@@ -89,9 +41,6 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
-            <configuration>
-              <failIfNoTests>false</failIfNoTests>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -100,59 +49,33 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <overlays>
-            <overlay>
-              <groupId>com.consol.citrus</groupId>
-              <artifactId>citrus-simulator-web</artifactId>
-              <type>war</type>
-            </overlay>
-            <overlay>
-              <!-- empty groupId/artifactId represents the current build -->
-            </overlay>
-          </overlays>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
 
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+        <configuration>
+          <fork>true</fork>
+        </configuration>
         <executions>
           <execution>
-            <id>start-simulator</id>
+            <id>pre</id>
             <phase>pre-integration-test</phase>
             <goals>
-              <goal>deploy-war</goal>
+              <goal>start</goal>
             </goals>
-            <configuration>
-              <daemon>true</daemon>
-            </configuration>
           </execution>
           <execution>
-            <id>stop-simulator</id>
+            <id>post</id>
             <phase>post-integration-test</phase>
             <goals>
               <goal>stop</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <webAppConfig>
-            <contextPath>/</contextPath>
-          </webAppConfig>
-          <httpConnector>
-            <port>${simulator.port}</port>
-            <idleTimeout>60000</idleTimeout>
-          </httpConnector>
-          <stopKey>simStop</stopKey>
-          <stopPort>${simulator.stop.port}</stopPort>
-          <systemProperties>
-            <systemProperty>
-              <name>citrus.simulator.configuration.class</name>
-              <value>com.consol.citrus.simulator.sample.SimulatorConfig</value>
-            </systemProperty>
-          </systemProperties>
-        </configuration>
       </plugin>
     </plugins>
   </build>
