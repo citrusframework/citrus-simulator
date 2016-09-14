@@ -18,15 +18,14 @@ package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.builder.*;
-import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
-import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorWebServiceScenario extends ExecutableTestDesignerComponent implements SimulatorScenario {
+public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
 
     @Autowired
     @Qualifier("simulatorWsInboundEndpoint")

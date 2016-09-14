@@ -18,17 +18,14 @@ package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.message.InterveningMessageHandler;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
-
-import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorWebServiceScenario implements InterveningMessageHandler {
+public class GoodNightScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
@@ -55,7 +52,7 @@ public class GoodNightScenario extends SimulatorWebServiceScenario implements In
     }
 
     @Override
-    public boolean isHandlerFor(Message message, Map<String, Object> variables) {
+    public boolean isHandlerFor(Message message) {
         return new XPathPayloadMappingKeyExtractor().getMappingKey(message).equals("GoodNight");
     }
 }

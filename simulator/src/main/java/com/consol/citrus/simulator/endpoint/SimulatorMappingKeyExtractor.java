@@ -20,8 +20,8 @@ import com.consol.citrus.TestCase;
 import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.correlation.CorrelationHandler;
 import com.consol.citrus.simulator.listener.SimulatorActiveTestListener;
-import com.consol.citrus.simulator.message.InterveningMessageHandler;
 import com.consol.citrus.simulator.scenario.Scenario;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +34,7 @@ import java.util.List;
 public class SimulatorMappingKeyExtractor extends AbstractMappingKeyExtractor {
 
     @Autowired(required = false)
-    private List<InterveningMessageHandler> interveningMessageHandlers = new ArrayList<>();
+    private List<CorrelationHandler> correlationHandlers = new ArrayList<>();
 
     @Autowired
     private SimulatorActiveTestListener activeTestListener;
@@ -48,10 +48,17 @@ public class SimulatorMappingKeyExtractor extends AbstractMappingKeyExtractor {
     @Override
     protected String getMappingKey(Message request) {
         for (TestCase activeTest : activeTestListener.getActiveTests()) {
-            for (InterveningMessageHandler interveningMessageHandler : interveningMessageHandlers) {
-                if (activeTest.getName().equals(interveningMessageHandler.getClass().getSimpleName()) ||
-                        activeTest.getName().equals(interveningMessageHandler.getClass().getAnnotation(Scenario.class).value())) {
-                    if (interveningMessageHandler.isHandlerFor(request, activeTest.getVariableDefinitions())) {
+            if (activeTest.getVariableDefinitions().containsKey(CorrelationHandler.class.getName()) &&
+                    ((CorrelationHandler) activeTest.getVariableDefinitions().get(CorrelationHandler.class.getName())).isHandlerFor(request)) {
+                return INTERVENING_MESSAGE_MAPPING;
+            }
+        }
+
+        for (TestCase activeTest : activeTestListener.getActiveTests()) {
+            for (CorrelationHandler correlationHandler : correlationHandlers) {
+                if (activeTest.getName().equals(correlationHandler.getClass().getSimpleName()) ||
+                        activeTest.getName().equals(correlationHandler.getClass().getAnnotation(Scenario.class).value())) {
+                    if (correlationHandler.isHandlerFor(request)) {
                         return INTERVENING_MESSAGE_MAPPING;
                     }
                 }

@@ -19,15 +19,14 @@ package com.consol.citrus.simulator.http;
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
 import com.consol.citrus.dsl.builder.SendMessageBuilder;
-import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
-import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorRestScenario extends ExecutableTestDesignerComponent implements SimulatorScenario {
+public class SimulatorRestScenario extends AbstractSimulatorScenario {
 
     @Autowired
     @Qualifier("simulatorRestInboundEndpoint")

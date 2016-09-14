@@ -19,15 +19,14 @@ package com.consol.citrus.simulator.jms;
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
 import com.consol.citrus.dsl.builder.SendMessageBuilder;
-import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
-import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorJmsScenario extends ExecutableTestDesignerComponent implements SimulatorScenario {
+public class SimulatorJmsScenario extends AbstractSimulatorScenario {
 
     @Autowired
     @Qualifier("simulatorJmsInboundEndpoint")

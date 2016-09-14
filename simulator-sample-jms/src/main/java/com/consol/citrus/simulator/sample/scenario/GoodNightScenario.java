@@ -16,20 +16,14 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
-import com.consol.citrus.simulator.message.InterveningMessageHandler;
 import com.consol.citrus.simulator.scenario.Scenario;
-
-import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorJmsScenario implements InterveningMessageHandler {
+public class GoodNightScenario extends SimulatorJmsScenario {
 
     private static final String CORRELATION_ID = "correlationId";
 
@@ -41,12 +35,8 @@ public class GoodNightScenario extends SimulatorJmsScenario implements Interveni
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        action(new AbstractTestAction() {
-            @Override
-            public void doExecute(TestContext context) {
-                getTestCase().getVariableDefinitions().put(CORRELATION_ID, context.getVariable("correlationId"));
-            }
-        });
+        startCorrelation()
+            .onHeader(CORRELATION_ID, "${correlationId}");
 
         sendScenarioResponse()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
@@ -59,11 +49,5 @@ public class GoodNightScenario extends SimulatorJmsScenario implements Interveni
 
         sendScenarioResponse()
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
-    }
-
-    @Override
-    public boolean isHandlerFor(Message message, Map<String, Object> variables) {
-        return  message.getHeader(CORRELATION_ID) != null && variables.containsKey(CORRELATION_ID) &&
-                message.getHeader(CORRELATION_ID).equals(variables.get(CORRELATION_ID));
     }
 }

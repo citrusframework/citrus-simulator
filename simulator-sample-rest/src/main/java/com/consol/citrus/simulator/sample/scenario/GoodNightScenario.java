@@ -16,23 +16,17 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.message.InterveningMessageHandler;
 import com.consol.citrus.simulator.scenario.Scenario;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
 @RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
-public class GoodNightScenario extends SimulatorRestScenario implements InterveningMessageHandler {
+public class GoodNightScenario extends SimulatorRestScenario {
 
     private static final String CORRELATION_ID = "x-correlationid";
 
@@ -44,12 +38,8 @@ public class GoodNightScenario extends SimulatorRestScenario implements Interven
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        action(new AbstractTestAction() {
-            @Override
-            public void doExecute(TestContext context) {
-                getTestCase().getVariableDefinitions().put(CORRELATION_ID, context.getVariable("correlationId"));
-            }
-        });
+        startCorrelation()
+            .onHeader(CORRELATION_ID, "${correlationId}");
 
         sendScenarioResponse()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
@@ -62,11 +52,5 @@ public class GoodNightScenario extends SimulatorRestScenario implements Interven
 
         sendScenarioResponse()
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
-    }
-
-    @Override
-    public boolean isHandlerFor(Message message, Map<String, Object> variables) {
-        return  message.getHeader(CORRELATION_ID) != null && variables.containsKey(CORRELATION_ID) &&
-                message.getHeader(CORRELATION_ID).equals(variables.get(CORRELATION_ID));
     }
 }

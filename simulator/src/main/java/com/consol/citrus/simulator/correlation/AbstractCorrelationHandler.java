@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.message;
+package com.consol.citrus.simulator.correlation;
 
-import com.consol.citrus.message.Message;
-
-import java.util.Map;
+import com.consol.citrus.context.TestContext;
 
 /**
  * @author Christoph Deppisch
  */
-public interface InterveningMessageHandler {
+public abstract class AbstractCorrelationHandler implements CorrelationHandler {
 
-    boolean isHandlerFor(Message message, Map<String, Object> variables);
+    protected TestContext context;
+
+    @Override
+    public void setTestContext(TestContext context) {
+        this.context = context;
+    }
 }
