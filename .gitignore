@@ -13,3 +13,4 @@ bin
 .pmd
 test-output
 overlays
+node_modules
