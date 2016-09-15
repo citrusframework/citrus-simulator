@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Introduction | citrus-simulator</title>
+        <title>Installation | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Citrus Simulator Documentation">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
         
         
@@ -47,8 +47,10 @@
         
     
     
-    <link rel="next" href="./preconditions.html" />
+    <link rel="next" href="./links.html" />
     
+    
+    <link rel="prev" href="./preconditions.html" />
     
 
         
@@ -57,9 +59,9 @@
         
         
     <div class="book"
-        data-level="0"
-        data-chapter-title="Introduction"
-        data-filepath="README.md"
+        data-level="2"
+        data-chapter-title="Installation"
+        data-filepath="installation.md"
         data-basepath="."
         data-revision="Thu Sep 15 2016 11:08:45 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -77,7 +79,7 @@
 
             
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -105,7 +107,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2" data-path="installation.html">
+        <li class="chapter active" data-level="2" data-path="installation.html">
             
                 
                     <a href="./installation.html">
@@ -296,15 +298,29 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="citrus-simulator"><a name="citrus-simulator" class="plugin-anchor" href="#citrus-simulator"><span class="fa fa-link"></span></a>Citrus Simulator</h1>
-<h2 id="welcome-to-the-citrus-simulator"><a name="welcome-to-the-citrus-simulator" class="plugin-anchor" href="#welcome-to-the-citrus-simulator"><span class="fa fa-link"></span></a>Welcome to the Citrus simulator</h2>
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
-<p>The simulator uses the test framework Citrus <a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></p>
-<p><strong>NOTE:</strong> <em>This project is still under construction!</em> </p>
-<p>Contributions and feedback is highly appreciated!  </p>
+                        <h2 id="installation"><a name="installation" class="plugin-anchor" href="#installation"><span class="fa fa-link"></span></a>Installation</h2>
+<p>The Citrus simulator is started as a web application that uses Spring Boot. The easiest way to get started is to use a Maven archetype that creates a new
+project for you.</p>
+<pre><code>&gt; mvn archetype:generate -DarchetypeGroupId=com.consol.citrus -DarchetypeArtifactId=citrus-simulator-quickstart
+</code></pre><p>If you execute the command above the Maven archetype generator will ask you some questions about versions and project names. Once you have completed the generation
+you get a new Maven project that is ready to use. The project is created in a new folder on your machine. Switch to that folder and continue to build the project.</p>
+<h3 id="build-project"><a name="build-project" class="plugin-anchor" href="#build-project"><span class="fa fa-link"></span></a>Build project</h3>
+<p>You can directly build the new project with</p>
+<pre><code>&gt; mvn install
+</code></pre><p>This compiles, tests and packages the project. Now we can run the simulator:</p>
+<pre><code>&gt; mvn spring-boot:run
+</code></pre><p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+you can open your browser and point to <strong><em><a href="http://localhost:8080" target="_blank">http://localhost:8080</a></em></strong>.</p>
+<p>Now everything is set up and you can start to create some simulator scenarios.     </p>
+<h3 id="use-simulator-artifacts"><a name="use-simulator-artifacts" class="plugin-anchor" href="#use-simulator-artifacts"><span class="fa fa-link"></span></a>Use simulator artifacts</h3>
+<p>The simulator is also available as packages web application artifact. First of all download the latest distribution which
+is a Java JAR file located at <a href="https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator" target="_blank">labs.consol.de/maven/repository</a>:</p>
+<p>Save the Java archive to a folder on your local machine and start the Spring boot web application. The downloaded JAR should be executable 
+from command line like this:</p>
+<p><code>java -jar citrus-simulator-0.6.jar</code></p>
+<p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+you can open your browser and point to <strong><em><a href="http://localhost:8080" target="_blank">http://localhost:8080</a></em></strong>.</p>
+<p>That&apos;s it you are ready to use the Citrus simulator.</p>
 
                     
                     </section>
@@ -315,8 +331,10 @@ messages. The simulator response logic is very powerful and enables us to simula
         </div>
 
         
+        <a href="./preconditions.html" class="navigation navigation-prev " aria-label="Previous page: Preconditions"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./preconditions.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Preconditions"><i class="fa fa-angle-right"></i></a>
+        
+        <a href="./links.html" class="navigation navigation-next " aria-label="Next page: Further Reading"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
