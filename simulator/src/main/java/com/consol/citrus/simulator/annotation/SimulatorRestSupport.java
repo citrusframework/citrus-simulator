@@ -158,6 +158,7 @@ public class SimulatorRestSupport {
     }
 
     @Bean
+    @DependsOn("simulatorRestInboundEndpoint")
     public MappingKeyExtractor delegateMappingKeyExtractor() {
         if (configurer != null) {
             return configurer.mappingKeyExtractor();
