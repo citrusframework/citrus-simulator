@@ -20,8 +20,7 @@ import com.consol.citrus.TestCase;
 import com.consol.citrus.report.AbstractTestListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author Christoph Deppisch
@@ -30,7 +29,7 @@ import java.util.List;
 public class SimulatorActiveTestListener extends AbstractTestListener {
 
     /** List of active tests */
-    private List<TestCase> activeTests = new ArrayList<>();
+    private ConcurrentLinkedQueue<TestCase> activeTests = new ConcurrentLinkedQueue<>();
 
     /** Maximum capacity of active tests */
     private int queueCapacity = 1000;
@@ -42,7 +41,7 @@ public class SimulatorActiveTestListener extends AbstractTestListener {
         }
 
         while (activeTests.size() > queueCapacity) {
-            activeTests.remove(0);
+            activeTests.remove();
         }
     }
 
@@ -56,7 +55,7 @@ public class SimulatorActiveTestListener extends AbstractTestListener {
      *
      * @return the activeTests
      */
-    public List<TestCase> getActiveTests() {
-        return activeTests;
+    public TestCase[] getActiveTests() {
+        return activeTests.toArray(new TestCase[ activeTests.size() ]);
     }
 }

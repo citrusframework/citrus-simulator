@@ -29,6 +29,9 @@ public class GoodNightScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
+        startCorrelation()
+            .withHandler(this);
+
         receiveScenarioRequest()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
