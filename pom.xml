@@ -31,6 +31,7 @@
     <module>simulator-sample-ws</module>
     <module>simulator-sample-jms</module>
     <module>simulator-sample-rest</module>
+    <module>simulator-sample-endpoint</module>
   </modules>
   
   <dependencyManagement>

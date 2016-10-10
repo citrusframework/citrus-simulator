@@ -21,7 +21,6 @@ import com.consol.citrus.context.TestContextFactory;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.exceptions.ActionTimeoutException;
-import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.messaging.Producer;
 import com.consol.citrus.messaging.ReplyProducer;
@@ -81,8 +80,14 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 continue;
             } catch (SimulatorException e) {
                 LOG.error("Failed to process message", e.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failed to process message", e);
+                }
             } catch (Exception e) {
                 LOG.error("Unexpected error while processing", e.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unexpected error while processing", e);
+                }
             }
         }
     }
@@ -138,7 +143,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      * Sets the target endpoint to read messages from.
      * @param targetEndpoint
      */
-    public void setTargetEndpoint(JmsEndpoint targetEndpoint) {
+    public void setTargetEndpoint(Endpoint targetEndpoint) {
         this.targetEndpoint = targetEndpoint;
     }
 
