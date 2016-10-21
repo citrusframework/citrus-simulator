@@ -27,9 +27,11 @@ public class DefaultScenario extends SimulatorEndpointScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest();
+        scenario()
+            .receive();
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

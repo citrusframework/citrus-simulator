@@ -16,9 +16,7 @@
 
 package com.consol.citrus.simulator.http;
 
-import com.consol.citrus.channel.ChannelSyncEndpoint;
-import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
-import com.consol.citrus.dsl.builder.SendMessageBuilder;
+import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,17 +28,10 @@ public class SimulatorRestScenario extends AbstractSimulatorScenario {
 
     @Autowired
     @Qualifier("simulatorRestInboundEndpoint")
-    protected ChannelSyncEndpoint simInboundEndpoint;
+    private Endpoint simInboundEndpoint;
 
-    public ReceiveMessageBuilder receiveScenarioRequest() {
-        return (ReceiveMessageBuilder)
-                receive(simInboundEndpoint)
-                    .description("Received REST request");
-    }
-
-    public SendMessageBuilder sendScenarioResponse() {
-        return (SendMessageBuilder)
-                send(simInboundEndpoint)
-                    .description("Sending REST response");
+    @Override
+    protected Endpoint getEndpoint() {
+        return simInboundEndpoint;
     }
 }

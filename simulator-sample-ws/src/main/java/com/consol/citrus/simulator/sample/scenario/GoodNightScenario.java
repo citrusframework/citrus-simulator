@@ -32,26 +32,30 @@ public class GoodNightScenario extends SimulatorWebServiceScenario {
         startCorrelation()
             .withHandler(this);
 
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .header("citrus_soap_action", "GoodNight");
 
-        sendScenarioFault()
+        scenario()
+            .sendFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
 
-        receiveScenarioRequest()
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Go to sleep!" +
-                        "</GoodNight>")
-                .header("citrus_soap_action", "GoodNight");
+        scenario()
+            .receive()
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Go to sleep!" +
+                    "</GoodNight>")
+            .header("citrus_soap_action", "GoodNight");
 
-        sendScenarioResponse()
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Good Night!" +
-                        "</GoodNightResponse>");
+        scenario()
+            .send()
+            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Good Night!" +
+                    "</GoodNightResponse>");
     }
 
     @Override

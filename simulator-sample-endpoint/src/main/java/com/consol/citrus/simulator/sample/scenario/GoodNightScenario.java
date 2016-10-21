@@ -29,7 +29,8 @@ public class GoodNightScenario extends SimulatorEndpointScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
@@ -45,29 +46,32 @@ public class GoodNightScenario extends SimulatorEndpointScenario {
         startCorrelation()
             .onMessageType("mail-message");
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +
                     "</mail-response>");
 
-        receiveScenarioRequest()
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Intervening</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Intervening!</content>" +
-                            "</body>" +
-                        "</mail-message>");
+        scenario()
+            .receive()
+            .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                        "<from>user@citrusframework.org</from>" +
+                        "<to>citrus@citrusframework.org</to>" +
+                        "<cc></cc>" +
+                        "<bcc></bcc>" +
+                        "<subject>Intervening</subject>" +
+                        "<body>" +
+                            "<contentType>text/plain; charset=utf-8</contentType>" +
+                            "<content>Say Intervening!</content>" +
+                        "</body>" +
+                    "</mail-message>");
 
-        sendScenarioResponse()
-                .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<code>250</code>" +
-                            "<message>OK</message>" +
-                        "</mail-response>");
+        scenario()
+            .send()
+            .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                        "<code>250</code>" +
+                        "<message>OK</message>" +
+                    "</mail-response>");
     }
 }

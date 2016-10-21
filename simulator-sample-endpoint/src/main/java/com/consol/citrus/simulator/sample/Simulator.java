@@ -25,15 +25,14 @@ import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Import;
 
 /**
  * @author Christoph Deppisch
  */
 @SpringBootApplication
 @SimulatorApplication
-@Import(SimulatorEndpointSupport.class)
-public class Simulator extends SimulatorAdapter {
+@EnableEndpointComponent
+public class Simulator extends SimulatorEndpointComponentAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);

@@ -27,7 +27,8 @@ public class DefaultScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("");
     }
 }

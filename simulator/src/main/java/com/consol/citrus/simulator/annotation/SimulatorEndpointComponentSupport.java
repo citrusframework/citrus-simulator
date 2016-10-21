@@ -13,10 +13,10 @@ import org.springframework.context.annotation.*;
  * @author Christoph Deppisch
  */
 @Configuration
-public class SimulatorEndpointSupport {
+public class SimulatorEndpointComponentSupport {
 
     @Autowired(required = false)
-    private SimulatorConfigurer configurer;
+    private SimulatorEndpointComponentConfigurer configurer;
 
     @Bean(name = "simulator.inbound")
     public MessageSelectingQueueChannel inboundChannel() {

@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * @author Christoph Deppisch
  */
-public abstract class SimulatorAdapter implements SimulatorConfigurer {
+public abstract class SimulatorEndpointComponentAdapter implements SimulatorEndpointComponentConfigurer {
 
     @Override
     public Endpoint endpoint(ApplicationContext applicationContext) {

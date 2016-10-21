@@ -27,13 +27,15 @@ public class GoodByeScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>")
             .header("citrus_soap_action", "GoodBye");
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

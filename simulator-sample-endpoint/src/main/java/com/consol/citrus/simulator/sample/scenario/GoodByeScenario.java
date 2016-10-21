@@ -27,7 +27,8 @@ public class GoodByeScenario extends SimulatorEndpointScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
@@ -40,7 +41,8 @@ public class GoodByeScenario extends SimulatorEndpointScenario {
                         "</body>" +
                     "</mail-message>");
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

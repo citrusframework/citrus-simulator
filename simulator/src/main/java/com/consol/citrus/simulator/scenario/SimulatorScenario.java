@@ -16,24 +16,10 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
-import com.consol.citrus.dsl.builder.SendMessageBuilder;
-
 /**
  * @author Christoph Deppisch
  */
 public interface SimulatorScenario {
 
-    /**
-     * Receives the scenario initiating request message. Subclasses can add custom message validation steps
-     * and extract message values for further use.
-     * @return
-     */
-    ReceiveMessageBuilder receiveScenarioRequest();
-
-    /**
-     * Sends the final scenario response message.
-     * @return
-     */
-    SendMessageBuilder sendScenarioResponse();
+    ScenarioEndpoint scenario();
 }

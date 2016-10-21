@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * @author Christoph Deppisch
  */
-public interface SimulatorConfigurer {
+public interface SimulatorEndpointComponentConfigurer {
 
     /**
      * Gets the target endpoint.

@@ -30,12 +30,14 @@ public class GoodByeScenario extends SimulatorRestScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

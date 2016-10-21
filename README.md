@@ -7,13 +7,15 @@ JMS messaging.
 Clients are able to access the simulator endpoints and the simulator answers with predefined response
 messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
 
+Read the simulator [user manual](https://christophd.github.io/citrus-simulator/) for more information.
+
 Message processing
 ---------
 
-First of all the simulator identifies the request operation called on the endpoint and maps to the test logic defined
-for this simulator scenario.
+First of all the simulator identifies the simulator scenario based on a mapping key that is extracted from the incoming request. Based
+on that operation key the respective simulator scenario is executed.
 
-There are multiple ways to identify the simulator scenario form incoming request messages:
+There are multiple ways to identify the simulator scenario from incoming request messages:
 
 * Message-Type: Each request message type (XML root QName) results in a separate simulator scenario
 * REST request mappings: Identifies the scenario based on Http method and resource path on server
@@ -39,11 +41,11 @@ Features
 Quick start
 ---------
 
-* Unpack project
-* Build all sources from Maven (mvn clean install)
-* See package com.consol.citrus.simulator.scenario for sample test builder classes
-* Run Spring Boot application from Maven (mvn spring-boot:run)
-* Execute Citrus client tests and see simulator respond to that
+* Unpack project (git clone https://github.com/christophd/citrus-simulator.git)
+* Build all sources with Maven (mvn clean install)
+* See sample modules for individual simulator example code
+* Navigate to simulator sample and run Spring Boot application with Maven (mvn spring-boot:run)
+* Execute Citrus client tests and see simulator respond to that (mvn integration-test)
 
 Resources
 ---------
@@ -57,8 +59,8 @@ Following code resources build the simulator core logic:
 Information
 ---------
 
-For more information on Citrus see [www.citrusframework.org][2], including
-a complete [reference manual][3].
+Read the [user manual](https://christophd.github.io/citrus-simulator/) for detailed instructions and features.
+For more information on Citrus see [www.citrusframework.org][2], including a complete [reference manual][3].
 
  [1]: http://www.citrusframework.org/img/brand-logo.png "Citrus"
  [2]: http://www.citrusframework.org

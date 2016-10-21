@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.channel.ChannelSyncEndpoint;
-import com.consol.citrus.dsl.builder.*;
+import com.consol.citrus.dsl.builder.SendSoapFaultBuilder;
+import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,29 +29,30 @@ public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
 
     @Autowired
     @Qualifier("simulatorWsInboundEndpoint")
-    protected ChannelSyncEndpoint simInboundEndpoint;
+    private Endpoint simInboundEndpoint;
 
     @Override
-    public ReceiveMessageBuilder receiveScenarioRequest() {
-        return (ReceiveMessageBuilder)
-                receive(simInboundEndpoint)
-                    .description("Received SOAP request");
+    protected Endpoint getEndpoint() {
+        return simInboundEndpoint;
     }
 
     @Override
-    public SendMessageBuilder sendScenarioResponse() {
-        return (SendMessageBuilder)
-                send(simInboundEndpoint)
-                    .description("Sending SOAP response");
+    public DefaultWsScenarioEndpoint scenario() {
+        return new DefaultWsScenarioEndpoint();
     }
 
     /**
-     * Sends SOAP fault as scenario response.
-     * @return
+     * Default scenario implementation.
      */
-    public SendSoapFaultBuilder sendScenarioFault() {
-        return (SendSoapFaultBuilder)
-                sendSoapFault(simInboundEndpoint)
-                    .description("Sending SOAP fault");
+    protected class DefaultWsScenarioEndpoint extends DefaultScenarioEndpoint {
+        /**
+         * Sends SOAP fault as scenario response.
+         * @return
+         */
+        public SendSoapFaultBuilder sendFault() {
+            return (SendSoapFaultBuilder)
+                    sendSoapFault(simInboundEndpoint)
+                            .description("Sending SOAP fault");
+        }
     }
 }

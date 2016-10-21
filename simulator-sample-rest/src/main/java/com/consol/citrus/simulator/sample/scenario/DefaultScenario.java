@@ -27,9 +27,11 @@ public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest();
+        scenario()
+            .receive();
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

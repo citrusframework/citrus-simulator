@@ -27,12 +27,14 @@ public class HelloScenario extends SimulatorJmsScenario {
 
     @Override
     protected void configure() {
-        receiveScenarioRequest()
+        scenario()
+            .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>");
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");

@@ -16,7 +16,10 @@
 
 package com.consol.citrus.simulator.scenario;
 
+import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
+import com.consol.citrus.dsl.builder.SendMessageBuilder;
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
+import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.correlation.CorrelationHandler;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
@@ -39,5 +42,38 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
     @Override
     public boolean isHandlerFor(Message message) {
         return false;
+    }
+
+    /**
+     * Gets the scenario endpoint.
+     * @return
+     */
+    public ScenarioEndpoint scenario() {
+        return new DefaultScenarioEndpoint();
+    }
+
+    /**
+     * Subclasses must provide the target endpoint.
+     * @return
+     */
+    protected abstract Endpoint getEndpoint();
+
+    /**
+     * Default scenario implementation.
+     */
+    protected class DefaultScenarioEndpoint implements ScenarioEndpoint {
+        @Override
+        public ReceiveMessageBuilder receive() {
+            return (ReceiveMessageBuilder)
+                    AbstractSimulatorScenario.this.receive(getEndpoint())
+                            .description("Received scenario request");
+        }
+
+        @Override
+        public SendMessageBuilder send() {
+            return (SendMessageBuilder)
+                    AbstractSimulatorScenario.this.send(getEndpoint())
+                            .description("Sending scenario response");
+        }
     }
 }

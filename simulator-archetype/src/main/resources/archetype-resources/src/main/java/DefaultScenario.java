@@ -10,9 +10,11 @@ public class DefaultScenario extends SimulatorRestScenario {
     protected void configure() {
         echo("Default scenario was started");
 
-        receiveScenarioRequest();
+        scenario()
+            .receive();
 
-        sendScenarioResponse()
+        scenario()
+            .send()
             .payload("OK");
 
         echo("Received request");
