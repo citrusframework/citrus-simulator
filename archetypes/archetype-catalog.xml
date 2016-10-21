@@ -3,7 +3,7 @@
   <archetypes>
     <archetype>
       <groupId>com.consol.citrus.archetypes</groupId>
-      <artifactId>citrus-simulator-rest-archetype</artifactId>
+      <artifactId>citrus-simulator-archetype-rest</artifactId>
       <version>0.7</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus REST simulator</description>

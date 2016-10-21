@@ -1,6 +1,6 @@
 package ${package};
 
-import com.consol.citrus.simulator.model.AbstractScenarioStarter;
+import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
 
 import java.util.*;
