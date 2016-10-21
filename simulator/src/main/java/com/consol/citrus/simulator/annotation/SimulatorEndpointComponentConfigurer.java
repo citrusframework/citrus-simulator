@@ -1,13 +1,12 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import org.springframework.context.ApplicationContext;
 
 /**
  * @author Christoph Deppisch
  */
-public interface SimulatorEndpointComponentConfigurer {
+public interface SimulatorEndpointComponentConfigurer extends SimulatorConfigurer {
 
     /**
      * Gets the target endpoint.
@@ -23,9 +22,4 @@ public interface SimulatorEndpointComponentConfigurer {
      */
     boolean useSoapEnvelope();
 
-    /**
-     * Gets the mapping key extractor.
-     * @return
-     */
-    MappingKeyExtractor mappingKeyExtractor();
 }

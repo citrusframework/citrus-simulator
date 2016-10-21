@@ -1,18 +1,11 @@
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * @author Christoph Deppisch
  */
-public interface SimulatorRestConfigurer {
-
-    /**
-     * Gets the mapping key extractor.
-     * @return
-     */
-    MappingKeyExtractor mappingKeyExtractor();
+public interface SimulatorRestConfigurer extends SimulatorConfigurer {
 
     /**
      * Gets list of handler interceptors that should be automatically added to Citrus
