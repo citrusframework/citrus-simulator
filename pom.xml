@@ -28,10 +28,10 @@
     <module>simulator</module>
     <module>simulator-docs</module>
     <module>simulator-archetype</module>
-    <module>simulator-sample-ws</module>
-    <module>simulator-sample-jms</module>
-    <module>simulator-sample-rest</module>
-    <module>simulator-sample-endpoint</module>
+    <module>samples/sample-ws</module>
+    <module>samples/sample-jms</module>
+    <module>samples/sample-rest</module>
+    <module>samples/sample-endpoint</module>
   </modules>
   
   <dependencyManagement>
