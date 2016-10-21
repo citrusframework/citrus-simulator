@@ -1,7 +1,8 @@
 ## Further reading
 
-* The [Citrus reference manual](http://www.citrusframework.org/reference/html/) gives you a detailed description of all Citrus features.
-* Examples: 
-  - [Sample projects](https://github.com/christophd/citrus-simulator)
+* [Citrus home](http://www.citrusframework.org) Citrus homepage with samples and further information.
+* [User guide](http://www.citrusframework.org/reference/html/) gives you a detailed description of all Citrus features.
+* [Sample projects](https://github.com/christophd/citrus-simulator/samples) 
+  demonstrate typical simulator scenarios with different message transports
 * [Contributing](https://github.com/christophd/citrus-simulator/blob/master/citrus-simulator-docs/contributing.md)
   explains how you can contribute to this project. Pull requests are highly appreciated! 
