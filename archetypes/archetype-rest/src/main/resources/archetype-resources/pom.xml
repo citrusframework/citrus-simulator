@@ -7,7 +7,7 @@
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
-  <name>Citrus Simulator</name>
+  <name>Citrus REST Simulator</name>
 
   <packaging>war</packaging>
 

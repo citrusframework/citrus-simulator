@@ -2,11 +2,11 @@
                    xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-catalog/1.0.0 http://maven.apache.org/xsd/archetype-catalog-1.0.0.xsd">
   <archetypes>
     <archetype>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-archetype</artifactId>
+      <groupId>com.consol.citrus.archetypes</groupId>
+      <artifactId>citrus-simulator-rest-archetype</artifactId>
       <version>0.7</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
-      <description>Basic archetype for Citrus simulator project</description>
+      <description>Archetype for Citrus REST simulator</description>
     </archetype>
   </archetypes>
 </archetype-catalog>

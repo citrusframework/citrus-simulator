@@ -27,11 +27,11 @@
   <modules>
     <module>simulator</module>
     <module>simulator-docs</module>
-    <module>simulator-archetype</module>
     <module>samples/sample-ws</module>
     <module>samples/sample-jms</module>
     <module>samples/sample-rest</module>
     <module>samples/sample-endpoint</module>
+    <module>archetypes/archetype-rest</module>
   </modules>
   
   <dependencyManagement>
