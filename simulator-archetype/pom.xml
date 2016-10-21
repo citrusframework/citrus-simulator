@@ -7,7 +7,7 @@
   <parent>
     <artifactId>citrus-simulator-parent</artifactId>
     <groupId>com.consol.citrus</groupId>
-    <version>0.6</version>
+    <version>0.7</version>
   </parent>
 
   <groupId>com.consol.citrus</groupId>

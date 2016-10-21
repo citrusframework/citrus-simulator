@@ -4,7 +4,7 @@
     <archetype>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-archetype</artifactId>
-      <version>0.6</version>
+      <version>0.7</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Basic archetype for Citrus simulator project</description>
     </archetype>
