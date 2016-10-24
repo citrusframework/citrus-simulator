@@ -71,7 +71,7 @@ public class Simulator extends SimulatorJmsAdapter {
                        
     @Override
     public String destinationName() {
-        return "/my-rest-service/**";
+        return "JMS.Queue.simulator.inbound";
     }
     
     @Override

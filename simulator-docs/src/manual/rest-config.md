@@ -29,7 +29,9 @@ add handler interceptors to the REST API call handling.
 The **urlMapping** defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
 REST API would be accessible on this URI:
 
-```http://localhhost:8080/services/rest/*```
+```
+http://localhhost:8080/services/rest/*
+```
 
 The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
 scenario.
@@ -50,7 +52,9 @@ public class MySimulatorRestAdapter extends SimulatorRestAdapter {
 As you can see the class is annotated with **@Component** annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
 REST adapter behavior. The custom adapter just overwrites the **urlMapping** method so the REST simulator API will be accessible for clients under this endpoint URI:
 
-```http://localhhost:8080/my-rest-service/*```
+```
+http://localhhost:8080/my-rest-service/*
+```
 
 This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:
 

@@ -10,11 +10,7 @@ the scenario is a normal Java class that implements following interface *Simulat
 ```java
 package com.consol.citrus.simulator.scenario;
 
-/**
- * @author Christoph Deppisch
- */
 public interface SimulatorScenario {
-
     ScenarioEndpoint scenario();
 }
 ```
@@ -77,7 +73,7 @@ public class HelloScenario extends SimulatorRestScenario {
 }
 ``` 
 
-In the receive operation the user name value is extracted to a test variable ***${userName}*. In the response we are able to use this variable in order to greet the user by name. This way
+In the receive operation the user name value is extracted to a test variable **${userName}**. In the response we are able to use this variable in order to greet the user by name. This way
 we can use the Citrus test power for generating dynamic response messages. Of course this mechanism works for XML, Json and Plaintext payloads.
 
 Now you are ready to write different scenarios that generate different response messages for the calling client.

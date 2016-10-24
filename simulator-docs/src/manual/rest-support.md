@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SimulatorApplication
 @EnableRest
 public class Simulator {
-
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
     }

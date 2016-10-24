@@ -57,6 +57,7 @@ way than for **errorMessage** types.
 You can change the mapping key behavior by overwriting te default mapping key extractor in your simulator.
 
 ```java
+@Component
 public class SimulatorAdapter extends SimulatorRestAdapter {
     @Override
     public MappingKeyExtractor mappingKeyExtractor() {
@@ -68,5 +69,6 @@ public class SimulatorAdapter extends SimulatorRestAdapter {
 ```
 
 With the configuration above we use the *HeaderMappingKeyExtractor* implementation so the header name **X-simulator-scenario** gets evaluated for each incoming request message. 
-Depending on that header value the matching scenario is executed as a result. As you can see the mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
-this behavior very easy in the simulator adapter configuration.
+Depending on that header value the matching scenario is executed as a result. The mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
+this behavior very easy in the simulator adapter configuration. Read more about how to add simulator adapter configuration classes in configuration chapters [rest-config](rest-config.md), [ws-config](ws-config.md) 
+or [jms-config](jms-config.md).

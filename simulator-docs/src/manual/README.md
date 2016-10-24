@@ -1,4 +1,4 @@
-# Citrus Simulator
+# Citrus Simulator - Reference Documentation ![citrus-logo](images/citrus_logo.png)
 
 ## Welcome to the Citrus simulator
 
@@ -13,3 +13,15 @@ The simulator uses the test framework Citrus [www.citrusframework.org](http://ww
 **NOTE:** *This project is still under construction!* 
 
 Contributions and feedback is highly appreciated!  
+
+## Authors
+
+Christoph Deppisch
+
+## Version
+
+**0.7**
+
+**Copyright © 2016 ConSol Software GmbH**
+
+**[www.citrusframework.org](http://www.citrusframework.org)**

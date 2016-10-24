@@ -1,5 +1,5 @@
 {
-  "title": "citrus-simulator",
+  "title": "Citrus Simulator Reference Guide",
   "description": "Citrus Simulator Documentation",
   "extension": "pdf",
   "github": "christophd/citrus-simulator",
@@ -21,7 +21,7 @@
   "pluginsConfig": {
     "edit-link": {
       "base": "https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual",
-      "label": "Edit This Page"
+      "label": "Improve This Page"
     }
   },
 
@@ -32,8 +32,8 @@
     "margin": {
       "right": 62,
       "left": 62,
-      "top": 36,
-      "bottom": 36
+      "top": 56,
+      "bottom": 56
     }
   }
 }
