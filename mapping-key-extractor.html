@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Mapping key extractor | citrus-simulator</title>
+        <title>Mapping key extractor | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -63,7 +63,7 @@
         data-chapter-title="Mapping key extractor"
         data-filepath="mapping-key-extractor.md"
         data-basepath="."
-        data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
+        data-revision="Mon Oct 24 2016 11:22:11 GMT+0200 (CEST)"
         data-innerlanguage="">
     
 
@@ -434,7 +434,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="./" >citrus-simulator</a>
+        <a href="./" >Citrus Simulator Reference Guide</a>
     </h1>
 </div>
 
@@ -489,7 +489,8 @@ respective naming. Given the following incoming requests the simulator will pick
 way than for <strong>errorMessage</strong> types.</p>
 <h3 id="configuration"><a name="configuration" class="plugin-anchor" href="#configuration"><span class="fa fa-link"></span></a>Configuration</h3>
 <p>You can change the mapping key behavior by overwriting te default mapping key extractor in your simulator.</p>
-<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestAdapter</span> </span>{
+<pre><code class="lang-java"><span class="hljs-annotation">@Component</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestAdapter</span> </span>{
     <span class="hljs-annotation">@Override</span>
     <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
         HeaderMappingKeyExtractor mappingKeyExtractor = <span class="hljs-keyword">new</span> HeaderMappingKeyExtractor();
@@ -499,8 +500,9 @@ way than for <strong>errorMessage</strong> types.</p>
 }
 </code></pre>
 <p>With the configuration above we use the <em>HeaderMappingKeyExtractor</em> implementation so the header name <strong>X-simulator-scenario</strong> gets evaluated for each incoming request message. 
-Depending on that header value the matching scenario is executed as a result. As you can see the mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
-this behavior very easy in the simulator adapter configuration.</p>
+Depending on that header value the matching scenario is executed as a result. The mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
+this behavior very easy in the simulator adapter configuration. Read more about how to add simulator adapter configuration classes in configuration chapters <a href="rest-config.html">rest-config</a>, <a href="ws-config.html">ws-config</a> 
+or <a href="jms-config.html">jms-config</a>.</p>
 
                     
                     </section>
@@ -552,7 +554,7 @@ this behavior very easy in the simulator adapter configuration.</p>
 
 <script>
 require(["gitbook"], function(gitbook) {
-    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Edit This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Improve This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
     gitbook.start(config);
 });
 </script>

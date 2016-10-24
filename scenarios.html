@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Simulator scenarios | citrus-simulator</title>
+        <title>Simulator scenarios | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -63,7 +63,7 @@
         data-chapter-title="Simulator scenarios"
         data-filepath="scenarios.md"
         data-basepath="."
-        data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
+        data-revision="Mon Oct 24 2016 11:22:11 GMT+0200 (CEST)"
         data-innerlanguage="">
     
 
@@ -434,7 +434,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="./" >citrus-simulator</a>
+        <a href="./" >Citrus Simulator Reference Guide</a>
     </h1>
 </div>
 
@@ -452,11 +452,7 @@ is in charge of constructing a proper response message.</p>
 the scenario is a normal Java class that implements following interface <em>SimulatorScenario</em></p>
 <pre><code class="lang-java"><span class="hljs-keyword">package</span> com.consol.citrus.simulator.scenario;
 
-<span class="hljs-comment">/**
- * <span class="hljs-doctag">@author</span> Christoph Deppisch
- */</span>
 <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">SimulatorScenario</span> </span>{
-
     <span class="hljs-function">ScenarioEndpoint <span class="hljs-title">scenario</span><span class="hljs-params">()</span></span>;
 }
 </code></pre>
@@ -511,7 +507,7 @@ in order to construct different message payloads such as XML, JSON, PLAINTEXT an
     }
 }
 </code></pre>
-<p>In the receive operation the user name value is extracted to a test variable <em>**${userName}</em>. In the response we are able to use this variable in order to greet the user by name. This way
+<p>In the receive operation the user name value is extracted to a test variable <strong>${userName}</strong>. In the response we are able to use this variable in order to greet the user by name. This way
 we can use the Citrus test power for generating dynamic response messages. Of course this mechanism works for XML, Json and Plaintext payloads.</p>
 <p>Now you are ready to write different scenarios that generate different response messages for the calling client.</p>
 
@@ -565,7 +561,7 @@ we can use the Citrus test power for generating dynamic response messages. Of co
 
 <script>
 require(["gitbook"], function(gitbook) {
-    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Edit This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Improve This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
     gitbook.start(config);
 });
 </script>

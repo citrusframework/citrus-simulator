@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Configuration | citrus-simulator</title>
+        <title>Configuration | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -63,7 +63,7 @@
         data-chapter-title="Configuration"
         data-filepath="rest-config.md"
         data-basepath="."
-        data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
+        data-revision="Mon Oct 24 2016 11:22:11 GMT+0200 (CEST)"
         data-innerlanguage="">
     
 
@@ -434,7 +434,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="./" >citrus-simulator</a>
+        <a href="./" >Citrus Simulator Reference Guide</a>
     </h1>
 </div>
 
@@ -469,52 +469,47 @@ add a <strong>SimulatorRestAdapter</strong> implementation to the classpath. The
 add handler interceptors to the REST API call handling.</p>
 <p>The <strong>urlMapping</strong> defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
 REST API would be accessible on this URI:</p>
-<pre><code class="lang-http://localhhost:8080/services/rest/*```">
-The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
-scenario.
+<pre><code>http://localhhost:8080/services/rest/*
+</code></pre><p>The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
+scenario.</p>
+<p>You can simply extend the adapter in a custom class for adding customizations.</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Component</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySimulatorRestAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestAdapter</span> </span>{
 
-You can simply extend the adapter in a custom class for adding customizations.
-
-```java
-@Component
-public class MySimulatorRestAdapter extends SimulatorRestAdapter {
-
-    @Override
-    public String urlMapping() {
-        return &quot;/my-rest-service/**&quot;;
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">urlMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/my-rest-service/**&quot;</span>;
     }
 }
 </code></pre>
 <p>As you can see the class is annotated with <strong>@Component</strong> annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
 REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping</strong> method so the REST simulator API will be accessible for clients under this endpoint URI:</p>
-<pre><code class="lang-http://localhhost:8080/my-rest-service/*```">
-This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:
+<pre><code>http://localhhost:8080/my-rest-service/*
+</code></pre><p>This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableRest;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
 
-```java
-import com.consol.citrus.simulator.annotation.EnableRest;
-import com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-annotation">@EnableRest</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestAdapter</span> </span>{
 
-@SpringBootApplication
-@SimulatorApplication
-@EnableRest
-public class Simulator extends SimulatorRestAdapter {
-
-    @Override
-    public String urlMapping() {
-        return &quot;/my-rest-service/**&quot;;
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">urlMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/my-rest-service/**&quot;</span>;
     }
 
-    @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        HeaderMappingKeyExtractor mappingKeyExtractor = new HeaderMappingKeyExtractor();
-        mappingKeyExtractor.setHeaderName(&quot;X-simulator-scenario&quot;);
-        return mappingKeyExtractor;
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        HeaderMappingKeyExtractor mappingKeyExtractor = <span class="hljs-keyword">new</span> HeaderMappingKeyExtractor();
+        mappingKeyExtractor.setHeaderName(<span class="hljs-string">&quot;X-simulator-scenario&quot;</span>);
+        <span class="hljs-keyword">return</span> mappingKeyExtractor;
     }
 
-    public static void main(String[] args) {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
         SpringApplication.run(Simulator.class, args);
     }
 }
@@ -622,7 +617,7 @@ We can not use the <strong>@EnableRest</strong> auto configuration annotation th
 
 <script>
 require(["gitbook"], function(gitbook) {
-    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Edit This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
+    var config = {"edit-link":{"base":"https://github.com/christophd/citrus-simulator/edit/master/citrus-simulator-docs/src/manual","label":"Improve This Page"},"anchors":{},"code_tomorrow_scheme":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"fontsettings":{"family":"sans","size":2,"theme":"white"}};
     gitbook.start(config);
 });
 </script>
