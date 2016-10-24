@@ -48,7 +48,7 @@ public class SimulatorWebServiceSupport {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, getDispatcherServletMapping());
+        return new ServletRegistrationBean(servlet, getServletMapping());
     }
 
     @Bean(name = "simulator.ws.inbound")
@@ -126,7 +126,7 @@ public class SimulatorWebServiceSupport {
      * context path in order to access the web service support on the simulator.
      * @return
      */
-    protected String getDispatcherServletMapping() {
+    protected String getServletMapping() {
         if (configurer != null) {
             return configurer.servletMapping();
         }
