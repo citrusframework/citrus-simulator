@@ -1,4 +1,4 @@
-## SOAP Web Services configuration
+## Web Service configuration
 
 Once the SOAP support is enabled on the simulator we have different configuration options. The most comfortable way is to
 add a **SimulatorWebServiceAdapter** implementation to the classpath. The adapter provides several configuration methods.

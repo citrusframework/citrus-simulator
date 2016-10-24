@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -32,7 +33,7 @@ public class HelloScenario extends SimulatorWebServiceScenario {
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>")
-            .header("citrus_soap_action", "Hello");
+            .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
 
         scenario()
             .send()

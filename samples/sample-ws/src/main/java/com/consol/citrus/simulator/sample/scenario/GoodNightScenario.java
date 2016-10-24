@@ -20,6 +20,7 @@ import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtracto
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -37,7 +38,7 @@ public class GoodNightScenario extends SimulatorWebServiceScenario {
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
-            .header("citrus_soap_action", "GoodNight");
+            .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
 
         scenario()
             .sendFault()

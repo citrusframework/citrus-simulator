@@ -23,5 +23,5 @@ public class Simulator {
 The **@EnableJms** annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
-After that we are ready to handle incoming JMS messages on the simulator. In addition to that you are able to add JMS related configuration options
-as described in the following sections.
+With that piece of configuration we are ready to handle incoming JMS messages on the simulator. Of course we need a JMS connection factory and other JMS related 
+configuration options as described in the following sections.

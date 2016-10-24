@@ -3,6 +3,7 @@
 * [Concepts](concepts.md)
   - [Mapping key extractor](mapping-key-extractor.md)
   - [Simulator scenarios](scenarios.md)
+  - [Intermediate message handling](intermediate-messages.md)
 * [REST support](rest-support.md)
   - [Configuration](rest-config.md)
   - [Request mapping](rest-request-mapping.md)

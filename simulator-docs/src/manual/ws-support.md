@@ -22,5 +22,31 @@ public class Simulator {
 The **@EnableWebService** annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
-After that we are ready to handle incoming SOAP Web Service calls on the simulator. In addition to that you are able to add SOAP related configuration options
-as described in the following sections.
+After that we are ready to handle incoming SOAP Web Service calls on the simulator. We can use the default scenario base class for SOAP Web Services.
+
+```java
+@Scenario("Hello")
+public class HelloScenario extends SimulatorWebServiceScenario {
+
+    @Override
+    protected void configure() {
+        scenario()
+            .receive()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                     "</Hello>")
+            .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
+
+        scenario()
+            .send()
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                     "</HelloResponse>");
+    }
+}
+```
+
+The **SimulatorWebServiceScenario** automatically handles the SOAP envelope so we do not have to deal with that in the scenario receive and send operations. Also
+the scenario receive operation has access to the SOAP action of the incoming request call. Besides that we can also [return a SOAP fault](ws-soap-faults.md) message as scenario outcome. 
+
+Let's move on with having a look at the SOAP related configuration options as described in the following sections.

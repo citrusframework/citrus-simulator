@@ -26,6 +26,10 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 The adapter defines methods that configure the simulator REST handling. For instance we can add another mapping key extractor implementation or
 add handler interceptors to the REST API call handling.
 
+**Note**
+The REST support is using a different default mapping key extractor. The **AnnotationRequestMappingKeyExtractor** is active by default and enables **@RequestMapping**
+related mapping on scenario classes. Read more about that in [rest-request-mapping](rest-request-mapping.md).
+
 The **urlMapping** defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
 REST API would be accessible on this URI:
 
