@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Preconditions | citrus-simulator</title>
+        <title>Concepts | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -47,10 +47,10 @@
         
     
     
-    <link rel="next" href="./installation.html" />
+    <link rel="next" href="./mapping-key-extractor.html" />
     
     
-    <link rel="prev" href="./index.html" />
+    <link rel="prev" href="./installation.html" />
     
 
         
@@ -59,9 +59,9 @@
         
         
     <div class="book"
-        data-level="1"
-        data-chapter-title="Preconditions"
-        data-filepath="preconditions.md"
+        data-level="3"
+        data-chapter-title="Concepts"
+        data-filepath="concepts.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -92,7 +92,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="preconditions.html">
+        <li class="chapter " data-level="1" data-path="preconditions.html">
             
                 
                     <a href="./preconditions.html">
@@ -122,7 +122,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3" data-path="concepts.html">
+        <li class="chapter active" data-level="3" data-path="concepts.html">
             
                 
                     <a href="./concepts.html">
@@ -444,21 +444,69 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="preconditions"><a name="preconditions" class="plugin-anchor" href="#preconditions"><span class="fa fa-link"></span></a>Preconditions</h2>
-<p>The Citrus simulator requires some software installed on your localhost.</p>
-<h3 id="java-8"><a name="java-8" class="plugin-anchor" href="#java-8"><span class="fa fa-link"></span></a>Java 8</h3>
-<p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application. 
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
-<pre><code>&gt; java -version
-</code></pre><h3 id="build-tools"><a name="build-tools" class="plugin-anchor" href="#build-tools"><span class="fa fa-link"></span></a>Build tools</h3>
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-<pre><code>&gt; mvn -version
-</code></pre><h3 id="browsers"><a name="browsers" class="plugin-anchor" href="#browsers"><span class="fa fa-link"></span></a>Browsers</h3>
-<p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working 
-on these two browsers. Of course other browsers might work without any limitations, too.</p>
+                        <h2 id="concepts"><a name="concepts" class="plugin-anchor" href="#concepts"><span class="fa fa-link"></span></a>Concepts</h2>
+<p>The Citrus simulator project has the primary focus to provide messaging simulation as a standalone server. Once started the simulator
+provides different endpoints (Http REST, JMS, SOAP Web Service, and so on) and waits for incoming requests. The time a request arrives at one of the endpoints
+the simulator maps the request to a predefined <a href="scenarios.html">simulator scenario</a> which is automatically executed immediately. </p>
+<p>The mapping is done by <a href="mapping-key-extractor.html">extracting a mapping key</a> from the request data. This can be a special request header or a XPath
+expression that is evaluated on the request payload.</p>
+<p>The <a href="scenarios.html">simulator scenario</a> is capable of handling the request message and will return a proper response message to the calling client. 
+With different scenarios defined the simulator is able to respond to different requests accordingly.</p>
+<p>Each scenario defines a very special simulation logic by using Citrus test actions that perform once the scenario is triggered by incoming requests.</p>
+<p>This way each incoming request is processed and a proper response message is provided to the client. You can define default and fallback scenarios for
+each simulator.</p>
+<p>In addition to that the simulator provides a <a href="user-interface.md">user interface</a> where executed scenarios state success or failure. 
+Also you can trigger scenarios manually.</p>
+<h3 id="simulator-application"><a name="simulator-application" class="plugin-anchor" href="#simulator-application"><span class="fa fa-link"></span></a>Simulator application</h3>
+<p>The simulator is based on Spring boot. This means we have a main class that loads the Spring boot application.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableRest;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-annotation">@EnableRest</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>This class is the main entrance for all configuration and customization statements. First of all the class is annotated as <strong>@SpringBootApplication</strong>
+and <strong>@SimulatorApplication</strong>. This enables auto configuration for the simulator application. In addition to that we enable different aspects of the simulator
+by using further annotations provided. In the sample above we use the <strong>@EnableRest</strong> annotation for Http REST endpoint support.</p>
+<p>There are multiple annotations available for different transport endpoints:</p>
+<ul>
+<li><strong>@EnableRest</strong> Enables <a href="rest-support.html">Http REST support</a></li>
+<li><strong>@EnableWs</strong> Enables <a href="ws-support.html">SOAP web services support</a></li>
+<li><strong>@EnableJms</strong> Enables <a href="jms-support.html">JMS support</a></li>
+<li><strong>@EnableEndpointComponent</strong> Enables generic <a href="endpoint-component-support.md">endpoint component support</a></li>
+</ul>
+<h3 id="properties"><a name="properties" class="plugin-anchor" href="#properties"><span class="fa fa-link"></span></a>Properties</h3>
+<p>The simulator is capable of loading configuration from system properties and property files. There are several properties that you can use in order to customize the simulator behavior. These
+properties are:</p>
+<ul>
+<li><strong>citrus.simulator.configuration.class</strong> Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)</li>
+<li><strong>citrus.simulator.template.path</strong> Default path to message payload template files.</li>
+<li><strong>citrus.simulator.default.scenario</strong> Default scenario name.</li>
+<li><strong>citrus.simulator.timeout</strong> Timeout when waiting for inbound messages.</li>
+<li><strong>citrus.simulator.template.validation</strong> Enable/disable schema validation.</li>
+</ul>
+<p>You can set these properties as system properties or you can add a property file in following location:</p>
+<ul>
+<li><strong>META-INF/citrus-simulator.properties</strong></li>
+</ul>
+<p>The simulator will automatically load these properties during startup.</p>
+<h3 id="spring-bean-configuration"><a name="spring-bean-configuration" class="plugin-anchor" href="#spring-bean-configuration"><span class="fa fa-link"></span></a>Spring bean configuration</h3>
+<p>Citrus works with the Spring framework and the simulator is a Spring boot application. Therefore the configuration is done by adding and overwriting Spring beans in
+the application context. The simulator automatically loads Spring beans defined in following locations:</p>
+<ul>
+<li><strong>META-INF/citrus-simulator.xml</strong> Xml Spring bean configuration file.</li>
+<li><strong>com.consol.citrus.simulator.SimulatorConfig</strong> Java configuration class. You can customize this class by defining the property <strong>citrus.simulator.configuration.class</strong> </li>
+</ul>
+<p>All beans defined in there get automatically loaded to the simulator Spring application context.</p>
 
                     
                     </section>
@@ -469,10 +517,10 @@ on these two browsers. Of course other browsers might work without any limitatio
         </div>
 
         
-        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="./installation.html" class="navigation navigation-prev " aria-label="Previous page: Installation"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./installation.html" class="navigation navigation-next " aria-label="Next page: Installation"><i class="fa fa-angle-right"></i></a>
+        <a href="./mapping-key-extractor.html" class="navigation navigation-next " aria-label="Next page: Mapping key extractor"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

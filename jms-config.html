@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Preconditions | citrus-simulator</title>
+        <title>Configuration | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -47,10 +47,10 @@
         
     
     
-    <link rel="next" href="./installation.html" />
+    <link rel="next" href="./links.html" />
     
     
-    <link rel="prev" href="./index.html" />
+    <link rel="prev" href="./jms-support.html" />
     
 
         
@@ -59,9 +59,9 @@
         
         
     <div class="book"
-        data-level="1"
-        data-chapter-title="Preconditions"
-        data-filepath="preconditions.md"
+        data-level="6.1"
+        data-chapter-title="Configuration"
+        data-filepath="jms-config.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -92,7 +92,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="preconditions.html">
+        <li class="chapter " data-level="1" data-path="preconditions.html">
             
                 
                     <a href="./preconditions.html">
@@ -275,7 +275,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="6.1" data-path="jms-config.html">
+        <li class="chapter active" data-level="6.1" data-path="jms-config.html">
             
                 
                     <a href="./jms-config.html">
@@ -444,21 +444,81 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="preconditions"><a name="preconditions" class="plugin-anchor" href="#preconditions"><span class="fa fa-link"></span></a>Preconditions</h2>
-<p>The Citrus simulator requires some software installed on your localhost.</p>
-<h3 id="java-8"><a name="java-8" class="plugin-anchor" href="#java-8"><span class="fa fa-link"></span></a>Java 8</h3>
-<p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application. 
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
-<pre><code>&gt; java -version
-</code></pre><h3 id="build-tools"><a name="build-tools" class="plugin-anchor" href="#build-tools"><span class="fa fa-link"></span></a>Build tools</h3>
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-<pre><code>&gt; mvn -version
-</code></pre><h3 id="browsers"><a name="browsers" class="plugin-anchor" href="#browsers"><span class="fa fa-link"></span></a>Browsers</h3>
-<p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working 
-on these two browsers. Of course other browsers might work without any limitations, too.</p>
+                        <h2 id="jms-configuration"><a name="jms-configuration" class="plugin-anchor" href="#jms-configuration"><span class="fa fa-link"></span></a>JMS configuration</h2>
+<p>Once the JMS support is enabled on the simulator we have different configuration options. The most comfortable way is to
+add a <strong>SimulatorJmsAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorJmsAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">SimulatorJmsConfigurer</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ConnectionFactory <span class="hljs-title">connectionFactory</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> SingleConnectionFactory();
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">destinationName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> System.getProperty(<span class="hljs-string">&quot;citrus.simulator.jms.destination&quot;</span>, <span class="hljs-string">&quot;Citrus.Simulator.Inbound&quot;</span>);
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">useSoapEnvelope</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> XPathPayloadMappingKeyExtractor();
+    }
+}
+</code></pre>
+<p>The adapter defines methods that configure the simulator JMS handling. For instance we can add another mapping key extractor implementation or
+enable automatic SOAP envelope handling.</p>
+<p>The <strong>destinationName</strong> defines the incoming JMS destination to poll. The <strong>connectionFactory</strong> is mandatory in order to connect to a JMS
+message broker.</p>
+<p>You can simply extend the adapter in a custom class for adding customizations.</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Component</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySimulatorJmsAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorJmsAdapter</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">destinationName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;JMS.Queue.simulator.inbound&quot;</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ConnectionFactory <span class="hljs-title">connectionFactory</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ActiveMQConnectionFactory(<span class="hljs-string">&quot;tcp://localhost:61616&quot;</span>);
+    }
+}
+</code></pre>
+<p>As you can see the class is annotated with <strong>@Component</strong> annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
+JMS adapter behavior. The custom adapter just overwrites the <strong>connectionFactory</strong> and <strong>destinationName</strong> methods so the JMS simulator will connect to the ActiveMQ message broker
+and listen for incoming requests on that queue.</p>
+<p>This is the simplest way to customize the simulator JMS support. We can also use the adapter extension directly on the Spring boot main application class:</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableJms;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-annotation">@EnableJms</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorJmsAdapter</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">destinationName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/my-rest-service/**&quot;</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ConnectionFactory <span class="hljs-title">connectionFactory</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ActiveMQConnectionFactory(<span class="hljs-string">&quot;tcp://localhost:61616&quot;</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>So we have <strong>@EnableJms</strong> and JMS adapter customizations combined on one single class.</p>
 
                     
                     </section>
@@ -469,10 +529,10 @@ on these two browsers. Of course other browsers might work without any limitatio
         </div>
 
         
-        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="./jms-support.html" class="navigation navigation-prev " aria-label="Previous page: JMS support"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./installation.html" class="navigation navigation-next " aria-label="Next page: Installation"><i class="fa fa-angle-right"></i></a>
+        <a href="./links.html" class="navigation navigation-next " aria-label="Next page: Further Reading"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

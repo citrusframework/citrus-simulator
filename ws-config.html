@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Preconditions | citrus-simulator</title>
+        <title>Configuration | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -47,10 +47,10 @@
         
     
     
-    <link rel="next" href="./installation.html" />
+    <link rel="next" href="./jms-support.html" />
     
     
-    <link rel="prev" href="./index.html" />
+    <link rel="prev" href="./ws-support.html" />
     
 
         
@@ -59,9 +59,9 @@
         
         
     <div class="book"
-        data-level="1"
-        data-chapter-title="Preconditions"
-        data-filepath="preconditions.md"
+        data-level="5.1"
+        data-chapter-title="Configuration"
+        data-filepath="ws-config.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -92,7 +92,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="preconditions.html">
+        <li class="chapter " data-level="1" data-path="preconditions.html">
             
                 
                     <a href="./preconditions.html">
@@ -232,7 +232,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="5.1" data-path="ws-config.html">
+        <li class="chapter active" data-level="5.1" data-path="ws-config.html">
             
                 
                     <a href="./ws-config.html">
@@ -444,21 +444,111 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="preconditions"><a name="preconditions" class="plugin-anchor" href="#preconditions"><span class="fa fa-link"></span></a>Preconditions</h2>
-<p>The Citrus simulator requires some software installed on your localhost.</p>
-<h3 id="java-8"><a name="java-8" class="plugin-anchor" href="#java-8"><span class="fa fa-link"></span></a>Java 8</h3>
-<p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application. 
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
-<pre><code>&gt; java -version
-</code></pre><h3 id="build-tools"><a name="build-tools" class="plugin-anchor" href="#build-tools"><span class="fa fa-link"></span></a>Build tools</h3>
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-<pre><code>&gt; mvn -version
-</code></pre><h3 id="browsers"><a name="browsers" class="plugin-anchor" href="#browsers"><span class="fa fa-link"></span></a>Browsers</h3>
-<p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working 
-on these two browsers. Of course other browsers might work without any limitations, too.</p>
+                        <h2 id="soap-web-services-configuration"><a name="soap-web-services-configuration" class="plugin-anchor" href="#soap-web-services-configuration"><span class="fa fa-link"></span></a>SOAP Web Services configuration</h2>
+<p>Once the SOAP support is enabled on the simulator we have different configuration options. The most comfortable way is to
+add a <strong>SimulatorWebServiceAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorWebServiceAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">SimulatorWebServiceConfigurer</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">servletMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/services/ws/*&quot;</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> XPathPayloadMappingKeyExtractor();
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-keyword">public</span> EndpointInterceptor[] interceptors() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> EndpointInterceptor[] { <span class="hljs-keyword">new</span> LoggingEndpointInterceptor() };
+    }
+}
+</code></pre>
+<p>The adapter defines methods that configure the simulator SOAP message handling. For instance we can add another mapping key extractor implementation or
+add endpoint interceptors to the SOAP service call handling.</p>
+<p>The <strong>servletMapping</strong> defines how clients can access the simulator SOAP service. Assuming the Spring boot simulator application is running on port 8080 the
+SOAP service would be accessible on this URI:</p>
+<pre><code class="lang-http://localhhost:8080/services/ws/*```">
+The clients can send SOAP calls to that endpoint URI then. The simulator will respond with respective SOAP responses based on the called
+scenario.
+
+You can simply extend the adapter in a custom class for adding customizations.
+
+```java
+@Component
+public class MySimulatorWebServiceAdapter extends SimulatorWebServiceAdapter {
+
+    @Override
+    public String servletMapping() {
+        return &quot;/my-soap-service/**&quot;;
+    }
+}
+</code></pre>
+<p>As you can see the class is annotated with <strong>@Component</strong> annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
+SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMapping</strong> method so the SOAP simulator API will be accessible for clients under this endpoint URI:</p>
+<pre><code class="lang-http://localhhost:8080/my-soap-service/*```">
+This is the simplest way to customize the simulator SOAP support. We can also use the adapter extension directly on the Spring boot main application class:
+
+```java
+import com.consol.citrus.simulator.annotation.EnableWebService;
+import com.consol.citrus.simulator.annotation.SimulatorWebServiceAdapter;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@SimulatorApplication
+@EnableWebService
+public class Simulator extends SimulatorWebServiceAdapter {
+
+    @Override
+    public String servletMapping() {
+        return &quot;/my-soap-service/**&quot;;
+    }
+
+    @Override
+    public MappingKeyExtractor mappingKeyExtractor() {
+        return new SoapActionMappingKeyExtractor();
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>So we have <strong>@EnableWebService</strong> and SOAP adapter customizations combined on one single class.</p>
+<h3 id="advanced-customizations"><a name="advanced-customizations" class="plugin-anchor" href="#advanced-customizations"><span class="fa fa-link"></span></a>Advanced customizations</h3>
+<p>For a more advanced configuration option we can extend the <strong>SimulatorWebServiceSupport</strong> implementation.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableWebService;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorWebServiceSupport;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorWebServiceSupport</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> String <span class="hljs-title">getServletMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/my-soap-service/**&quot;</span>;
+    }
+
+    <span class="hljs-annotation">@Bean</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ServletRegistrationBean <span class="hljs-title">messageDispatcherServlet</span><span class="hljs-params">(ApplicationContext applicationContext)</span> </span>{
+        MessageDispatcherServlet servlet = <span class="hljs-keyword">new</span> MessageDispatcherServlet();
+        servlet.setApplicationContext(applicationContext);
+        servlet.setTransformWsdlLocations(<span class="hljs-keyword">true</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ServletRegistrationBean(servlet, getDispatcherServletMapping());
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the <strong>messageDispatcherServlet</strong>. 
+We can not use the <strong>@EnableWebService</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorWebServiceSupport</strong> implementation directly.</p>
 
                     
                     </section>
@@ -469,10 +559,10 @@ on these two browsers. Of course other browsers might work without any limitatio
         </div>
 
         
-        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="./ws-support.html" class="navigation navigation-prev " aria-label="Previous page: Web Service support"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./installation.html" class="navigation navigation-next " aria-label="Next page: Installation"><i class="fa fa-angle-right"></i></a>
+        <a href="./jms-support.html" class="navigation navigation-next " aria-label="Next page: JMS support"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Preconditions | citrus-simulator</title>
+        <title>Configuration | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -47,10 +47,10 @@
         
     
     
-    <link rel="next" href="./installation.html" />
+    <link rel="next" href="./ws-support.html" />
     
     
-    <link rel="prev" href="./index.html" />
+    <link rel="prev" href="./rest-support.html" />
     
 
         
@@ -59,9 +59,9 @@
         
         
     <div class="book"
-        data-level="1"
-        data-chapter-title="Preconditions"
-        data-filepath="preconditions.md"
+        data-level="4.1"
+        data-chapter-title="Configuration"
+        data-filepath="rest-config.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -92,7 +92,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="preconditions.html">
+        <li class="chapter " data-level="1" data-path="preconditions.html">
             
                 
                     <a href="./preconditions.html">
@@ -189,7 +189,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="4.1" data-path="rest-config.html">
+        <li class="chapter active" data-level="4.1" data-path="rest-config.html">
             
                 
                     <a href="./rest-config.html">
@@ -444,21 +444,133 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="preconditions"><a name="preconditions" class="plugin-anchor" href="#preconditions"><span class="fa fa-link"></span></a>Preconditions</h2>
-<p>The Citrus simulator requires some software installed on your localhost.</p>
-<h3 id="java-8"><a name="java-8" class="plugin-anchor" href="#java-8"><span class="fa fa-link"></span></a>Java 8</h3>
-<p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application. 
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
-<pre><code>&gt; java -version
-</code></pre><h3 id="build-tools"><a name="build-tools" class="plugin-anchor" href="#build-tools"><span class="fa fa-link"></span></a>Build tools</h3>
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-<pre><code>&gt; mvn -version
-</code></pre><h3 id="browsers"><a name="browsers" class="plugin-anchor" href="#browsers"><span class="fa fa-link"></span></a>Browsers</h3>
-<p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working 
-on these two browsers. Of course other browsers might work without any limitations, too.</p>
+                        <h2 id="rest-configuration"><a name="rest-configuration" class="plugin-anchor" href="#rest-configuration"><span class="fa fa-link"></span></a>REST configuration</h2>
+<p>Once the REST support is enabled on the simulator we have different configuration options. The most comfortable way is to
+add a <strong>SimulatorRestAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorRestAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">SimulatorRestConfigurer</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> AnnotationRequestMappingKeyExtractor();
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-keyword">public</span> HandlerInterceptor[] interceptors() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> HandlerInterceptor[] { <span class="hljs-keyword">new</span> LoggingHandlerInterceptor() };
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">urlMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/services/rest/**&quot;</span>;
+    }
+}
+</code></pre>
+<p>The adapter defines methods that configure the simulator REST handling. For instance we can add another mapping key extractor implementation or
+add handler interceptors to the REST API call handling.</p>
+<p>The <strong>urlMapping</strong> defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
+REST API would be accessible on this URI:</p>
+<pre><code class="lang-http://localhhost:8080/services/rest/*```">
+The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
+scenario.
+
+You can simply extend the adapter in a custom class for adding customizations.
+
+```java
+@Component
+public class MySimulatorRestAdapter extends SimulatorRestAdapter {
+
+    @Override
+    public String urlMapping() {
+        return &quot;/my-rest-service/**&quot;;
+    }
+}
+</code></pre>
+<p>As you can see the class is annotated with <strong>@Component</strong> annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
+REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping</strong> method so the REST simulator API will be accessible for clients under this endpoint URI:</p>
+<pre><code class="lang-http://localhhost:8080/my-rest-service/*```">
+This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:
+
+```java
+import com.consol.citrus.simulator.annotation.EnableRest;
+import com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@SimulatorApplication
+@EnableRest
+public class Simulator extends SimulatorRestAdapter {
+
+    @Override
+    public String urlMapping() {
+        return &quot;/my-rest-service/**&quot;;
+    }
+
+    @Override
+    public MappingKeyExtractor mappingKeyExtractor() {
+        HeaderMappingKeyExtractor mappingKeyExtractor = new HeaderMappingKeyExtractor();
+        mappingKeyExtractor.setHeaderName(&quot;X-simulator-scenario&quot;);
+        return mappingKeyExtractor;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>So we have <strong>@EnableRest</strong> and REST adapter customizations combined on one single class.</p>
+<h3 id="advanced-customizations"><a name="advanced-customizations" class="plugin-anchor" href="#advanced-customizations"><span class="fa fa-link"></span></a>Advanced customizations</h3>
+<p>For a more advanced configuration option we can extend the <strong>SimulatorRestSupport</strong> implementation.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableRest;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorRestSupport;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestSupport</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> String <span class="hljs-title">getUrlMapping</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/my-rest-service/**&quot;</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> FilterRegistrationBean <span class="hljs-title">requestCachingFilter</span><span class="hljs-params">()</span> </span>{
+        FilterRegistrationBean filterRegistrationBean = <span class="hljs-keyword">new</span> FilterRegistrationBean(<span class="hljs-keyword">new</span> RequestCachingServletFilter());
+
+        String urlMapping = getUrlMapping();
+        <span class="hljs-keyword">if</span> (urlMapping.endsWith(<span class="hljs-string">&quot;**&quot;</span>)) {
+            urlMapping = urlMapping.substring(<span class="hljs-number">0</span>, urlMapping.length() - <span class="hljs-number">1</span>);
+        }
+        filterRegistrationBean.setUrlPatterns(Collections.singleton(urlMapping));
+        <span class="hljs-keyword">return</span> filterRegistrationBean;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> HandlerMapping <span class="hljs-title">handlerMapping</span><span class="hljs-params">(ApplicationContext applicationContext)</span> </span>{
+        SimpleUrlHandlerMapping handlerMapping = <span class="hljs-keyword">new</span> SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        handlerMapping.setAlwaysUseFullPath(<span class="hljs-keyword">true</span>);
+
+        Map&lt;String, Object&gt; mappings = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+        mappings.put(getUrlMapping(), getRestController(applicationContext));
+
+        handlerMapping.setUrlMap(mappings);
+        handlerMapping.setInterceptors(interceptors());
+
+        <span class="hljs-keyword">return</span> handlerMapping;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>With that configuration option we can overwrite REST support auto configuration features on the simulator such as the <strong>requestCachingFilter</strong> or the <strong>handlerMapping</strong>. 
+We can not use the <strong>@EnableRest</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorRestSupport</strong> implementation directly.</p>
 
                     
                     </section>
@@ -469,10 +581,10 @@ on these two browsers. Of course other browsers might work without any limitatio
         </div>
 
         
-        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="./rest-support.html" class="navigation navigation-prev " aria-label="Previous page: REST support"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./installation.html" class="navigation navigation-next " aria-label="Next page: Installation"><i class="fa fa-angle-right"></i></a>
+        <a href="./ws-support.html" class="navigation navigation-next " aria-label="Next page: Web Service support"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Preconditions | citrus-simulator</title>
+        <title>Mapping key extractor | citrus-simulator</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
@@ -47,10 +47,10 @@
         
     
     
-    <link rel="next" href="./installation.html" />
+    <link rel="next" href="./scenarios.html" />
     
     
-    <link rel="prev" href="./index.html" />
+    <link rel="prev" href="./concepts.html" />
     
 
         
@@ -59,9 +59,9 @@
         
         
     <div class="book"
-        data-level="1"
-        data-chapter-title="Preconditions"
-        data-filepath="preconditions.md"
+        data-level="3.1"
+        data-chapter-title="Mapping key extractor"
+        data-filepath="mapping-key-extractor.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 10:57:40 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -92,7 +92,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="preconditions.html">
+        <li class="chapter " data-level="1" data-path="preconditions.html">
             
                 
                     <a href="./preconditions.html">
@@ -138,7 +138,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="mapping-key-extractor.html">
+        <li class="chapter active" data-level="3.1" data-path="mapping-key-extractor.html">
             
                 
                     <a href="./mapping-key-extractor.html">
@@ -444,21 +444,63 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h2 id="preconditions"><a name="preconditions" class="plugin-anchor" href="#preconditions"><span class="fa fa-link"></span></a>Preconditions</h2>
-<p>The Citrus simulator requires some software installed on your localhost.</p>
-<h3 id="java-8"><a name="java-8" class="plugin-anchor" href="#java-8"><span class="fa fa-link"></span></a>Java 8</h3>
-<p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application. 
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
-<pre><code>&gt; java -version
-</code></pre><h3 id="build-tools"><a name="build-tools" class="plugin-anchor" href="#build-tools"><span class="fa fa-link"></span></a>Build tools</h3>
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-<pre><code>&gt; mvn -version
-</code></pre><h3 id="browsers"><a name="browsers" class="plugin-anchor" href="#browsers"><span class="fa fa-link"></span></a>Browsers</h3>
-<p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working 
-on these two browsers. Of course other browsers might work without any limitations, too.</p>
+                        <h2 id="mapping-key-extractor"><a name="mapping-key-extractor" class="plugin-anchor" href="#mapping-key-extractor"><span class="fa fa-link"></span></a>Mapping key extractor</h2>
+<p>The mapping key extractor implementation decides how to map incoming request message to simulator scenarios. Each incoming request
+triggers a predefined scenario that generates the response message for the calling client. The simulator identifies the scenario based 
+on a mapping key that is extracted from the incoming request.</p>
+<p>There are multiple ways to identify the simulator scenario from incoming request messages:</p>
+<ul>
+<li>Message-Type: Each request message type (XML root QName) results in a separate simulator scenario</li>
+<li>REST request mappings: Identifies the scenario based on Http method and resource path on server</li>
+<li>SOAP Action: Each SOAP action value defines a simulator scenario</li>
+<li>Message Header: Any SOAP or Http message header value specifies a new simulator scenario</li>
+<li>XPath payload: An XPath expression is evaluated on the message payload to identify the scenario</li>
+<li>Json payload: An JsonPath expression is evaluated on the message payload to identify the scenario</li>
+</ul>
+<p>Once the simulator scenario is identified with the respective mapping key the scenario get loaded and executed. All scenarios perform Citrus test logic in order
+to provide a proper response messages as a result. This way the simulator is able to perform complex response generating logic with dynamic values and so on. </p>
+<p>The mentioned mapping key extraction strategies are implemented in these classes:</p>
+<ul>
+<li><strong>AnnotationRequestMappingKeyExtractor</strong> Evaluates REST request mappings</li>
+<li><strong>SoapActionMappingKeyExtractor</strong> Evaluates the SOAP action header</li>
+<li><strong>HeaderMappingKeyExtractor</strong> Evaluates any message header</li>
+<li><strong>XPathPayloadMappingKeyExtractor</strong> Evaluates a XPath expression on the message payload</li>
+<li><strong>JsonPayloadMappingKeyExtractor</strong> Evaluates a JsonPath expression on the message payload</li>
+</ul>
+<p>Of course you can also implement a custom mapping key extractor. Just implement the interface methods of that API and add the implementation to the simulator 
+configuration as described later on in this document.</p>
+<h3 id="default-behavior"><a name="default-behavior" class="plugin-anchor" href="#default-behavior"><span class="fa fa-link"></span></a>Default behavior</h3>
+<p>The default mapping key logic extracts the message type of incoming requests. This is done by evaluating a Xpath expression on the request payload that uses the root element of the message as the
+mapping key. Each message type gets its own simulator scenario.</p>
+<p>Let&apos;s demonstrate that in a simple example. We know three different message types named <strong>successMessage</strong>, <strong>warningMessage</strong> and <strong>errorMessage</strong>. We create a simulator scenario for each of these message types with
+respective naming. Given the following incoming requests the simulator will pick the matching scenario for execution. </p>
+<pre><code>&lt;successMessage&gt;
+    &lt;text&gt;This is a success message&lt;/text&gt;
+&lt;/successMessage&gt;
+
+&lt;warningMessage&gt;
+    &lt;text&gt;This is a warning message&lt;/text&gt;
+&lt;/warningMessage&gt;
+
+&lt;errorMessage&gt;
+    &lt;text&gt;This is a error message&lt;/text&gt;
+&lt;/errorMessage&gt;
+</code></pre><p>The simulator evaluates the root element name and maps the requests to the matching scenario. Each scenario implements different response generating logic so the simulator is able to respond to a <strong>successMessage</strong> in a different
+way than for <strong>errorMessage</strong> types.</p>
+<h3 id="configuration"><a name="configuration" class="plugin-anchor" href="#configuration"><span class="fa fa-link"></span></a>Configuration</h3>
+<p>You can change the mapping key behavior by overwriting te default mapping key extractor in your simulator.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestAdapter</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        HeaderMappingKeyExtractor mappingKeyExtractor = <span class="hljs-keyword">new</span> HeaderMappingKeyExtractor();
+        mappingKeyExtractor.setHeaderName(<span class="hljs-string">&quot;X-simulator-scenario&quot;</span>);
+        <span class="hljs-keyword">return</span> mappingKeyExtractor;
+    } 
+}
+</code></pre>
+<p>With the configuration above we use the <em>HeaderMappingKeyExtractor</em> implementation so the header name <strong>X-simulator-scenario</strong> gets evaluated for each incoming request message. 
+Depending on that header value the matching scenario is executed as a result. As you can see the mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
+this behavior very easy in the simulator adapter configuration.</p>
 
                     
                     </section>
@@ -469,10 +511,10 @@ on these two browsers. Of course other browsers might work without any limitatio
         </div>
 
         
-        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="./concepts.html" class="navigation navigation-prev " aria-label="Previous page: Concepts"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./installation.html" class="navigation navigation-next " aria-label="Next page: Installation"><i class="fa fa-angle-right"></i></a>
+        <a href="./scenarios.html" class="navigation navigation-next " aria-label="Next page: Simulator scenarios"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
