@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Introduction | Citrus Simulator Reference Guide</title>
+        <title>Endpoint component support | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Citrus Simulator Documentation">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
         
         
@@ -47,8 +47,10 @@
         
     
     
-    <link rel="next" href="./preconditions.html" />
+    <link rel="next" href="./endpoint-component-config.html" />
     
+    
+    <link rel="prev" href="./jms-config.html" />
     
 
         
@@ -57,9 +59,9 @@
         
         
     <div class="book"
-        data-level="0"
-        data-chapter-title="Introduction"
-        data-filepath="README.md"
+        data-level="7"
+        data-chapter-title="Endpoint component support"
+        data-filepath="endpoint-component-support.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -77,7 +79,7 @@
 
             
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -316,7 +318,7 @@
             
         </li>
     
-        <li class="chapter " data-level="7" data-path="endpoint-component-support.html">
+        <li class="chapter active" data-level="7" data-path="endpoint-component-support.html">
             
                 
                     <a href="./endpoint-component-support.html">
@@ -489,21 +491,29 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="citrus-simulator--reference-documentation-"><a name="citrus-simulator--reference-documentation-" class="plugin-anchor" href="#citrus-simulator--reference-documentation-"><span class="fa fa-link"></span></a>Citrus Simulator - Reference Documentation <img src="images/citrus_logo.png" alt="citrus-logo"></h1>
-<h2 id="welcome-to-the-citrus-simulator"><a name="welcome-to-the-citrus-simulator" class="plugin-anchor" href="#welcome-to-the-citrus-simulator"><span class="fa fa-link"></span></a>Welcome to the Citrus simulator</h2>
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
-<p>The simulator uses the test framework Citrus <a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></p>
-<p><strong>NOTE:</strong> <em>This project is still under construction!</em> </p>
-<p>Contributions and feedback is highly appreciated!  </p>
-<h2 id="authors"><a name="authors" class="plugin-anchor" href="#authors"><span class="fa fa-link"></span></a>Authors</h2>
-<p>Christoph Deppisch</p>
-<h2 id="version"><a name="version" class="plugin-anchor" href="#version"><span class="fa fa-link"></span></a>Version</h2>
-<p><strong>0.7</strong></p>
-<p><strong>Copyright &#xA9; 2016 ConSol Software GmbH</strong></p>
-<p><strong><a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></strong></p>
+                        <h2 id="endpoint-component-support"><a name="endpoint-component-support" class="plugin-anchor" href="#endpoint-component-support"><span class="fa fa-link"></span></a>Endpoint component support</h2>
+<p>We have seen how the simulator handles different transports such as <a href="rest-support.html">Http REST</a>, <a href="ws-support.html">SOAP web services</a> and <a href="jms-support.html">JMS</a>.
+Now the simulator is also able to handle other message transports such as mail communication, JMX mbean server, RMI invocations and much more. The
+simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.</p>
+<p>The generic endpoint support is added with <strong>@EnableEndpointComponent</strong> annotation.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableEndpointComponent;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-annotation">@EnableEndpointComponent</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+</code></pre>
+<p>The <strong>@EnableEndpointComponent</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+in the Spring boot application. Once we use that feature we can have any Citrus endpoint component as inbound source for simulator scenarios. This means
+we can have a mail server or a RMI server that is simulated with proper response messages.</p>
+<p>As we are using generic endpoint components as inbound source we need to set the endpoint in the configuration. Read about that in the following sections.</p>
 
                     
                     </section>
@@ -514,8 +524,10 @@ messages. The simulator response logic is very powerful and enables us to simula
         </div>
 
         
+        <a href="./jms-config.html" class="navigation navigation-prev " aria-label="Previous page: Configuration"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./preconditions.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Preconditions"><i class="fa fa-angle-right"></i></a>
+        
+        <a href="./endpoint-component-config.html" class="navigation navigation-next " aria-label="Next page: Configuration"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

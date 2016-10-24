@@ -47,7 +47,7 @@
         
     
     
-    <link rel="next" href="./ws-support.html" />
+    <link rel="next" href="./rest-request-mapping.html" />
     
     
     <link rel="prev" href="./rest-support.html" />
@@ -63,7 +63,7 @@
         data-chapter-title="Configuration"
         data-filepath="rest-config.md"
         data-basepath="."
-        data-revision="Mon Oct 24 2016 11:22:11 GMT+0200 (CEST)"
+        data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
     
 
@@ -168,6 +168,13 @@
             
         </li>
     
+        <li class="chapter " data-level="3.3" data-path="intermediate-messages.html">
+            
+            <span><b>3.3.</b> Intermediate message handling</span>
+            
+            
+        </li>
+    
 
             </ul>
             
@@ -206,7 +213,15 @@
     
         <li class="chapter " data-level="4.2" data-path="rest-request-mapping.html">
             
-            <span><b>4.2.</b> Request mapping</span>
+                
+                    <a href="./rest-request-mapping.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                        Request mapping
+                    </a>
             
             
         </li>
@@ -249,7 +264,15 @@
     
         <li class="chapter " data-level="5.2" data-path="ws-soap-faults.html">
             
-            <span><b>5.2.</b> SOAP faults</span>
+                
+                    <a href="./ws-soap-faults.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.2.</b>
+                        
+                        SOAP faults
+                    </a>
             
             
         </li>
@@ -297,7 +320,15 @@
     
         <li class="chapter " data-level="7" data-path="endpoint-component-support.html">
             
-            <span><b>7.</b> Endpoint component support</span>
+                
+                    <a href="./endpoint-component-support.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>7.</b>
+                        
+                        Endpoint component support
+                    </a>
             
             
             <ul class="articles">
@@ -305,7 +336,15 @@
     
         <li class="chapter " data-level="7.1" data-path="endpoint-component-config.html">
             
-            <span><b>7.1.</b> Configuration</span>
+                
+                    <a href="./endpoint-component-config.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>7.1.</b>
+                        
+                        Configuration
+                    </a>
             
             
         </li>
@@ -337,7 +376,15 @@
     
         <li class="chapter " data-level="9" data-path="user-interface.html">
             
-            <span><b>9.</b> Admin UI</span>
+                
+                    <a href="./user-interface.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.</b>
+                        
+                        Admin UI
+                    </a>
             
             
             <ul class="articles">
@@ -467,6 +514,9 @@ add a <strong>SimulatorRestAdapter</strong> implementation to the classpath. The
 </code></pre>
 <p>The adapter defines methods that configure the simulator REST handling. For instance we can add another mapping key extractor implementation or
 add handler interceptors to the REST API call handling.</p>
+<p><strong>Note</strong>
+The REST support is using a different default mapping key extractor. The <strong>AnnotationRequestMappingKeyExtractor</strong> is active by default and enables <strong>@RequestMapping</strong>
+related mapping on scenario classes. Read more about that in <a href="rest-request-mapping.html">rest-request-mapping</a>.</p>
 <p>The <strong>urlMapping</strong> defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
 REST API would be accessible on this URI:</p>
 <pre><code>http://localhhost:8080/services/rest/*
@@ -579,7 +629,7 @@ We can not use the <strong>@EnableRest</strong> auto configuration annotation th
         <a href="./rest-support.html" class="navigation navigation-prev " aria-label="Previous page: REST support"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./ws-support.html" class="navigation navigation-next " aria-label="Next page: Web Service support"><i class="fa fa-angle-right"></i></a>
+        <a href="./rest-request-mapping.html" class="navigation navigation-next " aria-label="Next page: Request mapping"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

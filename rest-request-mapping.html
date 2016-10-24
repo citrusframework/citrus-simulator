@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Introduction | Citrus Simulator Reference Guide</title>
+        <title>Request mapping | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Citrus Simulator Documentation">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
         
         
@@ -47,8 +47,10 @@
         
     
     
-    <link rel="next" href="./preconditions.html" />
+    <link rel="next" href="./ws-support.html" />
     
+    
+    <link rel="prev" href="./rest-config.html" />
     
 
         
@@ -57,9 +59,9 @@
         
         
     <div class="book"
-        data-level="0"
-        data-chapter-title="Introduction"
-        data-filepath="README.md"
+        data-level="4.2"
+        data-chapter-title="Request mapping"
+        data-filepath="rest-request-mapping.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -77,7 +79,7 @@
 
             
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -209,7 +211,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.2" data-path="rest-request-mapping.html">
+        <li class="chapter active" data-level="4.2" data-path="rest-request-mapping.html">
             
                 
                     <a href="./rest-request-mapping.html">
@@ -489,21 +491,36 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="citrus-simulator--reference-documentation-"><a name="citrus-simulator--reference-documentation-" class="plugin-anchor" href="#citrus-simulator--reference-documentation-"><span class="fa fa-link"></span></a>Citrus Simulator - Reference Documentation <img src="images/citrus_logo.png" alt="citrus-logo"></h1>
-<h2 id="welcome-to-the-citrus-simulator"><a name="welcome-to-the-citrus-simulator" class="plugin-anchor" href="#welcome-to-the-citrus-simulator"><span class="fa fa-link"></span></a>Welcome to the Citrus simulator</h2>
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
-<p>The simulator uses the test framework Citrus <a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></p>
-<p><strong>NOTE:</strong> <em>This project is still under construction!</em> </p>
-<p>Contributions and feedback is highly appreciated!  </p>
-<h2 id="authors"><a name="authors" class="plugin-anchor" href="#authors"><span class="fa fa-link"></span></a>Authors</h2>
-<p>Christoph Deppisch</p>
-<h2 id="version"><a name="version" class="plugin-anchor" href="#version"><span class="fa fa-link"></span></a>Version</h2>
-<p><strong>0.7</strong></p>
-<p><strong>Copyright &#xA9; 2016 ConSol Software GmbH</strong></p>
-<p><strong><a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></strong></p>
+                        <h2 id="rest-request-mapping"><a name="rest-request-mapping" class="plugin-anchor" href="#rest-request-mapping"><span class="fa fa-link"></span></a>REST request mapping</h2>
+<p>Usually we define simulator scenarios and map them to incoming requests by their names. When using REST support on the simulator we can also
+use request mapping annotations on scenarios in order to map incoming requests.</p>
+<p>This looks like follows:</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Scenario</span>(<span class="hljs-string">&quot;Hello&quot;</span>)
+<span class="hljs-annotation">@RequestMapping</span>(value = <span class="hljs-string">&quot;/services/rest/simulator/hello&quot;</span>, method = RequestMethod.POST)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HelloScenario</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorRestScenario</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span> </span>{
+        scenario()
+            .receive()
+            .payload(<span class="hljs-string">&quot;&lt;Hello xmlns=\&quot;http://citrusframework.org/schemas/hello\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;Say Hello!&quot;</span> +
+                     <span class="hljs-string">&quot;&lt;/Hello&gt;&quot;</span>);
+
+        scenario()
+            .send()
+            .payload(<span class="hljs-string">&quot;&lt;HelloResponse xmlns=\&quot;http://citrusframework.org/schemas/hello\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;Hi there!&quot;</span> +
+                     <span class="hljs-string">&quot;&lt;/HelloResponse&gt;&quot;</span>);
+    }
+}
+</code></pre>
+<p>As you can see the example above uses <strong>@RequestMapping</strong> annotation in addition to the <strong>@Scenario</strong> annotation. All requests on the request path
+<strong>/services/rest/simulator/hello</strong> of method <strong>POST</strong> will be mapped to the scenario. With this strategy the simulator is able to map requests based
+on methods, request paths and parameters.</p>
+<p>The mapping strategy requires a special mapping key extractor implementation that automatically scans for scenarios with <strong>@RequestMapping</strong> annotations.
+The <strong>AnnotationRequestMappingKeyExtractor</strong> is active by default so in case you need to apply different mapping strategies you must overwrite the mapping key extractor
+in configuration adapter.</p>
 
                     
                     </section>
@@ -514,8 +531,10 @@ messages. The simulator response logic is very powerful and enables us to simula
         </div>
 
         
+        <a href="./rest-config.html" class="navigation navigation-prev " aria-label="Previous page: Configuration"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./preconditions.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Preconditions"><i class="fa fa-angle-right"></i></a>
+        
+        <a href="./ws-support.html" class="navigation navigation-next " aria-label="Next page: Web Service support"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

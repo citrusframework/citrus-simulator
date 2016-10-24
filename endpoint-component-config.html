@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Introduction | Citrus Simulator Reference Guide</title>
+        <title>Configuration | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Citrus Simulator Documentation">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
         
         
@@ -47,8 +47,10 @@
         
     
     
-    <link rel="next" href="./preconditions.html" />
+    <link rel="next" href="./user-interface.html" />
     
+    
+    <link rel="prev" href="./endpoint-component-support.html" />
     
 
         
@@ -57,9 +59,9 @@
         
         
     <div class="book"
-        data-level="0"
-        data-chapter-title="Introduction"
-        data-filepath="README.md"
+        data-level="7.1"
+        data-chapter-title="Configuration"
+        data-filepath="endpoint-component-config.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -77,7 +79,7 @@
 
             
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -332,7 +334,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="7.1" data-path="endpoint-component-config.html">
+        <li class="chapter active" data-level="7.1" data-path="endpoint-component-config.html">
             
                 
                     <a href="./endpoint-component-config.html">
@@ -489,21 +491,101 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="citrus-simulator--reference-documentation-"><a name="citrus-simulator--reference-documentation-" class="plugin-anchor" href="#citrus-simulator--reference-documentation-"><span class="fa fa-link"></span></a>Citrus Simulator - Reference Documentation <img src="images/citrus_logo.png" alt="citrus-logo"></h1>
-<h2 id="welcome-to-the-citrus-simulator"><a name="welcome-to-the-citrus-simulator" class="plugin-anchor" href="#welcome-to-the-citrus-simulator"><span class="fa fa-link"></span></a>Welcome to the Citrus simulator</h2>
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
-<p>The simulator uses the test framework Citrus <a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></p>
-<p><strong>NOTE:</strong> <em>This project is still under construction!</em> </p>
-<p>Contributions and feedback is highly appreciated!  </p>
-<h2 id="authors"><a name="authors" class="plugin-anchor" href="#authors"><span class="fa fa-link"></span></a>Authors</h2>
-<p>Christoph Deppisch</p>
-<h2 id="version"><a name="version" class="plugin-anchor" href="#version"><span class="fa fa-link"></span></a>Version</h2>
-<p><strong>0.7</strong></p>
-<p><strong>Copyright &#xA9; 2016 ConSol Software GmbH</strong></p>
-<p><strong><a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></strong></p>
+                        <h2 id="endpoint-component-configuration"><a name="endpoint-component-configuration" class="plugin-anchor" href="#endpoint-component-configuration"><span class="fa fa-link"></span></a>Endpoint component configuration</h2>
+<p>When using generic Citrus endpoints as simulator inbound source we need to configure those endpoint components. The most comfortable way is to
+add a <strong>SimulatorEndpointComponentAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SimulatorEndpointComponentAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">SimulatorEndpointComponentConfigurer</span> </span>{
+
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> Endpoint <span class="hljs-title">endpoint</span><span class="hljs-params">(ApplicationContext applicationContext)</span></span>;
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">useSoapEnvelope</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> XPathPayloadMappingKeyExtractor();
+    }
+}
+</code></pre>
+<p>The adapter defines methods that configure the endpoint component used as inbound source. As usual we can set the mapping key extractor implementation or
+add automatic SOAP envelope support.</p>
+<p>More importantly we need to define an inbound endpoint that is used as source for scenarios. Let&apos;s have a simple endpoint component adapter example.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.EnableEndpointComponent;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter;
+<span class="hljs-keyword">import</span> com.consol.citrus.simulator.annotation.SimulatorApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="hljs-annotation">@SpringBootApplication</span>
+<span class="hljs-annotation">@SimulatorApplication</span>
+<span class="hljs-annotation">@EnableEndpointComponent</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Simulator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorEndpointComponentAdapter</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(Simulator.class, args);
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Endpoint <span class="hljs-title">endpoint</span><span class="hljs-params">(ApplicationContext applicationContext)</span> </span>{
+        MailServer mailServer = <span class="hljs-keyword">new</span> MailServer();
+        mailServer.setPort(<span class="hljs-number">2222</span>);
+        mailServer.setAutoStart(<span class="hljs-keyword">true</span>);
+
+        <span class="hljs-keyword">return</span> mailServer;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MappingKeyExtractor <span class="hljs-title">mappingKeyExtractor</span><span class="hljs-params">()</span> </span>{
+        XPathPayloadMappingKeyExtractor mappingKeyExtractor = <span class="hljs-keyword">new</span> XPathPayloadMappingKeyExtractor();
+        NamespaceContextBuilder namespaceContextBuilder = <span class="hljs-keyword">new</span> NamespaceContextBuilder();
+        namespaceContextBuilder.getNamespaceMappings().put(<span class="hljs-string">&quot;mail&quot;</span>, <span class="hljs-string">&quot;http://www.citrusframework.org/schema/mail/message&quot;</span>);
+        mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
+        mappingKeyExtractor.setXpathExpression(<span class="hljs-string">&quot;/mail:mail-message/mail:subject&quot;</span>);
+        <span class="hljs-keyword">return</span> mappingKeyExtractor;
+    }
+}
+</code></pre>
+<p>The custom adapter defines a Citrus mail server endpoint that should be used as inbound source. Any mail message that arrives at this mail server component will
+trigger a new simulator scenario then. Also we overwrite the mapping key extractor implementation so that the mail subject evaluates to the scenario that should be executed.</p>
+<p>This configuration would lead us to a mail server that responds to incoming mail messages base on the mail subject. So we can have several simulator
+scenarios for different mail messages.</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Scenario</span>(<span class="hljs-string">&quot;Hello&quot;</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HelloScenario</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorEndpointScenario</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span> </span>{
+        scenario()
+            .receive()
+            .payload(<span class="hljs-string">&quot;&lt;mail-message xmlns=\&quot;http://www.citrusframework.org/schema/mail/message\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;from&gt;user@citrusframework.org&lt;/from&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;to&gt;citrus@citrusframework.org&lt;/to&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;cc&gt;&lt;/cc&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;bcc&gt;&lt;/bcc&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;subject&gt;Hello&lt;/subject&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;body&gt;&quot;</span> +
+                            <span class="hljs-string">&quot;&lt;contentType&gt;text/plain; charset=utf-8&lt;/contentType&gt;&quot;</span> +
+                            <span class="hljs-string">&quot;&lt;content&gt;Say Hello!&lt;/content&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;/body&gt;&quot;</span> +
+                    <span class="hljs-string">&quot;&lt;/mail-message&gt;&quot;</span>);
+
+        scenario()
+            .send()
+            .payload(<span class="hljs-string">&quot;&lt;mail-response xmlns=\&quot;http://www.citrusframework.org/schema/mail/message\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;code&gt;250&lt;/code&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;&lt;message&gt;OK&lt;/message&gt;&quot;</span> +
+                    <span class="hljs-string">&quot;&lt;/mail-response&gt;&quot;</span>);
+    }
+}
+</code></pre>
+<p>The scenario implementation above uses the base class <strong>SimulatorEndpointScenario</strong> and listens for mail messages of subject <strong>Hello</strong>. The
+mail XML marshalling is automatically done by Citrus. This is the usual way how the Citrus mail component handles mail messages and responses. That means we can use the default Citrus
+features in our simulator, too. The scenario sends back a positive mail response to the calling client.</p>
+<p>This is how we can use any Citrus endpoint component as simulator inbound source. This gives us the opportunity to support a huge set of message transports and
+message types in our simulator applications. Each incoming request on the endpoint component triggers a new simulator scenario.</p>
 
                     
                     </section>
@@ -514,8 +596,10 @@ messages. The simulator response logic is very powerful and enables us to simula
         </div>
 
         
+        <a href="./endpoint-component-support.html" class="navigation navigation-prev " aria-label="Previous page: Endpoint component support"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./preconditions.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Preconditions"><i class="fa fa-angle-right"></i></a>
+        
+        <a href="./user-interface.html" class="navigation navigation-next " aria-label="Next page: Admin UI"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

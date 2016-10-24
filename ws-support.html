@@ -50,7 +50,7 @@
     <link rel="next" href="./ws-config.html" />
     
     
-    <link rel="prev" href="./rest-config.html" />
+    <link rel="prev" href="./rest-request-mapping.html" />
     
 
         
@@ -63,7 +63,7 @@
         data-chapter-title="Web Service support"
         data-filepath="ws-support.md"
         data-basepath="."
-        data-revision="Mon Oct 24 2016 11:22:11 GMT+0200 (CEST)"
+        data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
     
 
@@ -168,6 +168,13 @@
             
         </li>
     
+        <li class="chapter " data-level="3.3" data-path="intermediate-messages.html">
+            
+            <span><b>3.3.</b> Intermediate message handling</span>
+            
+            
+        </li>
+    
 
             </ul>
             
@@ -206,7 +213,15 @@
     
         <li class="chapter " data-level="4.2" data-path="rest-request-mapping.html">
             
-            <span><b>4.2.</b> Request mapping</span>
+                
+                    <a href="./rest-request-mapping.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                        Request mapping
+                    </a>
             
             
         </li>
@@ -249,7 +264,15 @@
     
         <li class="chapter " data-level="5.2" data-path="ws-soap-faults.html">
             
-            <span><b>5.2.</b> SOAP faults</span>
+                
+                    <a href="./ws-soap-faults.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.2.</b>
+                        
+                        SOAP faults
+                    </a>
             
             
         </li>
@@ -297,7 +320,15 @@
     
         <li class="chapter " data-level="7" data-path="endpoint-component-support.html">
             
-            <span><b>7.</b> Endpoint component support</span>
+                
+                    <a href="./endpoint-component-support.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>7.</b>
+                        
+                        Endpoint component support
+                    </a>
             
             
             <ul class="articles">
@@ -305,7 +336,15 @@
     
         <li class="chapter " data-level="7.1" data-path="endpoint-component-config.html">
             
-            <span><b>7.1.</b> Configuration</span>
+                
+                    <a href="./endpoint-component-config.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>7.1.</b>
+                        
+                        Configuration
+                    </a>
             
             
         </li>
@@ -337,7 +376,15 @@
     
         <li class="chapter " data-level="9" data-path="user-interface.html">
             
-            <span><b>9.</b> Admin UI</span>
+                
+                    <a href="./user-interface.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.</b>
+                        
+                        Admin UI
+                    </a>
             
             
             <ul class="articles">
@@ -463,8 +510,30 @@ SOAP enabling annotation that we can use on the application class:</p>
 </code></pre>
 <p>The <strong>@EnableWebService</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
-<p>After that we are ready to handle incoming SOAP Web Service calls on the simulator. In addition to that you are able to add SOAP related configuration options
-as described in the following sections.</p>
+<p>After that we are ready to handle incoming SOAP Web Service calls on the simulator. We can use the default scenario base class for SOAP Web Services.</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Scenario</span>(<span class="hljs-string">&quot;Hello&quot;</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HelloScenario</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorWebServiceScenario</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span> </span>{
+        scenario()
+            .receive()
+            .payload(<span class="hljs-string">&quot;&lt;Hello xmlns=\&quot;http://citrusframework.org/schemas/hello\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;Say Hello!&quot;</span> +
+                     <span class="hljs-string">&quot;&lt;/Hello&gt;&quot;</span>)
+            .header(SoapMessageHeaders.SOAP_ACTION, <span class="hljs-string">&quot;Hello&quot;</span>);
+
+        scenario()
+            .send()
+            .payload(<span class="hljs-string">&quot;&lt;HelloResponse xmlns=\&quot;http://citrusframework.org/schemas/hello\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;Hi there!&quot;</span> +
+                     <span class="hljs-string">&quot;&lt;/HelloResponse&gt;&quot;</span>);
+    }
+}
+</code></pre>
+<p>The <strong>SimulatorWebServiceScenario</strong> automatically handles the SOAP envelope so we do not have to deal with that in the scenario receive and send operations. Also
+the scenario receive operation has access to the SOAP action of the incoming request call. Besides that we can also <a href="ws-soap-faults.html">return a SOAP fault</a> message as scenario outcome. </p>
+<p>Let&apos;s move on with having a look at the SOAP related configuration options as described in the following sections.</p>
 
                     
                     </section>
@@ -475,7 +544,7 @@ as described in the following sections.</p>
         </div>
 
         
-        <a href="./rest-config.html" class="navigation navigation-prev " aria-label="Previous page: Configuration"><i class="fa fa-angle-left"></i></a>
+        <a href="./rest-request-mapping.html" class="navigation navigation-prev " aria-label="Previous page: Request mapping"><i class="fa fa-angle-left"></i></a>
         
         
         <a href="./ws-config.html" class="navigation navigation-next " aria-label="Next page: Configuration"><i class="fa fa-angle-right"></i></a>

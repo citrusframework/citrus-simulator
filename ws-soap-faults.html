@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Introduction | Citrus Simulator Reference Guide</title>
+        <title>SOAP faults | Citrus Simulator Reference Guide</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Citrus Simulator Documentation">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.6.7">
         
         
@@ -47,8 +47,10 @@
         
     
     
-    <link rel="next" href="./preconditions.html" />
+    <link rel="next" href="./jms-support.html" />
     
+    
+    <link rel="prev" href="./ws-config.html" />
     
 
         
@@ -57,9 +59,9 @@
         
         
     <div class="book"
-        data-level="0"
-        data-chapter-title="Introduction"
-        data-filepath="README.md"
+        data-level="5.2"
+        data-chapter-title="SOAP faults"
+        data-filepath="ws-soap-faults.md"
         data-basepath="."
         data-revision="Mon Oct 24 2016 14:34:12 GMT+0200 (CEST)"
         data-innerlanguage="">
@@ -77,7 +79,7 @@
 
             
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -260,7 +262,7 @@
             
         </li>
     
-        <li class="chapter " data-level="5.2" data-path="ws-soap-faults.html">
+        <li class="chapter active" data-level="5.2" data-path="ws-soap-faults.html">
             
                 
                     <a href="./ws-soap-faults.html">
@@ -489,21 +491,31 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="citrus-simulator--reference-documentation-"><a name="citrus-simulator--reference-documentation-" class="plugin-anchor" href="#citrus-simulator--reference-documentation-"><span class="fa fa-link"></span></a>Citrus Simulator - Reference Documentation <img src="images/citrus_logo.png" alt="citrus-logo"></h1>
-<h2 id="welcome-to-the-citrus-simulator"><a name="welcome-to-the-citrus-simulator" class="plugin-anchor" href="#welcome-to-the-citrus-simulator"><span class="fa fa-link"></span></a>Welcome to the Citrus simulator</h2>
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
-<p>The simulator uses the test framework Citrus <a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></p>
-<p><strong>NOTE:</strong> <em>This project is still under construction!</em> </p>
-<p>Contributions and feedback is highly appreciated!  </p>
-<h2 id="authors"><a name="authors" class="plugin-anchor" href="#authors"><span class="fa fa-link"></span></a>Authors</h2>
-<p>Christoph Deppisch</p>
-<h2 id="version"><a name="version" class="plugin-anchor" href="#version"><span class="fa fa-link"></span></a>Version</h2>
-<p><strong>0.7</strong></p>
-<p><strong>Copyright &#xA9; 2016 ConSol Software GmbH</strong></p>
-<p><strong><a href="http://www.citrusframework.org" target="_blank">www.citrusframework.org</a></strong></p>
+                        <h2 id="soap-faults"><a name="soap-faults" class="plugin-anchor" href="#soap-faults"><span class="fa fa-link"></span></a>SOAP faults</h2>
+<p>The simulator is in charge of sending proper response messages to the calling client. When using SOAP we might also want to send
+back a SOAP fault message. Therefore the default Web Service scenario implementation also provides fault responses as scenario result.</p>
+<pre><code class="lang-java"><span class="hljs-annotation">@Scenario</span>(<span class="hljs-string">&quot;GoodNight&quot;</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GoodNightScenario</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimulatorWebServiceScenario</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span> </span>{
+        scenario()
+            .receive()
+            .payload(<span class="hljs-string">&quot;&lt;GoodNight xmlns=\&quot;http://citrusframework.org/schemas/hello\&quot;&gt;&quot;</span> +
+                        <span class="hljs-string">&quot;Go to sleep!&quot;</span> +
+                     <span class="hljs-string">&quot;&lt;/GoodNight&gt;&quot;</span>)
+            .header(SoapMessageHeaders.SOAP_ACTION, <span class="hljs-string">&quot;GoodNight&quot;</span>);
+
+        scenario()
+            .sendFault()
+            .faultCode(<span class="hljs-string">&quot;{http://citrusframework.org}CITRUS:SIM-1001&quot;</span>)
+            .faultString(<span class="hljs-string">&quot;No sleep for me!&quot;</span>);
+    }
+}
+</code></pre>
+<p>The example above shows a simple fault generating SOAP scenario. The base class <strong>SimulatorWebServiceScenario</strong> provides
+the <strong>sendFault()</strong> method in order to create proper SOAP fault messages. The simulator automatically add SOAP envelope and SOAP fault
+message details for you. So we can decide wheather to provide a success response or SOAP fault.</p>
 
                     
                     </section>
@@ -514,8 +526,10 @@ messages. The simulator response logic is very powerful and enables us to simula
         </div>
 
         
+        <a href="./ws-config.html" class="navigation navigation-prev " aria-label="Previous page: Configuration"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./preconditions.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Preconditions"><i class="fa fa-angle-right"></i></a>
+        
+        <a href="./jms-support.html" class="navigation navigation-next " aria-label="Next page: JMS support"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
