@@ -20,7 +20,7 @@ Christoph Deppisch
 
 ## Version
 
-**0.7**
+**0.8**
 
 **Copyright © 2016 ConSol Software GmbH**
 

@@ -6,7 +6,7 @@
 
   <groupId>com.consol.citrus.archetypes</groupId>
   <artifactId>citrus-simulator-archetype-rest</artifactId>
-  <version>0.7</version>
+  <version>0.8</version>
   <name>citrus-simulator-archetype-rest</name>
   <description>Archetype for Citrus REST simulator</description>
 

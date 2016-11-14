@@ -10,6 +10,6 @@
   },
 
   "scripts": {
-    "postinstall": "gitbook install & gitbook build ./manual ../target/_book & gitbook pdf ./manual ../target/_book/pdf/citrus-simulator-reference-0.7.pdf"
+    "postinstall": "gitbook install & gitbook build ./manual ../target/_book & gitbook pdf ./manual ../target/_book/pdf/citrus-simulator-reference-0.8.pdf"
   }
 }
