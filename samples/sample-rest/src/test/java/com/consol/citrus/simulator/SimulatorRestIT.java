@@ -41,12 +41,14 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     @CitrusTest
     public void testHelloRequest() {
         http().client(simulatorClient)
+                .send()
                 .post("hello")
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
                          "</Hello>");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
@@ -59,12 +61,14 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     @CitrusTest
     public void testGoodByeRequest() {
         http().client(simulatorClient)
+                .send()
                 .post("goodbye")
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
                          "</GoodBye>");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
@@ -77,12 +81,14 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     @CitrusTest
     public void testDefaultRequest() {
         http().client(simulatorClient)
+                .send()
                 .post()
                 .payload("<Default>" +
                             "Should trigger default scenario" +
                         "</Default>");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload(defaultResponse);
     }
@@ -95,6 +101,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         variable("correlationId", "citrus:randomNumber(10)");
 
         http().client(simulatorClient)
+                .send()
                 .post("goodnight")
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
@@ -102,34 +109,41 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .header("x-correlationid", "${correlationId}");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
                         "</GoodNightResponse>");
 
         http().client(simulatorClient)
+                .send()
                 .post()
                 .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload(defaultResponse);
 
         http().client(simulatorClient)
+                .send()
                 .post()
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
         http().client(simulatorClient)
+                .send()
                 .put("goodnight")
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 
         http().client(simulatorClient)
+                .receive()
                 .response(HttpStatus.OK)
                 .payload(defaultResponse);
     }

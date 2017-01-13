@@ -16,7 +16,8 @@
 
 package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.dsl.builder.SendSoapFaultBuilder;
+import com.consol.citrus.dsl.actions.DelegatingTestAction;
+import com.consol.citrus.dsl.builder.SoapServerFaultResponseActionBuilder;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,14 @@ public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
          * Sends SOAP fault as scenario response.
          * @return
          */
-        public SendSoapFaultBuilder sendFault() {
-            return (SendSoapFaultBuilder)
-                    sendSoapFault(simInboundEndpoint)
+        public SoapServerFaultResponseActionBuilder sendFault() {
+            SoapServerFaultResponseActionBuilder actionBuilder = (SoapServerFaultResponseActionBuilder)
+                    new SoapServerFaultResponseActionBuilder(new DelegatingTestAction<>(), simInboundEndpoint)
+                            .withApplicationContext(getApplicationContext())
                             .description("Sending SOAP fault");
+
+            SimulatorWebServiceScenario.this.action(actionBuilder);
+            return actionBuilder;
         }
     }
 }
