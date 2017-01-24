@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * Configuration class for configuring spring data and JPA
  */
 @Configuration
-@EnableJpaRepositories("com.consol.citrus.simulator.core.repository")
+@EnableJpaRepositories("com.consol.citrus.simulator.repository")
 @EntityScan({"com.consol.citrus.simulator.model"})
 public class RepositoryConfig {
 }
