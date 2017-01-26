@@ -10,7 +10,7 @@ import java.util.List;
  * JPA entity for representing a test parameter
  */
 @Entity
-public class TestParameter implements Serializable {
+public class TestParameter implements Serializable { // TODO MM rename to ScenarioParameter
     public enum ControlType {
         TEXTBOX,
         TEXTAREA,

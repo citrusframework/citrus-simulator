@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
+import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.TestParameterOption;
 import com.consol.citrus.simulator.scenario.*;
 
 import java.util.*;
@@ -28,8 +30,8 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     protected void configure() {
+        echo("${title} ${firstname} ${lastname} ");
         echo("${greeting}");
-        echo("${payload}");
     }
 
     @Override
@@ -53,5 +55,56 @@ public class HelloStarter extends AbstractScenarioStarter {
         parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
 
         return parameters;
+    }
+
+    @Override
+    public Collection<TestParameter> getLaunchableTestParameters() {
+        List<TestParameter> testParameters = new ArrayList<>();
+        TestParameter tp;
+        List<TestParameterOption> tpOptions;
+
+        // title (dropdown)
+        tpOptions = new ArrayList<>();
+        tpOptions.add(new TestParameterOption("Mr", "Mr."));
+        tpOptions.add(new TestParameterOption("Mrs", "Mrs."));
+        tpOptions.add(new TestParameterOption("Miss", "Miss"));
+
+        tp = new TestParameter();
+        tp.setName("title");
+        tp.setLabel("Title");
+        tp.setRequired(false);
+        tp.setControlType(TestParameter.ControlType.DROPDOWN);
+        tp.setValue("Miss");
+        tp.setOptions(tpOptions);
+        testParameters.add(tp);
+
+        // firstname (text box)
+        tp = new TestParameter();
+        tp.setName("firstname");
+        tp.setLabel("First Name");
+        tp.setRequired(true);
+        tp.setControlType(TestParameter.ControlType.TEXTBOX);
+        tp.setValue("Mickey");
+        testParameters.add(tp);
+
+        // lastname (text area)
+        tp = new TestParameter();
+        tp.setName("lastname");
+        tp.setLabel("Last Name");
+        tp.setRequired(true);
+        tp.setControlType(TestParameter.ControlType.TEXTBOX);
+        tp.setValue("Mouse");
+        testParameters.add(tp);
+
+        // greeting (text area)
+        tp = new TestParameter();
+        tp.setName("greeting");
+        tp.setLabel("Greeting");
+        tp.setRequired(true);
+        tp.setControlType(TestParameter.ControlType.TEXTAREA);
+        tp.setValue("Hey there Mini");
+        testParameters.add(tp);
+
+        return testParameters;
     }
 }

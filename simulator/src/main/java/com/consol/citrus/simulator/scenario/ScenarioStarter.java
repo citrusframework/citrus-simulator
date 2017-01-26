@@ -16,15 +16,18 @@
 
 package com.consol.citrus.simulator.scenario;
 
+import com.consol.citrus.simulator.model.TestParameter;
 import org.springframework.beans.factory.BeanNameAware;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Special interface marking that test executable is able to start a scenario with active role. This is usually the case when
  * a test executable starts to act as an interface partner with an outbound message rather than waiting for inbound actions. So
  * the simulator test executable sends the first starting message.
- *
+ * <p>
  * User is able to call these test scenarios manually through web user interfaces.
  *
  * @author Christoph Deppisch
@@ -33,32 +36,46 @@ public interface ScenarioStarter extends BeanNameAware {
 
     /**
      * Get name of starter usually the Spring bean name.
+     *
      * @return
      */
     String getName();
 
     /**
      * Get name of starter for display in GUI.
+     *
      * @return
      */
     String getDisplayName();
 
     /**
      * Marks starter as default.
+     *
      * @return
      */
     boolean isDefault();
 
     /**
      * Gets available message templates for this scenario starter.
+     *
      * @return
      */
     List<String> getMessageTemplates();
 
     /**
      * Gets list of parameters required to execute this starter.
+     *
      * @return
      */
     List<ScenarioParameter> getScenarioParameter();
+
+    /**
+     * Gets list of parameters required to execute this starter.
+     *
+     * @return
+     */
+    default Collection<TestParameter> getLaunchableTestParameters() {
+        return Collections.EMPTY_LIST;
+    }
 
 }

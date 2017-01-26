@@ -31,6 +31,7 @@ import org.springframework.context.annotation.*;
         "com.consol.citrus.simulator.service",
         "com.consol.citrus.simulator.endpoint",
         "com.consol.citrus.simulator.web",
+        "com.consol.citrus.simulator.controller",
 }, nameGenerator = ScenarioBeanNameGenerator.class)
 @Import(value = { CitrusSpringConfig.class, SimulatorImportSelector.class })
 @ImportResource(locations = "classpath*:citrus-simulator-context.xml")

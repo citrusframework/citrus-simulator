@@ -19,16 +19,22 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.simulator.model.TestExecution;
+import com.consol.citrus.simulator.model.TestParameter;
 import com.consol.citrus.simulator.scenario.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.ScenarioStarter;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Default test builder service. Service is called to invoke a test executable manually. The service has to translate
@@ -40,14 +46,38 @@ import java.util.*;
 @Service
 public class DefaultScenarioService implements ScenarioService {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static final Logger log = LoggerFactory.getLogger(DefaultScenarioService.class);
 
-    /** List of available scenario starters */
-    @Autowired(required = false)
-    private List<ScenarioStarter> scenarioStarters = new ArrayList<>();
+    /**
+     * List of available scenario starters
+     */
+    private Map<String, ScenarioStarter> scenarioStarters;
+
+    /**
+     * List of available scenarios
+     */
+    private Map<String, SimulatorScenario> scenarios;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+
+    @PostConstruct
+    private void init() {
+        scenarios = applicationContext.getBeansOfType(SimulatorScenario.class);
+        log.info(String.format("Scenarios discovered: \n%s", Arrays.toString(scenarios.keySet().toArray())));
+        scenarioStarters = applicationContext.getBeansOfType(ScenarioStarter.class);
+        log.info(String.format("Scenario Starters discovered: \n%s", Arrays.toString(scenarioStarters.keySet().toArray())));
+    }
 
     @Override
+    @Deprecated
     public final void run(Executable testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext) {
         log.info("Executing test executable: " + testExecutable.getClass().getName());
 
@@ -57,29 +87,41 @@ public class DefaultScenarioService implements ScenarioService {
 
         prepare(testExecutable);
         addParameters(testExecutable, parameter);
+        TestExecution es = activityService.createExecutionScenario(testExecutable.getClass().getName(), Collections.emptyList());
+        addParameter(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
 
         testExecutable.execute();
     }
 
     /**
      * Adds test executable parameters to test executable as normal test variables before execution.
+     *
      * @param testExecutable
      * @param parameter
      */
     protected void addParameters(Executable testExecutable, Map<String, Object> parameter) {
         for (Map.Entry<String, Object> paramEntry : parameter.entrySet()) {
-            if (testExecutable instanceof TestDesigner) {
-                ((TestDesigner) testExecutable).variable(paramEntry.getKey(), paramEntry.getValue());
-            }
+            addParameter(testExecutable, paramEntry.getKey(), paramEntry.getValue());
+        }
+    }
 
-            if (testExecutable instanceof TestRunner) {
-                ((TestRunner) testExecutable).variable(paramEntry.getKey(), paramEntry.getValue());
-            }
+    private void addParameter(Executable testExecutable, String key, Object value) {
+        String variableValue = "";
+        if (value != null && StringUtils.hasText(value.toString())) {
+            variableValue = value.toString();
+        }
+        if (testExecutable instanceof TestDesigner) {
+            ((TestDesigner) testExecutable).variable(key, value);
+        }
+
+        if (testExecutable instanceof TestRunner) {
+            ((TestRunner) testExecutable).variable(key, value);
         }
     }
 
     /**
      * Prepare test executable instance before execution. Subclasses can add custom preparation steps in here.
+     *
      * @param testExecutable
      */
     protected void prepare(Executable testExecutable) {
@@ -89,10 +131,55 @@ public class DefaultScenarioService implements ScenarioService {
     public List<ScenarioParameter> getScenarioParameter() {
         List<ScenarioParameter> allParameters = new ArrayList<>();
 
-        for (ScenarioStarter scenarioStarter : scenarioStarters) {
+        for (ScenarioStarter scenarioStarter : scenarioStarters.values()) {
             allParameters.addAll(scenarioStarter.getScenarioParameter());
         }
 
         return allParameters;
     }
+
+    @Override
+    public final void run2(String name, List<TestParameter> scenarioParameters) {
+        log.info(String.format("Executing scenario : %s", name));
+
+        Executable testExecutable = applicationContext.getBean(name, Executable.class);
+
+        if (testExecutable instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) testExecutable).setApplicationContext(applicationContext);
+        }
+
+        prepare(testExecutable);
+
+        if (scenarioParameters != null) {
+            scenarioParameters.forEach(p -> addParameter(testExecutable, p.getName(), p.getValue()));
+        }
+
+        TestExecution es = activityService.createExecutionScenario(name, scenarioParameters);
+        addParameter(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
+
+        testExecutable.execute();
+    }
+
+    @Override
+    public Collection<String> getScenarioNames() {
+        return scenarios.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<String> getStarterNames() {
+        return scenarioStarters.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<TestParameter> lookupScenarioParameters(String scenarioName) {
+        if (scenarioStarters.containsKey(scenarioName)) {
+            return scenarioStarters.get(scenarioName).getLaunchableTestParameters();
+        }
+        return Collections.EMPTY_LIST;
+    }
+
 }

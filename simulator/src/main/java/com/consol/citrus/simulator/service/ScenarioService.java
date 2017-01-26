@@ -17,9 +17,12 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.dsl.endpoint.Executable;
+import com.consol.citrus.simulator.model.TestExecution;
+import com.consol.citrus.simulator.model.TestParameter;
 import com.consol.citrus.simulator.scenario.ScenarioParameter;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -49,4 +52,32 @@ public interface ScenarioService {
      * @return
      */
     List<ScenarioParameter> getScenarioParameter();
+
+    /**
+     * Starts a new scenario instance using the collection of supplied parameters.
+     *
+     * @param name               the name of the scenario to start
+     * @param scenarioParameters the list of parameters to pass to the scenario when starting
+     */
+    void run2(String name, List<TestParameter> scenarioParameters);
+
+    /**
+     * Returns a list containing the names of all scenarios.
+     *
+     * @return all scenario names
+     */
+    Collection<String> getScenarioNames();
+
+    /**
+     * Returns a list containing the names of all starters
+     * @return all starter names
+     */
+    Collection<String> getStarterNames();
+
+    /**
+     * Returns the list of parameters that the scenario can be passed when started
+     * @param scenarioName
+     * @return
+     */
+    Collection<TestParameter> lookupScenarioParameters(String scenarioName);
 }

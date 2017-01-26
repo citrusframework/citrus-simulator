@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Used for drop-down lists when displaying a list of options
  */
-public class TestParameterOption implements Serializable {
+public class TestParameterOption implements Serializable { // TODO MM rename to ScenarioParameterOption
     private String key;
     private String value;
 

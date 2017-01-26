@@ -19,14 +19,18 @@ package com.consol.citrus.simulator.annotation;
 import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
+import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
@@ -34,6 +38,10 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.adapter.MessageEndpointAdapter;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -43,6 +51,12 @@ public class SimulatorWebServiceSupport {
 
     @Autowired(required = false)
     private SimulatorWebServiceConfigurer configurer;
+
+    @Autowired
+    private MessageListeners messageListeners;
+
+    @Autowired
+    private SimulatorMessageListener simulatorMessageListener;
 
     @Bean
     public MessageEndpointAdapter messageEndpointAdapter() {
@@ -127,9 +141,16 @@ public class SimulatorWebServiceSupport {
         return new XPathPayloadMappingKeyExtractor();
     }
 
+    @Bean
+    protected EndpointInterceptor webServiceInterceptor() {
+        messageListeners.addMessageListener(simulatorMessageListener);
+        return new InterceptorWebService(messageListeners);
+    }
+
     /**
      * Gets the web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
+     *
      * @return
      */
     protected String getServletMapping() {
@@ -142,13 +163,16 @@ public class SimulatorWebServiceSupport {
 
     /**
      * Provides list of endpoint interceptors.
+     *
      * @return
      */
     protected EndpointInterceptor[] interceptors() {
+        List<EndpointInterceptor> interceptors = new ArrayList<>();
         if (configurer != null) {
-            return configurer.interceptors();
+            Collections.addAll(interceptors, configurer.interceptors());
         }
-
-        return new EndpointInterceptor[] { new LoggingEndpointInterceptor() };
+        interceptors.add(new LoggingEndpointInterceptor());
+        interceptors.add(webServiceInterceptor());
+        return interceptors.toArray(new EndpointInterceptor[interceptors.size()]);
     }
 }

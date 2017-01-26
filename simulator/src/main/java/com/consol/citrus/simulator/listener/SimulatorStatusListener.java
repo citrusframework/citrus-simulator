@@ -19,8 +19,10 @@ package com.consol.citrus.simulator.listener;
 import com.consol.citrus.*;
 import com.consol.citrus.actions.SleepAction;
 import com.consol.citrus.report.*;
+import com.consol.citrus.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -42,6 +44,9 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     /** Accumulated test results */
     private TestResults testResults = new TestResults();
 
+    @Autowired
+    protected ActivityService executionService;
+
     @Override
     public void onTestStart(TestCase test) {
         runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getParameters()));
@@ -57,6 +62,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         TestResult result = TestResult.success(test.getName(), test.getParameters());
         testResults.addResult(result);
         LOG.info(result.toString());
+        executionService.completeTestExecutionSuccess(test);
     }
 
     @Override
@@ -66,6 +72,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
         LOG.info(result.toString());
         LOG.info(result.getFailureCause());
+        executionService.completeTestExecutionFailure(test, cause);
     }
 
     @Override
@@ -75,11 +82,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
                     StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
                     testAction.getName() + ": " +
                     (StringUtils.hasText(testAction.getDescription()) ? testAction.getDescription() : ""));
+            executionService.createTestAction(testCase, testAction);
         }
     }
 
     @Override
     public void onTestActionFinish(TestCase testCase, TestAction testAction) {
+        executionService.completeTestAction(testCase, testAction);
+
     }
 
     @Override
@@ -118,5 +128,12 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
      */
     public void clearResults() {
         testResults = new TestResults();
+    }
+
+    /**
+     * Get the count of active scenarios
+     */
+    public int getCountActiveScenarios() {
+        return runningTests.size();
     }
 }

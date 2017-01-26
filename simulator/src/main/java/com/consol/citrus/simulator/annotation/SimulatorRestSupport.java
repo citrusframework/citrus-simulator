@@ -5,15 +5,22 @@ import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
+import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
+import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
-import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.HandlerAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -33,10 +40,18 @@ public class SimulatorRestSupport {
     private SimulatorRestConfigurer configurer;
 
     @Autowired
+    private MessageListeners messageListeners;
+
+    @Autowired
+    private SimulatorMessageListener simulatorMessageListener;
+
+    @Autowired
     @SuppressWarnings("SpringJavaAutowiringInspection")
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
-    /** Target Citrus Http controller */
+    /**
+     * Target Citrus Http controller
+     */
     private HttpMessageController restController;
 
     @Bean
@@ -138,6 +153,7 @@ public class SimulatorRestSupport {
 
     /**
      * Gets the Citrus Http REST controller.
+     *
      * @param applicationContext
      * @return
      */
@@ -167,9 +183,16 @@ public class SimulatorRestSupport {
         return new AnnotationRequestMappingKeyExtractor();
     }
 
+    @Bean
+    protected HandlerInterceptor httpInterceptor() {
+        messageListeners.addMessageListener(simulatorMessageListener);
+        return new InterceptorHttp(messageListeners);
+    }
+
     /**
      * Gets the url pattern to map this Http rest controller to. Clients must use this
      * context path in order to access the Http REST support on the simulator.
+     *
      * @return
      */
     protected String getUrlMapping() {
@@ -182,13 +205,17 @@ public class SimulatorRestSupport {
 
     /**
      * Provides list of endpoint interceptors.
+     *
      * @return
      */
     protected HandlerInterceptor[] interceptors() {
+        List<HandlerInterceptor> interceptors = new ArrayList<>();
         if (configurer != null) {
-            return configurer.interceptors();
+            Collections.addAll(interceptors, configurer.interceptors());
         }
-
-        return new HandlerInterceptor[] { new LoggingHandlerInterceptor() };
+        interceptors.add(new LoggingHandlerInterceptor());
+        interceptors.add(httpInterceptor());
+        return interceptors.toArray(new HandlerInterceptor[interceptors.size()]);
     }
+
 }

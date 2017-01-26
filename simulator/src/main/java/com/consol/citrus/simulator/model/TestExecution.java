@@ -14,7 +14,7 @@ import java.util.List;
  * JPA entity for representing a test execution
  */
 @Entity
-public class TestExecution implements Serializable {
+public class TestExecution implements Serializable { // TODO MM rename to ScenarioExecution
     private static final Logger LOG = LoggerFactory.getLogger(TestExecution.class);
 
     public static final String EXECUTION_ID = "testExecutionId";

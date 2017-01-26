@@ -10,7 +10,7 @@ import java.util.Date;
  * JPA entity for representing a test action
  */
 @Entity
-public class TestAction implements Serializable {
+public class TestAction implements Serializable { // TODO MM rename to ScenarioAction
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
