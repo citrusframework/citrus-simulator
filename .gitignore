@@ -19,3 +19,5 @@ logs
 typings
 **/app/**/*.js
 **/app/**/*.js.map
+systemjs-config.js
+systemjs-config.js.map
