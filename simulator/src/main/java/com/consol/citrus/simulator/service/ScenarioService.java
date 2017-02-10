@@ -16,15 +16,10 @@
 
 package com.consol.citrus.simulator.service;
 
-import com.consol.citrus.dsl.endpoint.Executable;
-import com.consol.citrus.simulator.model.TestExecution;
 import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.scenario.ScenarioParameter;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service interface capable of executing test executables. The service takes care on setting up the executable before execution. Service
@@ -35,31 +30,12 @@ import java.util.Map;
 public interface ScenarioService {
 
     /**
-     * Executes a test scenario instance with given parameters which get translated into setters on test executable
-     * implementation. It is ensured that test parameters do have necessary keys set. Application context is necessary to
-     * create proper test context for execution.
-     *
-     * @param testExecutable
-     * @param parameter
-     * @param applicationContext
-     */
-    void run(Executable testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext);
-
-    /**
-     * Builds a list of required scenario parameters. Values in this list represent default values. These
-     * values may be set by outside logic then.
-     *
-     * @return
-     */
-    List<ScenarioParameter> getScenarioParameter();
-
-    /**
      * Starts a new scenario instance using the collection of supplied parameters.
      *
      * @param name               the name of the scenario to start
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
-    void run2(String name, List<TestParameter> scenarioParameters);
+    Long run(String name, List<TestParameter> scenarioParameters);
 
     /**
      * Returns a list containing the names of all scenarios.
@@ -70,12 +46,14 @@ public interface ScenarioService {
 
     /**
      * Returns a list containing the names of all starters
+     *
      * @return all starter names
      */
     Collection<String> getStarterNames();
 
     /**
      * Returns the list of parameters that the scenario can be passed when started
+     *
      * @param scenarioName
      * @return
      */

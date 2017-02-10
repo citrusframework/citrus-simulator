@@ -1,0 +1,13 @@
+<div class="row">
+    <div *ngIf="test" class="col-md-12">
+        <h3>{{title}} <small>{{test.name}}</small></h3>
+
+        <test-parameter-form [testParameters]="testParameters" [test]="test"></test-parameter-form>
+
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{errorMessage}}
+    </div>
+</div>

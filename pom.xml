@@ -26,6 +26,7 @@
 
   <modules>
     <module>simulator</module>
+    <module>simulator-client</module>
     <module>simulator-docs</module>
     <module>samples/sample-ws</module>
     <module>samples/sample-jms</module>

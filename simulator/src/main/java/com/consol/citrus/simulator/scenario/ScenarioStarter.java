@@ -35,46 +35,11 @@ import java.util.List;
 public interface ScenarioStarter extends BeanNameAware {
 
     /**
-     * Get name of starter usually the Spring bean name.
-     *
-     * @return
-     */
-    String getName();
-
-    /**
-     * Get name of starter for display in GUI.
-     *
-     * @return
-     */
-    String getDisplayName();
-
-    /**
-     * Marks starter as default.
-     *
-     * @return
-     */
-    boolean isDefault();
-
-    /**
-     * Gets available message templates for this scenario starter.
-     *
-     * @return
-     */
-    List<String> getMessageTemplates();
-
-    /**
      * Gets list of parameters required to execute this starter.
      *
      * @return
      */
-    List<ScenarioParameter> getScenarioParameter();
-
-    /**
-     * Gets list of parameters required to execute this starter.
-     *
-     * @return
-     */
-    default Collection<TestParameter> getLaunchableTestParameters() {
+    default Collection<TestParameter> getScenarioParameters() {
         return Collections.EMPTY_LIST;
     }
 

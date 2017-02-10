@@ -1,0 +1,59 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    padding-top: 70px
+}
+
+.label-pill {
+    float: right;
+    border-radius: 1em;
+}
+
+/** Buttons **/
+
+.btn-primary {
+    color: #ffffff;
+    border-color: #0096D6;
+    background: #0096D6;
+}
+
+.btn-primary:hover {
+    border-color: #33abde;
+    background-color: #33abde;
+}
+
+.btn-return {
+    color: #ffffff;
+    border-color: #d66e5b;
+    background: #d66e5b;
+}
+
+.btn-return:hover {
+    border-color: #d6857a;
+    background-color: #d6857a;
+}
+
+.btn-filter:focus, .btn-filter:active:focus, .btn-filter.active:focus, .btn-filter.focus, .btn-filter:active.focus, .btn-filter.active.focus {
+    outline: 0;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+.clickable:hover{
+    opacity: 0.5;
+}
+
+tr td {
+    font-size: 14px;
+}
+
+span i.glyphicon-flash {
+    color: darkgreen;
+}
+span i.glyphicon-eye-open {
+    color: darkblue;
+}

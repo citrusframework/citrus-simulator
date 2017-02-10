@@ -1,0 +1,22 @@
+<div class="panel panel-info">
+    <div class="panel-heading">Test Actions</div>
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let testAction of testActions" class="action">
+            <td>{{testAction.name}}</td>
+            <td>{{testAction.startDate | date:format}}</td>
+            <td>{{testAction.endDate | date:format}}</td>
+        </tr>
+        <tr class="no-actions">
+            <td colspan="3">No actions were executed</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

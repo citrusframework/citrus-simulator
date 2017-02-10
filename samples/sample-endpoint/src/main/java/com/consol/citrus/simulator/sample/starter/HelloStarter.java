@@ -16,9 +16,13 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
+import com.consol.citrus.simulator.scenario.Starter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -33,25 +37,27 @@ public class HelloStarter extends AbstractScenarioStarter {
     }
 
     @Override
-    public String getDisplayName() {
-        return "Hello";
-    }
+    public List<TestParameter> getScenarioParameters() {
+        List<TestParameter> testParameters = new ArrayList<>();
 
-    @Override
-    public boolean isDefault() {
-        return true;
-    }
+        // greeting (text box)
+        testParameters.add(new TestParameterBuilder()
+                .name("greeting")
+                .label("Greeting Text")
+                .required()
+                .textbox()
+                .value("Hi there!")
+                .build());
 
-    @Override
-    public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"Hello"});
-    }
+        // payload (text area)
+        testParameters.add(new TestParameterBuilder()
+                .name("payload")
+                .label("Payload")
+                .required()
+                .textarea()
+                .value(getMessageTemplate("Hello"))
+                .build());
 
-    @Override
-    public List<ScenarioParameter> getScenarioParameter() {
-        List<ScenarioParameter> parameters = new ArrayList<>();
-        parameters.add(new ScenarioParameter("greeting", "Greeting Text", "Hi there!").addScenarioFilter(HelloStarter.class));
-
-        return parameters;
+        return testParameters;
     }
 }

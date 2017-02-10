@@ -1,0 +1,22 @@
+<div class="panel panel-info">
+    <div class="panel-heading">Test Parameters</div>
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let testParameter of testParameters" class="parameter">
+            <td>{{testParameter.label}}</td>
+            <td>{{testParameter.controlType}}</td>
+            <td>{{testParameter.value | truncate : 50}}</td>
+        </tr>
+        <tr class="no-parameters">
+            <td colspan="3">No start parameters were used</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

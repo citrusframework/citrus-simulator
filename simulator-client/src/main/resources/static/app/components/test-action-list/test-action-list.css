@@ -1,0 +1,8 @@
+tr.no-actions {
+    display: table-row;
+}
+
+tr.action + tr.no-actions {
+    display: none;
+}
+

@@ -1,0 +1,19 @@
+tr.no-executions {
+    display: table-row;
+}
+
+tr.execution {
+    cursor: pointer;
+}
+
+tr.execution + tr.no-executions {
+    display: none;
+}
+
+.panel-heading div {
+    margin-top: -18px;
+    font-size: 15px;
+}
+.panel-heading div span{
+    margin-left:5px;
+}

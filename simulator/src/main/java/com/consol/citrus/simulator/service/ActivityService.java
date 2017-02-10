@@ -1,3 +1,19 @@
+/*
+ * Copyright 2006-2016 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.TestAction;
@@ -15,6 +31,8 @@ import javax.transaction.Transactional;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -38,7 +56,7 @@ public class ActivityService {
     public TestExecution createExecutionScenario(String scenarioName, Collection<TestParameter> scenarioParameters) {
         TestExecution ts = new TestExecution();
         ts.setTestName(scenarioName);
-        ts.setStartDate(new Date());
+        ts.setStartDate(getTimeNow());
         ts.setStatus(TestExecution.Status.ACTIVE);
 
         if (scenarioParameters != null) {
@@ -102,7 +120,7 @@ public class ActivityService {
 
     private void completeTestExecution(TestExecution.Status status, TestCase testCase, Throwable cause) {
         TestExecution te = lookupTestExecution(testCase);
-        te.setEndDate(new Date());
+        te.setEndDate(getTimeNow());
         te.setStatus(status);
         if (cause != null) {
             StringWriter sw = new StringWriter();
@@ -120,7 +138,7 @@ public class ActivityService {
         TestExecution te = lookupTestExecution(testCase);
         com.consol.citrus.simulator.model.TestAction ta = new com.consol.citrus.simulator.model.TestAction();
         ta.setName(testAction.getName());
-        ta.setStartDate(new Date());
+        ta.setStartDate(getTimeNow());
         te.addTestAction(ta);
     }
 
@@ -143,7 +161,7 @@ public class ActivityService {
             throw new CitrusRuntimeException(String.format("Expected to find last test action with name %s but got %s", testAction.getName(), lastTestAction.getName()));
         }
 
-        lastTestAction.setEndDate(new Date());
+        lastTestAction.setEndDate(getTimeNow());
     }
 
     private boolean skipTestAction(TestAction testAction) {
@@ -157,6 +175,18 @@ public class ActivityService {
 
     private long lookupTestExecutionId(TestCase testCase) {
         return Long.parseLong(testCase.getVariableDefinitions().get(TestExecution.EXECUTION_ID).toString());
+    }
+
+    private Date getTimeNow() {
+        return Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private Date getDateAtStartOfDay() {
+        return Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+
+    private Date getDateAtEndOfDay() {
+        return Date.from(LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 
 }

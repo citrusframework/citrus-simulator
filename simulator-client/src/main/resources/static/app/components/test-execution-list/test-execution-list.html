@@ -1,0 +1,22 @@
+<table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th *ngIf="!hideTestname">Scenario</th>
+        <th>Start</th>
+        <th>End</th>
+        <th *ngIf="!hideStatus">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let execution of testExecutions" (click)="onSelect(execution)"
+        class="{{execution.status | executionStatus}} execution">
+        <td *ngIf="!hideTestname">{{execution.testName}}</td>
+        <td>{{execution.startDate | date: format}}</td>
+        <td>{{execution.endDate | date: format}}</td>
+        <td *ngIf="!hideStatus"><span class="label label-{{execution.status | executionStatus}}">{{execution.status}}</span></td>
+    </tr>
+    <tr class="no-executions">
+        <td colspan="5">No executions to display</td>
+    </tr>
+    </tbody>
+</table>

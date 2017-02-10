@@ -17,42 +17,24 @@
 package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
+import com.consol.citrus.exceptions.CitrusRuntimeException;
+import com.consol.citrus.simulator.config.SimulatorConfiguration;
+import com.consol.citrus.util.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * @author Christoph Deppisch
  */
 public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComponent implements ScenarioStarter {
 
-    /** This starter's name */
+    /**
+     * This starter's name
+     */
     private String name;
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
-    public boolean isDefault() {
-        return false;
-    }
-
-    @Override
-    public List<String> getMessageTemplates() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<ScenarioParameter> getScenarioParameter() {
-        return Collections.emptyList();
-    }
 
     /**
      * Sets the beanName property.
@@ -63,4 +45,32 @@ public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComp
     public void setBeanName(String beanName) {
         this.name = beanName;
     }
+
+    @Autowired
+    private SimulatorConfiguration simulatorConfiguration;
+
+    /**
+     * Gets a classpath file resource from base template package.
+     *
+     * @param fileName
+     * @return
+     */
+    protected Resource getFileResource(String fileName) {
+        return new ClassPathResource(simulatorConfiguration.getTemplatePath() + "/" + fileName + ".xml");
+    }
+
+    /**
+     * Locates a message template using the supplied {@code filename} returning the contents as a string
+     *
+     * @param filename the message template name
+     * @return the contents as a string
+     */
+    protected String getMessageTemplate(String filename) {
+        try {
+            return FileUtils.readToString(this.getFileResource(filename));
+        } catch (IOException e) {
+            throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
+        }
+    }
+
 }

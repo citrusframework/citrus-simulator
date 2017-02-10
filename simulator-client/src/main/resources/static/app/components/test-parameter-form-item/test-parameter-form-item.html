@@ -1,0 +1,24 @@
+<div [formGroup]="form" class="form-group" [hidden]="testParameter.controlType == 'HIDDEN_TEXTBOX'">
+    <label [attr.for]="testParameter.name" class="control-label col-sm-2">{{testParameter.label}}</label>
+    <div [ngSwitch]="testParameter.controlType">
+
+        <input *ngSwitchCase="'TEXTBOX'" [formControlName]="testParameter.name" [id]="testParameter.name"
+               [type]="testParameter.type">
+
+        <input *ngSwitchCase="'HIDDEN_TEXTBOX'" [formControlName]="testParameter.name" [id]="testParameter.name"
+               [type]="testParameter.type" hidden="true">
+
+
+        <textarea *ngSwitchCase="'TEXTAREA'" [formControlName]="testParameter.name" [id]="testParameter.name"
+                  class="message-payload-textarea col-sm-10"></textarea>
+
+        <select [id]="testParameter.name" *ngSwitchCase="'DROPDOWN'" [formControlName]="testParameter.name">
+            <option *ngFor="let opt of testParameter.options" [value]="opt.key">{{opt.value}}</option>
+        </select>
+    </div>
+    <div *ngIf="!isValid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{testParameter.label}} is required
+    </div>
+</div>

@@ -1,0 +1,30 @@
+<div *ngIf="testParameters">
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="form-horizontal">
+        <div class="form-row">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+                <button type="submit" [disabled]="!form.valid" class="btn btn-success" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+            </div>
+        </div>
+        <hr/>
+
+        <div *ngFor="let testParameter of testParameters" class="form-row">
+            <test-parameter-form-item [testParameter]="testParameter" [form]="form"></test-parameter-form-item>
+        </div>
+
+        <hr/>
+        <div class="form-row">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+                <button type="submit" [disabled]="!form.valid" class="btn btn-success" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+            </div>
+        </div>
+    </form>
+    <div *ngIf="errorMessage" class="form-row">
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Error launching test: {{errorMessage}}
+        </div>
+    </div>
+</div>

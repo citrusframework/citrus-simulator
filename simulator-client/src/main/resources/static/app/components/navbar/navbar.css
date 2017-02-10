@@ -1,0 +1,46 @@
+.navbar-brand {
+    text-shadow: none;
+}
+
+.navbar-brand span {
+    color: #ffffff;
+}
+
+.navbar-brand:hover span {
+    color: #ffffff;
+}
+
+.navbar-brand img {
+    float: left;
+    margin-top: -2px;
+    margin-right: 3px;
+}
+
+.navbar-default {
+    background: #0096D6;
+    border: none;
+}
+
+.navbar .nav > li > a {
+    color: #ffffff;
+    text-shadow: none;
+}
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover, .navbar .nav .active > a:focus {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.2);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.navbar .nav > li > a.router-link-active, .navbar .nav > li > a.router-link-active:hover, .navbar .nav > li > a.router-link-active:focus {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.2);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.navbar .nav > li > a:hover {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.2);
+}

@@ -1,0 +1,19 @@
+tr.no-tests {
+    display: table-row;
+}
+
+td.test {
+    cursor: pointer;
+}
+
+tr.test + tr.no-tests {
+    display: none;
+}
+
+.panel-heading div {
+    margin-top: -18px;
+    font-size: 15px;
+}
+.panel-heading div span{
+    margin-left:5px;
+}

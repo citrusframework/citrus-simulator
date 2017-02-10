@@ -19,9 +19,6 @@ package com.consol.citrus.simulator.sample.starter;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author Christoph Deppisch
  */
@@ -34,13 +31,4 @@ public class GoodByeStarter extends AbstractScenarioStarter {
         echo("${payload}");
     }
 
-    @Override
-    public String getDisplayName() {
-        return "GoodBye";
-    }
-
-    @Override
-    public List<String> getMessageTemplates() {
-        return Arrays.asList(new String[] {"Goodbye"});
-    }
 }

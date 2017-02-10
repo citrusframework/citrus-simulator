@@ -21,7 +21,6 @@ import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.model.TestExecution;
 import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.scenario.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.ScenarioStarter;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
@@ -30,10 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -77,39 +77,46 @@ public class DefaultScenarioService implements ScenarioService {
     }
 
     @Override
-    @Deprecated
-    public final void run(Executable testExecutable, Map<String, Object> parameter, ApplicationContext applicationContext) {
-        log.info("Executing test executable: " + testExecutable.getClass().getName());
+    public final Long run(String name, List<TestParameter> scenarioParameters) {
+        log.info(String.format("Executing scenario : %s", name));
+
+        Executable testExecutable = applicationContext.getBean(name, Executable.class);
 
         if (testExecutable instanceof ApplicationContextAware) {
             ((ApplicationContextAware) testExecutable).setApplicationContext(applicationContext);
         }
 
         prepare(testExecutable);
-        addParameters(testExecutable, parameter);
-        TestExecution es = activityService.createExecutionScenario(testExecutable.getClass().getName(), Collections.emptyList());
-        addParameter(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
 
-        testExecutable.execute();
+        if (scenarioParameters != null) {
+            scenarioParameters.forEach(p -> addTestVariable(testExecutable, p.getName(), p.getValue()));
+        }
+
+        TestExecution es = activityService.createExecutionScenario(name, scenarioParameters);
+        addTestVariable(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            log.debug(String.format("Starting scenario: '%s'", name));
+            try {
+                testExecutable.execute();
+                log.debug(String.format("Scenario completed: '%s'", name));
+            } catch (Exception e) {
+                log.error(String.format("Scenario completed with error: '%s'", name), e);
+            }
+        });
+
+        return es.getExecutionId();
     }
 
     /**
-     * Adds test executable parameters to test executable as normal test variables before execution.
+     * Adds a new variable to the testExecutable using the supplied key an value.
      *
      * @param testExecutable
-     * @param parameter
+     * @param key            variable name
+     * @param value          variable value
      */
-    protected void addParameters(Executable testExecutable, Map<String, Object> parameter) {
-        for (Map.Entry<String, Object> paramEntry : parameter.entrySet()) {
-            addParameter(testExecutable, paramEntry.getKey(), paramEntry.getValue());
-        }
-    }
-
-    private void addParameter(Executable testExecutable, String key, Object value) {
-        String variableValue = "";
-        if (value != null && StringUtils.hasText(value.toString())) {
-            variableValue = value.toString();
-        }
+    private void addTestVariable(Executable testExecutable, String key, Object value) {
         if (testExecutable instanceof TestDesigner) {
             ((TestDesigner) testExecutable).variable(key, value);
         }
@@ -125,39 +132,6 @@ public class DefaultScenarioService implements ScenarioService {
      * @param testExecutable
      */
     protected void prepare(Executable testExecutable) {
-    }
-
-    @Override
-    public List<ScenarioParameter> getScenarioParameter() {
-        List<ScenarioParameter> allParameters = new ArrayList<>();
-
-        for (ScenarioStarter scenarioStarter : scenarioStarters.values()) {
-            allParameters.addAll(scenarioStarter.getScenarioParameter());
-        }
-
-        return allParameters;
-    }
-
-    @Override
-    public final void run2(String name, List<TestParameter> scenarioParameters) {
-        log.info(String.format("Executing scenario : %s", name));
-
-        Executable testExecutable = applicationContext.getBean(name, Executable.class);
-
-        if (testExecutable instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) testExecutable).setApplicationContext(applicationContext);
-        }
-
-        prepare(testExecutable);
-
-        if (scenarioParameters != null) {
-            scenarioParameters.forEach(p -> addParameter(testExecutable, p.getName(), p.getValue()));
-        }
-
-        TestExecution es = activityService.createExecutionScenario(name, scenarioParameters);
-        addParameter(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
-
-        testExecutable.execute();
     }
 
     @Override
@@ -177,7 +151,7 @@ public class DefaultScenarioService implements ScenarioService {
     @Override
     public Collection<TestParameter> lookupScenarioParameters(String scenarioName) {
         if (scenarioStarters.containsKey(scenarioName)) {
-            return scenarioStarters.get(scenarioName).getLaunchableTestParameters();
+            return scenarioStarters.get(scenarioName).getScenarioParameters();
         }
         return Collections.EMPTY_LIST;
     }
