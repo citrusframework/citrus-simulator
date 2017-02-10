@@ -16,6 +16,13 @@
   <name>citrus-simulator</name>
 
   <dependencies>
+
+    <!-- simulator -->
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-client</artifactId>
+    </dependency>
+
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
