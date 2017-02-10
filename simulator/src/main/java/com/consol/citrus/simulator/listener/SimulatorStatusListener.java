@@ -16,9 +16,13 @@
 
 package com.consol.citrus.simulator.listener;
 
-import com.consol.citrus.*;
+import com.consol.citrus.TestAction;
+import com.consol.citrus.TestCase;
+import com.consol.citrus.TestResult;
 import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.report.*;
+import com.consol.citrus.report.AbstractTestListener;
+import com.consol.citrus.report.TestActionListener;
+import com.consol.citrus.report.TestResults;
 import com.consol.citrus.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,13 +42,19 @@ import java.util.*;
 @Component
 public class SimulatorStatusListener extends AbstractTestListener implements TestActionListener {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static final Logger LOG = LoggerFactory.getLogger(SimulatorStatusListener.class);
 
-    /** Currently running test */
+    /**
+     * Currently running test
+     */
     private Map<String, TestResult> runningTests = new LinkedHashMap<>();
 
-    /** Accumulated test results */
+    /**
+     * Accumulated test results
+     */
     private TestResults testResults = new TestResults();
 
     @Autowired
@@ -77,7 +90,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestActionStart(TestCase testCase, TestAction testAction) {
-        if (!testAction.getClass().equals(SleepAction.class)) {
+        if (!ignoreTestAction(testAction)) {
             LOG.debug(testCase.getName() + "(" +
                     StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
                     testAction.getName() + ": " +
@@ -88,9 +101,15 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestActionFinish(TestCase testCase, TestAction testAction) {
-        executionService.completeTestAction(testCase, testAction);
-
+        if (!ignoreTestAction(testAction)) {
+            executionService.completeTestAction(testCase, testAction);
+        }
     }
+
+    private boolean ignoreTestAction(TestAction testAction) {
+        return testAction.getClass().equals(SleepAction.class);
+    }
+
 
     @Override
     public void onTestActionSkipped(TestCase testCase, TestAction testAction) {
