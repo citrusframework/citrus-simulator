@@ -16,8 +16,14 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
+import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.TestParameterBuilder;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -29,6 +35,21 @@ public class GoodByeStarter extends AbstractScenarioStarter {
     protected void configure() {
         echo("GoodBye starter was executed!");
         echo("${payload}");
+    }
+    @Override
+    public Collection<TestParameter> getScenarioParameters() {
+        List<TestParameter> testParameters = new ArrayList<>();
+
+        // greeting (text area)
+        testParameters.add(new TestParameterBuilder()
+                .name("payload")
+                .label("Payload")
+                .required()
+                .textarea()
+                .value(getMessageTemplate("Goodbye"))
+                .build());
+
+        return testParameters;
     }
 
 }
