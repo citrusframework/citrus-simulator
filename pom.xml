@@ -37,6 +37,14 @@
   
   <dependencyManagement>
     <dependencies>
+
+      <!-- Simulator -->
+      <dependency>
+        <groupId>com.consol.citrus</groupId>
+        <artifactId>citrus-simulator-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- Citrus -->
       <dependency>
         <groupId>com.consol.citrus</groupId>
