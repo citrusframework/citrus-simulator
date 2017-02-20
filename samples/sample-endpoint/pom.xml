@@ -11,8 +11,8 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator-sample-endpoint</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>war</packaging>
 
   <dependencies>

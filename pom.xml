@@ -6,7 +6,7 @@
   
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator-parent</artifactId>
-  <name>citrus-simulator-parent</name>
+  <name>${project.artifactId}</name>
   <version>0.9</version>
 
   <packaging>pom</packaging>
