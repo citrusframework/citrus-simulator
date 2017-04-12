@@ -1,16 +1,16 @@
 import {NgModule} from "@angular/core";
 import {Routes, RouterModule} from "@angular/router";
-import {WelcomeComponent} from "../welcome/welcome";
-import {StatusComponent} from "../status/status";
-import {ActivityComponent} from "../activity/activity";
-import {TestExecutionDetailComponent} from "../test-execution-detail/test-execution-detail";
-import {TestsComponent} from "../tests/tests";
-import {TestDetailComponent} from "../test-detail/test-detail";
-import {TestLaunchComponent} from "../test-launch/test-launch";
-import {MessagesComponent} from "../messages/messages";
-import {MessageDetailComponent} from "../message-detail/message-detail";
-import {AboutComponent} from "../about/about";
-import {HelpComponent} from "../help/help";
+import {WelcomeComponent} from "./components/welcome/welcome";
+import {StatusComponent} from "./components/status/status";
+import {ActivityComponent} from "./components/activity/activity";
+import {TestExecutionDetailComponent} from "./components/test-execution-detail/test-execution-detail";
+import {TestsComponent} from "./components/tests/tests";
+import {TestDetailComponent} from "./components/test-detail/test-detail";
+import {TestLaunchComponent} from "./components/test-launch/test-launch";
+import {MessagesComponent} from "./components/messages/messages";
+import {MessageDetailComponent} from "./components/message-detail/message-detail";
+import {AboutComponent} from "./components/about/about";
+import {HelpComponent} from "./components/help/help";
 import {LocationStrategy, HashLocationStrategy} from "@angular/common";
 
 const routes: Routes = [

@@ -7,22 +7,45 @@
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator-parent</artifactId>
   <name>${project.artifactId}</name>
-  <version>0.9</version>
+  <version>0.9.1</version>
 
   <packaging>pom</packaging>
   
   <properties>
-    <project.version>0.9</project.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.version>2.7-SNAPSHOT</citrus.version>
-    <spring.version>4.3.5.RELEASE</spring.version>
+    <citrus.version>2.7.1</citrus.version>
+    <spring.version>4.3.6.RELEASE</spring.version>
     <spring.ws.version>2.4.0.RELEASE</spring.ws.version>
-    <spring.boot.version>1.4.3.RELEASE</spring.boot.version>
+    <spring.boot.version>1.5.0.RELEASE</spring.boot.version>
     <slf4j.version>1.7.22</slf4j.version>
     <testng.version>6.10</testng.version>
-    <handlebars.version>4.0.6</handlebars.version>
+    <node.version>v7.7.4</node.version>
+    <npm.version>4.4.3</npm.version>
+    <skip.gpg>false</skip.gpg>
   </properties>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>manual</distribution>
+      <comments>Citrus is published free of charge under Apache License, Version 2.0. You are allowed to use Citrus to test any kind of software
+        (also commercial applications). If you do this, we kindly ask you to tell us about it so that we can add you to our references
+        list. You may also use our "Tested using Citrus" logo in your online or printed documentation.</comments>
+    </license>
+  </licenses>
+
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>http://labs-build.consol.de/view/Citrus/</url>
+    <notifiers>
+      <notifier>
+        <type>mail</type>
+        <address>citrus-dev-l@consol.de</address>
+      </notifier>
+    </notifiers>
+  </ciManagement>
 
   <modules>
     <module>simulator</module>
@@ -34,16 +57,15 @@
     <module>samples/sample-endpoint</module>
     <module>archetypes/archetype-rest</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:git@github.com:christophd/citrus-simulator.git</connection>
+    <developerConnection>scm:git:git@github.com/christophd/citrus-simulator.git</developerConnection>
+    <url>http://github.com/christophd/citrus-simulator.git</url>
+  </scm>
   
   <dependencyManagement>
     <dependencies>
-
-      <!-- Simulator -->
-      <dependency>
-        <groupId>com.consol.citrus</groupId>
-        <artifactId>citrus-simulator-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
 
       <!-- Citrus -->
       <dependency>
@@ -84,28 +106,6 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
         <version>${spring.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.github.jknack</groupId>
-        <artifactId>handlebars</artifactId>
-        <version>${handlebars.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.jknack</groupId>
-        <artifactId>handlebars-springmvc</artifactId>
-        <version>${handlebars.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.webjars</groupId>
-        <artifactId>jquery</artifactId>
-        <version>2.1.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.webjars</groupId>
-        <artifactId>bootstrap</artifactId>
-        <version>3.3.5</version>
       </dependency>
 
       <dependency>
@@ -189,6 +189,29 @@
           <artifactId>frontend-maven-plugin</artifactId>
           <version>1.0</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.6</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <useAgent>true</useAgent>
+            <keyname>christoph.deppisch@consol.de</keyname>
+            <skip>${skip.gpg}</skip>
+            <gpgArguments>
+              <arg>--allow-weak-digest-algos</arg>
+            </gpgArguments>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -202,7 +225,40 @@
         </configuration>
       </plugin>
     </plugins>
+
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>2.7</version>
+      </extension>
+    </extensions>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release-labs</id>
+      <distributionManagement>
+        <repository>
+          <id>consol-labs-release</id>
+          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/repository</url>
+        </repository>
+        <snapshotRepository>
+          <id>consol-labs-snapshots</id>
+          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/snapshots-repository</url>
+        </snapshotRepository>
+      </distributionManagement>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <repositories>
     <repository>

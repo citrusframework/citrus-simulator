@@ -1,11 +1,10 @@
 import {Component, OnInit} from "@angular/core";
 import {Title} from "@angular/platform-browser";
-import {AppInfoService} from "../../services/appinfo-service";
+import {AppInfoService} from "../services/appinfo-service";
 
 @Component({
-    moduleId: module.id,
-    selector: 'my-app',
-    templateUrl: 'app.component.html',
+    selector: 'app',
+    templateUrl: 'app.html',
 })
 export class AppComponent implements OnInit {
     constructor(private titleService: Title, private appInfoService: AppInfoService) {

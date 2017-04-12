@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
 import {AppInfo} from "../model/appinfo";
 import {Http, Response} from "@angular/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx';
 import {ConfigService} from "./config-service";
 
 @Injectable()

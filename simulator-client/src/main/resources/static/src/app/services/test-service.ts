@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Headers, Http, Response} from "@angular/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx';
 import {Test, TestParameter} from "../model/test";
 import {ConfigService} from "./config-service";
 
