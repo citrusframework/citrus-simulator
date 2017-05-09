@@ -17,9 +17,7 @@
 package com.consol.citrus.simulator.endpoint;
 
 import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
-import com.consol.citrus.dsl.runner.ExecutableTestRunnerComponent;
 import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.message.Message;
@@ -29,7 +27,6 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -65,34 +62,6 @@ public class SimulatorEndpointAdapter extends TestExecutingEndpointAdapter {
                     "using default scenario '%s'", mappingName, configuration.getDefaultScenario()));
             return super.dispatchMessage(request, configuration.getDefaultScenario());
         }
-    }
-
-    private Message doDispatchMessageUsingWorkaround(final Message request, String mappingName) {
-        final Executable executable;
-
-        try {
-            executable = getApplicationContext().getBean(mappingName, Executable.class);
-        } catch (NoSuchBeanDefinitionException e) {
-            throw new CitrusRuntimeException("Unable to find test builder with name '" +
-                    mappingName + "' in Spring bean context", e);
-        }
-
-        getTaskExecutor().execute(new Runnable() {
-            public void run() {
-                if (executable instanceof TestRunner) {
-                    prepareExecution(request, (TestRunner) executable);
-                    if (executable instanceof ExecutableTestRunnerComponent) {
-                        ((ExecutableTestRunnerComponent) executable).prepareExecution();
-                    }
-                } else if (executable instanceof TestDesigner) {
-                    prepareExecution(request, (TestDesigner) executable);
-                }
-
-                executable.execute();
-            }
-        });
-
-        return getResponseEndpointAdapter().handleMessage(request);
     }
 
     protected void prepareExecution(Message request, TestDesigner testDesigner) {
