@@ -23,14 +23,23 @@ import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.correlation.CorrelationHandler;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
+import com.consol.citrus.simulator.exception.SimulatorException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Christoph Deppisch
  */
 public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerComponent implements SimulatorScenario, CorrelationHandler {
 
+    @Autowired
+    private List<Endpoint> endpoints;
+
     /**
      * Starts new correlation for messages with given handler.
+     *
      * @return
      */
     public CorrelationHandlerBuilder startCorrelation() {
@@ -46,6 +55,7 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
 
     /**
      * Gets the scenario endpoint.
+     *
      * @return
      */
     public ScenarioEndpoint scenario() {
@@ -54,9 +64,23 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
 
     /**
      * Subclasses must provide the target endpoint.
+     *
      * @return
      */
     protected abstract Endpoint getEndpoint();
+
+    /**
+     * Subclasses must provide the target endpoint.
+     *
+     * @return
+     */
+    protected Endpoint getEndpointByName(String name) {
+        Optional<Endpoint> optional = endpoints.parallelStream().filter(endpoint -> endpoint.getName().equalsIgnoreCase(name)).findFirst();
+        if (optional.isPresent()) {
+            return optional.get();
+        }
+        throw new SimulatorException(String.format("No endpoint found matching name '%s'", name));
+    }
 
     /**
      * Default scenario implementation.
@@ -70,9 +94,23 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
         }
 
         @Override
+        public ReceiveMessageBuilder receive(String endpointName) {
+            return (ReceiveMessageBuilder)
+                    AbstractSimulatorScenario.this.receive(getEndpointByName(endpointName))
+                            .description("Received scenario request");
+        }
+
+        @Override
         public SendMessageBuilder send() {
             return (SendMessageBuilder)
                     AbstractSimulatorScenario.this.send(getEndpoint())
+                            .description("Sending scenario response");
+        }
+
+        @Override
+        public SendMessageBuilder send(String endpointName) {
+            return (SendMessageBuilder)
+                    AbstractSimulatorScenario.this.send(getEndpointByName(endpointName))
                             .description("Sending scenario response");
         }
     }
