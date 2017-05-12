@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,33 @@ import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.correlation.CorrelationHandler;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.exception.SimulatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Christoph Deppisch
  */
 public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerComponent implements SimulatorScenario, CorrelationHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSimulatorScenario.class);
+
     @Autowired
     private List<Endpoint> endpoints;
+
+    @PostConstruct
+    private void init() {
+        List<String> endpointNames = endpoints.parallelStream()
+                .map(endpoint -> endpoint.getName())
+                .sorted()
+                .collect(Collectors.toList());
+        LOG.info(String.format("Endpoints discovered: \n%s", endpointNames));
+    }
 
     /**
      * Starts new correlation for messages with given handler.
@@ -63,11 +78,19 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
     }
 
     /**
-     * Subclasses must provide the target endpoint.
+     * Subclasses must provide the endpoint for receiving messages.
      *
      * @return
      */
-    protected abstract Endpoint getEndpoint();
+    protected abstract Endpoint getDefaultReceiveEndpoint();
+
+    /**
+     * Subclasses must provide the endpoint for sending messages. When simulating a synchronous endpoint (e.g. HTTP)
+     * this is typically the same endpoint that is returned by {@link #getDefaultReceiveEndpoint()}
+     *
+     * @return
+     */
+    protected abstract Endpoint getDefaultSendEndpoint();
 
     /**
      * Subclasses must provide the target endpoint.
@@ -75,7 +98,9 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
      * @return
      */
     protected Endpoint getEndpointByName(String name) {
-        Optional<Endpoint> optional = endpoints.parallelStream().filter(endpoint -> endpoint.getName().equalsIgnoreCase(name)).findFirst();
+        Optional<Endpoint> optional = endpoints.parallelStream()
+                .filter(endpoint -> endpoint.getName().equalsIgnoreCase(name))
+                .findFirst();
         if (optional.isPresent()) {
             return optional.get();
         }
@@ -89,7 +114,7 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
         @Override
         public ReceiveMessageBuilder receive() {
             return (ReceiveMessageBuilder)
-                    AbstractSimulatorScenario.this.receive(getEndpoint())
+                    AbstractSimulatorScenario.this.receive(getDefaultReceiveEndpoint())
                             .description("Received scenario request");
         }
 
@@ -103,7 +128,7 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
         @Override
         public SendMessageBuilder send() {
             return (SendMessageBuilder)
-                    AbstractSimulatorScenario.this.send(getEndpoint())
+                    AbstractSimulatorScenario.this.send(getDefaultSendEndpoint())
                             .description("Sending scenario response");
         }
 

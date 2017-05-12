@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,10 +68,12 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 TestContext context = testContextFactory.getObject();
                 Message message = targetEndpoint.createConsumer().receive(context, targetEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
+                    LOG.debug("Inbound message received. Processing ...");
                     Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
                     Producer producer = targetEndpoint.createProducer();
                     if (response != null && producer instanceof ReplyProducer) {
+                        LOG.debug("Outbound message received. Sending reply ...");
                         producer.send(processResponseMessage(response), context);
                     }
                 }

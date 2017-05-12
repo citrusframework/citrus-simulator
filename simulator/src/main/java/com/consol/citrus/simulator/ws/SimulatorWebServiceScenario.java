@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,22 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
 
+    /**
+     * The endpoint for receiving and sending webservice requests and responses.
+     * Since this is a synchronous endpoint the same endpoint can be used
+     * for receiving requests and sending responses.
+     */
     @Autowired
     @Qualifier("simulatorWsInboundEndpoint")
     private Endpoint simInboundEndpoint;
 
     @Override
-    protected Endpoint getEndpoint() {
+    protected Endpoint getDefaultReceiveEndpoint() {
+        return simInboundEndpoint;
+    }
+
+    @Override
+    protected Endpoint getDefaultSendEndpoint() {
         return simInboundEndpoint;
     }
 
@@ -48,6 +58,7 @@ public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
     protected class DefaultWsScenarioEndpoint extends DefaultScenarioEndpoint {
         /**
          * Sends SOAP fault as scenario response.
+         *
          * @return
          */
         public SoapServerFaultResponseActionBuilder sendFault() {

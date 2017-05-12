@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.http;
+package com.consol.citrus.simulator.jms;
 
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
@@ -22,21 +22,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- * @author Christoph Deppisch
+ * @author Martin Maher
  */
-public class SimulatorRestScenario extends AbstractSimulatorScenario {
+public class SimulatorJmsAsyncScenario extends AbstractSimulatorScenario {
+    @Autowired
+    @Qualifier("simulatorJmsAsyncReceiveEndpoint")
+    private Endpoint receiveEndpoint;
 
     @Autowired
-    @Qualifier("simulatorRestInboundEndpoint")
-    private Endpoint simInboundEndpoint;
+    @Qualifier("simulatorJmsAsyncSendEndpoint")
+    private Endpoint sendEndpoint;
 
     @Override
     protected Endpoint getDefaultReceiveEndpoint() {
-        return simInboundEndpoint;
+        return receiveEndpoint;
     }
 
     @Override
     protected Endpoint getDefaultSendEndpoint() {
-        return simInboundEndpoint;
+        return sendEndpoint;
     }
+
 }
