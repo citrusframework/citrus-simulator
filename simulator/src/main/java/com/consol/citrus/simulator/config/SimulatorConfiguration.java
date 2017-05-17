@@ -21,16 +21,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author Christoph Deppisch
  */
 @Component
 public class SimulatorConfiguration {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    /** Custom configuration class name */
+    /**
+     * Custom configuration class name
+     */
     public static final String SIMULATOR_CONFIGURATION_CLASS_PROPERTY = "citrus.simulator.configuration.class";
     public static final String SIMULATOR_CONFIGURATION_CLASS = System.getProperty(SIMULATOR_CONFIGURATION_CLASS_PROPERTY);
 
@@ -48,6 +54,11 @@ public class SimulatorConfiguration {
     @Value(value = "${citrus.simulator.template.validation:true}")
     /** Property that en/disables template validation, default value is true */
     private boolean templateValidation;
+
+    @PostConstruct
+    private void debugProperties() {
+        log.info("Using the following properties: {}", this.toString());
+    }
 
     /**
      * Gets the template path property.
@@ -120,5 +131,15 @@ public class SimulatorConfiguration {
      */
     public Long getDefaultTimeout() {
         return defaultTimeout;
+    }
+
+    @Override
+    public String toString() {
+        return "SimulatorConfiguration{" +
+                "templatePath='" + templatePath + '\'' +
+                ", defaultScenario='" + defaultScenario + '\'' +
+                ", defaultTimeout=" + defaultTimeout +
+                ", templateValidation=" + templateValidation +
+                '}';
     }
 }
