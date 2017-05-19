@@ -1,0 +1,13 @@
+@startuml
+
+title __Asynchronous JMS Communication__
+
+participant "Application" as Application <<Service Consumer>>
+participant "Simulator" as Simulator <<Service Provider>>
+
+note over Application, Simulator
+Scenario: __AFTERNOON__
+end note
+Application -> Simulator : goodAfternoonNotification
+
+@enduml

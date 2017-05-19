@@ -67,7 +67,7 @@
     <module>simulator-core</module>
     <module>simulator-client</module>
     <module>simulator-docs</module>
-    <module>samples</module>
+    <module>simulator-samples</module>
     <module>archetypes/archetype-rest</module>
   </modules>
 

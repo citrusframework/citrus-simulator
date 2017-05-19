@@ -1,0 +1,46 @@
+@startuml
+
+title __JMS Communication Example__
+
+participant "Application" as Application
+participant "Simulator" as Simulator
+
+note over Application, Simulator
+Scenario: __ALL_GREETINGS__
+
+Note: The __name__ from the
+ __goodMorningRequest__ is
+ used as a Correlation ID for
+ correlating inbound requests
+ or notifications later on
+ to the correct scenario
+
+Todo: Divide up the 'Simulator'
+ participant into multiple
+ participants, based on the
+ communication protocol and
+ role (service provider or
+ consumer)
+
+end note
+
+Application -> Simulator : goodMorningRequest
+activate Simulator
+Simulator -->> Application : goodMorningResponse
+deactivate Simulator
+
+... wait ...
+Application -> Simulator : goodAfternoonNotification
+
+... sleep 5 seconds ...
+
+Simulator --> Application : goodEveningRequest
+activate Application
+Application ->> Simulator : goodEveningResponse
+deactivate Application
+
+... sleep 5 seconds ...
+
+Simulator -> Application : goodNightNotification
+
+@enduml

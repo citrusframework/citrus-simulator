@@ -1,0 +1,80 @@
+@startuml
+
+title __JMS Async Simulator__
+
+participant "Application" as Application
+participant "Simulator" as Simulator  <<XML>> <<JMS>>
+
+note over Application, Simulator
+Scenario: SEND_OK (default)
+end note
+
+Application ->> Simulator : sendFax
+
+|||
+
+Simulator ->> Application : statusUpdate
+note right: QUEUED
+
+... sleep 5 seconds ...
+
+Simulator ->> Application : statusUpdate
+note right: SUCCESS
+
+... sleep 5 seconds ...
+
+note over Application, Simulator
+Scenario: SEND_CANCEL
+end note
+
+Application ->> Simulator : sendFax
+
+|||
+
+Simulator ->> Application : statusUpdate
+note right: QUEUED
+
+|||
+
+Application ->> Simulator : cancelFax
+
+|||
+
+Simulator ->> Application : statusUpdate
+note right: CANCELLED
+
+|||
+
+note over Application, Simulator
+Scenario: SEND_ERROR_BUSY
+end note
+
+Application ->> Simulator : sendFax
+
+|||
+
+Simulator ->> Application : statusUpdate
+note right: QUEUED
+
+... sleep 5 seconds ...
+
+Simulator ->> Application : statusUpdate
+note right: ERROR (busy)
+
+note over Application, Simulator
+Scenario: SEND_ERROR_NO_ANSWER
+end note
+
+Application ->> Simulator : sendFax
+
+|||
+
+Simulator ->> Application : statusUpdate
+note right: QUEUED
+
+... sleep 5 seconds ...
+
+Simulator ->> Application : statusUpdate
+note right: ERROR (no answer)
+
+@enduml
