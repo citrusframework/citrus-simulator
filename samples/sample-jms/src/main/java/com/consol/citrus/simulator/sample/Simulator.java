@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.*;
+import com.consol.citrus.simulator.annotation.EnableJmsSync;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.annotation.SimulatorJmsSyncAdapter;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,8 +30,8 @@ import javax.jms.ConnectionFactory;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableJms
-public class Simulator extends SimulatorJmsAdapter {
+@EnableJmsSync
+public class Simulator extends SimulatorJmsSyncAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);

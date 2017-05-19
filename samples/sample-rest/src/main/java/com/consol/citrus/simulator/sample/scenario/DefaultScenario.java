@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
 
 /**
  * @author Christoph Deppisch
  */
-@Scenario("DEFAULT_SCENARIO")
+@Scenario("Default")
 public class DefaultScenario extends SimulatorRestScenario {
 
     @Override

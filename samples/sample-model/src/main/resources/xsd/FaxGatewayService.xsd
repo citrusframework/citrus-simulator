@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2006-2017 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://citrusframework.org/schemas/fax"
+           targetNamespace="http://citrusframework.org/schemas/fax"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+  <xs:complexType name="FaxType">
+    <xs:sequence>
+      <xs:element name="recepientFaxNumber" type="xs:string"/>
+      <xs:element name="senderFaxNumber" type="xs:string"/>
+      <xs:element name="contact" type="xs:string"/>
+      <xs:element name="contentType" type="xs:string"/>
+      <xs:element name="content" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ResponseType">
+    <xs:sequence>
+      <xs:element name="statusCode" type="xs:string"/>
+      <xs:element name="statusMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="FaxStatusEnumType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="QUEUED"/>
+      <xs:enumeration value="SENDING"/>
+      <xs:enumeration value="SUCCESS"/>
+      <xs:enumeration value="CANCELLED"/>
+      <xs:enumeration value="ERROR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SendFaxType">
+    <xs:sequence>
+      <xs:element name="fax" type="FaxType"/>
+      <xs:element name="clientId" type="xs:string"/>
+      <xs:element name="referenceId" type="xs:string" minOccurs="0"/>
+      <xs:element name="sendStatusUpdates" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CancelFaxType">
+    <xs:sequence>
+      <xs:element name="referenceId" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FaxStatusType">
+    <xs:sequence>
+      <xs:element name="referenceId" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="FaxStatusEnumType"/>
+      <xs:element name="statusMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TransmissionReportType">
+    <xs:sequence>
+      <xs:element name="transmissionTime" type="xs:positiveInteger"/>
+      <xs:element name="pagesSent" type="xs:positiveInteger"/>
+      <xs:element name="completionTime" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="SendFaxRequest" type="SendFaxType"/>
+  <xs:element name="SendFaxResponse" type="ResponseType"/>
+  <xs:element name="SendFaxMessage" type="SendFaxType"/>
+
+  <xs:element name="GetStatusRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="referenceId" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetStatusResponse" type="FaxStatusType"/>
+  <xs:element name="StatusUpdateMessage" type="FaxStatusType"/>
+
+  <xs:element name="CancelFaxRequest" type="CancelFaxType"/>
+  <xs:element name="CancelFaxResponse" type="ResponseType"/>
+  <xs:element name="CancelFaxMessage" type="CancelFaxType"/>
+
+  <xs:element name="GetTransmissionReportRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="referenceId" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTransmissionReportResponse" type="TransmissionReportType"/>
+</xs:schema>

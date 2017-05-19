@@ -19,14 +19,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator-parent</artifactId>
   <name>${project.artifactId}</name>
   <version>0.9.1</version>
 
   <packaging>pom</packaging>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -67,10 +67,7 @@
     <module>simulator</module>
     <module>simulator-client</module>
     <module>simulator-docs</module>
-    <module>samples/sample-ws</module>
-    <module>samples/sample-jms</module>
-    <module>samples/sample-rest</module>
-    <module>samples/sample-endpoint</module>
+    <module>samples</module>
     <module>archetypes/archetype-rest</module>
   </modules>
 
@@ -79,9 +76,23 @@
     <developerConnection>scm:git:git@github.com/christophd/citrus-simulator.git</developerConnection>
     <url>http://github.com/christophd/citrus-simulator.git</url>
   </scm>
-  
+
   <dependencyManagement>
     <dependencies>
+
+      <!-- Citrus Simulator -->
+
+      <dependency>
+        <groupId>com.consol.citrus</groupId>
+        <artifactId>citrus-simulator-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.consol.citrus</groupId>
+        <artifactId>citrus-simulator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- Citrus -->
 
@@ -165,7 +176,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <pluginManagement>
       <plugins>
