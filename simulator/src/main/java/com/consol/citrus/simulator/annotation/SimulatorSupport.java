@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 the original author or authors.
+ * Copyright 2006-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,16 @@ import org.springframework.context.annotation.*;
         "com.consol.citrus.simulator.web",
         "com.consol.citrus.simulator.controller",
 }, nameGenerator = ScenarioBeanNameGenerator.class)
-@Import(value = { CitrusSpringConfig.class, SimulatorImportSelector.class })
-@ImportResource(locations = "classpath*:citrus-simulator-context.xml")
-@PropertySource(value = "classpath*:citrus-simulator.properties", ignoreResourceNotFound = true)
+@Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class})
+@ImportResource(
+        locations = {
+                "classpath*:citrus-simulator-context.xml",
+                "classpath*:META-INF/citrus-simulator-context.xml"
+        })
+@PropertySource(
+        value = {
+                "citrus-simulator.properties",
+                "META-INF/citrus-simulator.properties"
+        }, ignoreResourceNotFound = true)
 public class SimulatorSupport {
 }
