@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2006-2017 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:citrus-jms="http://www.citrusframework.org/schema/jms/config"
+       xmlns:citrus-http="http://www.citrusframework.org/schema/http/config"
+       xmlns:jms="http://www.citrusframework.org/schema/jms/testcase"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.citrusframework.org/schema/jms/config http://www.citrusframework.org/schema/jms/config/citrus-jms-config.xsd
+       http://www.citrusframework.org/schema/jms/testcase http://www.citrusframework.org/schema/jms/testcase/citrus-jms-testcase.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd
+       http://www.citrusframework.org/schema/http/config http://www.citrusframework.org/schema/http/config/citrus-http-config.xsd">
+
+  <citrus:schema-repository id="schemaRepository">
+    <citrus:locations>
+      <citrus:location path="classpath:xsd/FaxGatewayService.xsd"/>
+    </citrus:locations>
+  </citrus:schema-repository>
+
+  <!--
+    **** Simulator JMS endpoints ****
+  -->
+
+  <!-- Endpoint for sending messages to the Simulator -->
+  <citrus-jms:endpoint id="simulatorInboundEndpoint"
+                       destination-name="Citrus.Simulator.Async.Inbound"/>
+
+  <!-- Endpoint for receiving messages from the Simulator -->
+  <citrus-jms:endpoint id="simulatorOutboundEndpoint"
+                       destination-name="Citrus.Simulator.Async.Outbound"/>
+
+  <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="tcp://localhost:61616"/>
+  </bean>
+
+  <!-- Purge all queues before running any tests -->
+  <citrus:before-test id="purgeBeforeTest">
+    <citrus:actions>
+      <jms:purge-jms-queues>
+        <jms:queue name="Citrus.Simulator.Async.Inbound"/>
+        <jms:queue name="Citrus.Simulator.Async.Outbound"/>
+      </jms:purge-jms-queues>
+    </citrus:actions>
+  </citrus:before-test>
+
+  <!--
+    **** Simulator REST endpoint ****
+  -->
+  <citrus-http:client
+      id="simulatorRestEndpoint"
+      request-url="http://localhost:8080"
+      content-type="application/json"
+      timeout="300000"
+  />
+</beans>
