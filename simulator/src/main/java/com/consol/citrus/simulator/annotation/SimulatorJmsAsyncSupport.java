@@ -28,6 +28,7 @@ import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtracto
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.jms.endpoint.JmsEndpointConfiguration;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.config.SimulatorConfiguration;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
 import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
@@ -52,6 +53,9 @@ public class SimulatorJmsAsyncSupport {
     @Autowired(required = false)
     private SimulatorJmsAsyncConfigurer configurer;
 
+    @Autowired
+    private SimulatorConfiguration configuration;
+
     /**
      * Inbound JMS destination name
      */
@@ -75,6 +79,7 @@ public class SimulatorJmsAsyncSupport {
         ChannelEndpoint inboundChannelEndpoint = new ChannelEndpoint();
         inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
         inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
+        inboundChannelEndpoint.getEndpointConfiguration().setTimeout(configuration.getDefaultTimeout());
         return inboundChannelEndpoint;
     }
 

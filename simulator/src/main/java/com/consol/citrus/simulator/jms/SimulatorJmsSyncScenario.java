@@ -27,16 +27,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class SimulatorJmsSyncScenario extends AbstractSimulatorScenario {
 
     @Autowired
-    @Qualifier("simulatorJmsSyncInboundEndpoint")
-    private Endpoint simInboundEndpoint;
+    @Qualifier("simulatorJmsSyncReceiveEndpoint")
+    private Endpoint receiveAndReplyEndpoint;
 
     @Override
     protected Endpoint getDefaultReceiveEndpoint() {
-        return simInboundEndpoint;
+        return receiveAndReplyEndpoint;
     }
 
     @Override
     protected Endpoint getDefaultSendEndpoint() {
-        return simInboundEndpoint;
+        return receiveAndReplyEndpoint;
     }
 }

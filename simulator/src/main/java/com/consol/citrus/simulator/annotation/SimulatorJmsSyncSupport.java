@@ -22,6 +22,7 @@ import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtracto
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
 import com.consol.citrus.jms.endpoint.JmsSyncEndpointConfiguration;
+import com.consol.citrus.simulator.config.SimulatorConfiguration;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
 import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
@@ -35,6 +36,7 @@ import org.springframework.jms.connection.SingleConnectionFactory;
 
 import javax.jms.ConnectionFactory;
 
+import static com.consol.citrus.simulator.annotation.SimulatorJmsSyncConfigurer.RECEIVE_DESTINATION_NAME_KEY;
 import static com.consol.citrus.simulator.annotation.SimulatorJmsSyncConfigurer.RECEIVE_DESTINATION_VALUE_DEFAULT;
 
 /**
@@ -46,11 +48,14 @@ public class SimulatorJmsSyncSupport {
     @Autowired(required = false)
     private SimulatorJmsSyncConfigurer configurer;
 
+    @Autowired
+    private SimulatorConfiguration configuration;
+
     /**
      * Inbound JMS destination name
      */
     private static final String RECEIVE_DESTINATION_NAME =
-            System.getProperty(SimulatorJmsSyncConfigurer.RECEIVE_DESTINATION_NAME_KEY, RECEIVE_DESTINATION_VALUE_DEFAULT);
+            System.getProperty(RECEIVE_DESTINATION_NAME_KEY, RECEIVE_DESTINATION_VALUE_DEFAULT);
 
     @Bean(name = "simulator.jms.sync.inbound")
     public MessageSelectingQueueChannel inboundChannel() {
@@ -58,15 +63,16 @@ public class SimulatorJmsSyncSupport {
         return inboundChannel;
     }
 
-    @Bean(name = "simulatorJmsSyncInboundEndpoint")
+    @Bean(name = "simulatorJmsSyncReceiveEndpoint")
     public ChannelEndpoint inboundChannelEndpoint() {
         ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
         inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
         inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
+        inboundChannelEndpoint.getEndpointConfiguration().setTimeout(configuration.getDefaultTimeout());
         return inboundChannelEndpoint;
     }
 
-    @Bean(name = "simulatorJmsSyncInboundAdapter")
+    @Bean(name = "simulatorJmsSyncReceiveEndpointAdapterAdapter")
     public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
         ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
         endpointConfiguration.setChannel(inboundChannel());
@@ -76,7 +82,7 @@ public class SimulatorJmsSyncSupport {
         return endpointAdapter;
     }
 
-    @Bean(name = "simulatorJmsSyncEndpoint")
+    @Bean(name = "simulatorJmsSyncInboundEndpoint")
     protected JmsEndpoint jmsEndpoint() {
         JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
         JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
@@ -101,7 +107,7 @@ public class SimulatorJmsSyncSupport {
     }
 
     @Bean
-    @DependsOn("simulatorSyncJmsInboundEndpoint")
+    @DependsOn("simulatorJmsSyncInboundEndpoint")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
         SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
         simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
