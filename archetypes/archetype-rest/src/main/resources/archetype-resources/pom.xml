@@ -29,8 +29,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>0.9.1</citrus.simulator.version>
+    <citrus.simulator.version>0.10.0-SNAPSHOT</citrus.simulator.version>
     <spring.boot.version>1.5.0.RELEASE</spring.boot.version>
+    <testng.version>6.10</testng.version>
   </properties>
 
   <dependencyManagement>
@@ -55,10 +56,25 @@
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
+    <!-- Citrus Simulator -->
+
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-core</artifactId>
       <version>${citrus.simulator.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-sample-model</artifactId>
+      <version>${citrus.simulator.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

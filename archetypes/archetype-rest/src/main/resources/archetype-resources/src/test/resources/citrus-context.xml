@@ -18,23 +18,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:citrus-http="http://www.citrusframework.org/schema/http/config"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 
+       http://www.citrusframework.org/schema/http/config http://www.citrusframework.org/schema/http/config/citrus-http-config.xsd
        http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
 
-    <citrus:schema-repository id="schemaRepository">
-      <citrus:locations>
-        <citrus:location path="classpath:xsd/HelloService.xsd"/>
-      </citrus:locations>
-    </citrus:schema-repository>
-    
-    <citrus:global-variables>
-        <citrus:variable name="simulator.name" value="Citrus REST Simulator"/>
-    </citrus:global-variables>
+  <citrus:schema-repository id="schemaRepository">
+    <citrus:locations>
+      <citrus:location path="classpath:xsd/HelloService.xsd"/>
+    </citrus:locations>
+  </citrus:schema-repository>
 
-    <citrus:namespace-context>
-        <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
-      <citrus:namespace prefix="hello" uri="http://citrusframework.org/schemas/hello"/>
-    </citrus:namespace-context>
+  <!-- Test SOAP client -->
+  <citrus-http:client id="simulatorClient"
+                      request-url="http://localhost:8080/services/rest/simulator"/>
 
 </beans>

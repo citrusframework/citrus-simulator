@@ -16,20 +16,22 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.annotation.EnableRest;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.consol.citrus.simulator.http.SimulatorRestScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
 
 /**
  * @author Christoph Deppisch
  */
-@SpringBootApplication
-@SimulatorApplication
-@EnableRest
-public class Simulator {
+@Scenario("Default")
+public class DefaultScenario extends SimulatorRestScenario {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Simulator.class, args);
+    @Override
+    protected void configure() {
+        scenario()
+            .receive();
+
+        scenario()
+            .send()
+            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }
