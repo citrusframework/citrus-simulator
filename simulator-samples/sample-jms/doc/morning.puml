@@ -1,0 +1,16 @@
+@startuml
+
+title __Synchronous JMS Communication__
+
+participant "Application" as Application <<Service Consumer>>
+participant "Simulator" as Simulator <<Service Provider>>
+
+note over Application, Simulator
+Scenario: __MORNING__
+end note
+Application -> Simulator : goodMorningRequest
+activate Simulator
+Simulator -->> Application : goodMorningResponse
+deactivate Simulator
+
+@enduml

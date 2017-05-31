@@ -12,6 +12,13 @@ bin
 .codepro
 .pmd
 test-output
-node_modules
 logs
 *.log
+
+### Angular ###
+node_modules
+typings
+**/app/**/*.js
+**/app/**/*.js.map
+**/systemjs-config.js.map
+**/systemjs-config.js
