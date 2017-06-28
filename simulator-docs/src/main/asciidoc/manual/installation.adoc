@@ -1,7 +1,35 @@
-== Installation
+[[installation]]
+= Installation
 
-The Citrus simulator is started as a web application that uses Spring Boot. The easiest way to get started is to use a Maven archetype that creates a new
-project for you.
+The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
+or as container/pod in Docker, Kubernetes or Openshift.
+
+== Download
+
+You can download an executable web archive representing the the latest simulator distribution located at
+https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web[labs.consol.de/maven/repository]:
+
+[source,bash]
+----
+curl -o citrus-simulator.war https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web/1.0.1-SNAPSHOT/citrus-simulator-web-1.0.1-SNAPSHOT-executable.war
+----
+
+Save the Java web archive to a folder on your local machine and start the Spring boot web application. The downloaded artifact should be executable
+from command line like this:
+
+[source,bash]
+----
+java -jar citrus-simulator.war
+----
+
+You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
+
+That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
+
+== Maven archetype
+
+The easiest way to get started with a new simulator project is to use a Maven archetype that creates a new project for you.
 
 [source,bash]
 ----
@@ -17,16 +45,16 @@ There are different simulator archetypes available. Please pick the most conveni
 * *citrus-simulator-archetypes-ws* SOAP web service simulator sample
 * *citrus-simulator-archetypes-jms* JMS simulator sample
 
-=== Build project
+=== Build sources
 
-You can directly build the new project with
+You can directly build the new simulator project with
 
 [source,bash]
 ----
 mvn install
 ----
 
-This compiles, tests and packages the project. Now we can run the simulator:
+This compiles, tests and packages the new simulator project on your local machine. Now we can run the simulator:
 
 [source,bash]
 ----
@@ -38,7 +66,7 @@ you can open your browser and point to link:http://localhost:8080[http://localho
 
 Now everything is set up and you can start to create some simulator scenarios. 
 
-=== Use simulator artifacts
+=== Simulator artifacts
 
 The simulator project creates a web application artifact. After building you can find this WAR file in target/citrus-simulator-1.0.war
 
