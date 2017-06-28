@@ -38,7 +38,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.jms.connection.SingleConnectionFactory;
+import org.springframework.context.annotation.Import;
 
 import javax.jms.ConnectionFactory;
 
@@ -48,6 +48,7 @@ import static com.consol.citrus.simulator.annotation.SimulatorJmsAsyncConfigurer
  * @author Martin Maher
  */
 @Configuration
+@Import(SimulatorJmsSupport.class)
 public class SimulatorJmsAsyncSupport {
 
     @Autowired(required = false)
@@ -121,32 +122,23 @@ public class SimulatorJmsAsyncSupport {
 
 
     @Bean(name = "simulatorJmsAsyncInboundEndpoint")
-    protected JmsEndpoint jmsAsyncInbountEndpoint() {
+    protected JmsEndpoint jmsAsyncInbountEndpoint(ConnectionFactory connectionFactory) {
         JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
         JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
         endpointConfiguration.setDestinationName(getReceiveDestinationName());
-        endpointConfiguration.setConnectionFactory(connectionFactory());
+        endpointConfiguration.setConnectionFactory(connectionFactory);
 
         return jmsEndpoint;
     }
 
     @Bean(name = "simulatorJmsAsyncSendEndpoint")
-    protected JmsEndpoint jmsSendEndpoint() {
+    protected JmsEndpoint jmsSendEndpoint(ConnectionFactory connectionFactory) {
         JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
         JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
         endpointConfiguration.setDestinationName(getSendDestinationName());
-        endpointConfiguration.setConnectionFactory(connectionFactory());
+        endpointConfiguration.setConnectionFactory(connectionFactory);
 
         return jmsEndpoint;
-    }
-
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        if (configurer != null) {
-            return configurer.connectionFactory();
-        }
-
-        return new SingleConnectionFactory();
     }
 
     @Bean
@@ -172,7 +164,7 @@ public class SimulatorJmsAsyncSupport {
     }
 
     @Bean(name = "simulatorJmsAsyncEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext, ConnectionFactory connectionFactory) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -181,7 +173,7 @@ public class SimulatorJmsAsyncSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(jmsAsyncInbountEndpoint());
+        endpointPoller.setTargetEndpoint(jmsAsyncInbountEndpoint(connectionFactory));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());

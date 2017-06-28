@@ -32,7 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.jms.connection.SingleConnectionFactory;
+import org.springframework.context.annotation.Import;
 
 import javax.jms.ConnectionFactory;
 
@@ -43,6 +43,7 @@ import static com.consol.citrus.simulator.annotation.SimulatorJmsSyncConfigurer.
  * @author Christoph Deppisch
  */
 @Configuration
+@Import(SimulatorJmsSupport.class)
 public class SimulatorJmsSyncSupport {
 
     @Autowired(required = false)
@@ -83,22 +84,13 @@ public class SimulatorJmsSyncSupport {
     }
 
     @Bean(name = "simulatorJmsSyncInboundEndpoint")
-    protected JmsEndpoint jmsEndpoint() {
+    protected JmsEndpoint jmsEndpoint(ConnectionFactory connectionFactory) {
         JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
         JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
         endpointConfiguration.setDestinationName(getReceiveDestinationName());
-        endpointConfiguration.setConnectionFactory(connectionFactory());
+        endpointConfiguration.setConnectionFactory(connectionFactory);
 
         return jmsEndpoint;
-    }
-
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        if (configurer != null) {
-            return configurer.connectionFactory();
-        }
-
-        return new SingleConnectionFactory();
     }
 
     @Bean
@@ -124,7 +116,7 @@ public class SimulatorJmsSyncSupport {
     }
 
     @Bean(name = "simulatorJmsSyncEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext, ConnectionFactory connectionFactory) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -133,7 +125,7 @@ public class SimulatorJmsSyncSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(jmsEndpoint());
+        endpointPoller.setTargetEndpoint(jmsEndpoint(connectionFactory));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());

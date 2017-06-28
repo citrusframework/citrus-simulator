@@ -16,12 +16,10 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import javax.jms.ConnectionFactory;
-
 /**
- * @author Martin Maher
+ * Common JMS asynchronous simulator configuration
  */
-public interface SimulatorJmsAsyncConfigurer extends SimulatorConfigurer {
+public interface SimulatorJmsAsyncConfigurer extends SimulatorJmsConfigurer {
 
     /**
      * The system property key for retrieving the JMS inbound destination name. The simulator receives asynchronous
@@ -46,32 +44,9 @@ public interface SimulatorJmsAsyncConfigurer extends SimulatorConfigurer {
     String SEND_DESTINATION_VALUE_DEFAULT = "Citrus.Simulator.Async.Outbound";
 
     /**
-     * Gets the jms connection factory.
-     *
-     * @return
-     */
-    ConnectionFactory connectionFactory();
-
-    /**
-     * Gets the jms destination to receive messages from.
-     *
-     * @return
-     */
-    String receiveDestinationName();
-
-    /**
      * Gets the jms destination to send messages to.
      *
      * @return
      */
     String sendDestinationName();
-
-    /**
-     * Should operate with SOAP envelope. This automatically adds SOAP envelope
-     * handling to the inbound and outbound messages.
-     *
-     * @return
-     */
-    boolean useSoapEnvelope();
-
 }

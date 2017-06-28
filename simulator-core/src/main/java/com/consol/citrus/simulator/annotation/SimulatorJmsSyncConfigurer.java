@@ -21,7 +21,7 @@ import javax.jms.ConnectionFactory;
 /**
  * @author Christoph Deppisch
  */
-public interface SimulatorJmsSyncConfigurer extends SimulatorConfigurer {
+public interface SimulatorJmsSyncConfigurer extends SimulatorJmsConfigurer {
 
     /**
      * The system property key for retrieving the JMS destination name to use when simulating a synchronous jms
@@ -33,27 +33,4 @@ public interface SimulatorJmsSyncConfigurer extends SimulatorConfigurer {
      * The default JMS queue from which inbound messages are received
      */
     String RECEIVE_DESTINATION_VALUE_DEFAULT = "Citrus.Simulator.Sync.Inbound";
-
-    /**
-     * Gets the jms connection factory.
-     *
-     * @return
-     */
-    ConnectionFactory connectionFactory();
-
-    /**
-     * Gets the jms destination to read messages from.
-     *
-     * @return
-     */
-    String receiveDestinationName();
-
-    /**
-     * Should operate with SOAP envelope. This automatically adds SOAP envelope
-     * handling to the inbound and outbound messages.
-     *
-     * @return
-     */
-    boolean useSoapEnvelope();
-
 }
