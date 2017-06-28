@@ -1,0 +1,19 @@
+[[samples]]
+= Samples
+
+TODO
+
+[[samples-rest]]
+== REST sample
+
+TODO
+
+[[samples-soap]]
+== SOAP sample
+
+TODO
+
+[[samples-jms]]
+== JMS sample
+
+TODO
