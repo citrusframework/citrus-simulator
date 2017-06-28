@@ -80,12 +80,12 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 TestContext context = testContextFactory.getObject();
                 Message message = targetEndpoint.createConsumer().receive(context, targetEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    LOG.debug("Inbound message received. Processing ...");
+                    LOG.debug(String.format("Inbound message '%s' received. Processing ...", message.getId()));
                     Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
                     Producer producer = targetEndpoint.createProducer();
                     if (response != null && producer instanceof ReplyProducer) {
-                        LOG.debug("Outbound message received. Sending reply ...");
+                        LOG.debug(String.format("Got the reply for '%s'. Sending ...", message.getId()));
                         producer.send(processResponseMessage(response), context);
                     }
                 }
