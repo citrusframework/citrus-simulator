@@ -1,12 +1,24 @@
-## Admin user interface
+[[user-interface]]
+= User interface
 
 The simulator application is started as a Spring boot web application. Users can access an administrative user interface
 for reviewing the simulator status and executed scenarios and their outcome.
 
 Open your browser and point to the simulator UI:
 
-```
+[source]
+----
 http://localhost:8080
-```
+----
 
 You will see a simple web application that gives you information about the simulator.
+
+[[user-interface-status]]
+== Status
+
+TODO
+
+[[user-interface-run]]
+== Run scenarios
+
+TODO

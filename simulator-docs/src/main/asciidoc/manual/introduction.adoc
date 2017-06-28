@@ -1,0 +1,51 @@
+[[introduction]]
+= Introduction
+
+This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
+JMS messaging.
+
+Clients are able to access the simulator endpoints and the simulator answers with predefined response
+messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
+
+The simulator uses the test framework Citrus link:https://www.citrusframework.org[https://www.citrusframework.org]
+
+Contributions and feedback is highly appreciated!
+
+[[limitations]]
+== Limitations
+
+*NOTE:* _This project is considered stable but still under construction!_
+
+The administration UI is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet.
+
+Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
+However the administration UI is usable and most features are considered to be stable.
+
+Please consider following limitations that we have right now:
+
+=== Java 8
+
+The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application.
+Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.
+
+[source,bash]
+----
+java -version
+----
+
+=== Build tools
+
+The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
+you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
+the Maven installation on your host with this command:
+
+[source,bash]
+----
+mvn -version
+----
+
+=== Browsers
+
+The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
+invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working
+on these two browsers. Of course other browsers might work without any limitations, too.
