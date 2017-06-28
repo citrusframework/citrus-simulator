@@ -48,6 +48,8 @@ public class TestParameter implements Serializable { // TODO MM rename to Scenar
     @Column(nullable = false)
     private ControlType controlType;
 
+    @Column(columnDefinition = "CLOB")
+    @Lob
     private String value;
     private boolean required;
     private String label;
