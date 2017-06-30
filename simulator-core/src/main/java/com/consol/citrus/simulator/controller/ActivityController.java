@@ -29,7 +29,7 @@ import java.util.Date;
 public class ActivityController {
 
     @Autowired
-    ActivityService executionService;
+    ActivityService activityService;
 
     // TODO MM rename execution to activity
     @RequestMapping(method = RequestMethod.GET, value = "/execution")
@@ -39,26 +39,26 @@ public class ActivityController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size
     ) {
-        return executionService.getTestExecutionsByStartDate(fromDate, toDate, page, size);
+        return activityService.getTestExecutionsByStartDate(fromDate, toDate, page, size);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/execution")
     public void clearExecutions() {
-        executionService.clearTestExecutions();
+        activityService.clearTestExecutions();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/execution/test/{name}")
     public Collection<TestExecution> getTestExecutionsByTestName(@PathVariable("name") String name) {
-        return executionService.getTestExecutionsByName(name);
+        return activityService.getTestExecutionsByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/execution/status/{status}")
     public Collection<TestExecution> getTestExecutionsByStatus(@PathVariable("status") String status) {
-        return executionService.getTestExecutionsByStatus(TestExecution.Status.valueOf(status));
+        return activityService.getTestExecutionsByStatus(TestExecution.Status.valueOf(status));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/execution/{id}")
     public TestExecution getTestExecution(@PathVariable("id") Long id) {
-        return executionService.getTestExecutionById(id);
+        return activityService.getTestExecutionById(id);
     }
 }
