@@ -30,6 +30,7 @@
         <version>1.5.3</version>
         <configuration>
           <sourceDirectory>src/main/asciidoc</sourceDirectory>
+          <sourceDocumentName>index.adoc</sourceDocumentName>
           <attributes>
             <icons>font</icons>
             <pagenums/>
@@ -48,7 +49,7 @@
     <!-- ==== HTML documentation ====================== -->
 
     <profile>
-      <id>html</id>
+      <id>docs-html</id>
       <build>
         <plugins>
           <plugin>
@@ -75,13 +76,12 @@
           </plugin>
         </plugins>
       </build>
-      <activation><activeByDefault>true</activeByDefault></activation>
     </profile>
 
     <!-- ==== PDF documentation ====================== -->
 
     <profile>
-      <id>pdf</id>
+      <id>docs-pdf</id>
       <build>
         <plugins>
           <plugin>
