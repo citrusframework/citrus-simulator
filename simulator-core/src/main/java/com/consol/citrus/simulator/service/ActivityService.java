@@ -19,9 +19,8 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCase;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.simulator.model.TestExecution;
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.repository.TestExecutionRepository;
+import com.consol.citrus.simulator.model.*;
+import com.consol.citrus.simulator.repository.ScenarioExecutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,63 +36,63 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 /**
- * Service for persisting and retrieving {@link TestExecution} data.
+ * Service for persisting and retrieving {@link ScenarioExecution} data.
  */
 @Service
 @Transactional
 public class ActivityService {
 
     @Autowired
-    TestExecutionRepository testExecutionRepository;
+    ScenarioExecutionRepository scenarioExecutionRepository;
 
     /**
-     * Creates a new {@link TestExecution}, persisting it within the database.
+     * Creates a new {@link ScenarioExecution}, persisting it within the database.
      *
      * @param scenarioName       the name of the scenario
      * @param scenarioParameters the scenario's start parameters
-     * @return the new {@link TestExecution}
+     * @return the new {@link ScenarioExecution}
      */
-    public TestExecution createExecutionScenario(String scenarioName, Collection<TestParameter> scenarioParameters) {
-        TestExecution ts = new TestExecution();
-        ts.setTestName(scenarioName);
+    public ScenarioExecution createExecutionScenario(String scenarioName, Collection<ScenarioParameter> scenarioParameters) {
+        ScenarioExecution ts = new ScenarioExecution();
+        ts.setScenarioName(scenarioName);
         ts.setStartDate(getTimeNow());
-        ts.setStatus(TestExecution.Status.ACTIVE);
+        ts.setStatus(ScenarioExecution.Status.ACTIVE);
 
         if (scenarioParameters != null) {
-            for (TestParameter tp : scenarioParameters) {
-                ts.addTestParameter(tp);
+            for (ScenarioParameter tp : scenarioParameters) {
+                ts.addScenarioParameter(tp);
             }
         }
 
-        ts = testExecutionRepository.save(ts);
+        ts = scenarioExecutionRepository.save(ts);
         return ts;
     }
 
-    public void completeTestExecutionSuccess(TestCase testCase) {
-        completeTestExecution(TestExecution.Status.SUCCESS, testCase, null);
+    public void completeScenarioExecutionSuccess(TestCase testCase) {
+        completeScenarioExecution(ScenarioExecution.Status.SUCCESS, testCase, null);
     }
 
-    public void completeTestExecutionFailure(TestCase testCase, Throwable cause) {
-        completeTestExecution(TestExecution.Status.FAILED, testCase, cause);
+    public void completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
+        completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
     }
 
-    public Collection<TestExecution> getTestExecutionsByName(String testName) {
-        return testExecutionRepository.findByTestNameOrderByStartDateDesc(testName);
+    public Collection<ScenarioExecution> getScenarioExecutionsByName(String testName) {
+        return scenarioExecutionRepository.findByScenarioNameOrderByStartDateDesc(testName);
     }
 
-    public Collection<TestExecution> getTestExecutionsByStatus(TestExecution.Status status) {
-        return testExecutionRepository.findByStatusOrderByStartDateDesc(status);
+    public Collection<ScenarioExecution> getScenarioExecutionsByStatus(ScenarioExecution.Status status) {
+        return scenarioExecutionRepository.findByStatusOrderByStartDateDesc(status);
     }
 
-    public TestExecution getTestExecutionById(Long id) {
-        return testExecutionRepository.findOne(id);
+    public ScenarioExecution getScenarioExecutionById(Long id) {
+        return scenarioExecutionRepository.findOne(id);
     }
 
-    public void clearTestExecutions() {
-        testExecutionRepository.deleteAll();
+    public void clearScenarioExecutions() {
+        scenarioExecutionRepository.deleteAll();
     }
 
-    public Collection<TestExecution> getTestExecutionsByStartDate(Date fromDate, Date toDate, Integer page, Integer size) {
+    public Collection<ScenarioExecution> getScenarioExecutionsByStartDate(Date fromDate, Date toDate, Integer page, Integer size) {
         Date calcFromDate = fromDate;
         if (calcFromDate == null) {
             calcFromDate = Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
@@ -115,11 +114,11 @@ public class ActivityService {
 
         Pageable pageable = new PageRequest(calcPage, calcSize);
 
-        return testExecutionRepository.findByStartDateBetweenOrderByStartDateDesc(calcFromDate, calcToDate, pageable);
+        return scenarioExecutionRepository.findByStartDateBetweenOrderByStartDateDesc(calcFromDate, calcToDate, pageable);
     }
 
-    private void completeTestExecution(TestExecution.Status status, TestCase testCase, Throwable cause) {
-        TestExecution te = lookupTestExecution(testCase);
+    private void completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, Throwable cause) {
+        ScenarioExecution te = lookupScenarioExecution(testCase);
         te.setEndDate(getTimeNow());
         te.setStatus(status);
         if (cause != null) {
@@ -135,11 +134,11 @@ public class ActivityService {
             return;
         }
 
-        TestExecution te = lookupTestExecution(testCase);
-        com.consol.citrus.simulator.model.TestAction ta = new com.consol.citrus.simulator.model.TestAction();
+        ScenarioExecution te = lookupScenarioExecution(testCase);
+        ScenarioAction ta = new ScenarioAction();
         ta.setName(testAction.getName());
         ta.setStartDate(getTimeNow());
-        te.addTestAction(ta);
+        te.addScenarioAction(ta);
     }
 
     public void completeTestAction(TestCase testCase, TestAction testAction) {
@@ -147,21 +146,21 @@ public class ActivityService {
             return;
         }
 
-        TestExecution te = lookupTestExecution(testCase);
-        Iterator<com.consol.citrus.simulator.model.TestAction> iterator = te.getTestActions().iterator();
-        com.consol.citrus.simulator.model.TestAction lastTestAction = null;
+        ScenarioExecution te = lookupScenarioExecution(testCase);
+        Iterator<ScenarioAction> iterator = te.getScenarioActions().iterator();
+        ScenarioAction lastScenarioAction = null;
         while (iterator.hasNext()) {
-            lastTestAction = iterator.next();
+            lastScenarioAction = iterator.next();
         }
 
-        if (lastTestAction == null) {
+        if (lastScenarioAction == null) {
             throw new CitrusRuntimeException(String.format("No test action found with name %s", testAction.getName()));
         }
-        if (!lastTestAction.getName().equals(testAction.getName())) {
-            throw new CitrusRuntimeException(String.format("Expected to find last test action with name %s but got %s", testAction.getName(), lastTestAction.getName()));
+        if (!lastScenarioAction.getName().equals(testAction.getName())) {
+            throw new CitrusRuntimeException(String.format("Expected to find last test action with name %s but got %s", testAction.getName(), lastScenarioAction.getName()));
         }
 
-        lastTestAction.setEndDate(getTimeNow());
+        lastScenarioAction.setEndDate(getTimeNow());
     }
 
     private boolean skipTestAction(TestAction testAction) {
@@ -169,12 +168,12 @@ public class ActivityService {
         return ignoreList.contains(testAction.getName());
     }
 
-    private TestExecution lookupTestExecution(TestCase testCase) {
-        return testExecutionRepository.findOne(lookupTestExecutionId(testCase));
+    private ScenarioExecution lookupScenarioExecution(TestCase testCase) {
+        return scenarioExecutionRepository.findOne(lookupScenarioExecutionId(testCase));
     }
 
-    private long lookupTestExecutionId(TestCase testCase) {
-        return Long.parseLong(testCase.getVariableDefinitions().get(TestExecution.EXECUTION_ID).toString());
+    private long lookupScenarioExecutionId(TestCase testCase) {
+        return Long.parseLong(testCase.getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID).toString());
     }
 
     private Date getTimeNow() {

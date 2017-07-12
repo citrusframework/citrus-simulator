@@ -10,14 +10,14 @@ import {ConfigService} from "./services/config-service";
 import {ExecutionService} from "./services/execution-service";
 import {MessageService} from "./services/message-service";
 import {StatusService} from "./services/status-service";
-import {TestParameterControlService} from "./services/test-parameter-control-service";
-import {TestService} from "./services/test-service";
-import {TestExecutionList} from "./components/test-execution-list/test-execution-list";
-import {TestActionList} from "./components/test-action-list/test-action-list";
-import {TestParameterList} from "./components/test-parameter-list/test-parameter-list";
-import {TestParameterFormComponent} from "./components/test-parameter-form/test-parameter-form";
-import {TestParameterFormItemComponent} from "./components/test-parameter-form-item/test-parameter-form-item";
-import {MessageListComponent} from "./components/message-list/message-list";
+import {ScenarioParameterService} from "./services/scenario-parameter-service";
+import {ScenarioService} from "./services/scenario-service";
+import {ScenarioExecutionList} from "./components/scenarios/execution/scenario-execution-list";
+import {ScenarioActionList} from "./components/scenarios/action/scenario-action-list";
+import {ScenarioParameterList} from "./components/scenarios/parameter/scenario-parameter-list";
+import {ScenarioParameterFormComponent} from "./components/scenarios/parameter/scenario-parameter-form";
+import {ScenarioParameterFormItemComponent} from "./components/scenarios/parameter/scenario-parameter-form-item";
+import {MessageListComponent} from "./components/messages/list/message-list";
 import {AboutComponent} from "./components/about/about";
 import {HelpComponent} from "./components/help/help";
 import {ExecutionStatusPipe} from "./pipes/execution-status-pipe";
@@ -37,11 +37,11 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
     declarations: [
         AppComponent,
         NavbarComponent,
-        TestExecutionList,
-        TestActionList,
-        TestParameterList,
-        TestParameterFormComponent,
-        TestParameterFormItemComponent,
+        ScenarioExecutionList,
+        ScenarioActionList,
+        ScenarioParameterList,
+        ScenarioParameterFormComponent,
+        ScenarioParameterFormItemComponent,
         MessageListComponent,
         AboutComponent,
         HelpComponent,
@@ -58,8 +58,8 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
         ExecutionService,
         MessageService,
         StatusService,
-        TestParameterControlService,
-        TestService
+        ScenarioParameterService,
+        ScenarioService
     ],
     bootstrap: [AppComponent]
 })

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {StatusService} from '../../services/status-service';
-import {Summary, TestExecution} from '../../model/test';
+import {Summary, ScenarioExecution} from '../../model/scenario';
 import {ExecutionService} from '../../services/execution-service';
 
 @Component({
@@ -14,7 +14,7 @@ export class StatusComponent implements OnInit {
     title = 'Status';
     summary: Summary;
     active: number;
-    testExecutions: TestExecution[];
+    scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 
     constructor(
@@ -37,7 +37,7 @@ export class StatusComponent implements OnInit {
     }
 
     getActive() {
-        this.statusService.getCountActiveTests()
+        this.statusService.getCountActiveScenarios()
             .subscribe(
                 active => this.active = active,
                 error => this.errorMessage = <any>error

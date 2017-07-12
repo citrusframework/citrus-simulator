@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
-import {Summary} from "../model/test";
+import {Summary} from "../model/scenario";
 import {ConfigService} from "./config-service";
 
 @Injectable()
@@ -19,7 +19,7 @@ export class StatusService {
         return this.resetSummaryResults();
     }
 
-    getCountActiveTests(): Observable<number> {
+    getCountActiveScenarios(): Observable<number> {
         return this.retrieveSummaryActive();
     }
 

@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import org.springframework.beans.factory.BeanNameAware;
 
 import java.util.Collection;
@@ -38,7 +38,7 @@ public interface ScenarioStarter extends BeanNameAware {
      *
      * @return
      */
-    default Collection<TestParameter> getScenarioParameters() {
+    default Collection<ScenarioParameter> getScenarioParameters() {
         return Collections.EMPTY_LIST;
     }
 

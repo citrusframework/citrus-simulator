@@ -1,0 +1,47 @@
+<div class="row">
+    <div *ngIf="scenario" class="col-md-12">
+        <h3>{{title}} : {{scenario.name}}</h3>
+
+        <div class="btn-group" style="padding-bottom: 20px">
+            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+        </div>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Activity</h3>
+                <div class="pull-right">
+                    <span class="clickable" title="Refresh Activity" (click)="getScenarioExecutions(scenario.name)">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                    </span>
+                    <span class="clickable filter" title="Toggle table filter" (click)="toggleActivityFilterDisplay()">
+                        <i class="glyphicon glyphicon-filter"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="panel-body" *ngIf="displayActivityFilter">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default btn-filter {{successState}}" (click)="toggleSuccess()">Success</button>
+                        <button type="button" class="btn btn-default btn-filter {{failedState}}" (click)="toggleFailed()">Failed</button>
+                        <button type="button" class="btn btn-default btn-filter {{activeState}}" (click)="toggleActive()">Active</button>
+                    </div>
+                </div>
+            </div>
+            <scenario-execution-list [scenarioExecutions]="scenarioExecutions | activityFilter : '' : includeSuccess : includeFailed : includeActive" [hideScenarioname]="true"></scenario-execution-list>
+        </div>
+
+        <hr/>
+        <div class="btn-group">
+            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+        </div>
+
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{errorMessage}}
+    </div>
+</div>
+

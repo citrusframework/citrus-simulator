@@ -1,7 +1,7 @@
 import {Component, OnInit, AfterViewInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {ExecutionService} from "../../services/execution-service";
-import {TestExecution} from "../../model/test";
+import {ScenarioExecution} from "../../model/scenario";
 
 @Component({
     moduleId: module.id,
@@ -11,7 +11,7 @@ import {TestExecution} from "../../model/test";
 })
 export class ActivityComponent implements OnInit, AfterViewInit {
     title = 'Activity';
-    testExecutions: TestExecution[];
+    scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 
     inputValue: string = '';
@@ -50,15 +50,15 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     }
 
     getActivity() {
-        this.executionService.getTestExecutions()
+        this.executionService.getScenarioExecutions()
             .subscribe(
-                testExecutions => this.testExecutions = testExecutions,
+                scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
                 error => this.errorMessage = <any>error
             );
     }
 
     clearActivity() {
-        this.executionService.clearTestExecutions().subscribe(
+        this.executionService.clearScenarioExecutions().subscribe(
             success => this.getActivity(),
             error => this.errorMessage = <any>error
         );

@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
-import {TestExecution} from "../model/test";
+import {ScenarioExecution} from "../model/scenario";
 import {ConfigService} from "./config-service";
 
 @Injectable()
@@ -11,71 +11,71 @@ export class ExecutionService {
     constructor(private http:Http, private configService:ConfigService) {
     }
 
-    getTestExecutions(): Observable<TestExecution[]> {
-        return this.retrieveTestExecutions();
+    getScenarioExecutions(): Observable<ScenarioExecution[]> {
+        return this.retrieveScenarioExecutions();
     }
 
-    getTestExecutionById(id: number): Observable<TestExecution> {
-        return this.retrieveTestExecutionById(id);
+    getScenarioExecutionById(id: number): Observable<ScenarioExecution> {
+        return this.retrieveScenarioExecutionById(id);
     }
 
-    getTestExecutionsByTestName(name: string): Observable<TestExecution[]> {
-        return this.retrieveTestExecutionByName(name);
+    getScenarioExecutionsByScenarioName(name: string): Observable<ScenarioExecution[]> {
+        return this.retrieveScenarioExecutionByName(name);
     }
 
-    getTestExecutionsByExecutionStatus(status: string): Observable<TestExecution[]> {
-        return this.retrieveTestExecutionByStatus(status);
+    getScenarioExecutionsByExecutionStatus(status: string): Observable<ScenarioExecution[]> {
+        return this.retrieveScenarioExecutionByStatus(status);
     }
 
-    clearTestExecutions(): Observable<any> {
-        return this.deleteAllTestExecutions();
+    clearScenarioExecutions(): Observable<any> {
+        return this.deleteAllScenarioExecutions();
     }
 
-    private retrieveTestExecutions(): Observable<TestExecution[]> {
+    private retrieveScenarioExecutions(): Observable<ScenarioExecution[]> {
         let activityUrl = this.configService.getBaseUrl() + "execution";
         return this.http.get(activityUrl)
             .map(
-                this.extractTestExecutionData
+                this.extractScenarioExecutionData
             )
             .catch(
                 this.handleError
             );
     }
 
-    private retrieveTestExecutionById(id: number): Observable<TestExecution> {
+    private retrieveScenarioExecutionById(id: number): Observable<ScenarioExecution> {
         let executionByIdUrl = this.configService.getBaseUrl() + "execution/" + id;
         return this.http.get(executionByIdUrl)
             .map(
-                this.extractTestExecution
+                this.extractScenarioExecution
             )
             .catch(
                 this.handleError
             );
     }
 
-    private retrieveTestExecutionByName(name: string): Observable<TestExecution[]> {
-        let executionsByNameUrl = this.configService.getBaseUrl() + "execution/test/" + name;
+    private retrieveScenarioExecutionByName(name: string): Observable<ScenarioExecution[]> {
+        let executionsByNameUrl = this.configService.getBaseUrl() + "execution/scenario/" + name;
         return this.http.get(executionsByNameUrl)
             .map(
-                this.extractTestExecutionData
+                this.extractScenarioExecutionData
             )
             .catch(
                 this.handleError
             );
     }
 
-    private retrieveTestExecutionByStatus(status: string): Observable<TestExecution[]> {
+    private retrieveScenarioExecutionByStatus(status: string): Observable<ScenarioExecution[]> {
         let executionsByStatusUrl = this.configService.getBaseUrl() + "execution/status/" + status;
         return this.http.get(executionsByStatusUrl)
             .map(
-                this.extractTestExecutionData
+                this.extractScenarioExecutionData
             )
             .catch(
                 this.handleError
             );
     }
 
-    private deleteAllTestExecutions(): Observable<any> {
+    private deleteAllScenarioExecutions(): Observable<any> {
         let executionUrl = this.configService.getBaseUrl() + "execution";
         return this.http.delete(executionUrl)
             .catch(
@@ -83,16 +83,16 @@ export class ExecutionService {
             );
     }
 
-    private extractTestExecutionData(res: Response) {
-        var testExecutionData = <TestExecution[]> res.json();
-        if (testExecutionData) {
-            return testExecutionData;
+    private extractScenarioExecutionData(res: Response) {
+        var scenarioExecutionData = <ScenarioExecution[]> res.json();
+        if (scenarioExecutionData) {
+            return scenarioExecutionData;
         }
         return [];
     }
 
-    private extractTestExecution(res: Response) {
-        return <TestExecution> res.json();
+    private extractScenarioExecution(res: Response) {
+        return <ScenarioExecution> res.json();
     }
 
     private handleError(error: any) {

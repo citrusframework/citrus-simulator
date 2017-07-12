@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.service;
 
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ public interface ScenarioService {
      * @param name               the name of the scenario to start
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
-    Long run(String name, List<TestParameter> scenarioParameters);
+    Long run(String name, List<ScenarioParameter> scenarioParameters);
 
     /**
      * Returns a list containing the names of all scenarios.
@@ -57,5 +57,5 @@ public interface ScenarioService {
      * @param scenarioName
      * @return
      */
-    Collection<TestParameter> lookupScenarioParameters(String scenarioName);
+    Collection<ScenarioParameter> lookupScenarioParameters(String scenarioName);
 }

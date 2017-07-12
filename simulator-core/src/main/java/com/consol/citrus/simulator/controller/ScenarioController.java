@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.controller;
 
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.service.ScenarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,9 +61,8 @@ public class ScenarioController {
      * @param filter
      * @return
      */
-    // TODO MM rename test to scenario
-    @RequestMapping(method = RequestMethod.GET, value = "/test")
-    public Collection<Scenario> getTestNames(@RequestParam(value = "filter", required = false) String filter) {
+    @RequestMapping(method = RequestMethod.GET, value = "/scenario")
+    public Collection<Scenario> getScenarioNames(@RequestParam(value = "filter", required = false) String filter) {
         List<Scenario> scenarios = new ArrayList<>();
         scenarioService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
         scenarioService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
@@ -72,13 +71,13 @@ public class ScenarioController {
     }
 
     /**
-     * Get the test parameters for the test matching the supplied name
+     * Get the scenario parameters for the scenario matching the supplied name
      *
      * @param scenarioName the name of the scenario
      * @return the scenario parameters, if any are defined, or an empty list
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/test/{name}/parameters")
-    public Collection<TestParameter> getTestParameters(@PathVariable("name") String scenarioName) {
+    @RequestMapping(method = RequestMethod.GET, value = "/scenario/{name}/parameters")
+    public Collection<ScenarioParameter> getScenarioParameters(@PathVariable("name") String scenarioName) {
         return scenarioService.lookupScenarioParameters(scenarioName);
     }
 
@@ -88,12 +87,12 @@ public class ScenarioController {
      *
      * @param name
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/test/{name}/launch")
-    public Long launchTest(
+    @RequestMapping(method = RequestMethod.POST, value = "/scenario/{name}/launch")
+    public Long launchScenario(
             @PathVariable("name") String name,
-            @RequestBody(required = false) List<TestParameter> testParameters
+            @RequestBody(required = false) List<ScenarioParameter> scenarioParameters
     ) {
-        return scenarioService.run(name, testParameters);
+        return scenarioService.run(name, scenarioParameters);
     }
 
 }

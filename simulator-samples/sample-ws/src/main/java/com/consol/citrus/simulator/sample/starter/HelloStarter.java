@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
 
@@ -38,11 +38,11 @@ public class HelloStarter extends AbstractScenarioStarter {
     }
 
     @Override
-    public Collection<TestParameter> getScenarioParameters() { // TODO rename
-        List<TestParameter> testParameters = new ArrayList<>();
+    public Collection<ScenarioParameter> getScenarioParameters() {
+        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
         // title (dropdown)
-        testParameters.add(new TestParameterBuilder()
+        scenarioParameters.add(new ScenarioParameterBuilder()
                 .name("title")
                 .label("Title")
                 .required()
@@ -54,7 +54,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // firstname (text box)
-        testParameters.add(new TestParameterBuilder()
+        scenarioParameters.add(new ScenarioParameterBuilder()
                 .name("firstname")
                 .label("First Name")
                 .required()
@@ -63,7 +63,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // lastname (text box)
-        testParameters.add(new TestParameterBuilder()
+        scenarioParameters.add(new ScenarioParameterBuilder()
                 .name("lastname")
                 .label("Last Name")
                 .required()
@@ -73,7 +73,7 @@ public class HelloStarter extends AbstractScenarioStarter {
 
 
         // greeting (text area)
-        testParameters.add(new TestParameterBuilder()
+        scenarioParameters.add(new ScenarioParameterBuilder()
                 .name("greeting")
                 .label("Greeting")
                 .required()
@@ -81,6 +81,6 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .value("Hey there Mini")
                 .build());
 
-        return testParameters;
+        return scenarioParameters;
     }
 }

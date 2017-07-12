@@ -17,7 +17,7 @@
 package com.consol.citrus.simulator.sample.jms.async.starter;
 
 import com.consol.citrus.simulator.jms.SimulatorJmsAsyncScenario;
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
 import com.consol.citrus.simulator.sample.jms.async.variables.Status;
 import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
@@ -50,12 +50,12 @@ public class StatusUpdateStarter extends SimulatorJmsAsyncScenario implements Sc
     }
 
     @Override
-    public List<TestParameter> getScenarioParameters() {
-        List<TestParameter> testParameters = new ArrayList<>();
-        testParameters.add(new ReferenceId().asTestParameter());
-        testParameters.add(new Status(FaxStatusEnumType.SUCCESS).asTestParameter());
-        testParameters.add(new StatusMessage("").asTestParameter());
-        return testParameters;
+    public List<ScenarioParameter> getScenarioParameters() {
+        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+        scenarioParameters.add(new ReferenceId().asScenarioParameter());
+        scenarioParameters.add(new Status(FaxStatusEnumType.SUCCESS).asScenarioParameter());
+        scenarioParameters.add(new StatusMessage("").asScenarioParameter());
+        return scenarioParameters;
     }
 
     @Override

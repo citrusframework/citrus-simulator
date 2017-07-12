@@ -20,7 +20,7 @@ import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
 import com.consol.citrus.simulator.sample.jms.async.variables.Status;
 import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
@@ -186,9 +186,9 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .send()
                 .post("/test/UpdateFaxStatus/launch")
                 .contentType("application/json")
-                .payload(asJson(referenceId.asTestParameter(),
-                        status.asTestParameter(),
-                        statusMessage.asTestParameter())
+                .payload(asJson(referenceId.asScenarioParameter(),
+                        status.asScenarioParameter(),
+                        statusMessage.asScenarioParameter())
                 );
 
 
@@ -198,10 +198,10 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
 
     }
 
-    private String asJson(TestParameter... testParameters) {
+    private String asJson(ScenarioParameter... scenarioParameters) {
         final Jackson2JsonObjectMapper mapper = new Jackson2JsonObjectMapper();
         try {
-            return mapper.toJson(Arrays.asList(testParameters));
+            return mapper.toJson(Arrays.asList(scenarioParameters));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

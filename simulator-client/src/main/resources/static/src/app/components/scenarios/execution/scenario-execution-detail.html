@@ -1,0 +1,42 @@
+<div class="row">
+    <div *ngIf="scenarioExecution" class="col-md-12">
+        <h3>{{title}} : <a [routerLink]="['scenarios','detail',scenarioExecution.scenarioName]">{{scenarioExecution.scenarioName}}</a> (#{{scenarioExecution.executionId}})</h3>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Started</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static">{{scenarioExecution.startDate | date:format}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Completed</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static">{{scenarioExecution.endDate | date:format}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Status</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><span class="label label-{{scenarioExecution.status | executionStatus}}">{{scenarioExecution.status}}</span></p>
+                </div>
+            </div>
+            <div *ngIf="scenarioExecution.errorMessage" class="form-group">
+                <label class="col-sm-2 control-label">Error</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" rows="3">{{scenarioExecution.errorMessage}}</textarea>
+                </div>
+            </div>
+        </form>
+
+        <div style="padding-bottom: 20px;">
+            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+        </div>
+
+        <scenario-parameter-list [scenarioParameters]="scenarioExecution.scenarioParameters"></scenario-parameter-list>
+
+        <scenario-action-list [scenarioActions]="scenarioExecution.scenarioActions"></scenario-action-list>
+
+        <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
+
+    </div>
+</div>

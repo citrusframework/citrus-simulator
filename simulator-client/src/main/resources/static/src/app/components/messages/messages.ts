@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {MessageService} from "../../services/message-service";
-import {Message} from "../../model/test";
+import {Message} from "../../model/scenario";
 
 @Component({
     moduleId: module.id,

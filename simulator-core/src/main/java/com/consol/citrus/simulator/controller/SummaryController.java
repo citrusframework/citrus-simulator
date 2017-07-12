@@ -53,7 +53,7 @@ public class SummaryController {
     }
 
     /**
-     * Get count of active tests
+     * Get count of active scenarios
      *
      * @return
      */

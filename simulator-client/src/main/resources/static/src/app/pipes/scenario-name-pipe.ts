@@ -1,15 +1,15 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {Test} from "../model/test";
+import {Scenario} from "../model/scenario";
 
 @Pipe({
     name: 'scenarioFilter'
 })
 export class ScenarioNamePipe implements PipeTransform {
-    transform(tests: Test[], name: string, starter: boolean, nonStarter: boolean): Test[] {
-        if (tests) {
+    transform(scenarios: Scenario[], name: string, starter: boolean, nonStarter: boolean): Scenario[] {
+        if (scenarios) {
             let what = name.toLowerCase();
-            return tests.filter(test => {
-                let type = test.type.toLowerCase();
+            return scenarios.filter(scenario => {
+                let type = scenario.type.toLowerCase();
 
                 if(!starter && type.indexOf('starter')) {
                     return false;
@@ -20,12 +20,12 @@ export class ScenarioNamePipe implements PipeTransform {
                 }
 
                 if(name && name.length > 0) {
-                    return ~test.name.toLowerCase().indexOf(name.toLowerCase());
+                    return ~scenario.name.toLowerCase().indexOf(name.toLowerCase());
                 }
                 return true;
             });
         } else {
-            return tests;
+            return scenarios;
         }
     }
 }

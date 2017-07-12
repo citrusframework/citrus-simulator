@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.jms.async.variables;
 
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 
 import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.STATUS_MESSAGE_VAR;
 
@@ -37,8 +37,8 @@ public class StatusMessage {
         return statusMessage;
     }
 
-    public TestParameter asTestParameter() {
-        TestParameterBuilder statusMessageParameterBuilder = new TestParameterBuilder()
+    public ScenarioParameter asScenarioParameter() {
+        ScenarioParameterBuilder statusMessageParameterBuilder = new ScenarioParameterBuilder()
                 .name(STATUS_MESSAGE_VAR)
                 .label("Status Message")
                 .optional()

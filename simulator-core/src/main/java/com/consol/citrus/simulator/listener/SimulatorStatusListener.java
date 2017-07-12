@@ -75,7 +75,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         TestResult result = TestResult.success(test.getName(), test.getParameters());
         testResults.addResult(result);
         LOG.info(result.toString());
-        executionService.completeTestExecutionSuccess(test);
+        executionService.completeScenarioExecutionSuccess(test);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
         LOG.info(result.toString());
         LOG.info(result.getFailureCause());
-        executionService.completeTestExecutionFailure(test, cause);
+        executionService.completeScenarioExecutionFailure(test, cause);
     }
 
     @Override

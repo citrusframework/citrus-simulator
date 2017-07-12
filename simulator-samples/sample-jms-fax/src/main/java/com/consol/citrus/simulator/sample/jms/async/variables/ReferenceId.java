@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.jms.async.variables;
 
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 
 import java.util.UUID;
 
@@ -43,8 +43,8 @@ public class ReferenceId {
         return referenceId;
     }
 
-    public TestParameter asTestParameter() {
-        return new TestParameterBuilder()
+    public ScenarioParameter asScenarioParameter() {
+        return new ScenarioParameterBuilder()
                 .name(REFERENCE_ID_VAR)
                 .label("Reference Id")
                 .required()

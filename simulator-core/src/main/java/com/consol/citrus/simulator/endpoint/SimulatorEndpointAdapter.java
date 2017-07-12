@@ -22,7 +22,7 @@ import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfiguration;
-import com.consol.citrus.simulator.model.TestExecution;
+import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.service.ActivityService;
 import org.slf4j.Logger;
@@ -73,12 +73,12 @@ public class SimulatorEndpointAdapter extends TestExecutingEndpointAdapter {
     }
 
     private void recordNewScenarioExecution(Object scenario) {
-        TestExecution ts = activityService.createExecutionScenario(lookupScenarioName(scenario), Collections.emptyList());
+        ScenarioExecution ts = activityService.createExecutionScenario(lookupScenarioName(scenario), Collections.emptyList());
 
         if (scenario instanceof TestRunner) {
-            ((TestRunner) scenario).variable(TestExecution.EXECUTION_ID, ts.getExecutionId());
+            ((TestRunner) scenario).variable(ScenarioExecution.EXECUTION_ID, ts.getExecutionId());
         } else if (scenario instanceof TestDesigner) {
-            ((TestDesigner) scenario).variable(TestExecution.EXECUTION_ID, ts.getExecutionId());
+            ((TestDesigner) scenario).variable(ScenarioExecution.EXECUTION_ID, ts.getExecutionId());
         } else {
             throw new CitrusRuntimeException(String.format(
                     "Received invalid scenario type '%s'. Scenario must be of type %s or %s",

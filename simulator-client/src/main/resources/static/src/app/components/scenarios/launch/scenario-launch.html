@@ -1,0 +1,13 @@
+<div class="row">
+    <div *ngIf="scenario" class="col-md-12">
+        <h3>{{title}} <small>{{scenario.name}}</small></h3>
+
+        <scenario-parameter-form [scenarioParameters]="scenarioParameters" [scenario]="scenario"></scenario-parameter-form>
+
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{errorMessage}}
+    </div>
+</div>

@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.controller;
 
-import com.consol.citrus.simulator.model.TestExecution;
+import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,32 +33,32 @@ public class ActivityController {
 
     // TODO MM rename execution to activity
     @RequestMapping(method = RequestMethod.GET, value = "/execution")
-    public Collection<TestExecution> getTestExecutions(
+    public Collection<ScenarioExecution> getScenarioExecutions(
             @RequestParam(value = "fromDate", required = false) Date fromDate,
             @RequestParam(value = "toDate", required = false) Date toDate,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size
     ) {
-        return activityService.getTestExecutionsByStartDate(fromDate, toDate, page, size);
+        return activityService.getScenarioExecutionsByStartDate(fromDate, toDate, page, size);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/execution")
     public void clearExecutions() {
-        activityService.clearTestExecutions();
+        activityService.clearScenarioExecutions();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/execution/test/{name}")
-    public Collection<TestExecution> getTestExecutionsByTestName(@PathVariable("name") String name) {
-        return activityService.getTestExecutionsByName(name);
+    @RequestMapping(method = RequestMethod.GET, value = "/execution/scenario/{name}")
+    public Collection<ScenarioExecution> getScenarioExecutionsByName(@PathVariable("name") String name) {
+        return activityService.getScenarioExecutionsByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/execution/status/{status}")
-    public Collection<TestExecution> getTestExecutionsByStatus(@PathVariable("status") String status) {
-        return activityService.getTestExecutionsByStatus(TestExecution.Status.valueOf(status));
+    public Collection<ScenarioExecution> getScenarioExecutionsByStatus(@PathVariable("status") String status) {
+        return activityService.getScenarioExecutionsByStatus(ScenarioExecution.Status.valueOf(status));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/execution/{id}")
-    public TestExecution getTestExecution(@PathVariable("id") Long id) {
-        return activityService.getTestExecutionById(id);
+    public ScenarioExecution getScenarioExecution(@PathVariable("id") Long id) {
+        return activityService.getScenarioExecutionById(id);
     }
 }

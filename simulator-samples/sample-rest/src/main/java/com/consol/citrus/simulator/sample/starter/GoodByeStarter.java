@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
 
@@ -37,11 +37,11 @@ public class GoodByeStarter extends AbstractScenarioStarter {
         echo("${payload}");
     }
     @Override
-    public Collection<TestParameter> getScenarioParameters() {
-        List<TestParameter> testParameters = new ArrayList<>();
+    public Collection<ScenarioParameter> getScenarioParameters() {
+        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
         // greeting (text area)
-        testParameters.add(new TestParameterBuilder()
+        scenarioParameters.add(new ScenarioParameterBuilder()
                 .name("payload")
                 .label("Payload")
                 .required()
@@ -49,7 +49,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
                 .value(getMessageTemplate("Goodbye"))
                 .build());
 
-        return testParameters;
+        return scenarioParameters;
     }
 
 }

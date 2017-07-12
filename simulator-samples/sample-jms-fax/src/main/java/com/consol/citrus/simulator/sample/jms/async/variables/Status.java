@@ -16,8 +16,8 @@
 
 package com.consol.citrus.simulator.sample.jms.async.variables;
 
-import com.consol.citrus.simulator.model.TestParameter;
-import com.consol.citrus.simulator.model.TestParameterBuilder;
+import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.sample.model.xml.fax.FaxStatusEnumType;
 
 import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.STATUS_VAR;
@@ -38,8 +38,8 @@ public class Status {
         return status;
     }
 
-    public TestParameter asTestParameter() {
-        TestParameterBuilder statusParameterBuilder = new TestParameterBuilder()
+    public ScenarioParameter asScenarioParameter() {
+        ScenarioParameterBuilder statusParameterBuilder = new ScenarioParameterBuilder()
                 .name(STATUS_VAR)
                 .label("Fax Status")
                 .required()

@@ -1,0 +1,24 @@
+<div [formGroup]="form" class="form-group" [hidden]="scenarioParameter.controlType == 'HIDDEN_TEXTBOX'">
+    <label [attr.for]="scenarioParameter.name" class="control-label col-sm-2">{{scenarioParameter.label}}</label>
+    <div [ngSwitch]="scenarioParameter.controlType">
+
+        <input *ngSwitchCase="'TEXTBOX'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
+               [type]="scenarioParameter.type">
+
+        <input *ngSwitchCase="'HIDDEN_TEXTBOX'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
+               [type]="scenarioParameter.type" hidden="true">
+
+
+        <textarea *ngSwitchCase="'TEXTAREA'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
+                  class="message-payload-textarea col-sm-10"></textarea>
+
+        <select [id]="scenarioParameter.name" *ngSwitchCase="'DROPDOWN'" [formControlName]="scenarioParameter.name">
+            <option *ngFor="let opt of scenarioParameter.options" [value]="opt.key">{{opt.value}}</option>
+        </select>
+    </div>
+    <div *ngIf="!isValid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{scenarioParameter.label}} is required
+    </div>
+</div>

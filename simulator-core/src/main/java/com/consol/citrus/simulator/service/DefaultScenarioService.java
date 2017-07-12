@@ -19,8 +19,8 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.dsl.endpoint.Executable;
 import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.simulator.model.TestExecution;
-import com.consol.citrus.simulator.model.TestParameter;
+import com.consol.citrus.simulator.model.ScenarioExecution;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.ScenarioStarter;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class DefaultScenarioService implements ScenarioService {
     }
 
     @Override
-    public final Long run(String name, List<TestParameter> scenarioParameters) {
+    public final Long run(String name, List<ScenarioParameter> scenarioParameters) {
         log.info(String.format("Executing scenario : %s", name));
 
         Executable testExecutable = applicationContext.getBean(name, Executable.class);
@@ -92,8 +92,8 @@ public class DefaultScenarioService implements ScenarioService {
             scenarioParameters.forEach(p -> addTestVariable(testExecutable, p.getName(), p.getValue()));
         }
 
-        TestExecution es = activityService.createExecutionScenario(name, scenarioParameters);
-        addTestVariable(testExecutable, TestExecution.EXECUTION_ID, es.getExecutionId());
+        ScenarioExecution es = activityService.createExecutionScenario(name, scenarioParameters);
+        addTestVariable(testExecutable, ScenarioExecution.EXECUTION_ID, es.getExecutionId());
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -149,7 +149,7 @@ public class DefaultScenarioService implements ScenarioService {
     }
 
     @Override
-    public Collection<TestParameter> lookupScenarioParameters(String scenarioName) {
+    public Collection<ScenarioParameter> lookupScenarioParameters(String scenarioName) {
         if (scenarioStarters.containsKey(scenarioName)) {
             return scenarioStarters.get(scenarioName).getScenarioParameters();
         }
