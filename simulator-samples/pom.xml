@@ -18,11 +18,11 @@
 
   <modules>
     <module>sample-model</module>
-    <module>sample-endpoint</module>
     <module>sample-jms</module>
     <module>sample-jms-fax</module>
     <module>sample-ws</module>
     <module>sample-rest</module>
+    <module>sample-endpoint</module>
   </modules>
 
   <dependencyManagement>
