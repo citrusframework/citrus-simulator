@@ -13,9 +13,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>0.10.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>1.5.0.RELEASE</spring.boot.version>
-    <testng.version>6.10</testng.version>
+    <citrus.simulator.version>1.0.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>1.5.4.RELEASE</spring.boot.version>
+    <testng.version>6.11</testng.version>
   </properties>
 
   <dependencyManagement>

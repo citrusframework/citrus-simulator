@@ -12,6 +12,7 @@ import {MessageDetailComponent} from "./components/message-detail/message-detail
 import {AboutComponent} from "./components/about/about";
 import {HelpComponent} from "./components/help/help";
 import {LocationStrategy, HashLocationStrategy} from "@angular/common";
+import {environment} from "../environments/environment";
 
 const routes: Routes = [
     {path: '', pathMatch: 'full', redirectTo: '/welcome'},
@@ -50,7 +51,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [
+        RouterModule.forRoot(routes,  { enableTracing: environment.traceRouting })
+    ],
     exports: [RouterModule],
     providers:    [
         {provide: LocationStrategy, useClass: HashLocationStrategy}
@@ -68,5 +71,5 @@ export const routedComponents = [
     TestDetailComponent,
     TestLaunchComponent,
     MessagesComponent,
-    MessageDetailComponent,
+    MessageDetailComponent
 ];

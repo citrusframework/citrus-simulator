@@ -1,8 +1,9 @@
-const LOCAL_STORAGE_ENV_KEY = '$CITRUS_ADMIN';
+import {Environment} from "./environment.interface";
+const LOCAL_STORAGE_ENV_KEY = '$CITRUS_SIMULATOR';
 
 let userEnv = {};
 if(localStorage) {
-    const localStorageContent = localStorage.getItem(LOCAL_STORAGE_ENV_KEY);
+    const localStorageContent = localStorage.getItem(LOCAL_STORAGE_ENV_KEY) + '';
     try {
         userEnv = JSON.parse(localStorageContent) || {};
     } catch(e) {
@@ -10,10 +11,11 @@ if(localStorage) {
     }
 }
 
-export const environment = {
+export const environment:Environment = {
     production: false,
-    traceRouting: true,
+    traceRouting: false,
     reduxTools: true,
+    stompDebug:true,
     ...userEnv
 };
 

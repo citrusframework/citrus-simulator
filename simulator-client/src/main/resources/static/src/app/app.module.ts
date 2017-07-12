@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
-import {BrowserModule, Title} from "@angular/platform-browser";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {BrowserModule} from "@angular/platform-browser";
+import {FormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {AppComponent} from "./components/app.component";
 import {NavbarComponent} from "./components/navbar/navbar";
@@ -29,10 +29,9 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
 @NgModule({
     imports: [
         BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
         HttpModule,
-        AppRoutingModule,
+        FormsModule,
+        AppRoutingModule
     ],
     declarations: [
         AppComponent,
@@ -50,17 +49,16 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
         ScenarioNamePipe,
         ActivityFilterPipe,
         MessageFilterPipe,
-        routedComponents,
+        routedComponents
     ],
     providers: [
-        Title,
         AppInfoService,
         ConfigService,
         ExecutionService,
         MessageService,
         StatusService,
         TestParameterControlService,
-        TestService,
+        TestService
     ],
     bootstrap: [AppComponent]
 })
