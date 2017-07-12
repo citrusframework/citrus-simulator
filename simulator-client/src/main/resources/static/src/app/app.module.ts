@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {AppComponent} from "./components/app.component";
 import {NavbarComponent} from "./components/navbar/navbar";
@@ -31,6 +31,7 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
         BrowserModule,
         HttpModule,
         FormsModule,
+        ReactiveFormsModule,
         AppRoutingModule
     ],
     declarations: [
