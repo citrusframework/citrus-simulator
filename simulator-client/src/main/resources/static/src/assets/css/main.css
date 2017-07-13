@@ -11,6 +11,12 @@ body {
     border-radius: 1em;
 }
 
+.sub-header {
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
 /** Buttons **/
 
 .btn-primary {
@@ -41,10 +47,6 @@ body {
 
 .clickable{
     cursor: pointer;
-}
-
-.clickable:hover{
-    opacity: 0.5;
 }
 
 tr td {

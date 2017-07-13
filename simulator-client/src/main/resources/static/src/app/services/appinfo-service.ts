@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {AppInfo} from "../model/appinfo";
+import {Simulator} from "../model/simulator";
 import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -9,17 +9,32 @@ export class AppInfoService {
     constructor(private http:Http) {
     }
 
-    getAppInfo(): Observable<AppInfo> {
-        let infoUrl = "manage/info";
-        return this.http.get(infoUrl).map(this.extractData).catch(this.handleError);
+    private serviceUrl = "manage/info";
+
+    cachedSimulator: Simulator;
+    cachedObservable: Observable<Simulator>;
+
+    getSimulatorInfo(): Observable<Simulator> {
+        if (this.cachedSimulator) {
+            return Observable.of(this.cachedSimulator)
+        } else if (this.cachedObservable) {
+            return this.cachedObservable;
+        } else {
+            this.cachedObservable = this.http.get(this.serviceUrl)
+                .map(this.extractData)
+                .do(p => this.cachedSimulator = p)
+                .catch(this.handleError)
+                .share();
+            return this.cachedObservable;
+        }
     }
 
-    private extractData(res: Response): AppInfo {
+    private extractData(res: Response): Simulator {
         let info = res.json();
-        let simulatorName = info.simulator.name ? info.simulator.name : '';
-        let simulatorDomain = info.simulator.domain ? info.simulator.domain : '';
-        let simulatorVersion = info.simulator.version ? info.simulator.version : '';
-        return new AppInfo(simulatorName, simulatorDomain, simulatorVersion);
+        let name = info.simulator.name ? info.simulator.name : '';
+        let domain = info.simulator.domain ? info.simulator.domain : '';
+        let version = info.simulator.version ? info.simulator.version : '';
+        return new Simulator(name, domain, version);
     }
 
     private handleError(error: Response | any) {

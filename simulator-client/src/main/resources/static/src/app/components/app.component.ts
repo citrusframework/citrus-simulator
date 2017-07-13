@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component} from "@angular/core";
 import {Title} from "@angular/platform-browser";
 import {AppInfoService} from "../services/appinfo-service";
 
@@ -6,14 +6,10 @@ import {AppInfoService} from "../services/appinfo-service";
     selector: 'app',
     templateUrl: 'app.html',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
     constructor(private titleService: Title, private appInfoService: AppInfoService) {
-        this.appInfoService.getAppInfo().subscribe(
-            appInfo => this.titleService.setTitle(appInfo.simulatorName),
+        this.appInfoService.getSimulatorInfo().subscribe(
+            simulator => this.titleService.setTitle(simulator.name),
             error => console.log(error));
-    }
-
-    ngOnInit(): void {
-        this.appInfoService.getAppInfo();
     }
 }

@@ -1,31 +1,78 @@
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{title}}</h3>
-                <div class="pull-right">
-                    <span class="clickable" title="Refresh Status Information" (click)="refreshStatusInformation()">
-                        <i class="glyphicon glyphicon-refresh"></i>
-                    </span>
-                    <span class="clickable" title="Clear Status Information" (click)="clearStatusInformation()">
-                        <i class="glyphicon glyphicon-remove-circle"></i>
-                    </span>
-                </div>
-            </div>
-            <ul class="list-group" *ngIf="summary">
-                <li class="list-group-item clickable" (click)="onSelect('SUCCESS')">
-                    <span class="label label-pill label-success">{{summary.success}}</span>
-                    Successful scenarios
-                </li>
-                <li class="list-group-item clickable" (click)="onSelect('FAILED')">
-                    <span class="label label-pill label-danger">{{summary.failed}}</span>
-                    Failed scenarios
-                </li>
-                <li class="list-group-item clickable" (click)="onSelect('ACTIVE')">
-                    <span class="label label-pill label-info">{{active}}</span>
-                    Active scenarios
-                </li>
-            </ul>
+<h1 class="page-header"><i class="fa fa-cube"></i> Simulator: {{simulator?.name}}</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-1">
+            <h4 class="pull-right">Name:</h4>
+        </div>
+        <div class="col-sm-11">
+            <h4>{{simulator?.name}}</h4>
+        </div>
+    </div>
+    <div class="row" *ngIf="project?.description">
+        <div class="col-sm-1">
+            <h4 class="pull-right">Description:</h4>
+        </div>
+        <div class="col-sm-11">
+            <h4 >{{simulator?.description}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1">
+            <h4 class="pull-right">Version:</h4>
+        </div>
+        <div class="col-sm-11">
+            <h4>{{simulator?.version}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1">
+            <h4 class="pull-right">Scenarios:</h4>
+        </div>
+        <div class="col-sm-11">
+            <h4>{{active}}</h4>
         </div>
     </div>
 </div>
+
+<h2 class="sub-header"><i class="fa fa-pie-chart"></i> Status
+  <div class="pull-right">
+      <span class="clickable" title="Refresh Status Information" (click)="refreshStatusInformation()"><i class="fa fa-refresh"></i></span>
+      <span class="clickable" title="Clear Status Information" (click)="clearStatusInformation()"><i class="fa fa-remove"></i></span>
+  </div>
+</h2>
+
+<div class="container-fluid">
+    <div class="row simulator-results">
+        <div class="col-xs-6 col-sm-3 simulator-result">
+            <a (click)="onSelect('SUCCESS')" title="View all success" class="clickable">
+                <span class="badge badge-success border-success" alt="PASSED">{{summary?.success}}</span>
+                <h4>PASSED</h4>
+                <span class="text-muted">{{summary?.size > 0 ? summary?.success / summary?.size * 100 : 0}} %</span>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3 simulator-result">
+            <a (click)="onSelect('FAILED')" title="View all failed" class="clickable">
+                <span class="badge badge-danger border-danger" alt="FAILED">{{summary?.failed}}</span>
+                <h4>FAILED</h4>
+                <span class="text-muted">{{summary?.size > 0 ? summary?.failed / summary?.size * 100 : 0}} %</span>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3 simulator-result">
+            <a (click)="onSelect('FAILED')" title="View all failed" class="clickable">
+                <span class="badge badge-warning border-warning" alt="FAILED">{{active}}</span>
+                <h4>ACTIVE</h4>
+                <span class="text-muted">{{active}}</span>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3 simulator-result">
+            <a title="View all tests" class="clickable">
+                <span class="badge badge-info border-info" alt="TOTAL">{{summary?.size}}</span>
+                <h4>TOTAL</h4>
+                <span class="text-muted">{{summary?.size}}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="alert-dialog" type="detailed"></div>

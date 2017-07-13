@@ -3,7 +3,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {AppComponent} from "./components/app.component";
-import {NavbarComponent} from "./components/navbar/navbar";
+import {HeaderComponent} from "./components/header/header";
 import {AppRoutingModule, routedComponents} from "./app-routing.module";
 import {AppInfoService} from "./services/appinfo-service";
 import {ActivityService} from "./services/activity-service";
@@ -35,7 +35,7 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
     ],
     declarations: [
         AppComponent,
-        NavbarComponent,
+        HeaderComponent,
         ScenarioExecutionList,
         ScenarioActionList,
         ScenarioParameterList,

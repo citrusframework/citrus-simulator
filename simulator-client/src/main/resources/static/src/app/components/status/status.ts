@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {SummaryService} from '../../services/summary-service';
-import {Summary, ScenarioExecution} from '../../model/scenario';
-import {ActivityService} from '../../services/activity-service';
+import {Summary} from '../../model/scenario';
+import {AppInfoService} from "../../services/appinfo-service";
+import {Simulator} from "../../model/simulator";
 
 @Component({
     moduleId: module.id,
@@ -10,19 +11,31 @@ import {ActivityService} from '../../services/activity-service';
     styleUrls: ['status.css'],
 })
 export class StatusComponent implements OnInit {
-    title = 'Status';
+
+    simulator: Simulator;
+
     summary: Summary;
     active: number;
     errorMessage: string;
 
     constructor(
         private router: Router,
-        private summaryService: SummaryService) {
+        private summaryService: SummaryService,
+        private appInfoService: AppInfoService) {
     }
 
     ngOnInit() {
+        this.getSimulatorInfo();
         this.getSummary();
         this.getActive();
+    }
+
+    getSimulatorInfo() {
+        this.appInfoService.getSimulatorInfo()
+            .subscribe(
+                simulator => this.simulator = simulator,
+                error => this.errorMessage = <any>error
+            );
     }
 
     getSummary() {

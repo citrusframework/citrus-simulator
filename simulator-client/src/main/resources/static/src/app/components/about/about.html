@@ -1,6 +1,17 @@
-<div class="row">
-    <div class="col-md-12">
-        <h3>{{title}}</h3>
-        <span *ngIf="appInfo" class="navbar-brand">{{appInfo.simulatorName}} (v{{appInfo.simulatorVersion}})</span>
-    </div>
+<div class="container">
+    <h1 class="page-header">About <small>Citrus Simulator</small></h1>
+
+    <p class="lead">This is the Citrus simulator UI that enables you to manage scenarios and review simulator activities.</p>
+
+    <br/>
+    
+    <h4>Name: {{simulator?.name}}</h4>
+    <h4 *ngIf="simulator?.domain">Domain: {{simulator?.domain}}</h4>
+    <h4>Version: v{{simulator?.version}}</h4>
+
+    <br/>
+
+    <h4>Copyright &copy; 2017 ConSol Software GmbH</h4>
+
+    <h4><a href="https://www.citrusframework.org">https://www.citrusframework.org</a></h4>
 </div>
