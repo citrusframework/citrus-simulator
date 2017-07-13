@@ -1,47 +1,37 @@
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{title}}</h3>
-                <div class="pull-right">
-                    <span class="clickable filter" title="Toggle table filter" (click)="toggleFilterDisplay()">
-                        <i class="fa fa-filter"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="panel-body" *ngIf="displayFilter">
-                <div class="input-group">
-                    <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default btn-filter {{starterState}}" (click)="toggleStarter()">Starter</button>
-                        <button type="button" class="btn btn-default btn-filter {{nonStarterState}}" (click)="toggleNonStarter()">Non-Starter</button>
-                    </div>
-                </div>
-            </div>
-            <table class="table table-bordered table-condensed table-hover">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>&nbsp;</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="scenario" *ngFor="let scenario of (scenarios | scenarioFilter : inputValue:includeStarter:includeNonStarter)">
-                    <td class="scenario" (click)="onSelect(scenario)">{{scenario.name}}</td>
-                    <td>
-                        <button *ngIf="scenario.type.indexOf('STARTER') > -1" style="padding: 0px 10px" class="btn btn-sm btn-success" (click)="launchScenario(scenario)" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch </button>
-                    </td>
-                </tr>
-                <tr class="no-scenarios">
-                    <td colspan="2">No scenarios to display</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+<h1 class="page-header"><i class="fa fa-cubes"></i> Scenarios</h1>
+
+<div class="input-group">
+    <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default btn-filter {{starterState}}" (click)="toggleStarter()"><i [class]="starterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Starter</button>
+        <button type="button" class="btn btn-default btn-filter {{nonStarterState}}" (click)="toggleNonStarter()"><i [class]="nonStarterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Non-Starter</button>
     </div>
-    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-        <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        Error launching scenario: {{errorMessage}}
-    </div>
+</div>
+
+<div class="table-responsive space-top-30">
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="scenario" *ngFor="let scenario of (scenarios | scenarioFilter : inputValue:includeStarter:includeNonStarter)">
+            <td class="scenario" (click)="onSelect(scenario)">{{scenario.name}}</td>
+            <td>
+                <button *ngIf="scenario.type.indexOf('STARTER') > -1" style="padding: 0px 10px" class="btn btn-sm btn-success" (click)="launchScenario(scenario)" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch </button>
+            </td>
+        </tr>
+        <tr class="no-scenarios">
+            <td colspan="2">No scenarios to display</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+    Error launching scenario: {{errorMessage}}
 </div>

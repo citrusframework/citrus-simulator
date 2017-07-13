@@ -12,7 +12,6 @@ import {ActivityService} from "../../services/activity-service";
 export class ScenarioComponent implements OnInit {
     title = 'Scenarios';
     inputValue: string = '';
-    displayFilter: boolean = false;
     includeStarter: boolean = true;
     includeNonStarter: boolean = true;
     starterState: string = 'active';
@@ -73,10 +72,6 @@ export class ScenarioComponent implements OnInit {
             },
             error => this.errorMessage = <any>error
         );
-    }
-
-    toggleFilterDisplay() {
-        this.displayFilter = !this.displayFilter;
     }
 
     toggleStarter() {
