@@ -3,14 +3,14 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {Scenario, ScenarioExecution, ScenarioParameter} from "../../../model/scenario";
 import {ScenarioService} from "../../../services/scenario-service";
-import {ExecutionService} from "../../../services/execution-service";
+import {ActivityService} from "../../../services/activity-service";
 
 @Component({
     moduleId: module.id,
     selector: 'scenario-detail',
     templateUrl: 'scenario-detail.html',
     styleUrls: ['scenario-detail.css'],
-    providers: [ScenarioService, ExecutionService]
+    providers: [ScenarioService, ActivityService]
 })
 export class ScenarioDetailComponent implements OnInit {
     title = 'Scenario';
@@ -29,7 +29,7 @@ export class ScenarioDetailComponent implements OnInit {
     activeState: string = 'active';
 
     constructor(private scenarioService: ScenarioService,
-                private executionService: ExecutionService,
+                private activityService: ActivityService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private location: Location) {
@@ -64,7 +64,7 @@ export class ScenarioDetailComponent implements OnInit {
 
 
     getScenarioExecutions(name: string) {
-        this.executionService.getScenarioExecutionsByScenarioName(name)
+        this.activityService.getScenarioExecutionsByScenarioName(name)
             .subscribe(
                 scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
                 error => this.errorMessage = <any>error

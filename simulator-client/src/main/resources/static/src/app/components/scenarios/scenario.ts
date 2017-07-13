@@ -2,7 +2,7 @@ import {Component, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {Scenario} from "../../model/scenario";
 import {ScenarioService} from "../../services/scenario-service";
-import {ExecutionService} from "../../services/execution-service";
+import {ActivityService} from "../../services/activity-service";
 
 @Component({
     moduleId: module.id,
@@ -23,7 +23,7 @@ export class ScenarioComponent implements OnInit {
     errorMessage: string;
 
     constructor(private router: Router,
-                private executionService: ExecutionService,
+                private activityService: ActivityService,
                 private scenarioService: ScenarioService) {
     }
 

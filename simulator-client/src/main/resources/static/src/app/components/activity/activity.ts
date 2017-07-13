@@ -1,6 +1,6 @@
 import {Component, OnInit, AfterViewInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {ExecutionService} from "../../services/execution-service";
+import {ActivityService} from "../../services/activity-service";
 import {ScenarioExecution} from "../../model/scenario";
 
 @Component({
@@ -24,7 +24,7 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     activeState: string = 'active';
 
     constructor(
-        private executionService: ExecutionService,
+        private activityService: ActivityService,
         private route: ActivatedRoute) {
     }
 
@@ -50,7 +50,7 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     }
 
     getActivity() {
-        this.executionService.getScenarioExecutions()
+        this.activityService.getScenarioExecutions()
             .subscribe(
                 scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
                 error => this.errorMessage = <any>error
@@ -58,7 +58,7 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     }
 
     clearActivity() {
-        this.executionService.clearScenarioExecutions().subscribe(
+        this.activityService.clearScenarioExecutions().subscribe(
             success => this.getActivity(),
             error => this.errorMessage = <any>error
         );

@@ -2,13 +2,13 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {Location} from "@angular/common";
 import {ScenarioExecution} from "../../../model/scenario";
-import {ExecutionService} from "../../../services/execution-service";
+import {ActivityService} from "../../../services/activity-service";
 
 @Component({
     moduleId: module.id,
     selector: 'scenario-execution-detail',
     templateUrl: 'scenario-execution-detail.html',
-    providers: [ExecutionService]
+    providers: [ActivityService]
 })
 export class ScenarioExecutionDetailComponent implements OnInit {
     title = 'Scenario Execution';
@@ -17,7 +17,7 @@ export class ScenarioExecutionDetailComponent implements OnInit {
     errorMessage: string;
 
     constructor(
-        private executionService: ExecutionService,
+        private activityService: ActivityService,
         private route: ActivatedRoute,
         private location: Location) {
     }
@@ -28,7 +28,7 @@ export class ScenarioExecutionDetailComponent implements OnInit {
     }
 
     getScenarioExecutionsById(id: number) {
-        this.executionService.getScenarioExecutionById(id)
+        this.activityService.getScenarioExecutionById(id)
             .subscribe(
                 scenarioExecution => this.scenarioExecution = scenarioExecution,
                 error => this.errorMessage = <any>error

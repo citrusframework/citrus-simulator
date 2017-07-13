@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {SummaryService} from '../../services/summary-service';
 import {Summary, ScenarioExecution} from '../../model/scenario';
-import {ExecutionService} from '../../services/execution-service';
+import {ActivityService} from '../../services/activity-service';
 
 @Component({
     moduleId: module.id,
@@ -20,7 +20,7 @@ export class StatusComponent implements OnInit {
     constructor(
         private router: Router,
         private summaryService: SummaryService,
-        private executionService: ExecutionService) {
+        private activityService: ActivityService) {
     }
 
     ngOnInit() {

@@ -5,7 +5,7 @@ import 'rxjs/Rx';
 import {ScenarioExecution} from "../model/scenario";
 
 @Injectable()
-export class ExecutionService {
+export class ActivityService {
 
     constructor(private http:Http) {
     }
