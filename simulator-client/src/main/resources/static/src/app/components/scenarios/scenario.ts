@@ -10,7 +10,6 @@ import {ActivityService} from "../../services/activity-service";
     styleUrls: ['scenario.css']
 })
 export class ScenarioComponent implements OnInit {
-    title = 'Scenarios';
     inputValue: string = '';
     includeStarter: boolean = true;
     includeNonStarter: boolean = true;

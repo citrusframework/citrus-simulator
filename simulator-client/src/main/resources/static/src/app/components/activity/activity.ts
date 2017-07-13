@@ -9,7 +9,6 @@ import {ScenarioExecution} from "../../model/scenario";
     styleUrls: ['activity.css'],
 })
 export class ActivityComponent implements OnInit, AfterViewInit {
-    title = 'Activity';
     scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 

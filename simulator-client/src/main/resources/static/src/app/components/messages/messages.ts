@@ -9,12 +9,10 @@ import {Message} from "../../model/scenario";
 
 })
 export class MessagesComponent {
-    title = 'Messages';
     messages: Message[];
     errorMessage: string;
 
     inputValue: string = '';
-    displayFilter: boolean = false;
     includeInbound: boolean = true;
     includeOutbound: boolean = true;
     inboundState: string = 'active';
@@ -33,10 +31,6 @@ export class MessagesComponent {
                 messages => this.messages = messages,
                 error => this.errorMessage = <any>error
             );
-    }
-
-    toggleFilterDisplay() {
-        this.displayFilter = !this.displayFilter;
     }
 
     clearAllMessages() {

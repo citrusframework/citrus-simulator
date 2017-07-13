@@ -7,8 +7,7 @@ import {Simulator} from "../../model/simulator";
     templateUrl: 'about.html'
 })
 export class AboutComponent implements OnInit {
-    title = 'About';
-
+    
     simulator: Simulator;
 
     constructor(private appInfoService: AppInfoService) {
