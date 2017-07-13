@@ -12,17 +12,18 @@ export class MessageFilterPipe implements PipeTransform {
                 let payload = message.payload.toLowerCase();
                 let direction = message.direction.toLowerCase();
 
-                if(!inbound && direction.indexOf('inbound')) {
+                if (!inbound && direction == 'inbound') {
                     return false;
                 }
 
-                if(!outbound && direction.indexOf('outbound')) {
+                if (!outbound && direction == 'outbound') {
                     return false;
                 }
 
-                if(name && name.length > 0) {
+                if (name && name.length > 0) {
                     return ~payload.indexOf(what);
                 }
+
                 return true;
             });
         } else {
