@@ -3,13 +3,14 @@ import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {ScenarioExecution} from "../model/scenario";
-import {ConfigService} from "./config-service";
 
 @Injectable()
 export class ExecutionService {
 
-    constructor(private http:Http, private configService:ConfigService) {
+    constructor(private http:Http) {
     }
+
+    private serviceUrl = 'api/activity';
 
     getScenarioExecutions(): Observable<ScenarioExecution[]> {
         return this.retrieveScenarioExecutions();
@@ -32,8 +33,7 @@ export class ExecutionService {
     }
 
     private retrieveScenarioExecutions(): Observable<ScenarioExecution[]> {
-        let activityUrl = this.configService.getBaseUrl() + "execution";
-        return this.http.get(activityUrl)
+        return this.http.get(this.serviceUrl)
             .map(
                 this.extractScenarioExecutionData
             )
@@ -43,8 +43,7 @@ export class ExecutionService {
     }
 
     private retrieveScenarioExecutionById(id: number): Observable<ScenarioExecution> {
-        let executionByIdUrl = this.configService.getBaseUrl() + "execution/" + id;
-        return this.http.get(executionByIdUrl)
+        return this.http.get(this.serviceUrl + "/" + id)
             .map(
                 this.extractScenarioExecution
             )
@@ -54,8 +53,7 @@ export class ExecutionService {
     }
 
     private retrieveScenarioExecutionByName(name: string): Observable<ScenarioExecution[]> {
-        let executionsByNameUrl = this.configService.getBaseUrl() + "execution/scenario/" + name;
-        return this.http.get(executionsByNameUrl)
+        return this.http.get(this.serviceUrl + "/scenario/" + name)
             .map(
                 this.extractScenarioExecutionData
             )
@@ -65,8 +63,7 @@ export class ExecutionService {
     }
 
     private retrieveScenarioExecutionByStatus(status: string): Observable<ScenarioExecution[]> {
-        let executionsByStatusUrl = this.configService.getBaseUrl() + "execution/status/" + status;
-        return this.http.get(executionsByStatusUrl)
+        return this.http.get(this.serviceUrl + "/status/" + status)
             .map(
                 this.extractScenarioExecutionData
             )
@@ -76,8 +73,7 @@ export class ExecutionService {
     }
 
     private deleteAllScenarioExecutions(): Observable<any> {
-        let executionUrl = this.configService.getBaseUrl() + "execution";
-        return this.http.delete(executionUrl)
+        return this.http.delete(this.serviceUrl)
             .catch(
                 this.handleError
             );

@@ -26,11 +26,13 @@ import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("api/message")
 public class MessageController {
-    @Autowired
-    MessageService messageService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/message")
+    @Autowired
+    private MessageService messageService;
+
+    @RequestMapping(method = RequestMethod.GET)
     public Collection<Message> getMessages(
             @RequestParam(value = "fromDate", required = false) Date fromDate,
             @RequestParam(value = "toDate", required = false) Date toDate,
@@ -40,12 +42,12 @@ public class MessageController {
         return messageService.getMessagesByDateBetween(fromDate, toDate, page, size);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/message")
+    @RequestMapping(method = RequestMethod.DELETE)
     public void clearMessages() {
         messageService.clearMessages();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/message/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public Message getMessageById(@PathVariable("id") Long id) {
         return messageService.getMessageById(id);
     }

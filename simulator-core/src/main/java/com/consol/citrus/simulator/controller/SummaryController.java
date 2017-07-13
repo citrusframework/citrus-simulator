@@ -26,17 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("api/summary")
 public class SummaryController {
 
     @Autowired
-    SimulatorStatusListener statusListener;
+    private SimulatorStatusListener statusListener;
 
     /**
      * Get a summary of all tests results
      *
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/summary/results")
+    @RequestMapping(method = RequestMethod.GET, value = "/results")
     public TestResults getSummaryTestResults() {
         return statusListener.getTestResults();
     }
@@ -46,7 +47,7 @@ public class SummaryController {
      *
      * @return
      */
-    @RequestMapping(method = RequestMethod.DELETE, value = "/summary/results")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/results")
     public TestResults clearSummaryTestResults() {
         statusListener.clearResults();
         return new TestResults();
@@ -57,7 +58,7 @@ public class SummaryController {
      *
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/summary/active")
+    @RequestMapping(method = RequestMethod.GET, value = "/active")
     public Integer getSummaryActive() {
         return statusListener.getCountActiveScenarios();
     }

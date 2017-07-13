@@ -6,10 +6,9 @@ import {AppComponent} from "./components/app.component";
 import {NavbarComponent} from "./components/navbar/navbar";
 import {AppRoutingModule, routedComponents} from "./app-routing.module";
 import {AppInfoService} from "./services/appinfo-service";
-import {ConfigService} from "./services/config-service";
 import {ExecutionService} from "./services/execution-service";
 import {MessageService} from "./services/message-service";
-import {StatusService} from "./services/status-service";
+import {SummaryService} from "./services/summary-service";
 import {ScenarioParameterService} from "./services/scenario-parameter-service";
 import {ScenarioService} from "./services/scenario-service";
 import {ScenarioExecutionList} from "./components/scenarios/execution/scenario-execution-list";
@@ -54,10 +53,9 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
     ],
     providers: [
         AppInfoService,
-        ConfigService,
         ExecutionService,
         MessageService,
-        StatusService,
+        SummaryService,
         ScenarioParameterService,
         ScenarioService
     ],

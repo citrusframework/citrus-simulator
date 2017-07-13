@@ -3,13 +3,14 @@ import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {Summary} from "../model/scenario";
-import {ConfigService} from "./config-service";
 
 @Injectable()
-export class StatusService {
+export class SummaryService {
 
-    constructor(private http:Http, private configService:ConfigService) {
+    constructor(private http:Http) {
     }
+
+    private serviceUrl = 'api/summary';
 
     getSummary(): Observable<Summary> {
         return this.retrieveSummaryResults();
@@ -24,8 +25,7 @@ export class StatusService {
     }
 
     private retrieveSummaryResults(): Observable<Summary> {
-        let summaryResultsUrl = this.configService.getBaseUrl() + "summary/results";
-        return this.http.get(summaryResultsUrl)
+        return this.http.get(this.serviceUrl + "/results")
             .map(
                 this.extractSummaryResults
             )
@@ -35,8 +35,7 @@ export class StatusService {
     }
 
     private resetSummaryResults(): Observable<Summary> {
-        let summaryResultsUrl = this.configService.getBaseUrl() + "summary/results";
-        return this.http.delete(summaryResultsUrl)
+        return this.http.delete(this.serviceUrl + "/results")
             .map(
                 this.extractSummaryResults
             )
@@ -46,8 +45,7 @@ export class StatusService {
     }
 
     private retrieveSummaryActive(): Observable<number> {
-        let summaryActiveUrl = this.configService.getBaseUrl() + "summary/active";
-        return this.http.get(summaryActiveUrl)
+        return this.http.get(this.serviceUrl + "/active")
             .map(
                 this.extractSummaryActive
             )

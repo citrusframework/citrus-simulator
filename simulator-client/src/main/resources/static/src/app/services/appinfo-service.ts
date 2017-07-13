@@ -3,15 +3,14 @@ import {AppInfo} from "../model/appinfo";
 import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
-import {ConfigService} from "./config-service";
 
 @Injectable()
 export class AppInfoService {
-    constructor(private http:Http, private configService:ConfigService) {
+    constructor(private http:Http) {
     }
 
     getAppInfo(): Observable<AppInfo> {
-        let infoUrl = this.configService.getBaseUrl() + "manage/info";
+        let infoUrl = "manage/info";
         return this.http.get(infoUrl).map(this.extractData).catch(this.handleError);
     }
 

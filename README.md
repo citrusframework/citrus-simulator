@@ -56,6 +56,34 @@ Following code resources build the simulator core logic:
 * Annotation based Spring Boot application configuration
 * Simulator configuration as part of the Spring application context configuration
 
+Development
+---------
+
+After forking/cloning the source code repository from [https://github.com/christophd/citrus-simulator](https://github.com/christophd/citrus-simulator) you can build the application locally with Maven:
+
+```
+mvn clean install
+```
+
+Just pick one of the sample projects and run the module as Spring Boot application.
+
+```
+mvn -pl simulator-samples/sample-rest spring-boot:run
+```
+
+For active development and a short round trip you can use the angular-cli dev-server in order to automatically compile typescript sources on the fly when they change.
+
+```
+mvn -pl simulator-client package -Pdevelopment
+```
+
+If you change a source file (e.e *.js, *.ts, *.css) the sources will automatically be compiled and copied to the Maven target folder. The running
+spring-boot application is able to automatically grab the newly compiled sources. Just go to the browser and hit refresh to see the changes.
+If you change server Java sources spring-boot automatically restarts the web application so you may just hit refresh in your browser, too.
+
+The development server is running on its own port 4200 ([http://localhost:4200](http://localhost:4200)). To avoid cors issues an api proxy to the backend is provided out of the box. 
+You can configure the proxy settings in [proxy.conf.json](simulator-client/src/main/resources/static/proxy.conf.json). 
+
 Information
 ---------
 

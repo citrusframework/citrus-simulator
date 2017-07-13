@@ -26,13 +26,13 @@ import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/api/activity")
 public class ActivityController {
 
     @Autowired
-    ActivityService activityService;
+    private ActivityService activityService;
 
-    // TODO MM rename execution to activity
-    @RequestMapping(method = RequestMethod.GET, value = "/execution")
+    @RequestMapping(method = RequestMethod.GET)
     public Collection<ScenarioExecution> getScenarioExecutions(
             @RequestParam(value = "fromDate", required = false) Date fromDate,
             @RequestParam(value = "toDate", required = false) Date toDate,
@@ -42,22 +42,22 @@ public class ActivityController {
         return activityService.getScenarioExecutionsByStartDate(fromDate, toDate, page, size);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/execution")
+    @RequestMapping(method = RequestMethod.DELETE)
     public void clearExecutions() {
         activityService.clearScenarioExecutions();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/execution/scenario/{name}")
+    @RequestMapping(method = RequestMethod.GET, value = "/scenario/{name}")
     public Collection<ScenarioExecution> getScenarioExecutionsByName(@PathVariable("name") String name) {
         return activityService.getScenarioExecutionsByName(name);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/execution/status/{status}")
+    @RequestMapping(method = RequestMethod.GET, value = "/status/{status}")
     public Collection<ScenarioExecution> getScenarioExecutionsByStatus(@PathVariable("status") String status) {
         return activityService.getScenarioExecutionsByStatus(ScenarioExecution.Status.valueOf(status));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/execution/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ScenarioExecution getScenarioExecution(@PathVariable("id") Long id) {
         return activityService.getScenarioExecutionById(id);
     }

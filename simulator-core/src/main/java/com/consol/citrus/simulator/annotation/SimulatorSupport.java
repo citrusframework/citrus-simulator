@@ -19,7 +19,14 @@ package com.consol.citrus.simulator.annotation;
 import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.bean.ScenarioBeanNameGenerator;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * @author Christoph Deppisch
@@ -45,4 +52,22 @@ import org.springframework.context.annotation.*;
                 "META-INF/citrus-simulator.properties"
         }, ignoreResourceNotFound = true)
 public class SimulatorSupport {
+
+    /** Logger */
+    private static Logger log = LoggerFactory.getLogger(SimulatorSupport.class);
+
+    /** Application version */
+    private static String version;
+
+    /* Load application version */
+    static {
+        try (final InputStream in = new ClassPathResource("META-INF/app.version").getInputStream()) {
+            Properties versionProperties = new Properties();
+            versionProperties.load(in);
+            version = versionProperties.get("app.version").toString();
+        } catch (IOException e) {
+            log.warn("Unable to read application version information", e);
+            version = "";
+        }
+    }
 }

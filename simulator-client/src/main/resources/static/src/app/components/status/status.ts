@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {StatusService} from '../../services/status-service';
+import {SummaryService} from '../../services/summary-service';
 import {Summary, ScenarioExecution} from '../../model/scenario';
 import {ExecutionService} from '../../services/execution-service';
 
@@ -19,7 +19,7 @@ export class StatusComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private statusService: StatusService,
+        private summaryService: SummaryService,
         private executionService: ExecutionService) {
     }
 
@@ -29,7 +29,7 @@ export class StatusComponent implements OnInit {
     }
 
     getSummary() {
-        this.statusService.getSummary()
+        this.summaryService.getSummary()
             .subscribe(
                 summary => this.summary = summary,
                 error => this.errorMessage = <any>error
@@ -37,7 +37,7 @@ export class StatusComponent implements OnInit {
     }
 
     getActive() {
-        this.statusService.getCountActiveScenarios()
+        this.summaryService.getCountActiveScenarios()
             .subscribe(
                 active => this.active = active,
                 error => this.errorMessage = <any>error
@@ -49,7 +49,7 @@ export class StatusComponent implements OnInit {
     }
 
     clearStatusInformation() {
-        this.statusService.resetSummary()
+        this.summaryService.resetSummary()
             .subscribe(
                 summary => this.summary = summary,
                 error => this.errorMessage = <any>error

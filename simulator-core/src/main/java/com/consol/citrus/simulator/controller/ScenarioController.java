@@ -28,9 +28,11 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("api/scenario")
 public class ScenarioController {
+
     @Autowired
-    ScenarioService scenarioService;
+    private ScenarioService scenarioService;
 
     public static class Scenario {
         public enum ScenarioType {
@@ -61,7 +63,7 @@ public class ScenarioController {
      * @param filter
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/scenario")
+    @RequestMapping(method = RequestMethod.GET)
     public Collection<Scenario> getScenarioNames(@RequestParam(value = "filter", required = false) String filter) {
         List<Scenario> scenarios = new ArrayList<>();
         scenarioService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
@@ -76,7 +78,7 @@ public class ScenarioController {
      * @param scenarioName the name of the scenario
      * @return the scenario parameters, if any are defined, or an empty list
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/scenario/{name}/parameters")
+    @RequestMapping(method = RequestMethod.GET, value = "/parameters/{name}")
     public Collection<ScenarioParameter> getScenarioParameters(@PathVariable("name") String scenarioName) {
         return scenarioService.lookupScenarioParameters(scenarioName);
     }
@@ -87,7 +89,7 @@ public class ScenarioController {
      *
      * @param name
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/scenario/{name}/launch")
+    @RequestMapping(method = RequestMethod.POST, value = "/launch/{name}")
     public Long launchScenario(
             @PathVariable("name") String name,
             @RequestBody(required = false) List<ScenarioParameter> scenarioParameters

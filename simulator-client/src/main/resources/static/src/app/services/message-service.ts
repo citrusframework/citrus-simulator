@@ -3,13 +3,14 @@ import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {Message} from "../model/scenario";
-import {ConfigService} from "./config-service";
 
 @Injectable()
 export class MessageService {
 
-    constructor(private http:Http, private configService:ConfigService) {
+    constructor(private http:Http) {
     }
+
+    private serviceUrl = 'api/message';
 
     getMessages(): Observable<Message[]> {
         return this.retrieveMessages();
@@ -24,8 +25,7 @@ export class MessageService {
     }
 
     private retrieveMessages(): Observable<Message[]> {
-        let messageUrl = this.configService.getBaseUrl() + "message";
-        return this.http.get(messageUrl)
+        return this.http.get(this.serviceUrl)
             .map(
                 this.extractMessageData
             )
@@ -35,8 +35,7 @@ export class MessageService {
     }
 
     private retrieveMessageById(id: number): Observable<Message> {
-        let messageIdUrl = this.configService.getBaseUrl() + "message/" + id;
-        return this.http.get(messageIdUrl)
+        return this.http.get(this.serviceUrl + "/" + id)
             .map(
                 this.extractMessage
             )
@@ -46,8 +45,7 @@ export class MessageService {
     }
 
     private deleteAllMessages(): Observable<any> {
-        let messageUrl = this.configService.getBaseUrl() + "message";
-        return this.http.delete(messageUrl)
+        return this.http.delete(this.serviceUrl)
             .catch(
                 this.handleError
             );

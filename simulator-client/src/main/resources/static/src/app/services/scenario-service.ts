@@ -3,13 +3,14 @@ import {Headers, Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {Scenario, ScenarioParameter} from "../model/scenario";
-import {ConfigService} from "./config-service";
 
 @Injectable()
 export class ScenarioService {
 
-    constructor(private http: Http, private configService: ConfigService) {
+    constructor(private http: Http) {
     }
+
+    private serviceUrl = 'api/scenario';
 
     getScenarios(): Observable<Scenario[]> {
         return this.retrieveScenarios("");
@@ -28,8 +29,7 @@ export class ScenarioService {
     }
 
     getScenarioParameters(name: string): Observable<ScenarioParameter[]> {
-        let scenarioParametersUrl = this.configService.getBaseUrl() + "scenario/" + name + "/parameters";
-        return this.http.get(scenarioParametersUrl)
+        return this.http.get(this.serviceUrl + "/parameters/" + name)
             .map(
                 this.extractScenarioParameterData
             )
@@ -39,10 +39,9 @@ export class ScenarioService {
     }
 
     launchScenario(name: string, scenarioParameters: ScenarioParameter[]): Observable<any> {
-        let launchUrl = this.configService.getBaseUrl() + "scenario/" + name + "/launch";
         let headers = new Headers({'Content-Type': 'application/json'});
 
-        return this.http.post(launchUrl, JSON.stringify(scenarioParameters), {headers: headers})
+        return this.http.post(this.serviceUrl + "/launch/" + name, JSON.stringify(scenarioParameters), {headers: headers})
             .map(
                 this.extractExecutionId
             )
@@ -56,8 +55,7 @@ export class ScenarioService {
     }
 
     private retrieveScenarios(filter: string): Observable<Scenario[]> {
-        let scenariosUrl = this.configService.getBaseUrl() + "scenario" + filter;
-        return this.http.get(scenariosUrl)
+        return this.http.get(this.serviceUrl + filter)
             .map(
                 this.extractScenarioData
             )
