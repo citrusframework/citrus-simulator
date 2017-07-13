@@ -5,7 +5,6 @@ import {ScenarioExecution} from "../../model/scenario";
 
 @Component({
     moduleId: module.id,
-    selector: 'simulator-activity-page',
     templateUrl: 'activity.html',
     styleUrls: ['activity.css'],
 })

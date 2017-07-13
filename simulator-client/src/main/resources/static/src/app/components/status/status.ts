@@ -6,7 +6,6 @@ import {ActivityService} from '../../services/activity-service';
 
 @Component({
     moduleId: module.id,
-    selector: 'simulator-status-page',
     templateUrl: 'status.html',
     styleUrls: ['status.css'],
 })
@@ -14,13 +13,11 @@ export class StatusComponent implements OnInit {
     title = 'Status';
     summary: Summary;
     active: number;
-    scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 
     constructor(
         private router: Router,
-        private summaryService: SummaryService,
-        private activityService: ActivityService) {
+        private summaryService: SummaryService) {
     }
 
     ngOnInit() {

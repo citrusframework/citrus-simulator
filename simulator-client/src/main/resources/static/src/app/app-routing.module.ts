@@ -1,6 +1,5 @@
 import {NgModule} from "@angular/core";
 import {Routes, RouterModule} from "@angular/router";
-import {WelcomeComponent} from "./components/welcome/welcome";
 import {StatusComponent} from "./components/status/status";
 import {ActivityComponent} from "./components/activity/activity";
 import {ScenarioExecutionDetailComponent} from "./components/scenarios/execution/scenario-execution-detail";
@@ -15,8 +14,7 @@ import {LocationStrategy, HashLocationStrategy} from "@angular/common";
 import {environment} from "../environments/environment";
 
 const routes: Routes = [
-    {path: '', pathMatch: 'full', redirectTo: '/welcome'},
-    {path: 'welcome', component: WelcomeComponent},
+    {path: '', pathMatch: 'full', redirectTo: '/status'},
     {path: 'status', component: StatusComponent},
     {
         path: 'activity',
@@ -58,7 +56,6 @@ export class AppRoutingModule {
 }
 
 export const routedComponents = [
-    WelcomeComponent,
     StatusComponent,
     ActivityComponent,
     ScenarioExecutionDetailComponent,

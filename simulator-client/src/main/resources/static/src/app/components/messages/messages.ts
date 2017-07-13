@@ -4,7 +4,6 @@ import {Message} from "../../model/scenario";
 
 @Component({
     moduleId: module.id,
-    selector: 'simulator-messages-page',
     templateUrl: 'messages.html',
     styleUrls: ['messages.css']
 

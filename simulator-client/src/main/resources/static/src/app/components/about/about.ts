@@ -4,7 +4,6 @@ import {AppInfo} from "../../model/appinfo";
 
 @Component({
     moduleId: module.id,
-    selector: 'simulator-about-page',
     templateUrl: 'about.html'
 })
 export class AboutComponent implements OnInit {
