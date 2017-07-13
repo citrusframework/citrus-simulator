@@ -21,6 +21,12 @@ body {
     margin-top: 30px;
 }
 
+/** Header navigation */
+
+.navbar-nav > li > a {
+    min-width: 8em;
+}
+
 /** Buttons **/
 
 .btn-primary {
