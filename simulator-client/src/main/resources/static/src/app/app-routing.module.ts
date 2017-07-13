@@ -9,7 +9,6 @@ import {ScenarioLaunchComponent} from "./components/scenarios/launch/scenario-la
 import {MessagesComponent} from "./components/messages/messages";
 import {MessageDetailComponent} from "./components/messages/detail/message-detail";
 import {AboutComponent} from "./components/about/about";
-import {HelpComponent} from "./components/help/help";
 import {LocationStrategy, HashLocationStrategy} from "@angular/common";
 import {environment} from "../environments/environment";
 
@@ -38,9 +37,7 @@ const routes: Routes = [
             {path: ':id', component: MessageDetailComponent},
         ],
     },
-    {path: 'help', component: HelpComponent},
     {path: 'about', component: AboutComponent}
-
 ];
 
 @NgModule({
