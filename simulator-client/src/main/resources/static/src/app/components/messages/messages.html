@@ -1,18 +1,18 @@
 <h1 class="page-header"><i class="fa fa-envelope-o"></i> Messages
     <div class="pull-right">
         <span class="clickable" title="Refresh Messages" (click)="getMessages()"><i class="fa fa-refresh"></i></span>
-        <span class="clickable" title="Clear All Messages" (click)="clearAllMessages()"><i class="fa fa-remove"></i></span>
+        <span class="clickable" title="Clear All Messages" (click)="clearAllMessages()"><i class="fa fa-recycle"></i></span>
     </div>
 </h1>
 
 <div class="input-group">
     <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Content">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-default btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
-        <button type="button" class="btn btn-default btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
+        <button type="button" class="btn btn-primary btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
+        <button type="button" class="btn btn-primary btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
     </div>
 </div>
 
 <div class="table-responsive space-top-30">
-    <message-list [messages]="messages | messageFilter : inputValue:includeInbound:includeOutbound"></message-list>
+    <message-list [messages]="messages | messageFilter : inputValue : includeInbound : includeOutbound"></message-list>
 </div>

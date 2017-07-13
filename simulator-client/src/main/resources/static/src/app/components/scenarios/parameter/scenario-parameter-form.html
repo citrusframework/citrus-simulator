@@ -1,30 +1,22 @@
 <div *ngIf="scenarioParameters">
     <form (ngSubmit)="onSubmit()" [formGroup]="form" class="form-horizontal">
-        <div class="form-row">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
-                <button type="submit" [disabled]="!form.valid" class="btn btn-success" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch</button>
-            </div>
-        </div>
-        <hr/>
-
-        <div *ngFor="let scenarioParameter of scenarioParameters" class="form-row">
+        <div *ngFor="let scenarioParameter of scenarioParameters" class="form-row space-top-30">
             <scenario-parameter-form-item [scenarioParameter]="scenarioParameter" [form]="form"></scenario-parameter-form-item>
         </div>
 
-        <hr/>
-        <div class="form-row">
-            <div class="btn-group">
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
                 <button type="button" class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
                 <button type="submit" [disabled]="!form.valid" class="btn btn-success" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch</button>
             </div>
         </div>
     </form>
-    <div *ngIf="errorMessage" class="form-row">
-        <div class="alert alert-danger" role="alert">
-            <span class="fa fa-exclamation" aria-hidden="true"></span>
-            <span class="sr-only">Error:</span>
-            Error launching scenario: {{errorMessage}}
-        </div>
+</div>
+
+<div *ngIf="errorMessage">
+    <div class="alert alert-danger" role="alert">
+        <span class="fa fa-exclamation" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        Error launching scenario: {{errorMessage}}
     </div>
 </div>

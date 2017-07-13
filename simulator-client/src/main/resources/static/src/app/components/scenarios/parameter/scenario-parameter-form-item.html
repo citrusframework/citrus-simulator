@@ -1,18 +1,16 @@
 <div [formGroup]="form" class="form-group" [hidden]="scenarioParameter.controlType == 'HIDDEN_TEXTBOX'">
-    <label [attr.for]="scenarioParameter.name" class="control-label col-sm-2">{{scenarioParameter.label}}</label>
-    <div [ngSwitch]="scenarioParameter.controlType">
-
-        <input *ngSwitchCase="'TEXTBOX'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
+    <label [attr.for]="scenarioParameter.name" class="col-sm-2 control-label">{{scenarioParameter.label}}</label>
+    <div class="col-sm-10" [ngSwitch]="scenarioParameter.controlType">
+        <input *ngSwitchCase="'TEXTBOX'" class="form-control" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
                [type]="scenarioParameter.type">
 
         <input *ngSwitchCase="'HIDDEN_TEXTBOX'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
                [type]="scenarioParameter.type" hidden="true">
 
+        <textarea *ngSwitchCase="'TEXTAREA'" class="form-control" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
+                  class="message-payload-textarea col-sm-10" rows="10"></textarea>
 
-        <textarea *ngSwitchCase="'TEXTAREA'" [formControlName]="scenarioParameter.name" [id]="scenarioParameter.name"
-                  class="message-payload-textarea col-sm-10"></textarea>
-
-        <select [id]="scenarioParameter.name" *ngSwitchCase="'DROPDOWN'" [formControlName]="scenarioParameter.name">
+        <select [id]="scenarioParameter.name" class="form-control" *ngSwitchCase="'DROPDOWN'" [formControlName]="scenarioParameter.name">
             <option *ngFor="let opt of scenarioParameter.options" [value]="opt.key">{{opt.value}}</option>
         </select>
     </div>

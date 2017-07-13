@@ -1,26 +1,40 @@
-<div class="row">
-    <div *ngIf="message" class="col-md-12">
-        <h3>{{title}} ({{message.messageId}})</h3>
-        <form class="form-horizontal">
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Direction</label>
-                <div class="col-sm-10">
-                    <p class="form-control-static">{{message.direction}}</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Date</label>
-                <div class="col-sm-10">
-                    <p class="form-control-static">{{message.date | date:format}}</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Payload</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control message-payload-textarea" rows="3">{{message.payload}}</textarea>
-                </div>
-            </div>
-        </form>
-        <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
+<h2 class="sub-header"><i class="fa fa-envelope-o"></i> Message detail</h2>
+
+<div *ngIf="message" class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 class="pull-right">Id:</h4>
+        </div>
+        <div class="col-sm-10">
+            <h4>#{{message.messageId}}</h4>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 class="pull-right">Direction:</h4>
+        </div>
+        <div class="col-sm-10">
+            <h4><span [class]="message.direction == 'INBOUND' ? 'label label-success' : 'label label-primary'">{{message.direction}}</span></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 class="pull-right">Date:</h4>
+        </div>
+        <div class="col-sm-10">
+            <h4>{{message.date | date:format}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 class="pull-right">Payload:</h4>
+        </div>
+        <div class="col-sm-10">
+            <pre>{{message.payload}}</pre>
+        </div>
+    </div>
+</div>
+
+<div class="btn-group">
+    <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
 </div>

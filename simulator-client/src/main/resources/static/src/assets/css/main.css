@@ -11,6 +11,16 @@ body {
     border-radius: 1em;
 }
 
+.page-header span > i, .sub-header span > i {
+    color: #31708f;
+    font-size: 0.7em;
+    font-weight: normal;
+}
+
+.page-header span > i:hover, .sub-header span > i:hover {
+    color: #0096D6;
+}
+
 .sub-header {
     margin-top: 30px;
     padding-bottom: 10px;
@@ -21,6 +31,14 @@ body {
     margin-top: 30px;
 }
 
+/** Tables */
+
+.table > thead > tr > th {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-bottom: 1px solid #ddd;
+}
+
 /** Header navigation */
 
 .navbar-nav > li > a {
@@ -29,15 +47,28 @@ body {
 
 /** Buttons **/
 
-.btn-primary {
-    color: #ffffff;
-    border-color: #0096D6;
-    background: #0096D6;
+.btn:active, .btn.active {
+    text-decoration: underline;
+    outline: 0;
+    background-image: none;
+    box-shadow: none;
 }
 
-.btn-primary:hover {
-    border-color: #33abde;
+.btn-primary,
+.btn-primary:focus {
     background-color: #33abde;
+    border-color: #33abde;
+}
+
+.btn-primary:hover, .btn-primary.active:hover {
+    background-color: #33abde;
+    border-color: #33abde;
+}
+
+.btn-primary.active,
+.btn-primary.active:focus {
+    background-color: #0096D6;
+    border-color: #0096D6;
 }
 
 .btn-return {

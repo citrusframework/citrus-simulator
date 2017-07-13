@@ -12,7 +12,6 @@ export class MessageListComponent {
     @Input() messages: Message[];
 
     inputValue: string = '';
-    displayFilter: boolean = false;
 
     selectedMessage: Message;
     format: string = "yyyy-MM-dd HH:mm:ss";
@@ -27,10 +26,6 @@ export class MessageListComponent {
 
     gotoMessageDetail() {
         this.router.navigate(['message', this.selectedMessage.messageId]);
-    }
-
-    toggleFilterDisplay() {
-        this.displayFilter = !this.displayFilter;
     }
 
     clearAllMessages() {

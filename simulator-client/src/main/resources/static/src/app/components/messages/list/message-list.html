@@ -1,4 +1,4 @@
-<table class="table table-bordered table-condensed table-hover">
+<table class="table table-bordered table-hover">
     <thead>
     <tr>
         <th>Direction</th>
@@ -8,7 +8,7 @@
     </thead>
     <tbody>
     <tr class="message" *ngFor="let message of messages" (click)="onSelect(message)">
-        <td>{{message.direction}}</td>
+        <td><span [class]="message.direction == 'INBOUND' ? 'label label-success' : 'label label-primary'">{{message.direction}}</span></td>
         <td>{{message.date | date:format}}</td>
         <td>{{message.payload | truncate: 80}}</td>
     </tr>

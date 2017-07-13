@@ -13,14 +13,13 @@ import {ActivityService} from "../../../services/activity-service";
     providers: [ScenarioService, ActivityService]
 })
 export class ScenarioDetailComponent implements OnInit {
-    title = 'Scenario';
+    
     scenario: Scenario;
     scenarioParameters: ScenarioParameter[];
     scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 
     inputValue: string = '';
-    displayActivityFilter: boolean = false;
     includeSuccess: boolean = true;
     includeFailed: boolean = true;
     includeActive: boolean = true;
@@ -102,7 +101,7 @@ export class ScenarioDetailComponent implements OnInit {
         if(this.includeSuccess) {
             this.successState = 'active';
         } else {
-            this.successState = 'deactivated';
+            this.successState = '';
         }
     }
 
@@ -111,7 +110,7 @@ export class ScenarioDetailComponent implements OnInit {
         if(this.includeFailed) {
             this.failedState = 'active';
         } else {
-            this.failedState = 'deactivated';
+            this.failedState = '';
         }
     }
 
@@ -120,12 +119,8 @@ export class ScenarioDetailComponent implements OnInit {
         if(this.includeActive) {
             this.activeState = 'active';
         } else {
-            this.activeState = 'deactivated';
+            this.activeState = '';
         }
-    }
-
-    toggleActivityFilterDisplay() {
-        this.displayActivityFilter = !this.displayActivityFilter;
     }
 
 }

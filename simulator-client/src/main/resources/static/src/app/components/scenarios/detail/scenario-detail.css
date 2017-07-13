@@ -6,7 +6,3 @@
 .panel-heading div span{
     margin-left:5px;
 }
-
-button.deactivated{
-    opacity: .45;
-}

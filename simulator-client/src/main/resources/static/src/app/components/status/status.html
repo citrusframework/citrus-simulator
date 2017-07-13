@@ -9,14 +9,6 @@
             <h4>{{simulator?.name}}</h4>
         </div>
     </div>
-    <div class="row" *ngIf="project?.description">
-        <div class="col-sm-1">
-            <h4 class="pull-right">Description:</h4>
-        </div>
-        <div class="col-sm-11">
-            <h4 >{{simulator?.description}}</h4>
-        </div>
-    </div>
     <div class="row">
         <div class="col-sm-1">
             <h4 class="pull-right">Version:</h4>
@@ -25,20 +17,12 @@
             <h4>{{simulator?.version}}</h4>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-1">
-            <h4 class="pull-right">Scenarios:</h4>
-        </div>
-        <div class="col-sm-11">
-            <h4>{{active}}</h4>
-        </div>
-    </div>
 </div>
 
 <h1 class="page-header"><i class="fa fa-pie-chart"></i> Status
   <div class="pull-right">
       <span class="clickable" title="Refresh Status Information" (click)="refreshStatusInformation()"><i class="fa fa-refresh"></i></span>
-      <span class="clickable" title="Clear Status Information" (click)="clearStatusInformation()"><i class="fa fa-remove"></i></span>
+      <span class="clickable" title="Clear Status Information" (click)="clearStatusInformation()"><i class="fa fa-recycle"></i></span>
   </div>
 </h1>
 

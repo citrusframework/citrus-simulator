@@ -1,16 +1,16 @@
 <h1 class="page-header"><i class="fa fa-cogs"></i> Activity
     <div class="pull-right">
         <span class="clickable" title="Refresh Activity" (click)="getActivity()"><i class="fa fa-refresh"></i></span>
-        <span class="clickable" title="Clear Activity" (click)="clearActivity()"><i class="fa fa-remove"></i></span>
+        <span class="clickable" title="Clear Activity" (click)="clearActivity()"><i class="fa fa-recycle"></i></span>
     </div>
 </h1>
 
 <div class="input-group">
     <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-default btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
-        <button type="button" class="btn btn-default btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
-        <button type="button" class="btn btn-default btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+        <button type="button" class="btn btn-primary btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
+        <button type="button" class="btn btn-primary btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
+        <button type="button" class="btn btn-primary btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
     </div>
 </div>
 
