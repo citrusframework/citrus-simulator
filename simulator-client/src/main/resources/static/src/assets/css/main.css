@@ -52,10 +52,3 @@ body {
 tr td {
     font-size: 14px;
 }
-
-span i.glyphicon-flash {
-    color: darkgreen;
-}
-span i.glyphicon-eye-open {
-    color: darkblue;
-}

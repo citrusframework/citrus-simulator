@@ -3,8 +3,8 @@
         <h3>{{title}} : {{scenario.name}}</h3>
 
         <div class="btn-group" style="padding-bottom: 20px">
-            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
-            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
+            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch</button>
         </div>
 
         <div class="panel panel-info">
@@ -15,7 +15,7 @@
                         <i class="fa fa-refresh"></i>
                     </span>
                     <span class="clickable filter" title="Toggle table filter" (click)="toggleActivityFilterDisplay()">
-                        <i class="glyphicon glyphicon-filter"></i>
+                        <i class="fa fa-filter"></i>
                     </span>
                 </div>
             </div>
@@ -33,13 +33,13 @@
 
         <hr/>
         <div class="btn-group">
-            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Back</button>
-            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Launch</button>
+            <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
+            <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch</button>
         </div>
 
     </div>
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="fa fa-exclamation" aria-hidden="true"></span>
         <span class="sr-only">Error:</span>
         {{errorMessage}}
     </div>
