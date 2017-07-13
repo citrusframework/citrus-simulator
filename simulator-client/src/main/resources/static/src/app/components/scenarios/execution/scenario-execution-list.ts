@@ -9,7 +9,7 @@ import {ScenarioExecution} from "../../../model/scenario";
     styleUrls: ['scenario-execution-list.css'],
 })
 export class ScenarioExecutionList {
-    @Input() hideScenarioname: boolean;
+    @Input() hideName: boolean;
     @Input() hideStatus: boolean;
     @Input() scenarioExecutions: ScenarioExecution[];
 

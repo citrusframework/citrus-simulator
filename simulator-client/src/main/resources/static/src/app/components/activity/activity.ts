@@ -14,7 +14,6 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     errorMessage: string;
 
     inputValue: string = '';
-    displayFilter: boolean = false;
     includeSuccess: boolean = true;
     includeFailed: boolean = true;
     includeActive: boolean = true;
@@ -31,7 +30,6 @@ export class ActivityComponent implements OnInit, AfterViewInit {
         this.getActivity();
         let statusFilter = this.route.snapshot.params['status'];
         if(statusFilter) {
-            this.displayFilter = true;
             if(statusFilter.toLowerCase().indexOf("success") > -1) {
                 this.toggleFailed();
                 this.toggleActive();
@@ -61,10 +59,6 @@ export class ActivityComponent implements OnInit, AfterViewInit {
             success => this.getActivity(),
             error => this.errorMessage = <any>error
         );
-    }
-
-    toggleFilterDisplay() {
-        this.displayFilter = !this.displayFilter;
     }
 
     toggleSuccess() {

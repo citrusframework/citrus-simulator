@@ -17,6 +17,10 @@ body {
     border-bottom: 1px solid #eee;
 }
 
+.space-top-30 {
+    margin-top: 30px;
+}
+
 /** Buttons **/
 
 .btn-primary {

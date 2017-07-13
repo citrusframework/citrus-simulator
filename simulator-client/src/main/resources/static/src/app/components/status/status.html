@@ -59,14 +59,14 @@
             </a>
         </div>
         <div class="col-xs-6 col-sm-3 simulator-result">
-            <a (click)="onSelect('FAILED')" title="View all failed" class="clickable">
+            <a (click)="onSelect('ACTIVE')" title="View all failed" class="clickable">
                 <span class="badge badge-warning border-warning" alt="FAILED">{{active}}</span>
                 <h4>ACTIVE</h4>
                 <span class="text-muted">{{active}}</span>
             </a>
         </div>
         <div class="col-xs-6 col-sm-3 simulator-result">
-            <a title="View all tests" class="clickable">
+            <a (click)="onSelect('ALL')" title="View all tests" class="clickable">
                 <span class="badge badge-info border-info" alt="TOTAL">{{summary?.size}}</span>
                 <h4>TOTAL</h4>
                 <span class="text-muted">{{summary?.size}}</span>

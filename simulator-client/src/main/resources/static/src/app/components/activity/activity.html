@@ -1,31 +1,19 @@
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">Activity</h3>
-                <div class="pull-right">
-                    <span class="clickable" title="Refresh Activity" (click)="getActivity()">
-                        <i class="fa fa-refresh"></i>
-                    </span>
-                    <span class="clickable filter" title="Toggle table filter" (click)="toggleFilterDisplay()">
-                        <i class="fa fa-filter"></i>
-                    </span>
-                    <span class="clickable" title="Clear Activity" (click)="clearActivity()">
-                        <i class="fa fa-remove"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="panel-body" *ngIf="displayFilter">
-                <div class="input-group">
-                    <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default btn-filter {{successState}}" (click)="toggleSuccess()">Success</button>
-                        <button type="button" class="btn btn-default btn-filter {{failedState}}" (click)="toggleFailed()">Failed</button>
-                        <button type="button" class="btn btn-default btn-filter {{activeState}}" (click)="toggleActive()">Active</button>
-                    </div>
-                </div>
-            </div>
-            <scenario-execution-list [scenarioExecutions]="scenarioExecutions | activityFilter : inputValue : includeSuccess : includeFailed : includeActive"></scenario-execution-list>
-        </div>
+<h1 class="page-header"><i class="fa fa-cogs"></i> Activity
+    <div class="pull-right">
+        <span class="clickable" title="Refresh Activity" (click)="getActivity()"><i class="fa fa-refresh"></i></span>
+        <span class="clickable" title="Clear Activity" (click)="clearActivity()"><i class="fa fa-remove"></i></span>
     </div>
+</h1>
+
+<div class="input-group">
+    <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
+        <button type="button" class="btn btn-default btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
+        <button type="button" class="btn btn-default btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+    </div>
+</div>
+
+<div class="table-responsive space-top-30">
+    <scenario-execution-list [scenarioExecutions]="scenarioExecutions | activityFilter : inputValue : includeSuccess : includeFailed : includeActive"></scenario-execution-list>
 </div>

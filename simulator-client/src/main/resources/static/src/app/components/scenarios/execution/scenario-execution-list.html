@@ -1,7 +1,7 @@
-<table class="table table-bordered table-condensed table-hover">
+<table class="table table-bordered table-hover">
     <thead>
     <tr>
-        <th *ngIf="!hideScenarioname">Scenario</th>
+        <th *ngIf="!hideName">Scenario</th>
         <th>Start</th>
         <th>End</th>
         <th *ngIf="!hideStatus">Status</th>
@@ -10,7 +10,7 @@
     <tbody>
     <tr *ngFor="let execution of scenarioExecutions" (click)="onSelect(execution)"
         class="{{execution.status | executionStatus}} execution">
-        <td *ngIf="!hideScenarioname">{{execution.scenarioName}}</td>
+        <td *ngIf="!hideName">{{execution.scenarioName}}</td>
         <td>{{execution.startDate | date: format}}</td>
         <td>{{execution.endDate | date: format}}</td>
         <td *ngIf="!hideStatus"><span class="label label-{{execution.status | executionStatus}}">{{execution.status}}</span></td>
