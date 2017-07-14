@@ -36,11 +36,10 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = {
         "com.consol.citrus.simulator.config",
+        "com.consol.citrus.simulator.controller",
+        "com.consol.citrus.simulator.endpoint",
         "com.consol.citrus.simulator.listener",
         "com.consol.citrus.simulator.service",
-        "com.consol.citrus.simulator.endpoint",
-        "com.consol.citrus.simulator.web",
-        "com.consol.citrus.simulator.controller",
 }, nameGenerator = ScenarioBeanNameGenerator.class)
 @Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class})
 @ImportResource(
