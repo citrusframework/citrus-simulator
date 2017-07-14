@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.simulator.config.SimulatorConfiguration;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -36,18 +36,8 @@ public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComp
      */
     private String name;
 
-    /**
-     * Sets the beanName property.
-     *
-     * @param beanName
-     */
-    @Override
-    public void setBeanName(String beanName) {
-        this.name = beanName;
-    }
-
     @Autowired
-    private SimulatorConfiguration simulatorConfiguration;
+    private SimulatorConfigurationProperties simulatorConfigurationProperties;
 
     /**
      * Gets a classpath file resource from base template package.
@@ -56,7 +46,7 @@ public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComp
      * @return
      */
     protected Resource getFileResource(String fileName) {
-        return new ClassPathResource(simulatorConfiguration.getTemplatePath() + "/" + fileName + ".xml");
+        return new ClassPathResource(simulatorConfigurationProperties.getTemplatePath() + "/" + fileName + ".xml");
     }
 
     /**
@@ -71,6 +61,16 @@ public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComp
         } catch (IOException e) {
             throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
         }
+    }
+
+    /**
+     * Sets the beanName property.
+     *
+     * @param beanName
+     */
+    @Override
+    public void setBeanName(String beanName) {
+        this.name = beanName;
     }
 
 }

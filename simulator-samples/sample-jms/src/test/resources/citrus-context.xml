@@ -15,7 +15,7 @@
 
   <!-- Test SOAP client -->
   <citrus-jms:sync-endpoint id="simulatorEndpoint"
-                            destination-name="Citrus.Simulator.Sync.Inbound"/>
+                            destination-name="Citrus.Simulator.Inbound"/>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
     <property name="brokerURL" value="tcp://localhost:61616" />

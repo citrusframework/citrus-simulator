@@ -21,7 +21,7 @@ import com.consol.citrus.dsl.endpoint.TestExecutingEndpointAdapter;
 import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfiguration;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.service.ActivityService;
@@ -44,7 +44,7 @@ public class SimulatorEndpointAdapter extends TestExecutingEndpointAdapter {
     private static Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
     @Autowired
-    private SimulatorConfiguration configuration;
+    private SimulatorConfigurationProperties configuration;
 
     @Autowired
     private ActivityService activityService;

@@ -18,46 +18,54 @@ package com.consol.citrus.simulator.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 
 /**
  * @author Christoph Deppisch
  */
-@Component
-public class SimulatorConfiguration {
+@ConfigurationProperties(prefix = "citrus.simulator")
+public class SimulatorConfigurationProperties implements EnvironmentAware {
 
-    /**
-     * Logger
-     */
+    /** Logger */
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Custom configuration class name
-     */
-    public static final String SIMULATOR_CONFIGURATION_CLASS_PROPERTY = "citrus.simulator.configuration.class";
-    public static final String SIMULATOR_CONFIGURATION_CLASS = System.getProperty(SIMULATOR_CONFIGURATION_CLASS_PROPERTY);
+    /** Template path */
+    private static final String SIMULATOR_TEMPLATE_PATH_PROPERTY = "citrus.simulator.template.path";
+    private static final String SIMULATOR_TEMPLATE_PATH_ENV = "CITRUS_SIMULATOR_TEMPLATE_PATH";
+    private String templatePath = "com/consol/citrus/simulator/templates";
 
-    @Value(value = "${citrus.simulator.template.path:com/consol/citrus/simulator/templates}")
-    private String templatePath;
-
-    @Value(value = "${citrus.simulator.default.scenario:DEFAULT_SCENARIO}")
     /** Default test scenario chosen in case of unknown scenario */
-    private String defaultScenario;
+    private static final String SIMULATOR_SCENARIO_PROPERTY = "citrus.simulator.default.scenario";
+    private static final String SIMULATOR_SCENARIO_ENV = "CITRUS_SIMULATOR_DEFAULT_SCENARIO";
+    private String defaultScenario = "DEFAULT_SCENARIO";
 
-    @Value(value = "${citrus.simulator.timeout:5000}")
     /** Default timeout when waiting for incoming messages */
-    private Long defaultTimeout;
+    private static final String SIMULATOR_TIMEOUT_PROPERTY = "citrus.simulator.default.timeout";
+    private static final String SIMULATOR_TIMEOUT_ENV = "CITRUS_SIMULATOR_DEFAULT_TIMEOUT";
+    private Long defaultTimeout = 5000L;
 
-    @Value(value = "${citrus.simulator.template.validation:true}")
-    /** Property that en/disables template validation, default value is true */
-    private boolean templateValidation;
+    /** Property that en-/disables template validation, default value is true */
+    private static final String SIMULATOR_TEMPLATE_VALIDATION_PROPERTY = "citrus.simulator.template.validation";
+    private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
+    private boolean templateValidation = true;
+
+    /**
+     * The Spring application context environment
+     */
+    private Environment env;
 
     @PostConstruct
-    private void debugProperties() {
-        log.info("Using the following properties: {}", this.toString());
+    private void loadProperties() {
+        templatePath = env.getProperty(SIMULATOR_TEMPLATE_PATH_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_PATH_ENV, templatePath));
+        defaultScenario = env.getProperty(SIMULATOR_SCENARIO_PROPERTY, env.getProperty(SIMULATOR_SCENARIO_ENV, defaultScenario));
+        defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
+        templateValidation = Boolean.valueOf(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
+
+        log.info("Using the simulator configuration: {}", this.toString());
     }
 
     /**
@@ -101,7 +109,7 @@ public class SimulatorConfiguration {
      *
      * @return
      */
-    public boolean isTemplateValidationActive() {
+    public boolean isTemplateValidation() {
         return templateValidation;
     }
 
@@ -111,7 +119,6 @@ public class SimulatorConfiguration {
      * @param templateValidation
      */
     public void setTemplateValidation(boolean templateValidation) {
-        log.debug("set template validation to " + String.valueOf(templateValidation).toUpperCase());
         this.templateValidation = templateValidation;
     }
 
@@ -135,11 +142,16 @@ public class SimulatorConfiguration {
 
     @Override
     public String toString() {
-        return "SimulatorConfiguration{" +
+        return this.getClass().getSimpleName() + "{" +
                 "templatePath='" + templatePath + '\'' +
                 ", defaultScenario='" + defaultScenario + '\'' +
                 ", defaultTimeout=" + defaultTimeout +
                 ", templateValidation=" + templateValidation +
                 '}';
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.env = environment;
     }
 }

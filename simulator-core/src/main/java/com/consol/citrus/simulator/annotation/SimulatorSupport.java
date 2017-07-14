@@ -18,9 +18,11 @@ package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.bean.ScenarioBeanNameGenerator;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 
@@ -51,6 +53,7 @@ import java.util.Properties;
                 "citrus-simulator.properties",
                 "META-INF/citrus-simulator.properties"
         }, ignoreResourceNotFound = true)
+@EnableConfigurationProperties(SimulatorConfigurationProperties.class)
 public class SimulatorSupport {
 
     /** Logger */

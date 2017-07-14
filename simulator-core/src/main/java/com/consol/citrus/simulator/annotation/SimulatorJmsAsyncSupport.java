@@ -20,29 +20,19 @@ import com.consol.citrus.channel.ChannelEndpoint;
 import com.consol.citrus.channel.MessageSelectingQueueChannel;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.context.TestContextFactory;
-import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.EndpointConfiguration;
+import com.consol.citrus.endpoint.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.jms.endpoint.JmsEndpointConfiguration;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfiguration;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
-import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
-import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 
 import javax.jms.ConnectionFactory;
-
-import static com.consol.citrus.simulator.annotation.SimulatorJmsAsyncConfigurer.*;
 
 /**
  * @author Martin Maher
@@ -54,21 +44,6 @@ public class SimulatorJmsAsyncSupport {
     @Autowired(required = false)
     private SimulatorJmsAsyncConfigurer configurer;
 
-    @Autowired
-    private SimulatorConfiguration configuration;
-
-    /**
-     * Inbound JMS destination name
-     */
-    private static final String RECEIVE_DESTINATION_NAME =
-            System.getProperty(RECEIVE_DESTINATION_NAME_KEY, RECEIVE_DESTINATION_VALUE_DEFAULT);
-
-    /**
-     * Outbound JMS destination name
-     */
-    private static final String SEND_DESTINATION_NAME =
-            System.getProperty(SEND_DESTINATION_NAME_KEY, SEND_DESTINATION_VALUE_DEFAULT);
-
     @Bean(name = "simulator.jms.async.inbound")
     public MessageSelectingQueueChannel inboundChannel() {
         MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
@@ -76,7 +51,7 @@ public class SimulatorJmsAsyncSupport {
     }
 
     @Bean(name = "simulatorJmsAsyncReceiveEndpoint")
-    public ChannelEndpoint jmsReceiveEndpoint() {
+    public ChannelEndpoint jmsReceiveEndpoint(SimulatorConfigurationProperties configuration) {
         ChannelEndpoint inboundChannelEndpoint = new ChannelEndpoint();
         inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
         inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
@@ -85,7 +60,8 @@ public class SimulatorJmsAsyncSupport {
     }
 
     @Bean(name = "simulatorJmsAsyncReceiveEndpointAdapter")
-    public EndpointAdapter jmsReceiveEndpointAdapter(final ApplicationContext applicationContext) {
+    public EndpointAdapter jmsReceiveEndpointAdapter(final ApplicationContext applicationContext,
+                                                     SimulatorConfigurationProperties configuration) {
 
         class JmsReceiveEndpointAdapter implements EndpointAdapter {
             private final TestContextFactory testContextFactory;
@@ -117,25 +93,27 @@ public class SimulatorJmsAsyncSupport {
             }
         }
 
-        return new JmsReceiveEndpointAdapter(TestContextFactory.newInstance(applicationContext), jmsReceiveEndpoint());
+        return new JmsReceiveEndpointAdapter(TestContextFactory.newInstance(applicationContext), jmsReceiveEndpoint(configuration));
     }
 
 
     @Bean(name = "simulatorJmsAsyncInboundEndpoint")
-    protected JmsEndpoint jmsAsyncInbountEndpoint(ConnectionFactory connectionFactory) {
+    protected JmsEndpoint jmsAsyncInbountEndpoint(ConnectionFactory connectionFactory,
+                                                  SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
         JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
-        endpointConfiguration.setDestinationName(getReceiveDestinationName());
+        endpointConfiguration.setDestinationName(getReceiveDestinationName(simulatorJmsConfiguration));
         endpointConfiguration.setConnectionFactory(connectionFactory);
 
         return jmsEndpoint;
     }
 
     @Bean(name = "simulatorJmsAsyncSendEndpoint")
-    protected JmsEndpoint jmsSendEndpoint(ConnectionFactory connectionFactory) {
+    protected JmsEndpoint jmsSendEndpoint(ConnectionFactory connectionFactory,
+                                          SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
         JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
-        endpointConfiguration.setDestinationName(getSendDestinationName());
+        endpointConfiguration.setDestinationName(getSendDestinationName(simulatorJmsConfiguration));
         endpointConfiguration.setConnectionFactory(connectionFactory);
 
         return jmsEndpoint;
@@ -164,7 +142,10 @@ public class SimulatorJmsAsyncSupport {
     }
 
     @Bean(name = "simulatorJmsAsyncEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext, ConnectionFactory connectionFactory) {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
+                                                  ConnectionFactory connectionFactory,
+                                                  SimulatorConfigurationProperties configuration,
+                                                  SimulatorJmsConfigurationProperties jmsConfiguration) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -173,11 +154,11 @@ public class SimulatorJmsAsyncSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(jmsAsyncInbountEndpoint(connectionFactory));
+        endpointPoller.setTargetEndpoint(jmsAsyncInbountEndpoint(connectionFactory, jmsConfiguration));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
-        endpointAdapter.setResponseEndpointAdapter(jmsReceiveEndpointAdapter(applicationContext));
+        endpointAdapter.setResponseEndpointAdapter(jmsReceiveEndpointAdapter(applicationContext, configuration));
 
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
@@ -189,12 +170,12 @@ public class SimulatorJmsAsyncSupport {
      *
      * @return
      */
-    protected String getReceiveDestinationName() {
+    protected String getReceiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         if (configurer != null) {
-            return configurer.receiveDestinationName();
+            return configurer.receiveDestinationName(simulatorJmsConfiguration);
         }
 
-        return RECEIVE_DESTINATION_NAME;
+        return simulatorJmsConfiguration.getReceiveDestination();
     }
 
     /**
@@ -202,11 +183,11 @@ public class SimulatorJmsAsyncSupport {
      *
      * @return
      */
-    protected String getSendDestinationName() {
+    protected String getSendDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         if (configurer != null) {
-            return configurer.sendDestinationName();
+            return configurer.sendDestinationName(simulatorJmsConfiguration);
         }
 
-        return SEND_DESTINATION_NAME;
+        return simulatorJmsConfiguration.getSendDestination();
     }
 }

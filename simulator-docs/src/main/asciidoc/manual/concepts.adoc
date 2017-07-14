@@ -59,7 +59,7 @@ properties are:
 * *citrus.simulator.configuration.class* Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
 * *citrus.simulator.template.path* Default path to message payload template files.
 * *citrus.simulator.default.scenario* Default scenario name.
-* *citrus.simulator.timeout* Timeout when waiting for inbound messages.
+* *citrus.simulator.default.timeout* Timeout when waiting for inbound messages.
 * *citrus.simulator.template.validation* Enable/disable schema validation.
 
 You can set these properties as system properties or you can add a property file in following location:

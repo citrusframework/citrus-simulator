@@ -21,12 +21,15 @@ import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Christoph Deppisch
  */
 public class SimulatorImportSelector implements DeferredImportSelector, EnvironmentAware {
+
+    private static final String SIMULATOR_CONFIGURATION_CLASS_PROPERTY = "citrus.simulator.configuration.class";
+    private static final String SIMULATOR_CONFIGURATION_CLASS_ENV = "CITRUS_SIMULATOR_CONFIGURATION_CLASS";
+    private static final String SIMULATOR_CONFIGURATION_CLASS_DEFAULT = "com.consol.citrus.simulator.SimulatorConfig";
 
     /**
      * The Spring application context environment
@@ -35,12 +38,11 @@ public class SimulatorImportSelector implements DeferredImportSelector, Environm
 
     @Override
     public String[] selectImports(AnnotationMetadata annotationMetadata) {
-        if (StringUtils.hasText(SimulatorConfiguration.SIMULATOR_CONFIGURATION_CLASS)) {
-            return new String[]{SimulatorConfiguration.SIMULATOR_CONFIGURATION_CLASS};
-        } else if (StringUtils.hasText(env.getProperty(SimulatorConfiguration.SIMULATOR_CONFIGURATION_CLASS_PROPERTY))) {
-            return new String[]{env.getProperty(SimulatorConfiguration.SIMULATOR_CONFIGURATION_CLASS_PROPERTY)};
-        } else if (ClassUtils.isPresent("com.consol.citrus.simulator.SimulatorConfig", this.getClass().getClassLoader())) {
-            return new String[]{"com.consol.citrus.simulator.SimulatorConfig"};
+        String configurationClassName = env.getProperty(SIMULATOR_CONFIGURATION_CLASS_PROPERTY,
+                env.getProperty(SIMULATOR_CONFIGURATION_CLASS_ENV, SIMULATOR_CONFIGURATION_CLASS_DEFAULT));
+
+        if (ClassUtils.isPresent(configurationClassName, this.getClass().getClassLoader())) {
+            return new String[]{ configurationClassName };
         } else {
             return new String[]{};
         }

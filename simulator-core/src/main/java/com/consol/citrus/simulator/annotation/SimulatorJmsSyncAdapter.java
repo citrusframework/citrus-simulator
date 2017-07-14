@@ -33,8 +33,8 @@ public abstract class SimulatorJmsSyncAdapter implements SimulatorJmsSyncConfigu
     }
 
     @Override
-    public String receiveDestinationName() {
-        return System.getProperty(RECEIVE_DESTINATION_NAME_KEY, RECEIVE_DESTINATION_VALUE_DEFAULT);
+    public String receiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getReceiveDestination();
     }
 
     @Override

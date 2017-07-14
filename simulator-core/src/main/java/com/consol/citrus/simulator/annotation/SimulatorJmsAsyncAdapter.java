@@ -33,13 +33,13 @@ public class SimulatorJmsAsyncAdapter implements SimulatorJmsAsyncConfigurer {
     }
 
     @Override
-    public String receiveDestinationName() {
-        return System.getProperty(RECEIVE_DESTINATION_NAME_KEY, RECEIVE_DESTINATION_VALUE_DEFAULT);
+    public String receiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getReceiveDestination();
     }
 
     @Override
-    public String sendDestinationName() {
-        return System.getProperty(SEND_DESTINATION_NAME_KEY, SEND_DESTINATION_VALUE_DEFAULT);
+    public String sendDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getSendDestination();
     }
 
     @Override

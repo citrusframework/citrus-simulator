@@ -34,7 +34,7 @@ public interface SimulatorJmsConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String receiveDestinationName();
+    String receiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 
     /**
      * Should operate with SOAP envelope. This automatically adds SOAP envelope

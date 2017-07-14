@@ -22,31 +22,9 @@ package com.consol.citrus.simulator.annotation;
 public interface SimulatorJmsAsyncConfigurer extends SimulatorJmsConfigurer {
 
     /**
-     * The system property key for retrieving the JMS inbound destination name. The simulator receives asynchronous
-     * messages from this destination.
-     */
-    String RECEIVE_DESTINATION_NAME_KEY = "citrus.simulator.jms.async.destination.receive";
-
-    /**
-     * The default JMS queue from which inbound messages are received
-     */
-    String RECEIVE_DESTINATION_VALUE_DEFAULT = "Citrus.Simulator.Async.Inbound";
-
-    /**
-     * The system property key for retrieving the JMS outbound destination name. The simulator sends asynchronous
-     * messages to this destination.
-     */
-    String SEND_DESTINATION_NAME_KEY = "citrus.simulator.jms.async.destination.send";
-
-    /**
-     * The default JMS queue to which outbound messages are sent
-     */
-    String SEND_DESTINATION_VALUE_DEFAULT = "Citrus.Simulator.Async.Outbound";
-
-    /**
      * Gets the jms destination to send messages to.
      *
      * @return
      */
-    String sendDestinationName();
+    String sendDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 }

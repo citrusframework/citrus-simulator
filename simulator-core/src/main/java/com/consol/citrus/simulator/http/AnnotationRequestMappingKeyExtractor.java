@@ -19,7 +19,7 @@ package com.consol.citrus.simulator.http;
 import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfiguration;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class AnnotationRequestMappingKeyExtractor extends AbstractMappingKeyExtr
     private List<SimulatorRestScenario> scenarios = new ArrayList<>();
 
     @Autowired
-    private SimulatorConfiguration configuration;
+    private SimulatorConfigurationProperties configuration;
 
     @Override
     protected String getMappingKey(Message request) {

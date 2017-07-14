@@ -16,21 +16,9 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import javax.jms.ConnectionFactory;
-
 /**
  * @author Christoph Deppisch
  */
 public interface SimulatorJmsSyncConfigurer extends SimulatorJmsConfigurer {
 
-    /**
-     * The system property key for retrieving the JMS destination name to use when simulating a synchronous jms
-     * endpoint
-     */
-    String RECEIVE_DESTINATION_NAME_KEY = "citrus.simulator.jms.sync.destination.receive";
-
-    /**
-     * The default JMS queue from which inbound messages are received
-     */
-    String RECEIVE_DESTINATION_VALUE_DEFAULT = "Citrus.Simulator.Sync.Inbound";
 }

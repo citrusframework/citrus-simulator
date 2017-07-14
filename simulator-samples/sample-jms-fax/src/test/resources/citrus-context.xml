@@ -23,11 +23,11 @@
 
   <!-- Endpoint for sending messages to the Simulator -->
   <citrus-jms:endpoint id="simulatorInboundEndpoint"
-                       destination-name="Citrus.Simulator.Async.Inbound"/>
+                       destination-name="Citrus.Simulator.Inbound"/>
 
   <!-- Endpoint for receiving messages from the Simulator -->
   <citrus-jms:endpoint id="simulatorOutboundEndpoint"
-                       destination-name="Citrus.Simulator.Async.Outbound"/>
+                       destination-name="Citrus.Simulator.Outbound"/>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
     <property name="brokerURL" value="tcp://localhost:61616"/>
@@ -37,8 +37,8 @@
   <citrus:before-test id="purgeBeforeTest">
     <citrus:actions>
       <jms:purge-jms-queues>
-        <jms:queue name="Citrus.Simulator.Async.Inbound"/>
-        <jms:queue name="Citrus.Simulator.Async.Outbound"/>
+        <jms:queue name="Citrus.Simulator.Inbound"/>
+        <jms:queue name="Citrus.Simulator.Outbound"/>
       </jms:purge-jms-queues>
     </citrus:actions>
   </citrus:before-test>
