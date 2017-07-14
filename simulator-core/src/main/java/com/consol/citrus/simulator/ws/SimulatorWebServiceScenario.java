@@ -38,12 +38,12 @@ public class SimulatorWebServiceScenario extends AbstractSimulatorScenario {
     private Endpoint simInboundEndpoint;
 
     @Override
-    protected Endpoint getDefaultReceiveEndpoint() {
+    protected Endpoint getInboundEndpoint() {
         return simInboundEndpoint;
     }
 
     @Override
-    protected Endpoint getDefaultSendEndpoint() {
+    protected Endpoint getOutboundEndpoint() {
         return simInboundEndpoint;
     }
 

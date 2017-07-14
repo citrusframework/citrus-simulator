@@ -16,9 +16,7 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.EnableJmsSync;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
-import com.consol.citrus.simulator.annotation.SimulatorJmsSyncAdapter;
+import com.consol.citrus.simulator.annotation.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,8 +28,8 @@ import javax.jms.ConnectionFactory;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableJmsSync
-public class Simulator extends SimulatorJmsSyncAdapter {
+@EnableJms
+public class Simulator extends SimulatorJmsAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -40,5 +38,10 @@ public class Simulator extends SimulatorJmsSyncAdapter {
     @Override
     public ConnectionFactory connectionFactory() {
         return new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
+
+    @Override
+    public boolean synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return true;
     }
 }

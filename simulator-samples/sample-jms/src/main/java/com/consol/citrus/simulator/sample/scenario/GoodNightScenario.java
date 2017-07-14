@@ -16,14 +16,14 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.jms.SimulatorJmsSyncScenario;
+import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorJmsSyncScenario {
+public class GoodNightScenario extends SimulatorJmsScenario {
 
     private static final String CORRELATION_ID = "correlationId";
 
