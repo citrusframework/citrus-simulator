@@ -4,6 +4,7 @@
 The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
 or as container/pod in Docker, Kubernetes or Openshift.
 
+[[download]]
 == Download
 
 You can download an executable web archive representing the the latest simulator distribution located at
@@ -27,6 +28,7 @@ you can open your browser and point to link:http://localhost:8080[http://localho
 
 That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
 
+[[maven-archetype]]
 == Maven archetype
 
 The easiest way to get started with a new simulator project is to use a Maven archetype that creates a new project for you.
@@ -45,7 +47,8 @@ There are different simulator archetypes available. Please pick the most conveni
 * *citrus-simulator-archetypes-ws* SOAP web service simulator sample
 * *citrus-simulator-archetypes-jms* JMS simulator sample
 
-=== Build sources
+[[development]]
+=== Development
 
 You can directly build the new simulator project with
 
@@ -66,6 +69,7 @@ you can open your browser and point to link:http://localhost:8080[http://localho
 
 Now everything is set up and you can start to create some simulator scenarios. 
 
+[[simulator-artifacts]]
 === Simulator artifacts
 
 The simulator project creates a web application artifact. After building you can find this WAR file in target/citrus-simulator-1.0.war

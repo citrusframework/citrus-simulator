@@ -1,4 +1,4 @@
-[[rest-support]]
+[[rest]]
 = REST support
 
 The simulator is able to handle REST API calls such as Http GET, POST, PUT, DELETE and so on. The simulator defines a special
@@ -156,6 +156,7 @@ public class Simulator extends SimulatorRestAdapter {
 
 So we have *@EnableRest* and REST adapter customizations combined on one single class.
 
+[[rest-customization]]
 == Advanced customizations
 
 For a more advanced configuration option we can extend the *SimulatorRestSupport* implementation.

@@ -1,4 +1,4 @@
-[[ws-support]]
+[[web-service]]
 = Web Service support
 
 The simulator is able to handle SOAP Web Service calls as a server. The simulator defines a special
@@ -54,7 +54,7 @@ the scenario receive operation has access to the SOAP action of the incoming req
 
 Let's move on with having a look at the SOAP related configuration options as described in the following sections.
 
-[[ws-config]]
+[[web-service-config]]
 == Configuration
 
 Once the SOAP support is enabled on the simulator we have different configuration options. The most comfortable way is to
@@ -149,6 +149,7 @@ public class Simulator extends SimulatorWebServiceAdapter {
 
 So we have *@EnableWebService* and SOAP adapter customizations combined on one single class.
 
+[[web-service-customization]]
 == Advanced customizations
 
 For a more advanced configuration option we can extend the *SimulatorWebServiceSupport* implementation.
@@ -187,7 +188,7 @@ public class Simulator extends SimulatorWebServiceSupport {
 With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the *messageDispatcherServlet*.
 We can not use the *@EnableWebService* auto configuration annotation then. Instead we extend the *SimulatorWebServiceSupport* implementation directly.
 
-[[ws-soap-faults]]
+[[web-service-faults]]
 == SOAP faults
 
 The simulator is in charge of sending proper response messages to the calling client. When using SOAP we might also want to send

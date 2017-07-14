@@ -1,4 +1,4 @@
-[[jms-support]]
+[[jms]]
 = JMS support
 
 The simulator is able to receive messages from any JMS message broker. The simulator will constantly poll a JMS destination (queue or topic)

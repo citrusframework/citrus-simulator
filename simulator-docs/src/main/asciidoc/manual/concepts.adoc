@@ -19,6 +19,7 @@ each simulator.
 In addition to that the simulator provides a link:#user-interface[user interface] where executed scenarios state success or failure.
 Also you can trigger scenarios manually.
 
+[[concept-simulator-application]]
 == Simulator application
 
 The simulator is based on Spring boot. This means we have a main class that loads the Spring boot application.
@@ -51,23 +52,86 @@ There are multiple annotations available for different transport endpoints:
 * *@EnableJms* Enables link:#jms-support[JMS support]
 * *@EnableEndpointComponent* Enables generic link:#endpoint-component-support[endpoint component support]
 
-== Properties
+[[concept-simulator-properties]]
+== Simulator properties
 
-The simulator is capable of loading configuration from system properties and property files. There are several properties that you can use in order to customize the simulator behavior. These
+The simulator is capable of loading configuration from system properties, environment variables and property files. First of all the default Spring boot properties configuration mechanism
+is supported. Following from that you can add properties to the `application.properties` file in your project resources in order to adjust simulator behavior.
+
+[source,properties]
+----
+citrus.simulator.defaultTimeout=10000
+citrus.simulator.templatePath=com/company/simulator/templates
+----
+
+The available simulator properties are grouped in following configuration classes:
+
+[horizontal]
+com.consol.citrus.simulator.config.SimulatorConfigurationProperties:: prefix=*citrus.simulator*
+com.consol.citrus.simulator.annotation.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
+com.consol.citrus.simulator.annotation.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
+com.consol.citrus.simulator.annotation.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
+
+There are several properties that you can use in order to customize the simulator behavior. These
 properties are:
 
-* *citrus.simulator.configuration.class* Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
-* *citrus.simulator.template.path* Default path to message payload template files.
-* *citrus.simulator.default.scenario* Default scenario name.
-* *citrus.simulator.default.timeout* Timeout when waiting for inbound messages.
-* *citrus.simulator.template.validation* Enable/disable schema validation.
+.Spring boot application properties
+[horizontal]
+citrus.simulator.templatePath:: Default path to message payload template files.
+citrus.simulator.defaultScenario:: Default scenario name.
+citrus.simulator.defaultTimeout:: Timeout when waiting for inbound messages.
+citrus.simulator.templateValidation:: Enable/disable schema validation.
+citrus.simulator.rest.urlMapping:: Handler adapter url mapping for inbound requests
+citrus.simulator.ws.servletMapping:: Message dispatcher servlet mapping for inbound SOAP requests
+citrus.simulator.jms.receiveDestination:: JMS destination name to consume inbound messages from
+citrus.simulator.jms.sendDestination:: JMS destination name to publish outbound messages to
 
-You can set these properties as system properties or you can add a property file in following location:
+Please refer to the respective configuration property classes to see what property settings are supported.
+
+[[concept-simulator-system-properties]]
+=== System properties
+
+In addition to that default Spring boot property replacement the simulator also supports system property and environment variables. The properties are:
+
+ .System property names
+[horizontal]
+citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
+citrus.simulator.template.path:: Default path to message payload template files.
+citrus.simulator.default.scenario:: Default scenario name.
+citrus.simulator.default.timeout:: Timeout when waiting for inbound messages.
+citrus.simulator.template.validation:: Enable/disable schema validation.
+citrus.simulator.rest.url.mapping:: Handler adapter url mapping for inbound requests
+citrus.simulator.ws.servlet.mapping:: Message dispatcher servlet mapping for inbound SOAP requests
+citrus.simulator.jms.receive.Destination:: JMS destination name to consume inbound messages from
+citrus.simulator.jms.send.destination:: JMS destination name to publish outbound messages to
+
+You can set these properties as system properties when starting the Spring boot web application or you can add a property file in following location:
 
 * *META-INF/citrus-simulator.properties*
 
-The simulator will automatically load these properties during startup.
+The simulator will automatically load these properties during startup and honor this configuration.
 
+[[concept-simulator-environment-variables]]
+=== Environment variables
+
+Same settings that are editable via system properties are also accessible via environment variables. This is extremely helpful when running the simulator in a containerized
+infrastructure such as Docker or Kubernetes.
+
+.Environment settings
+[horizontal]
+citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
+citrus.simulator.template.path:: Default path to message payload template files.
+citrus.simulator.default.scenario:: Default scenario name.
+citrus.simulator.default.timeout:: Timeout when waiting for inbound messages.
+citrus.simulator.template.validation:: Enable/disable schema validation.
+citrus.simulator.rest.url.mapping:: Handler adapter url mapping for inbound requests
+citrus.simulator.ws.servlet.mapping:: Message dispatcher servlet mapping for inbound SOAP requests
+citrus.simulator.jms.receive.Destination:: JMS destination name to consume inbound messages from
+citrus.simulator.jms.send.destination:: JMS destination name to publish outbound messages to
+
+In case these environment variables are present on your local system the simulator will automatically load these settings during startup and honor the configuration.
+
+[[concept-simulator-spring-configuration]]
 == Spring bean configuration
 
 Citrus works with the Spring framework and the simulator is a Spring boot application. Therefore the configuration is done by adding and overwriting Spring beans in
@@ -78,6 +142,6 @@ the application context. The simulator automatically loads Spring beans defined 
 
 All beans defined in there get automatically loaded to the simulator Spring application context.
 
-include::manual/mapping-key-extractor.adoc[]
-include::manual/scenarios.adoc[]
-include::manual/intermediate-messages.adoc[]
+include::mapping-key-extractor.adoc[]
+include::scenarios.adoc[]
+include::intermediate-messages.adoc[]
