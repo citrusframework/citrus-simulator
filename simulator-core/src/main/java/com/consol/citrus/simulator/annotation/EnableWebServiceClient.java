@@ -16,22 +16,18 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Christoph Deppisch
+ * @author Martin Maher
  */
-public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
-
-    @Override
-    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return simulatorWebServiceConfiguration.getServletMapping();
-    }
-
-    @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
-    }
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Import(SimulatorWebServiceClientSupport.class)
+public @interface EnableWebServiceClient {
 }

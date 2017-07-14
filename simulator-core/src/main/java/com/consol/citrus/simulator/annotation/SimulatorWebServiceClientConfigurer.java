@@ -16,22 +16,23 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
 /**
- * @author Christoph Deppisch
+ * @author Martin Maher
  */
-public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
+public interface SimulatorWebServiceClientConfigurer {
+    /**
+     * Gets the request url. This is where the SOAP client sends the requests to.
+     *
+     * @return
+     */
+    String requestUrl();
 
-    @Override
-    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return simulatorWebServiceConfiguration.getServletMapping();
-    }
-
-    @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
-    }
-
+    /**
+     * Gets the list of client interceptors.
+     *
+     * @return
+     */
+    ClientInterceptor[] interceptors();
 }
