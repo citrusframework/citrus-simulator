@@ -20,16 +20,30 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     /**
      * The JMS inbound destination name. The simulator receives asynchronous messages from this destination.
      */
-    private static final String SIMULATOR_RECEIVE_DESTINATION_PROPERTY = "citrus.simulator.jms.receive.destination";
-    private static final String SIMULATOR_RECEIVE_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_RECEIVE_DESTINATION";
-    private String receiveDestination = "Citrus.Simulator.Inbound";
+    private static final String SIMULATOR_INBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.inbound.destination";
+    private static final String SIMULATOR_INBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION";
+    private String inboundDestination = "Citrus.Simulator.Inbound";
 
     /**
      * The JMS outbound destination name. The simulator sends asynchronous messages to this destination.
      */
-    private static final String SIMULATOR_SEND_DESTINATION_PROPERTY = "citrus.simulator.jms.send.destination";
-    private static final String SIMULATOR_SEND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_SEND_DESTINATION";
-    private String sendDestination = "Citrus.Simulator.Outbound";
+    private static final String SIMULATOR_OUTBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.outbound.destination";
+    private static final String SIMULATOR_OUTBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_OUTBOUND_DESTINATION";
+    private String outboundDestination = "Citrus.Simulator.Outbound";
+
+    /**
+     * En-/Disable JMS synchronous communication.
+     */
+    private static final String SIMULATOR_SYNC_PROPERTY = "citrus.simulator.jms.synchronous";
+    private static final String SIMULATOR_SYNC_ENV = "CITRUS_SIMULATOR_JMS_SYNCHRONOUS";
+    private boolean synchronous = false;
+
+    /**
+     * En-/Disable JMS synchronous communication.
+     */
+    private static final String SIMULATOR_SOAP_ENVELOPE_PROPERTY = "citrus.simulator.jms.soap";
+    private static final String SIMULATOR_SOAP_ENVELOPE_ENV = "CITRUS_SIMULATOR_JMS_SOAP";
+    private boolean useSoap = false;
 
     /**
      * The Spring application context environment
@@ -38,53 +52,93 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
 
     @PostConstruct
     private void loadProperties() {
-        receiveDestination = env.getProperty(SIMULATOR_RECEIVE_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_RECEIVE_DESTINATION_ENV, receiveDestination));
-        sendDestination = env.getProperty(SIMULATOR_SEND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_SEND_DESTINATION_ENV, sendDestination));
+        inboundDestination = env.getProperty(SIMULATOR_INBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_INBOUND_DESTINATION_ENV, inboundDestination));
+        outboundDestination = env.getProperty(SIMULATOR_OUTBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_DESTINATION_ENV, outboundDestination));
+        synchronous = Boolean.valueOf(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
+        useSoap = Boolean.valueOf(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }
 
     /**
-     * Gets the receiveDestination.
+     * Gets the inboundDestination.
      *
      * @return
      */
-    public String getReceiveDestination() {
-        return receiveDestination;
+    public String getInboundDestination() {
+        return inboundDestination;
     }
 
     /**
-     * Sets the receiveDestination.
+     * Sets the inboundDestination.
      *
-     * @param receiveDestination
+     * @param inboundDestination
      */
-    public void setReceiveDestination(String receiveDestination) {
-        this.receiveDestination = receiveDestination;
+    public void setInboundDestination(String inboundDestination) {
+        this.inboundDestination = inboundDestination;
     }
 
     /**
-     * Gets the sendDestination.
+     * Gets the outboundDestination.
      *
      * @return
      */
-    public String getSendDestination() {
-        return sendDestination;
+    public String getOutboundDestination() {
+        return outboundDestination;
     }
 
     /**
-     * Sets the sendDestination.
+     * Sets the outboundDestination.
      *
-     * @param sendDestination
+     * @param outboundDestination
      */
-    public void setSendDestination(String sendDestination) {
-        this.sendDestination = sendDestination;
+    public void setOutboundDestination(String outboundDestination) {
+        this.outboundDestination = outboundDestination;
+    }
+
+    /**
+     * Gets the synchronous.
+     *
+     * @return
+     */
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Sets the synchronous.
+     *
+     * @param synchronous
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
+    /**
+     * Gets the useSoap.
+     *
+     * @return
+     */
+    public boolean isUseSoap() {
+        return useSoap;
+    }
+
+    /**
+     * Sets the useSoap.
+     *
+     * @param useSoap
+     */
+    public void setUseSoap(boolean useSoap) {
+        this.useSoap = useSoap;
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "receiveDestination='" + receiveDestination + '\'' +
-                ", sendDestination='" + sendDestination + '\'' +
+                "inboundDestination='" + inboundDestination + '\'' +
+                ", outboundDestination='" + outboundDestination + '\'' +
+                ", synchronous='" + synchronous + '\'' +
+                ", useSoap='" + useSoap + '\'' +
                 '}';
     }
 

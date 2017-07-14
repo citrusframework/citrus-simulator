@@ -16,14 +16,14 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.jms.SimulatorJmsSyncScenario;
+import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodBye")
-public class GoodByeScenario extends SimulatorJmsSyncScenario {
+public class GoodByeScenario extends SimulatorJmsScenario {
 
     @Override
     protected void configure() {

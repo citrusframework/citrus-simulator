@@ -31,17 +31,33 @@ public interface SimulatorJmsConfigurer extends SimulatorConfigurer {
 
     /**
      * Gets the jms destination to receive messages from.
+     * @param simulatorJmsConfiguration
      *
      * @return
      */
-    String receiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
+    String inboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
+
+    /**
+     * Gets the jms destination to send messages to.
+     * @param simulatorJmsConfiguration
+     *
+     * @return
+     */
+    String outboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 
     /**
      * Should operate with SOAP envelope. This automatically adds SOAP envelope
      * handling to the inbound and outbound messages.
+     * @param simulatorJmsConfiguration
      *
      * @return
      */
-    boolean useSoapEnvelope();
+    boolean useSoap(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 
+    /**
+     * En-/Disable synchronous communication.
+     * @param simulatorJmsConfiguration
+     * @return
+     */
+    boolean synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 }

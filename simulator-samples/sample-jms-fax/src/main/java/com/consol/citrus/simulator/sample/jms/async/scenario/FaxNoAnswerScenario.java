@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.jms.async.scenario;
 
-import com.consol.citrus.simulator.jms.SimulatorJmsAsyncScenario;
+import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.sample.model.xml.fax.FaxStatusEnumType;
 import com.consol.citrus.simulator.sample.model.xml.fax.PayloadHelper;
 import com.consol.citrus.simulator.scenario.Scenario;
@@ -27,7 +27,7 @@ import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.*
  * @author Martin Maher
  */
 @Scenario("FaxNoAnswer")
-public class FaxNoAnswerScenario extends SimulatorJmsAsyncScenario {
+public class FaxNoAnswerScenario extends SimulatorJmsScenario {
     private PayloadHelper payloadHelper = new PayloadHelper();
 
     @Override

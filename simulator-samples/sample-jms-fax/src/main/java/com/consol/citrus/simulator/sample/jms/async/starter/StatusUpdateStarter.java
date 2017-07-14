@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample.jms.async.starter;
 
-import com.consol.citrus.simulator.jms.SimulatorJmsAsyncScenario;
+import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
 import com.consol.citrus.simulator.sample.jms.async.variables.Status;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author Martin Maher
  */
 @Scenario("UpdateFaxStatus")
-public class StatusUpdateStarter extends SimulatorJmsAsyncScenario implements ScenarioStarter {
+public class StatusUpdateStarter extends SimulatorJmsScenario implements ScenarioStarter {
     @Override
     protected void configure() {
         echo("Sending Status Message:  ${status}");

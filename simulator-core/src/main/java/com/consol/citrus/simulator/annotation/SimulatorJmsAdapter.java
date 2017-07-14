@@ -23,9 +23,9 @@ import org.springframework.jms.connection.SingleConnectionFactory;
 import javax.jms.ConnectionFactory;
 
 /**
- * @author Martin Maher
+ * @author Christoph Deppisch
  */
-public class SimulatorJmsAsyncAdapter implements SimulatorJmsAsyncConfigurer {
+public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
 
     @Override
     public ConnectionFactory connectionFactory() {
@@ -33,18 +33,23 @@ public class SimulatorJmsAsyncAdapter implements SimulatorJmsAsyncConfigurer {
     }
 
     @Override
-    public String receiveDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        return simulatorJmsConfiguration.getReceiveDestination();
+    public String inboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getInboundDestination();
     }
 
     @Override
-    public String sendDestinationName(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        return simulatorJmsConfiguration.getSendDestination();
+    public String outboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getOutboundDestination();
     }
 
     @Override
-    public boolean useSoapEnvelope() {
-        return false;
+    public boolean useSoap(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.isUseSoap();
+    }
+
+    @Override
+    public boolean synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.isSynchronous();
     }
 
     @Override
@@ -52,4 +57,3 @@ public class SimulatorJmsAsyncAdapter implements SimulatorJmsAsyncConfigurer {
         return new XPathPayloadMappingKeyExtractor();
     }
 }
-

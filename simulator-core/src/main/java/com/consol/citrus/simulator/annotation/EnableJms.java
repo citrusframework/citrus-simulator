@@ -24,15 +24,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Activates or enables asynchronous-jms simulator support.
+ * Activates or enables synchronous-jms simulator support.
  * <p>
- * This annotation can be used in simulators that would like to simulate a service that sends and receives soap or xml
- * payloads via JMS.
+ * This annotation can be used in simulators that would like to simulate a service that receives soap or xml
+ * requests via JMS and replies.
  *
- * @author Martin Maher
+ * @author Christoph Deppisch
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(SimulatorJmsAsyncSupport.class)
-public @interface EnableJmsAsync {
+@Import(SimulatorJmsSupport.class)
+public @interface EnableJms {
 }

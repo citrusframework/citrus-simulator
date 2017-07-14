@@ -82,15 +82,15 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
      *
      * @return
      */
-    protected abstract Endpoint getDefaultReceiveEndpoint();
+    protected abstract Endpoint getInboundEndpoint();
 
     /**
      * Subclasses must provide the endpoint for sending messages. When simulating a synchronous endpoint (e.g. HTTP)
-     * this is typically the same endpoint that is returned by {@link #getDefaultReceiveEndpoint()}
+     * this is typically the same endpoint that is returned by {@link #getInboundEndpoint()}
      *
      * @return
      */
-    protected abstract Endpoint getDefaultSendEndpoint();
+    protected abstract Endpoint getOutboundEndpoint();
 
     /**
      * Subclasses must provide the target endpoint.
@@ -114,7 +114,7 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
         @Override
         public ReceiveMessageBuilder receive() {
             return (ReceiveMessageBuilder)
-                    AbstractSimulatorScenario.this.receive(getDefaultReceiveEndpoint())
+                    AbstractSimulatorScenario.this.receive(getInboundEndpoint())
                             .description("Received scenario request");
         }
 
@@ -128,7 +128,7 @@ public abstract class AbstractSimulatorScenario extends ExecutableTestDesignerCo
         @Override
         public SendMessageBuilder send() {
             return (SendMessageBuilder)
-                    AbstractSimulatorScenario.this.send(getDefaultSendEndpoint())
+                    AbstractSimulatorScenario.this.send(getOutboundEndpoint())
                             .description("Sending scenario response");
         }
 

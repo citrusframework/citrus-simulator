@@ -18,9 +18,7 @@ package com.consol.citrus.simulator.sample.jms.async;
 
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
-import com.consol.citrus.simulator.annotation.EnableJmsAsync;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
-import com.consol.citrus.simulator.annotation.SimulatorJmsAsyncAdapter;
+import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +33,8 @@ import javax.jms.ConnectionFactory;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableJmsAsync
-public class Simulator extends SimulatorJmsAsyncAdapter {
+@EnableJms
+public class Simulator extends SimulatorJmsAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
