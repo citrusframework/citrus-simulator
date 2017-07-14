@@ -28,7 +28,7 @@ public interface SimulatorWebServiceConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String servletMapping();
+    String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration);
 
     /**
      * Gets the list of endpoint interceptors.

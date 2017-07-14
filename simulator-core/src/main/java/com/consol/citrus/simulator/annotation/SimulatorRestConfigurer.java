@@ -36,5 +36,5 @@ public interface SimulatorRestConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String urlMapping();
+    String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration);
 }

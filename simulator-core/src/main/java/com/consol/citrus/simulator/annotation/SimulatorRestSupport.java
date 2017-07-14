@@ -27,6 +27,7 @@ import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
 import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +51,7 @@ import java.util.*;
  * @author Christoph Deppisch
  */
 @Configuration
+@EnableConfigurationProperties(SimulatorRestConfigurationProperties.class)
 public class SimulatorRestSupport {
 
     @Autowired(required = false)
@@ -71,10 +73,10 @@ public class SimulatorRestSupport {
     private HttpMessageController restController;
 
     @Bean
-    public FilterRegistrationBean requestCachingFilter() {
+    public FilterRegistrationBean requestCachingFilter(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new RequestCachingServletFilter());
 
-        String urlMapping = getUrlMapping();
+        String urlMapping = getUrlMapping(simulatorRestConfiguration);
         if (urlMapping.endsWith("**")) {
             urlMapping = urlMapping.substring(0, urlMapping.length() - 1);
         }
@@ -107,13 +109,14 @@ public class SimulatorRestSupport {
     }
 
     @Bean(name = "simulatorRestHandlerMapping")
-    public HandlerMapping handlerMapping(ApplicationContext applicationContext) {
+    public HandlerMapping handlerMapping(ApplicationContext applicationContext,
+                                         SimulatorRestConfigurationProperties simulatorRestConfiguration) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         handlerMapping.setAlwaysUseFullPath(true);
 
         Map<String, Object> mappings = new HashMap<>();
-        mappings.put(getUrlMapping(), getRestController(applicationContext));
+        mappings.put(getUrlMapping(simulatorRestConfiguration), getRestController(applicationContext));
 
         handlerMapping.setUrlMap(mappings);
         handlerMapping.setInterceptors(interceptors());
@@ -211,12 +214,12 @@ public class SimulatorRestSupport {
      *
      * @return
      */
-    protected String getUrlMapping() {
+    protected String getUrlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
         if (configurer != null) {
-            return configurer.urlMapping();
+            return configurer.urlMapping(simulatorRestConfiguration);
         }
 
-        return "/services/rest/**";
+        return simulatorRestConfiguration.getUrlMapping();
     }
 
     /**

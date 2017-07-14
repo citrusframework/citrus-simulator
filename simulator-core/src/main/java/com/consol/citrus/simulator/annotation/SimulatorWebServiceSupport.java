@@ -26,6 +26,7 @@ import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +48,7 @@ import java.util.List;
  * @author Christoph Deppisch
  */
 @Configuration
+@EnableConfigurationProperties(SimulatorWebServiceConfigurationProperties.class)
 public class SimulatorWebServiceSupport {
 
     @Autowired(required = false)
@@ -64,11 +66,12 @@ public class SimulatorWebServiceSupport {
     }
 
     @Bean
-    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
+    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext,
+                                                            SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, getServletMapping());
+        return new ServletRegistrationBean(servlet, getServletMapping(simulatorWebServiceConfiguration));
     }
 
     @Bean(name = "simulator.ws.inbound")
@@ -153,12 +156,12 @@ public class SimulatorWebServiceSupport {
      *
      * @return
      */
-    protected String getServletMapping() {
+    protected String getServletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
         if (configurer != null) {
-            return configurer.servletMapping();
+            return configurer.servletMapping(simulatorWebServiceConfiguration);
         }
 
-        return "/services/ws/*";
+        return simulatorWebServiceConfiguration.getServletMapping();
     }
 
     /**

@@ -27,8 +27,8 @@ import org.springframework.ws.server.EndpointInterceptor;
 public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
 
     @Override
-    public String servletMapping() {
-        return "/services/ws/*";
+    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        return simulatorWebServiceConfiguration.getServletMapping();
     }
 
     @Override
