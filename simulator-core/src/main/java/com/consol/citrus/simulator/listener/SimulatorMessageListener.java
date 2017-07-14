@@ -20,9 +20,12 @@ package com.consol.citrus.simulator.listener;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.report.MessageListener;
+import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * This listener is called when the simulator sends or receives messages and is responsible for ensuring
@@ -33,6 +36,14 @@ public class SimulatorMessageListener implements MessageListener {
 
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    private MessageListeners messageListeners;
+
+    @PostConstruct
+    public void init() {
+        messageListeners.addMessageListener(this);
+    }
 
     @Override
     public void onInboundMessage(Message message, TestContext context) {
