@@ -98,7 +98,7 @@ public class SimulatorJmsAsyncSupport {
 
 
     @Bean(name = "simulatorJmsAsyncInboundEndpoint")
-    protected JmsEndpoint jmsAsyncInbountEndpoint(ConnectionFactory connectionFactory,
+    protected JmsEndpoint jmsAsyncInboundEndpoint(ConnectionFactory connectionFactory,
                                                   SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
         JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
@@ -154,7 +154,7 @@ public class SimulatorJmsAsyncSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(jmsAsyncInbountEndpoint(connectionFactory, jmsConfiguration));
+        endpointPoller.setTargetEndpoint(jmsAsyncInboundEndpoint(connectionFactory, jmsConfiguration));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
