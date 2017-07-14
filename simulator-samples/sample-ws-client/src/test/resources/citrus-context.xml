@@ -46,7 +46,7 @@
       id="simulatorRestEndpoint"
       request-url="http://localhost:8080"
       content-type="application/json"
-      timeout="300000"
+      timeout="5000"
   />
 
 </beans>
