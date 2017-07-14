@@ -34,6 +34,8 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -95,8 +97,20 @@ public class DefaultScenarioService implements ScenarioService {
         ScenarioExecution es = activityService.createExecutionScenario(name, scenarioParameters);
         addTestVariable(testExecutable, ScenarioExecution.EXECUTION_ID, es.getExecutionId());
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+        executeScenarioAsync(name, testExecutable);
+
+        return es.getExecutionId();
+    }
+
+    private Future<?> executeScenarioAsync(String name, Executable testExecutable) {
+        final ExecutorService executorService = Executors.newSingleThreadExecutor(
+                r -> {
+                    Thread t = ((ThreadFactory) r1 -> new Thread(r1, "Scenario:" + name)).newThread(r);
+                    t.setDaemon(true);
+                    return t;
+                });
+
+        return executorService.submit(() -> {
             log.debug(String.format("Starting scenario: '%s'", name));
             try {
                 testExecutable.execute();
@@ -104,9 +118,8 @@ public class DefaultScenarioService implements ScenarioService {
             } catch (Exception e) {
                 log.error(String.format("Scenario completed with error: '%s'", name), e);
             }
+            executorService.shutdownNow();
         });
-
-        return es.getExecutionId();
     }
 
     /**

@@ -31,7 +31,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 
 /**
  * @author Christoph Deppisch
@@ -54,7 +53,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Thread running the server
      */
-    private TaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+    private SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
 
     /**
      * Message handler for incoming simulator request messages
@@ -77,6 +76,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
 
         while (running) {
             try {
+                // TODO CD does the test context have to be created on every loop iteration?
                 TestContext context = testContextFactory.getObject();
                 Message message = targetEndpoint.createConsumer().receive(context, targetEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
@@ -133,6 +133,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     public void start() {
         running = true;
+        taskExecutor.setDaemon(true);
         taskExecutor.execute(this);
     }
 

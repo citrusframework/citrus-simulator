@@ -29,6 +29,7 @@ import com.consol.citrus.simulator.sample.model.xml.fax.FaxType;
 import com.consol.citrus.simulator.sample.model.xml.fax.PayloadHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.testng.annotations.Test;
 
@@ -173,9 +174,7 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
      * Tests the UpdateFaxStatus simulation starter. It launches the simulation started via
      * the simulator's REST interface and verifies that the status update was sent.
      */
-    // TODO MM check why running this test causes a thread to be started that doesn't complete
-    //
-    //@CitrusTest
+    @CitrusTest
     public void testUpdateFaxStatusStarter() {
         ReferenceId referenceId = new ReferenceId();
         Status status = new Status(FaxStatusEnumType.QUEUED);
@@ -184,12 +183,17 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
         http()
                 .client(restEndpoint)
                 .send()
-                .post("/test/UpdateFaxStatus/launch")
+                .post("/api/scenario/launch/UpdateFaxStatus")
                 .contentType("application/json")
                 .payload(asJson(referenceId.asScenarioParameter(),
                         status.asScenarioParameter(),
                         statusMessage.asScenarioParameter())
                 );
+
+        http()
+                .client(restEndpoint)
+                .receive().response(HttpStatus.OK)
+        ;
 
 
         receive(simulatorOutboundEndpoint)
