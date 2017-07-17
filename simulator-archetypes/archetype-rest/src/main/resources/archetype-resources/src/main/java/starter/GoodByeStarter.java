@@ -16,6 +16,7 @@
 
 package ${package};
 
+import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
@@ -32,9 +33,9 @@ import java.util.List;
 public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
-    protected void configure() {
-        echo("GoodBye starter was executed!");
-        echo("${payload}");
+    public void start(TestRunner runner) {
+        runner.echo("GoodBye starter was executed!");
+        runner.echo("${payload}");
     }
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {

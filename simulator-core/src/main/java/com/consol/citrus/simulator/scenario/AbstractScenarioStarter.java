@@ -16,7 +16,6 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.dsl.design.ExecutableTestDesignerComponent;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.util.FileUtils;
@@ -29,12 +28,7 @@ import java.io.IOException;
 /**
  * @author Christoph Deppisch
  */
-public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComponent implements ScenarioStarter {
-
-    /**
-     * This starter's name
-     */
-    private String name;
+public abstract class AbstractScenarioStarter implements ScenarioStarter {
 
     @Autowired
     private SimulatorConfigurationProperties simulatorConfigurationProperties;
@@ -62,15 +56,4 @@ public abstract class AbstractScenarioStarter extends ExecutableTestDesignerComp
             throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
         }
     }
-
-    /**
-     * Sets the beanName property.
-     *
-     * @param beanName
-     */
-    @Override
-    public void setBeanName(String beanName) {
-        this.name = beanName;
-    }
-
 }

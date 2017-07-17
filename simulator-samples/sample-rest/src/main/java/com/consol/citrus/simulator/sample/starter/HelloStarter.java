@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
+import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
@@ -31,9 +32,9 @@ import java.util.List;
 public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
-    protected void configure() {
-        echo("${greeting}");
-        echo("${payload}");
+    public void run(TestRunner runner) {
+        runner.echo("${greeting}");
+        runner.echo("${payload}");
     }
 
     @Override

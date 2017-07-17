@@ -35,6 +35,7 @@ import java.util.List;
  */
 @Scenario("UpdateFaxStatus")
 public class StatusUpdateStarter extends SimulatorJmsScenario implements ScenarioStarter {
+
     @Override
     protected void configure() {
         echo("Sending Status Message:  ${status}");
@@ -42,9 +43,9 @@ public class StatusUpdateStarter extends SimulatorJmsScenario implements Scenari
         scenario()
                 .send()
                 .payload("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
-                        "   <referenceId>${referenceId}</referenceId>" +
-                        "   <status>${status}</status>\n" +
-                        "   <statusMessage>${statusMessage}</statusMessage>\n" +
+                            "<referenceId>${referenceId}</referenceId>" +
+                            "<status>${status}</status>" +
+                            "<statusMessage>${statusMessage}</statusMessage>" +
                         "</StatusUpdateMessage>");
         echo("Done");
     }
@@ -56,10 +57,5 @@ public class StatusUpdateStarter extends SimulatorJmsScenario implements Scenari
         scenarioParameters.add(new Status(FaxStatusEnumType.SUCCESS).asScenarioParameter());
         scenarioParameters.add(new StatusMessage("").asScenarioParameter());
         return scenarioParameters;
-    }
-
-    @Override
-    public void setBeanName(String name) {
-
     }
 }
