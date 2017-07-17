@@ -19,31 +19,34 @@ package com.consol.citrus.simulator.sample.starter;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.variables.Name;
 import com.consol.citrus.simulator.sample.variables.Variables;
-import com.consol.citrus.simulator.scenario.ScenarioStarter;
+import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
 import com.consol.citrus.simulator.scenario.Starter;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceClientScenario;
+import com.consol.citrus.ws.client.WebServiceClient;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 @Starter("HelloStarter")
-public class HelloStarter extends SimulatorWebServiceClientScenario implements ScenarioStarter {
+public class HelloStarter extends AbstractScenarioStarter {
+
+    @Autowired
+    private WebServiceClient webServiceClient;
 
     @Override
-    protected void configure() {
+    public void configure() {
         echo(String.format("Saying hello to: %s", Variables.NAME_PH));
 
-        scenario().send()
+        send(webServiceClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         Variables.NAME_PH +
                         "</Hello>")
                 .header("citrus_soap_action", "Hello");
 
-        scenario().receive()
+        receive(webServiceClient)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there " + Variables.NAME_PH +
                         "</HelloResponse>");
-
     }
 
     @Override

@@ -54,22 +54,22 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
         Name name = new Name();
 
         http()
-                .client(restEndpoint)
-                .send()
-                .post("/api/scenario/launch/HelloStarter")
-                .contentType("application/json")
-                .payload(asJson(name.asScenarioParameter()));
+            .client(restEndpoint)
+            .send()
+            .post("/api/scenario/launch/HelloStarter")
+            .contentType("application/json")
+            .payload(asJson(name.asScenarioParameter()));
 
         receive(soapServer)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        name.getValue() +
-                        "</Hello>")
-                .header("citrus_soap_action", "Hello");
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    name.getValue() +
+                    "</Hello>")
+            .header("citrus_soap_action", "Hello");
 
         send(soapServer)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there " + name.getValue() +
-                        "</HelloResponse>");
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there " + name.getValue() +
+                    "</HelloResponse>");
 
     }
 
