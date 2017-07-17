@@ -47,7 +47,6 @@ public class SimulatorWebServiceClientSupport {
     @Autowired
     private LoggingClientInterceptor loggingClientInterceptor;
 
-
     @Bean(name = "simulatorWsClientEndpoint")
     public WebServiceClient webServiceClientEndpoint(SimulatorWebServiceClientConfigurationProperties configProperties) {
         WebServiceClient endpoint = new WebServiceClient();

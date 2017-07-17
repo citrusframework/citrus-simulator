@@ -27,7 +27,7 @@ import javax.annotation.PostConstruct;
 /**
  * @author Martin Maher
  */
-@ConfigurationProperties(prefix = "citrus.simulator.ws-client")
+@ConfigurationProperties(prefix = "citrus.simulator.ws.client")
 public class SimulatorWebServiceClientConfigurationProperties implements EnvironmentAware {
     /**
      * Logger
@@ -37,11 +37,10 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     /**
      * This is where the SOAP client sends the requests to.
      */
-    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY = "citrus.simulator.ws-client.request-url";
-    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_ENV = "SIMULATOR_WSCLIENT_REQUEST_URL";
-    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_DEFAULT_VALUE = "http://localhost:8080/services/ws/simulator";
+    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY = "citrus.simulator.ws.client.request.url";
+    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_ENV = "SIMULATOR_WS_CLIENT_REQUEST_URL";
 
-    private String requestUrl;
+    private String requestUrl = "http://localhost:8080/services/ws/simulator";
 
     /**
      * The Spring application context environment
@@ -51,7 +50,7 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     @PostConstruct
     private void loadProperties() {
         requestUrl = env.getProperty(SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY,
-                env.getProperty(SIMULATOR_WSCLIENT_REQUEST_URL_ENV, SIMULATOR_WSCLIENT_REQUEST_URL_DEFAULT_VALUE)
+                env.getProperty(SIMULATOR_WSCLIENT_REQUEST_URL_ENV, requestUrl)
         );
 
         log.info("Using the simulator configuration: {}", this.toString());
