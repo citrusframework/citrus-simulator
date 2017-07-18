@@ -11,7 +11,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>citrus-simulator-core</artifactId>
+  <artifactId>citrus-simulator-starter</artifactId>
   <name>${project.artifactId}</name>
 
   <dependencies>
