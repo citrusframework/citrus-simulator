@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,30 +32,30 @@ public class GoodNightScenario extends SimulatorRestScenario {
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        startCorrelation()
+        startCorrelation(designer)
             .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
         scenario()
-            .receive()
+            .receive(designer)
             .selector("x-correlationid = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

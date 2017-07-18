@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.jms.async.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.sample.model.xml.fax.FaxStatusEnumType;
 import com.consol.citrus.simulator.sample.model.xml.fax.PayloadHelper;
@@ -34,15 +35,15 @@ public class FaxQueuedScenario extends SimulatorJmsScenario {
     private PayloadHelper payloadHelper = new PayloadHelper();
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-                .receive()
+                .receive(designer)
                 .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
                 .extractFromPayload(REFERENCE_ID_XPATH, REFERENCE_ID_VAR)
         ;
 
         scenario()
-                .send()
+                .send(designer)
                 .payload(
                         payloadHelper.generateFaxStatusMessage(REFERENCE_ID_PH, FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller()

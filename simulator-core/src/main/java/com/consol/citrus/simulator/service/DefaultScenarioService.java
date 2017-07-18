@@ -26,12 +26,12 @@ import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.ScenarioStarter;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -87,20 +87,16 @@ public class DefaultScenarioService implements ScenarioService {
         log.info(String.format("Starting scenario : %s", name));
 
         ScenarioExecution es = activityService.createExecutionScenario(name, scenarioParameters);
-        ScenarioStarter scenarioStarter = applicationContext.getBean(name, ScenarioStarter.class);
+        SimulatorScenario scenario = applicationContext.getBean(name, SimulatorScenario.class);
 
-        if (scenarioStarter instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) scenarioStarter).setApplicationContext(applicationContext);
-        }
+        prepare(scenario);
 
-        prepare(scenarioStarter);
-
-        startScenarioAsync(es.getExecutionId(), name, scenarioStarter, scenarioParameters);
+        startScenarioAsync(es.getExecutionId(), name, scenario, scenarioParameters);
 
         return es.getExecutionId();
     }
 
-    private Future<?> startScenarioAsync(Long executionId, String name, ScenarioStarter scenarioStarter, List<ScenarioParameter> scenarioParameters) {
+    private Future<?> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         final ExecutorService executorService = Executors.newSingleThreadExecutor(
                 r -> {
                     Thread t = ((ThreadFactory) r1 -> new Thread(r1, "Scenario:" + name)).newThread(r);
@@ -110,23 +106,23 @@ public class DefaultScenarioService implements ScenarioService {
 
         return executorService.submit(() -> {
             try {
-                if (scenarioStarter instanceof Executable) {
+                if (scenario instanceof Executable) {
                     if (scenarioParameters != null) {
-                        scenarioParameters.forEach(p -> addVariable(scenarioStarter, p.getName(), p.getValue()));
+                        scenarioParameters.forEach(p -> addVariable(scenario, p.getName(), p.getValue()));
                     }
 
-                    addVariable(scenarioStarter, ScenarioExecution.EXECUTION_ID, executionId);
+                    addVariable(scenario, ScenarioExecution.EXECUTION_ID, executionId);
 
-                    ((Executable) scenarioStarter).execute();
+                    ((Executable) scenario).execute();
                 } else {
                     TestContext context = citrus.createTestContext();
-                    ReflectionUtils.doWithLocalMethods(scenarioStarter.getClass(), m -> {
+                    ReflectionUtils.doWithLocalMethods(scenario.getClass(), m -> {
                         if (!m.getName().equals("run")) {
                             return;
                         }
 
                         if (m.getParameterCount() != 1) {
-                            throw new SimulatorException("Invalid scenario starter method signature - expect single method parameter but got: " + m.getParameterCount());
+                            throw new SimulatorException("Invalid scenario method signature - expect single method parameter but got: " + m.getParameterCount());
                         }
 
                         Class<?> parameterType = m.getParameterTypes()[0];
@@ -138,7 +134,7 @@ public class DefaultScenarioService implements ScenarioService {
 
                             designer.variable(ScenarioExecution.EXECUTION_ID, executionId);
 
-                            ReflectionUtils.invokeMethod(m, scenarioStarter, designer);
+                            ReflectionUtils.invokeMethod(m, scenario, designer);
                             citrus.run(designer.getTestCase(), context);
                         } else if (parameterType.equals(TestRunner.class)) {
                             TestRunner runner = new DefaultTestRunner(citrus.getApplicationContext(), context);
@@ -150,12 +146,12 @@ public class DefaultScenarioService implements ScenarioService {
 
                             try {
                                 runner.start();
-                                ReflectionUtils.invokeMethod(m, scenarioStarter, runner);
+                                ReflectionUtils.invokeMethod(m, scenario, runner);
                             } finally {
                                 runner.stop();
                             }
                         } else {
-                            throw new SimulatorException("Invalid scenario starter method parameter type: " + parameterType);
+                            throw new SimulatorException("Invalid scenario method parameter type: " + parameterType);
                         }
                     });
                 }
@@ -170,26 +166,26 @@ public class DefaultScenarioService implements ScenarioService {
     /**
      * Adds a new variable to the testExecutable using the supplied key an value.
      *
-     * @param scenarioStarter
+     * @param scenario
      * @param key            variable name
      * @param value          variable value
      */
-    private void addVariable(ScenarioStarter scenarioStarter, String key, Object value) {
-        if (scenarioStarter instanceof TestDesigner) {
-            ((TestDesigner) scenarioStarter).variable(key, value);
+    private void addVariable(SimulatorScenario scenario, String key, Object value) {
+        if (scenario instanceof TestDesigner) {
+            ((TestDesigner) scenario).variable(key, value);
         }
 
-        if (scenarioStarter instanceof TestRunner) {
-            ((TestRunner) scenarioStarter).variable(key, value);
+        if (scenario instanceof TestRunner) {
+            ((TestRunner) scenario).variable(key, value);
         }
     }
 
     /**
-     * Prepare scenario starter instance before execution. Subclasses can add custom preparation steps in here.
+     * Prepare scenario instance before execution. Subclasses can add custom preparation steps in here.
      *
-     * @param starter
+     * @param scenario
      */
-    protected void prepare(ScenarioStarter starter) {
+    protected void prepare(SimulatorScenario scenario) {
     }
 
     @Override

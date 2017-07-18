@@ -16,10 +16,23 @@
 
 package com.consol.citrus.simulator.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
+import com.consol.citrus.dsl.runner.TestRunner;
+
 /**
  * @author Christoph Deppisch
  */
 public interface SimulatorScenario {
 
-    ScenarioEndpoint scenario();
+    /**
+     * Default starter body method with provided test designer.
+     * @param designer
+     */
+    default void run(TestDesigner designer) {}
+
+    /**
+     * Default starter body method with provided test runner.
+     * @param runner
+     */
+    default void run(TestRunner runner) {}
 }

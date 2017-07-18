@@ -29,15 +29,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class GoodByeScenario extends SimulatorRestScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

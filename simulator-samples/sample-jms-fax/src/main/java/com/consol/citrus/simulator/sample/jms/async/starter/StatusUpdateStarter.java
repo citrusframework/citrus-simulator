@@ -16,11 +16,10 @@
 
 package com.consol.citrus.simulator.sample.jms.async.starter;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
-import com.consol.citrus.simulator.sample.jms.async.variables.Status;
-import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
+import com.consol.citrus.simulator.sample.jms.async.variables.*;
 import com.consol.citrus.simulator.sample.model.xml.fax.FaxStatusEnumType;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioStarter;
@@ -37,17 +36,18 @@ import java.util.List;
 public class StatusUpdateStarter extends SimulatorJmsScenario implements ScenarioStarter {
 
     @Override
-    protected void configure() {
-        echo("Sending Status Message:  ${status}");
+    public void run(TestDesigner designer) {
+        designer.echo("Sending Status Message:  ${status}");
 
         scenario()
-                .send()
+                .send(designer)
                 .payload("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
                             "<referenceId>${referenceId}</referenceId>" +
                             "<status>${status}</status>" +
                             "<statusMessage>${statusMessage}</statusMessage>" +
                         "</StatusUpdateMessage>");
-        echo("Done");
+
+        designer.echo("Done");
     }
 
     @Override

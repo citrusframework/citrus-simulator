@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 
@@ -26,9 +27,9 @@ import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 public class DefaultScenario extends SimulatorWebServiceScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .send()
+            .send(designer)
             .payload("");
     }
 }

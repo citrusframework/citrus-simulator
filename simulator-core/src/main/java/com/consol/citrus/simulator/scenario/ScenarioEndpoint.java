@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
 import com.consol.citrus.dsl.builder.SendMessageBuilder;
+import com.consol.citrus.dsl.design.TestDesigner;
 
 /**
  * @author Christoph Deppisch
@@ -29,7 +30,7 @@ public interface ScenarioEndpoint {
      *
      * @return
      */
-    ReceiveMessageBuilder receive();
+    ReceiveMessageBuilder receive(TestDesigner designer);
 
     /**
      * Receives simulator message using the supplied {@code endpointName}.
@@ -37,14 +38,14 @@ public interface ScenarioEndpoint {
      * @param endpointName the name of the endpoint to receive the message from
      * @return
      */
-    ReceiveMessageBuilder receive(String endpointName);
+    ReceiveMessageBuilder receive(TestDesigner designer, String endpointName);
 
     /**
      * Sends simulator message using the default endpoint.
      *
      * @return
      */
-    SendMessageBuilder send();
+    SendMessageBuilder send(TestDesigner designer);
 
     /**
      * Sends simulator message using the supplied {@code endpointName}.
@@ -52,5 +53,5 @@ public interface ScenarioEndpoint {
      * @param endpointName the name of the endpoint to send the message to
      * @return
      */
-    SendMessageBuilder send(String endpointName);
+    SendMessageBuilder send(TestDesigner designer, String endpointName);
 }

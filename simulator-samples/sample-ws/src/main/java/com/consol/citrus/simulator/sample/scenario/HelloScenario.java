@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 import com.consol.citrus.ws.message.SoapMessageHeaders;
@@ -27,16 +28,16 @@ import com.consol.citrus.ws.message.SoapMessageHeaders;
 public class HelloScenario extends SimulatorWebServiceScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>")
             .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");

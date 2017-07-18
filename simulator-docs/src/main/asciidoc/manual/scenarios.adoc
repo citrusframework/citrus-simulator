@@ -32,15 +32,15 @@ Each of these base scenario classes provide comfortable access to the endpoint s
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");
@@ -60,16 +60,16 @@ So we could also extract dynamic values from the request in order to reuse those
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "<user>@ignore@</user>" +
                      "</Hello>")
             .extractFromPayload("/Hello/user", "userName");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "<text>Hi there ${userName}!</text>" +
                      "</HelloResponse>");

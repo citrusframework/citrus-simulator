@@ -16,8 +16,6 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 
 import java.util.Collection;
@@ -32,7 +30,7 @@ import java.util.Collections;
  *
  * @author Christoph Deppisch
  */
-public interface ScenarioStarter {
+public interface ScenarioStarter extends SimulatorScenario {
 
     /**
      * Gets list of parameters required to execute this starter.
@@ -42,16 +40,4 @@ public interface ScenarioStarter {
     default Collection<ScenarioParameter> getScenarioParameters() {
         return Collections.EMPTY_LIST;
     }
-
-    /**
-     * Default starter body method with provided test designer.
-     * @param designer
-     */
-    default void run(TestDesigner designer) {}
-
-    /**
-     * Default starter body method with provided test runner.
-     * @param runner
-     */
-    default void run(TestRunner runner) {}
 }

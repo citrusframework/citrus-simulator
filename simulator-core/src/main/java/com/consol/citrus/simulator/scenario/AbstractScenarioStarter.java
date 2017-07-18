@@ -20,6 +20,8 @@ import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -28,7 +30,10 @@ import java.io.IOException;
 /**
  * @author Christoph Deppisch
  */
-public abstract class AbstractScenarioStarter implements ScenarioStarter {
+public abstract class AbstractScenarioStarter implements ScenarioStarter, ApplicationContextAware {
+
+    /** Spring application context */
+    private ApplicationContext applicationContext;
 
     @Autowired
     private SimulatorConfigurationProperties simulatorConfigurationProperties;
@@ -55,5 +60,24 @@ public abstract class AbstractScenarioStarter implements ScenarioStarter {
         } catch (IOException e) {
             throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
         }
+    }
+
+    /**
+     * Sets the applicationContext.
+     *
+     * @param applicationContext
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Gets the applicationContext.
+     *
+     * @return
+     */
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 }

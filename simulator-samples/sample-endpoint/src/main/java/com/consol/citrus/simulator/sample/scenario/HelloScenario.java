@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 
@@ -26,9 +27,9 @@ import com.consol.citrus.simulator.scenario.Scenario;
 public class HelloScenario extends SimulatorEndpointScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive()
+            .receive(designer)
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
@@ -42,7 +43,7 @@ public class HelloScenario extends SimulatorEndpointScenario {
                     "</mail-message>");
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

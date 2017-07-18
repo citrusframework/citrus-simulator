@@ -26,12 +26,12 @@ import com.consol.citrus.simulator.scenario.Scenario;
 public class DefaultScenario extends SimulatorRestScenario {
 
     @Override
-    protected void configure() {
+    public void run(TestDesigner designer) {
         scenario()
-            .receive();
+            .receive(designer);
 
         scenario()
-            .send()
+            .send(designer)
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

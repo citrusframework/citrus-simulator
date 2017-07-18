@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
+import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.http.SimulatorRestScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,20 +30,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    protected void configure() {
-        echo("Simulator: ${simulator.name}");
+    public void run(TestDesigner designer) {
+        designer.echo("Simulator: ${simulator.name}");
 
         scenario()
-                .receive()
+                .receive(designer)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                         "</Hello>")
                 .extractFromPayload("//hello:Hello", "greeting");
 
-        echo("Received greeting: ${greeting}");
+        designer.echo("Received greeting: ${greeting}");
 
         scenario()
-                .send()
+                .send(designer)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                         "</HelloResponse>");
