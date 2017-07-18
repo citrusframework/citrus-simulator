@@ -43,11 +43,6 @@
       <artifactId>citrus-simulator-starter</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-sample-model</artifactId>
-    </dependency>
-
     <!-- Citrus -->
 
     <dependency>

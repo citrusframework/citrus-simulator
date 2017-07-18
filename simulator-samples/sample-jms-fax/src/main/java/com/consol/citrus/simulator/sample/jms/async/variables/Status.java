@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.sample.jms.async.variables;
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
-import com.consol.citrus.simulator.sample.model.xml.fax.FaxStatusEnumType;
+import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
 
 import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.STATUS_VAR;
 

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.model.xml.fax;
+package com.consol.citrus.simulator.sample.jms.async.scenario;
 
+import com.consol.citrus.simulator.sample.jms.async.model.*;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import javax.xml.bind.JAXBElement;

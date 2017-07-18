@@ -44,11 +44,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-sample-model</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <scope>test</scope>

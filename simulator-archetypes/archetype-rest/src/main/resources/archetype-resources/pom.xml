@@ -48,12 +48,6 @@
       <version>${citrus.simulator.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-simulator-sample-model</artifactId>
-      <version>${citrus.simulator.version}</version>
-    </dependency>
-
     <!-- Citrus -->
 
     <dependency>

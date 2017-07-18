@@ -33,7 +33,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>sample-model</module>
     <module>sample-jms</module>
     <module>sample-jms-fax</module>
     <module>sample-ws</module>
@@ -41,16 +40,6 @@
     <module>sample-rest</module>
     <module>sample-endpoint</module>
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.consol.citrus</groupId>
-        <artifactId>citrus-simulator-sample-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <pluginManagement>
