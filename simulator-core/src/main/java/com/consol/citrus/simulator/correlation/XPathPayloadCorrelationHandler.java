@@ -16,13 +16,14 @@
 
 package com.consol.citrus.simulator.correlation;
 
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 
 /**
  * @author Christoph Deppisch
  */
-public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
+public class XPathPayloadCorrelationHandler implements CorrelationHandler {
 
     private XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
     private final String value;
@@ -39,7 +40,7 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
     }
 
     @Override
-    public boolean isHandlerFor(Message message) {
+    public boolean isHandlerFor(Message message, TestContext context) {
         return xPathPayloadMappingKeyExtractor.extractMappingKey(message).equals(context.replaceDynamicContentInString(value));
     }
 }

@@ -16,42 +16,45 @@
 
 package com.consol.citrus.simulator.correlation;
 
-import com.consol.citrus.TestCase;
+import com.consol.citrus.TestAction;
 import com.consol.citrus.dsl.builder.AbstractTestActionBuilder;
 
 /**
  * @author Christoph Deppisch
  */
-public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<SetCorrelationHandlerAction> {
+public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCorrelationHandlerAction> {
+
+    /** Stop correlation action */
+    private final StopCorrelationHandlerAction stopCorrelationAction = new StopCorrelationHandlerAction();
 
     /**
-     * Default constructor with test.
-     *
-     * @param test
+     * Default constructor with correlation handler.
      * @param handler
      */
-    public CorrelationHandlerBuilder(final TestCase test, CorrelationHandler handler) {
-        super(new SetCorrelationHandlerAction(test));
-        action.setCorrelationHandler(handler);
+    public CorrelationHandlerBuilder(CorrelationHandler handler) {
+        super(new StartCorrelationHandlerAction());
+        withHandler(handler);
     }
 
     public CorrelationHandlerBuilder onHeader(String headerName, String value) {
-        action.setCorrelationHandler(new HeaderMappingCorrelationHandler(headerName, value));
-        return this;
+        return withHandler(new HeaderMappingCorrelationHandler(headerName, value));
     }
 
     public CorrelationHandlerBuilder onMessageType(String type) {
-        action.setCorrelationHandler(new MessageTypeCorrelationHandler(type));
-        return this;
+        return withHandler(new MessageTypeCorrelationHandler(type));
     }
 
     public CorrelationHandlerBuilder onPayload(String expression, String value) {
-        action.setCorrelationHandler(new XPathPayloadCorrelationHandler(expression, value));
-        return this;
+        return withHandler(new XPathPayloadCorrelationHandler(expression, value));
     }
 
     public CorrelationHandlerBuilder withHandler(CorrelationHandler handler) {
         action.setCorrelationHandler(handler);
+        stopCorrelationAction.setCorrelationHandler(handler);
         return this;
+    }
+
+    public TestAction stop() {
+        return stopCorrelationAction;
     }
 }

@@ -16,12 +16,10 @@
 
 package com.consol.citrus.simulator.endpoint;
 
-import com.consol.citrus.TestCase;
 import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.correlation.CorrelationHandler;
-import com.consol.citrus.simulator.listener.SimulatorActiveTestListener;
+import com.consol.citrus.simulator.correlation.CorrelationHandlerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -30,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SimulatorMappingKeyExtractor extends AbstractMappingKeyExtractor {
 
     @Autowired
-    private SimulatorActiveTestListener activeTestListener;
+    private CorrelationHandlerRegistry handlerRegistry;
 
     /**
      * Delegate mapping key extractor
@@ -44,11 +42,8 @@ public class SimulatorMappingKeyExtractor extends AbstractMappingKeyExtractor {
 
     @Override
     protected String getMappingKey(Message request) {
-        for (TestCase activeTest : activeTestListener.getActiveTests()) {
-            if (activeTest.getVariableDefinitions().containsKey(CorrelationHandler.class.getName()) &&
-                    ((CorrelationHandler) activeTest.getVariableDefinitions().get(CorrelationHandler.class.getName())).isHandlerFor(request)) {
-                return INTERVENING_MESSAGE_MAPPING;
-            }
+        if (handlerRegistry.findHandlerFor(request)) {
+            return INTERVENING_MESSAGE_MAPPING;
         }
 
         return delegate.extractMappingKey(request);

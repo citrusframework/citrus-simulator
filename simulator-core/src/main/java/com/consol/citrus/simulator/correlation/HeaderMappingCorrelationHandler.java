@@ -16,12 +16,13 @@
 
 package com.consol.citrus.simulator.correlation;
 
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
 
 /**
  * @author Christoph Deppisch
  */
-public class HeaderMappingCorrelationHandler extends AbstractCorrelationHandler {
+public class HeaderMappingCorrelationHandler implements CorrelationHandler {
 
     /**
      * Message header to match on
@@ -40,7 +41,7 @@ public class HeaderMappingCorrelationHandler extends AbstractCorrelationHandler 
     }
 
     @Override
-    public boolean isHandlerFor(Message message) {
+    public boolean isHandlerFor(Message message, TestContext context) {
         return message.getHeader(headerName) != null && message.getHeader(headerName).equals(context.replaceDynamicContentInString(value));
     }
 }

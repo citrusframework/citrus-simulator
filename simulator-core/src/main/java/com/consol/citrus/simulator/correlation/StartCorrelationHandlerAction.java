@@ -16,31 +16,29 @@
 
 package com.consol.citrus.simulator.correlation;
 
-import com.consol.citrus.TestCase;
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
+import com.consol.citrus.simulator.exception.SimulatorException;
 
 /**
  * @author Christoph Deppisch
  */
-public class SetCorrelationHandlerAction extends AbstractTestAction {
-
-    private final TestCase test;
-    private CorrelationHandler correlationHandler;
+public class StartCorrelationHandlerAction extends AbstractTestAction {
 
     /**
-     * Default constructor.
-     *
-     * @param test
+     * Correlation handler to register.
      */
-    public SetCorrelationHandlerAction(TestCase test) {
-        this.test = test;
-    }
+    private CorrelationHandler correlationHandler;
 
     @Override
     public void doExecute(TestContext context) {
-        correlationHandler.setTestContext(context);
-        test.getVariableDefinitions().put(CorrelationHandler.class.getName(), correlationHandler);
+        CorrelationHandlerRegistry handlerRegistry = context.getApplicationContext().getBean(CorrelationHandlerRegistry.class);
+
+        if (handlerRegistry != null) {
+            handlerRegistry.register(correlationHandler, context);
+        } else {
+            throw new SimulatorException("Failed to get correlation handler registry in application context");
+        }
     }
 
     /**

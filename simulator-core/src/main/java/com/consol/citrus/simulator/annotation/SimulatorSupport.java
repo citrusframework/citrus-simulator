@@ -21,6 +21,7 @@ import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.bean.ScenarioBeanNameGenerator;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
+import com.consol.citrus.simulator.correlation.CorrelationHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,5 +79,11 @@ public class SimulatorSupport {
     @Bean
     public Citrus citrus(ApplicationContext applicationContext) {
         return Citrus.newInstance(applicationContext);
+    }
+
+
+    @Bean
+    public CorrelationHandlerRegistry correlationHandlerRegistry() {
+        return new CorrelationHandlerRegistry();
     }
 }

@@ -24,7 +24,11 @@ import com.consol.citrus.message.Message;
  */
 public interface CorrelationHandler {
 
-    boolean isHandlerFor(Message message);
-
-    void setTestContext(TestContext context);
+    /**
+     * Evaluates if handler is capable of handling given message
+     * @param message
+     * @param context
+     * @return
+     */
+    boolean isHandlerFor(Message message, TestContext context);
 }
