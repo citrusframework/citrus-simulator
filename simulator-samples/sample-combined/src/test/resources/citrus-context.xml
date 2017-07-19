@@ -2,8 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:citrus-http="http://www.citrusframework.org/schema/http/config"
        xmlns:citrus-jms="http://www.citrusframework.org/schema/jms/config"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.citrusframework.org/schema/http/config http://www.citrusframework.org/schema/http/config/citrus-http-config.xsd
        http://www.citrusframework.org/schema/jms/config http://www.citrusframework.org/schema/jms/config/citrus-jms-config.xsd
        http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
 
@@ -13,7 +15,12 @@
     </citrus:locations>
   </citrus:schema-repository>
 
-  <!-- Test JMS client -->
+  <!-- Test Http REST client -->
+  <citrus-http:client
+      id="simulatorClient"
+      request-url="http://localhost:8080/services/rest/simulator"
+      timeout="5000"/>
+
   <citrus-jms:sync-endpoint id="simulatorEndpoint"
                             destination-name="Citrus.Simulator.Inbound"/>
 

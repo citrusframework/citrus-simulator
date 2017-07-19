@@ -19,6 +19,7 @@
   <modules>
     <module>sample-jms</module>
     <module>sample-jms-fax</module>
+    <module>sample-combined</module>
     <module>sample-ws</module>
     <module>sample-ws-client</module>
     <module>sample-rest</module>
