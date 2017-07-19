@@ -49,13 +49,13 @@ export class ScenarioParameterOption {
 
 export class Summary {
     constructor(
-        public size: number,
+        public size: number = 0,
         public skippedPercentage: string,
         public failedPercentage: string,
         public successPercentage: string,
-        public failed: number,
-        public success: number,
-        public skipped: number) {
+        public failed: number = 0,
+        public success: number = 0,
+        public skipped: number = 0) {
     }
 }
 
