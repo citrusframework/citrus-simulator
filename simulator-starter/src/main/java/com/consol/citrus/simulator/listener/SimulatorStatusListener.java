@@ -16,13 +16,9 @@
 
 package com.consol.citrus.simulator.listener;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
-import com.consol.citrus.TestResult;
+import com.consol.citrus.*;
 import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.report.AbstractTestListener;
-import com.consol.citrus.report.TestActionListener;
-import com.consol.citrus.report.TestResults;
+import com.consol.citrus.report.*;
 import com.consol.citrus.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -50,7 +44,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     /**
      * Currently running test
      */
-    private Map<String, TestResult> runningTests = new LinkedHashMap<>();
+    private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
     /**
      * Accumulated test results
