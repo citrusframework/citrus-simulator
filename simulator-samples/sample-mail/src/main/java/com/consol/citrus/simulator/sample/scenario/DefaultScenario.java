@@ -21,7 +21,7 @@ import com.consol.citrus.simulator.scenario.*;
 /**
  * @author Christoph Deppisch
  */
-@Scenario("DEFAULT_SCENARIO")
+@Scenario("Default")
 public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override

@@ -11,7 +11,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>citrus-simulator-sample-endpoint</artifactId>
+  <artifactId>citrus-simulator-sample-mail</artifactId>
   <name>${project.artifactId}</name>
 
   <dependencyManagement>
