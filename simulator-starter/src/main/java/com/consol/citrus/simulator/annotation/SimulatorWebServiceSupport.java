@@ -16,21 +16,16 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
-import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
@@ -39,9 +34,7 @@ import org.springframework.ws.server.endpoint.adapter.MessageEndpointAdapter;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
@@ -71,30 +64,6 @@ public class SimulatorWebServiceSupport {
         return new ServletRegistrationBean(servlet, getServletMapping(simulatorWebServiceConfiguration));
     }
 
-    @Bean(name = "simulator.ws.inbound")
-    public MessageSelectingQueueChannel inboundChannel() {
-        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
-        return inboundChannel;
-    }
-
-    @Bean(name = "simulatorWsInboundEndpoint")
-    public ChannelEndpoint inboundChannelEndpoint() {
-        ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
-        inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-        return inboundChannelEndpoint;
-    }
-
-    @Bean(name = "simulatorWsInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
-        ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-        endpointConfiguration.setChannel(inboundChannel());
-        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
-        endpointAdapter.setApplicationContext(applicationContext);
-
-        return endpointAdapter;
-    }
-
     @Bean(name = "simulatorWsEndpointMapping")
     public EndpointMapping endpointMapping(ApplicationContext applicationContext) {
         UriEndpointMapping endpointMapping = new UriEndpointMapping();
@@ -114,26 +83,16 @@ public class SimulatorWebServiceSupport {
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
-
         return webServiceEndpoint;
     }
 
-    @Bean
+    @Bean(name = "simulatorWsEndpointAdapter")
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean
-    @DependsOn("simulatorWsInboundEndpoint")
+    @Bean(name = "simulatorWsMappingKeyExtractor")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
-        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
-        return simulatorMappingKeyExtractor;
-    }
-
-    @Bean
-    public MappingKeyExtractor delegateMappingKeyExtractor() {
         if (configurer != null) {
             return configurer.mappingKeyExtractor();
         }

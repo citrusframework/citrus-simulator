@@ -2,8 +2,6 @@ package com.consol.citrus.simulator.correlation;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,9 +13,6 @@ import java.util.stream.Stream;
  * @author Christoph Deppisch
  */
 public class CorrelationHandlerRegistry {
-
-    /** Logger */
-    private static Logger log = LoggerFactory.getLogger(CorrelationHandlerRegistry.class);
 
     /**
      * Map of active handlers
@@ -60,13 +55,13 @@ public class CorrelationHandlerRegistry {
      * @param request
      * @return
      */
-    public boolean findHandlerFor(Message request) {
+    public CorrelationHandler findHandlerFor(Message request) {
         for (Map.Entry<CorrelationHandler, TestContext> handlerEntry : registeredHandlers.entrySet()) {
             if (handlerEntry.getKey().isHandlerFor(request, handlerEntry.getValue())) {
-                return true;
+                return handlerEntry.getKey();
             }
         }
 
-        return false;
+        return null;
     }
 }

@@ -26,9 +26,9 @@ import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
 public class DefaultScenario extends SimulatorWebServiceScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .send(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("");
     }
 }

@@ -16,14 +16,12 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
-import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
 import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
 import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +30,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
-import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.*;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -82,30 +76,6 @@ public class SimulatorRestSupport {
         }
         filterRegistrationBean.setUrlPatterns(Collections.singleton(urlMapping));
         return filterRegistrationBean;
-    }
-
-    @Bean(name = "simulator.rest.inbound")
-    public MessageSelectingQueueChannel inboundChannel() {
-        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
-        return inboundChannel;
-    }
-
-    @Bean(name = "simulatorRestInboundEndpoint")
-    public ChannelEndpoint inboundChannelEndpoint() {
-        ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
-        inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-        return inboundChannelEndpoint;
-    }
-
-    @Bean(name = "simulatorRestInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
-        ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-        endpointConfiguration.setChannel(inboundChannel());
-        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
-        endpointAdapter.setApplicationContext(applicationContext);
-
-        return endpointAdapter;
     }
 
     @Bean(name = "simulatorRestHandlerMapping")
@@ -157,17 +127,9 @@ public class SimulatorRestSupport {
         };
     }
 
-    @Bean
+    @Bean(name = "simulatorRestEndpointAdapter")
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
-    }
-
-    @Bean
-    @DependsOn("simulatorRestInboundEndpoint")
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
-        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
-        return simulatorMappingKeyExtractor;
     }
 
     /**
@@ -185,16 +147,13 @@ public class SimulatorRestSupport {
             endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
 
             restController.setEndpointAdapter(endpointAdapter);
-
-            endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
         }
 
         return restController;
     }
 
-    @Bean
-    @DependsOn("simulatorRestInboundEndpoint")
-    public MappingKeyExtractor delegateMappingKeyExtractor() {
+    @Bean(name = "simulatorRestMappingKeyExtractor")
+    public MappingKeyExtractor simulatorMappingKeyExtractor() {
         if (configurer != null) {
             return configurer.mappingKeyExtractor();
         }

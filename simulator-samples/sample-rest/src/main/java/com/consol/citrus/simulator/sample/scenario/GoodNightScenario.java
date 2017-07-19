@@ -16,9 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,35 +25,35 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Scenario("GoodNight")
 @RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
-public class GoodNightScenario extends SimulatorRestScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        startCorrelation(designer)
+        scenario.correlation().start()
             .onHeader(CORRELATION_ID, "${correlationId}");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .selector("x-correlationid = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

@@ -31,30 +31,30 @@ public class GoodNightScenario extends SimulatorRestScenario {
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        startCorrelation(designer)
+        scenario.correlation().start()
             .onHeader(CORRELATION_ID, "${correlationId}");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .selector("x-correlationid = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

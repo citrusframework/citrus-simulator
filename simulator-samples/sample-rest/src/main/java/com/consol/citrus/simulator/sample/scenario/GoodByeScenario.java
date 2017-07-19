@@ -16,9 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,18 +25,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Scenario("GoodBye")
 @RequestMapping(value = "/services/rest/simulator/goodbye", method = RequestMethod.POST)
-public class GoodByeScenario extends SimulatorRestScenario {
+public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

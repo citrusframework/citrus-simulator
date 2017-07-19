@@ -84,7 +84,7 @@ citrus.simulator.templateValidation:: Enable/disable schema validation.
 citrus.simulator.rest.urlMapping:: Handler adapter url mapping for inbound requests
 citrus.simulator.ws.servletMapping:: Message dispatcher servlet mapping for inbound SOAP requests
 citrus.simulator.jms.inboundDestination:: JMS destination name to consume inbound messages from
-citrus.simulator.jms.outboundDestination:: JMS destination name to publish outbound messages to
+citrus.simulator.jms.replyDestination:: JMS destination name to publish reply messages to
 
 Please refer to the respective configuration property classes to see what property settings are supported.
 

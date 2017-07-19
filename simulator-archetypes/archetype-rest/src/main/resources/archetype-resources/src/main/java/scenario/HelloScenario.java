@@ -29,22 +29,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    public void run(TestDesigner designer) {
+    public void run(ScenarioDesigner scenario) {
         echo("Simulator: ${simulator.name}");
 
-        scenario()
-                .receive(designer)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                        "</Hello>")
-                .extractFromPayload("//hello:Hello", "greeting");
+        scenario
+            .receive(scenario.inboundEndpoint())
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                    "</Hello>")
+            .extractFromPayload("//hello:Hello", "greeting");
 
         echo("Received greeting: ${greeting}");
 
-        scenario()
-                .send(designer)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                        "</HelloResponse>");
+        scenario
+            .send(scenario.replyEndpoint())
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                    "</HelloResponse>");
     }
 }

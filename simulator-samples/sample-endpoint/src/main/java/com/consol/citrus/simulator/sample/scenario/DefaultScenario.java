@@ -16,23 +16,21 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("DEFAULT_SCENARIO")
-public class DefaultScenario extends SimulatorEndpointScenario {
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer);
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint());
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

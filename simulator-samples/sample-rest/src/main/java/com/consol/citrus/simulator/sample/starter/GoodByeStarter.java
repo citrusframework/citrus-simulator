@@ -16,11 +16,9 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
-import com.consol.citrus.simulator.scenario.AbstractScenarioStarter;
-import com.consol.citrus.simulator.scenario.Starter;
+import com.consol.citrus.simulator.scenario.*;
 
 import java.util.*;
 
@@ -31,9 +29,9 @@ import java.util.*;
 public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
-    public void run(TestDesigner designer) {
-        designer.echo("GoodBye starter was executed!");
-        designer.echo("${payload}");
+    public void run(ScenarioDesigner scenario) {
+        scenario.echo("GoodBye starter was executed!");
+        scenario.echo("${payload}");
     }
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {

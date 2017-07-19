@@ -16,9 +16,7 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,25 +25,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Scenario("Hello")
 @RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
-public class HelloScenario extends SimulatorRestScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        designer.echo("Simulator: ${simulator.name}");
+    public void run(ScenarioDesigner scenario) {
+        scenario.echo("Simulator: ${simulator.name}");
 
-        scenario()
-                .receive(designer)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                        "</Hello>")
-                .extractFromPayload("//hello:Hello", "greeting");
+        scenario
+            .receive(scenario.inboundEndpoint())
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                    "</Hello>")
+            .extractFromPayload("//hello:Hello", "greeting");
 
-        designer.echo("Received greeting: ${greeting}");
+        scenario.echo("Received greeting: ${greeting}");
 
-        scenario()
-                .send(designer)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                        "</HelloResponse>");
+        scenario
+            .send(scenario.replyEndpoint())
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                    "</HelloResponse>");
     }
 }

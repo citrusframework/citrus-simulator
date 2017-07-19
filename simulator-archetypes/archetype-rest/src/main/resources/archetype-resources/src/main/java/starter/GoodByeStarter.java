@@ -33,9 +33,9 @@ import java.util.List;
 public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
-    public void start(TestRunner runner) {
-        runner.echo("GoodBye starter was executed!");
-        runner.echo("${payload}");
+    public void start(ScenarioRunner scenario) {
+        scenario.echo("GoodBye starter was executed!");
+        scenario.echo("${payload}");
     }
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {

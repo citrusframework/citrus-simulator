@@ -18,11 +18,12 @@ package com.consol.citrus.simulator.correlation;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 
 /**
  * @author Christoph Deppisch
  */
-public class HeaderMappingCorrelationHandler implements CorrelationHandler {
+public class HeaderMappingCorrelationHandler extends AbstractCorrelationHandler {
 
     /**
      * Message header to match on
@@ -33,9 +34,12 @@ public class HeaderMappingCorrelationHandler implements CorrelationHandler {
     /**
      * Constructor using header name property.
      *
+     * @param scenarioEndpoint
      * @param headerName
+     * @param value
      */
-    public HeaderMappingCorrelationHandler(String headerName, String value) {
+    public HeaderMappingCorrelationHandler(ScenarioEndpoint scenarioEndpoint, String headerName, String value) {
+        super(scenarioEndpoint);
         this.headerName = headerName;
         this.value = value;
     }

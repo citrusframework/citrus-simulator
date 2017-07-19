@@ -16,26 +16,24 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("Hello")
-public class HelloScenario extends SimulatorJmsScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");

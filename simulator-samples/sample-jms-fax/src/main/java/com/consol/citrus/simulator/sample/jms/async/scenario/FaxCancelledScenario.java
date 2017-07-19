@@ -16,10 +16,9 @@
 
 package com.consol.citrus.simulator.sample.jms.async.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
 import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.*;
 
@@ -27,46 +26,40 @@ import static com.consol.citrus.simulator.sample.jms.async.variables.Variables.*
  * @author Martin Maher
  */
 @Scenario("FaxCancelled")
-public class FaxCancelledScenario extends SimulatorJmsScenario {
-    private PayloadHelper payloadHelper = new PayloadHelper();
+public class FaxCancelledScenario extends AbstractFaxScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-                .receive(designer)
-                .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
-                .extractFromPayload(REFERENCE_ID_XPATH, REFERENCE_ID_VAR)
-        ;
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
+            .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
+            .extractFromPayload(REFERENCE_ID_XPATH, REFERENCE_ID_VAR);
 
-        startCorrelation(designer)
-                // TODO MM add support for namespace
-                .onPayload("//*[local-name() = 'referenceId']", REFERENCE_ID_PH);
+        scenario.correlation().start()
+            // TODO MM add support for namespace
+            .onPayload("//*[local-name() = 'referenceId']", REFERENCE_ID_PH);
 
-        scenario()
-                .send(designer)
-                .payload(
-                        payloadHelper.generateFaxStatusMessage(REFERENCE_ID_PH,
-                                FaxStatusEnumType.QUEUED,
-                                "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller()
-                )
-        ;
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage(REFERENCE_ID_PH,
+                            FaxStatusEnumType.QUEUED,
+                            "The fax message has been queued and will be send shortly"),
+                    getPayloadHelper().getMarshaller()
+            );
 
-        scenario()
-                .receive(designer)
-                .xpath(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
-                .xpath(REFERENCE_ID_XPATH, REFERENCE_ID_PH)
-        ;
+        scenario
+            .receive(scenario.inboundEndpoint())
+            .xpath(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
+            .xpath(REFERENCE_ID_XPATH, REFERENCE_ID_PH);
 
-        scenario()
-                .send(designer)
-                .payload(
-                        payloadHelper.generateFaxStatusMessage(REFERENCE_ID_PH,
-                                FaxStatusEnumType.CANCELLED,
-                                "The fax message has been cancelled"),
-                        payloadHelper.getMarshaller()
-                )
-        ;
-
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage(REFERENCE_ID_PH,
+                            FaxStatusEnumType.CANCELLED,
+                            "The fax message has been cancelled"),
+                    getPayloadHelper().getMarshaller()
+            );
     }
 }

@@ -21,6 +21,7 @@ import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class AnnotationRequestMappingKeyExtractor extends AbstractMappingKeyExtr
     private static Logger log = LoggerFactory.getLogger(AnnotationRequestMappingKeyExtractor.class);
 
     @Autowired(required = false)
-    private List<SimulatorRestScenario> scenarios = new ArrayList<>();
+    private List<SimulatorScenario> scenarios = new ArrayList<>();
 
     @Autowired
     private SimulatorConfigurationProperties configuration;
@@ -51,7 +52,7 @@ public class AnnotationRequestMappingKeyExtractor extends AbstractMappingKeyExtr
         if (request instanceof HttpMessage) {
             String requestPath = ((HttpMessage) request).getPath();
 
-            for (SimulatorRestScenario scenario : scenarios) {
+            for (SimulatorScenario scenario : scenarios) {
                 if (scenario.getClass().getAnnotation(RequestMapping.class) != null) {
                     RequestMapping requestMapping = scenario.getClass().getAnnotation(RequestMapping.class);
 

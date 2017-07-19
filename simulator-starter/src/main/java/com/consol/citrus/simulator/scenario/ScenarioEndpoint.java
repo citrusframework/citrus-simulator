@@ -16,42 +16,75 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
-import com.consol.citrus.dsl.builder.SendMessageBuilder;
-import com.consol.citrus.dsl.design.TestDesigner;
+import com.consol.citrus.context.TestContext;
+import com.consol.citrus.endpoint.AbstractEndpoint;
+import com.consol.citrus.message.Message;
+import com.consol.citrus.messaging.Consumer;
+import com.consol.citrus.messaging.Producer;
+import com.consol.citrus.simulator.exception.SimulatorException;
+
+import java.util.Stack;
+import java.util.concurrent.*;
 
 /**
  * @author Christoph Deppisch
  */
-public interface ScenarioEndpoint {
+public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
+
+    /** Internal im memory message channel */
+    private LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
+
+    /** Stack of response futures to complete */
+    private Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
 
     /**
-     * Receives simulator message using the default endpoint.
+     * Default constructor using endpoint configuration.
      *
-     * @return
+     * @param endpointConfiguration
      */
-    ReceiveMessageBuilder receive(TestDesigner designer);
+    public ScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
+        super(endpointConfiguration);
+    }
 
     /**
-     * Receives simulator message using the supplied {@code endpointName}.
-     *
-     * @param endpointName the name of the endpoint to receive the message from
-     * @return
+     * Adds new message for direct message consumption.
+     * @param request
      */
-    ReceiveMessageBuilder receive(TestDesigner designer, String endpointName);
+    public void add(Message request, CompletableFuture<Message> future) {
+        responseFutures.push(future);
+        channel.add(request);
+    }
 
-    /**
-     * Sends simulator message using the default endpoint.
-     *
-     * @return
-     */
-    SendMessageBuilder send(TestDesigner designer);
+    @Override
+    public Producer createProducer() {
+        return this;
+    }
 
-    /**
-     * Sends simulator message using the supplied {@code endpointName}.
-     *
-     * @param endpointName the name of the endpoint to send the message to
-     * @return
-     */
-    SendMessageBuilder send(TestDesigner designer, String endpointName);
+    @Override
+    public Consumer createConsumer() {
+        return this;
+    }
+
+    @Override
+    public Message receive(TestContext context) {
+        return receive(context, getEndpointConfiguration().getTimeout());
+    }
+
+    @Override
+    public Message receive(TestContext context, long timeout) {
+        try {
+            return channel.poll(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            throw new SimulatorException(e);
+        }
+    }
+
+    @Override
+    public void send(Message message, TestContext context) {
+        if (responseFutures.isEmpty()) {
+            throw new SimulatorException("Failed to process scenario response message - missing response consumer");
+        } else {
+            responseFutures.pop().complete(message);
+        }
+    }
 }

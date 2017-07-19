@@ -16,15 +16,18 @@
 
 package com.consol.citrus.simulator.sample.jms.async;
 
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 import javax.jms.ConnectionFactory;
 
@@ -41,10 +44,10 @@ public class Simulator extends SimulatorJmsAdapter {
     }
 
     @Autowired
-    NamespaceContextBuilder namespaceContextBuilder = null;
+    private NamespaceContextBuilder namespaceContextBuilder;
 
-    @Autowired
-    ApplicationContext context;
+    @Value("${citrus.simulator.jms.status.destination}")
+    private String statusDestinationName;
 
     @Override
     public ConnectionFactory connectionFactory() {
@@ -57,6 +60,15 @@ public class Simulator extends SimulatorJmsAdapter {
         mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
         mappingKeyExtractor.setXpathExpression("//fax:clientId");
         return mappingKeyExtractor;
+    }
+
+    @Bean(name = "simulatorJmsStatusEndpoint")
+    public JmsEndpoint statusEndpoint() {
+        return CitrusEndpoints.jms()
+                .asynchronous()
+                .destination(statusDestinationName)
+                .connectionFactory(connectionFactory())
+                .build();
     }
 
 }

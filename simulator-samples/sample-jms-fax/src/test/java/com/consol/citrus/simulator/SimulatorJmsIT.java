@@ -47,8 +47,8 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
     private JmsEndpoint simulatorInboundEndpoint;
 
     @Autowired
-    @Qualifier("simulatorOutboundEndpoint")
-    private JmsEndpoint simulatorOutboundEndpoint;
+    @Qualifier("simulatorStatusEndpoint")
+    private JmsEndpoint simulatorStatusEndpoint;
 
     @Autowired
     @Qualifier("simulatorRestEndpoint")
@@ -67,12 +67,12 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateSendFaxMessage("Non-Matchable Scenario", fax, referenceId.getValue(), true),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller());
 
         // check no other status messages are sent; the default scenario only sends one status message
-        receiveTimeout(simulatorOutboundEndpoint)
+        receiveTimeout(simulatorStatusEndpoint)
                 .timeout(3000);
     }
 
@@ -89,13 +89,13 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateSendFaxMessage("FaxSent", fax, referenceId.getValue(), true),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller());
 
         sleep(2000L);
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.SUCCESS, "The fax message has been successfully sent"),
                         payloadHelper.getMarshaller());
     }
@@ -113,7 +113,7 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateSendFaxMessage("FaxCancelled", fax, referenceId.getValue(), true),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller());
 
@@ -121,7 +121,7 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateCancelFaxMessage(referenceId.getValue()),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.CANCELLED, "The fax message has been cancelled"),
                         payloadHelper.getMarshaller());
     }
@@ -139,11 +139,11 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateSendFaxMessage("FaxBusy", fax, referenceId.getValue(), true),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: The receiving fax was busy"),
                         payloadHelper.getMarshaller());
     }
@@ -161,11 +161,11 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 .payload(payloadHelper.generateSendFaxMessage("FaxNoAnswer", fax, referenceId.getValue(), true),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
                         payloadHelper.getMarshaller());
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: No answer from the receiving fax"),
                         payloadHelper.getMarshaller());
     }
@@ -181,22 +181,21 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
         StatusMessage statusMessage = new StatusMessage("The fax message has been queued and will be send shortly");
 
         http()
-                .client(restEndpoint)
-                .send()
-                .post("/api/scenario/launch/UpdateFaxStatus")
-                .contentType("application/json")
-                .payload(asJson(referenceId.asScenarioParameter(),
-                        status.asScenarioParameter(),
-                        statusMessage.asScenarioParameter())
-                );
+            .client(restEndpoint)
+            .send()
+            .post("/api/scenario/launch/UpdateFaxStatus")
+            .contentType("application/json")
+            .payload(asJson(referenceId.asScenarioParameter(),
+                    status.asScenarioParameter(),
+                    statusMessage.asScenarioParameter())
+            );
 
         http()
-                .client(restEndpoint)
-                .receive().response(HttpStatus.OK)
-        ;
+            .client(restEndpoint)
+            .receive().response(HttpStatus.OK);
 
 
-        receive(simulatorOutboundEndpoint)
+        receive(simulatorStatusEndpoint)
                 .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, statusMessage.getValue()),
                         payloadHelper.getMarshaller());
 

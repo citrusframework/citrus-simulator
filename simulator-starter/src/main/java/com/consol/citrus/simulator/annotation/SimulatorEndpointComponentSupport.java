@@ -20,15 +20,11 @@ import com.consol.citrus.channel.*;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
-import com.consol.citrus.simulator.endpoint.SimulatorMappingKeyExtractor;
-import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
+import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 /**
  * @author Christoph Deppisch
@@ -39,58 +35,26 @@ public class SimulatorEndpointComponentSupport {
     @Autowired(required = false)
     private SimulatorEndpointComponentConfigurer configurer;
 
-    @Bean(name = "simulator.inbound")
-    public MessageSelectingQueueChannel inboundChannel() {
-        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
-        return inboundChannel;
-    }
-
-    @Bean(name = "simulatorInboundEndpoint")
-    public ChannelEndpoint inboundChannelEndpoint() {
-        ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
-        inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-        inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-        return inboundChannelEndpoint;
-    }
-
-    @Bean(name = "simulatorInboundAdapter")
-    public ChannelEndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext) {
-        ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-        endpointConfiguration.setChannel(inboundChannel());
-        ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
-        endpointAdapter.setApplicationContext(applicationContext);
-
-        return endpointAdapter;
-    }
-
     @Bean(name = "simulatorEndpoint")
-    protected Endpoint simEndpoint(ApplicationContext applicationContext) {
+    protected Endpoint simulatorEndpoint(ApplicationContext applicationContext) {
         if (configurer != null) {
             return configurer.endpoint(applicationContext);
         } else {
             ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
             ChannelSyncEndpoint syncEndpoint = new ChannelSyncEndpoint(endpointConfiguration);
-            endpointConfiguration.setChannelName("simulator.endpoint.inbound");
+            endpointConfiguration.setChannelName("simulator.inbound.endpoint");
 
             return syncEndpoint;
         }
     }
 
-    @Bean
+    @Bean(name = "simulatorEndpointAdapter")
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean
-    @DependsOn("simulatorInboundEndpoint")
+    @Bean(name = "simulatorMappingKeyExtractor")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
-        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
-        return simulatorMappingKeyExtractor;
-    }
-
-    @Bean
-    public MappingKeyExtractor delegateMappingKeyExtractor() {
         if (configurer != null) {
             return configurer.mappingKeyExtractor();
         }
@@ -108,14 +72,12 @@ public class SimulatorEndpointComponentSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(simEndpoint(applicationContext));
+        endpointPoller.setInboundEndpoint(simulatorEndpoint(applicationContext));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
 
         endpointPoller.setEndpointAdapter(endpointAdapter);
-
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext));
 
         return endpointPoller;
     }

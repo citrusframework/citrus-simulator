@@ -16,43 +16,41 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorJmsScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     private static final String CORRELATION_ID = "correlationId";
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
-        startCorrelation(designer)
+        scenario.correlation().start()
             .onHeader(CORRELATION_ID, "${correlationId}");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .selector("correlationId = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

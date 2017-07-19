@@ -39,11 +39,11 @@
 
   <!-- Endpoint for sending messages to the Simulator -->
   <citrus-jms:endpoint id="simulatorInboundEndpoint"
-                       destination-name="Citrus.Simulator.Inbound"/>
+                       destination-name="Fax.Inbound"/>
 
   <!-- Endpoint for receiving messages from the Simulator -->
-  <citrus-jms:endpoint id="simulatorOutboundEndpoint"
-                       destination-name="Citrus.Simulator.Outbound"/>
+  <citrus-jms:endpoint id="simulatorStatusEndpoint"
+                       destination-name="Fax.Status"/>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
     <property name="brokerURL" value="tcp://localhost:61616"/>

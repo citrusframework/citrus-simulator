@@ -16,7 +16,6 @@
 
 package com.consol.citrus.simulator.sample.starter;
 
-import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.variables.Name;
 import com.consol.citrus.simulator.sample.variables.Variables;
@@ -28,22 +27,22 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @Starter("HelloStarter")
-public class HelloStarter implements ScenarioStarter {
+public class HelloStarter extends AbstractScenarioStarter {
 
     @Autowired
     private WebServiceClient webServiceClient;
 
     @Override
-    public void run(TestDesigner designer) {
-        designer.echo(String.format("Saying hello to: %s", Variables.NAME_PH));
+    public void run(ScenarioDesigner scenario) {
+        scenario.echo(String.format("Saying hello to: %s", Variables.NAME_PH));
 
-        designer.send(webServiceClient)
+        scenario.send(webServiceClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             Variables.NAME_PH +
                         "</Hello>")
                 .header("citrus_soap_action", "Hello");
 
-        designer.receive(webServiceClient)
+        scenario.receive(webServiceClient)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there " + Variables.NAME_PH +
                         "</HelloResponse>");

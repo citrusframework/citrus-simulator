@@ -21,6 +21,7 @@ import com.consol.citrus.context.TestContextFactory;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.exceptions.ActionTimeoutException;
+import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.messaging.Producer;
 import com.consol.citrus.messaging.ReplyProducer;
@@ -46,9 +47,9 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     private TestContextFactory testContextFactory;
 
     /**
-     * Endpoint destination that is constantly polled for new messages
+     * Endpoint destination that is constantly polled for new messages.
      */
-    private Endpoint targetEndpoint;
+    private Endpoint inboundEndpoint;
 
     /**
      * Thread running the server
@@ -72,35 +73,35 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
 
     @Override
     public void run() {
-        LOG.info(String.format("Simulator endpoint waiting for requests on endpoint '%s'", targetEndpoint.getName()));
+        LOG.info(String.format("Simulator endpoint waiting for requests on endpoint '%s'", inboundEndpoint.getName()));
 
         while (running) {
             try {
-                // TODO CD does the test context have to be created on every loop iteration?
                 TestContext context = testContextFactory.getObject();
-                Message message = targetEndpoint.createConsumer().receive(context, targetEndpoint.getEndpointConfiguration().getTimeout());
+                Message message = inboundEndpoint.createConsumer().receive(context, inboundEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    LOG.debug(String.format("Inbound message '%s' received. Processing ...", message.getId()));
+                    LOG.debug(String.format("Processing inbound message '%s'", message.getId()));
                     Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
-                    Producer producer = targetEndpoint.createProducer();
-                    if (response != null && producer instanceof ReplyProducer) {
-                        LOG.debug(String.format("Got the reply for '%s'. Sending ...", message.getId()));
-                        producer.send(processResponseMessage(response), context);
+                    if (response != null) {
+                        Producer producer = inboundEndpoint.createProducer();
+                        if (producer instanceof ReplyProducer) {
+                            LOG.debug(String.format("Sending response message for inbound message '%s'", message.getId()));
+                            producer.send(processResponseMessage(response), context);
+                        }
                     }
                 }
             } catch (ActionTimeoutException e) {
                 // ignore timeout and continue listening for request messages.
-                continue;
-            } catch (SimulatorException e) {
+            } catch (SimulatorException | CitrusRuntimeException e) {
                 LOG.error("Failed to process message", e.getMessage());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to process message", e);
+                    LOG.debug(e.getMessage(), e);
                 }
             } catch (Exception e) {
                 LOG.error("Unexpected error while processing", e.getMessage());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unexpected error while processing", e);
+                    LOG.debug(e.getMessage(), e);
                 }
             }
         }
@@ -157,12 +158,12 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     }
 
     /**
-     * Sets the target endpoint to read messages from.
+     * Sets the target inbound endpoint to read messages from.
      *
-     * @param targetEndpoint
+     * @param inboundEndpoint
      */
-    public void setTargetEndpoint(Endpoint targetEndpoint) {
-        this.targetEndpoint = targetEndpoint;
+    public void setInboundEndpoint(Endpoint inboundEndpoint) {
+        this.inboundEndpoint = inboundEndpoint;
     }
 
     /**

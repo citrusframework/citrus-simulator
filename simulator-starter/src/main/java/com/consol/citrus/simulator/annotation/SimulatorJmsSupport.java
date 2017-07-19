@@ -16,22 +16,18 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.channel.*;
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.context.TestContextFactory;
-import com.consol.citrus.endpoint.*;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.*;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.SingleConnectionFactory;
+import org.springframework.util.StringUtils;
 
 import javax.jms.ConnectionFactory;
 
@@ -52,83 +48,18 @@ public class SimulatorJmsSupport {
         return new SingleConnectionFactory();
     }
 
-    @Bean(name = "simulator.jms.inbound")
-    public MessageSelectingQueueChannel inboundChannel() {
-        MessageSelectingQueueChannel inboundChannel = new MessageSelectingQueueChannel();
-        return inboundChannel;
-    }
-
     @Bean(name = "simulatorJmsInboundEndpoint")
-    public ChannelEndpoint inboundChannelEndpoint(SimulatorConfigurationProperties configuration,
-                                                  SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        if (isSynchronous(simulatorJmsConfiguration)) {
-            ChannelSyncEndpoint inboundChannelEndpoint = new ChannelSyncEndpoint();
-            inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-            inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-            inboundChannelEndpoint.getEndpointConfiguration().setTimeout(configuration.getDefaultTimeout());
-            return inboundChannelEndpoint;
-        } else {
-            ChannelEndpoint inboundChannelEndpoint = new ChannelEndpoint();
-            inboundChannelEndpoint.getEndpointConfiguration().setUseObjectMessages(true);
-            inboundChannelEndpoint.getEndpointConfiguration().setChannel(inboundChannel());
-            inboundChannelEndpoint.getEndpointConfiguration().setTimeout(configuration.getDefaultTimeout());
-            return inboundChannelEndpoint;
-        }
-    }
-
-    @Bean(name = "simulatorJmsInboundEndpointAdapter")
-    public EndpointAdapter inboundEndpointAdapter(ApplicationContext applicationContext,
-                                                         SimulatorConfigurationProperties configuration,
-                                                         SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        if (isSynchronous(simulatorJmsConfiguration)) {
-            ChannelSyncEndpointConfiguration endpointConfiguration = new ChannelSyncEndpointConfiguration();
-            endpointConfiguration.setChannel(inboundChannel());
-            ChannelEndpointAdapter endpointAdapter = new ChannelEndpointAdapter(endpointConfiguration);
-            endpointAdapter.setApplicationContext(applicationContext);
-
-            return endpointAdapter;
-        } else {
-            class JmsReceiveEndpointAdapter implements EndpointAdapter {
-                private final TestContextFactory testContextFactory;
-                private final Endpoint endpoint;
-
-                public JmsReceiveEndpointAdapter(TestContextFactory testContextFactory, Endpoint endpoint) {
-                    this.testContextFactory = testContextFactory;
-                    this.endpoint = endpoint;
-                }
-
-                @Override
-                public Message handleMessage(Message message) {
-                    getEndpoint().createProducer().send(message, getTestContext());
-                    return null;
-                }
-
-                @Override
-                public Endpoint getEndpoint() {
-                    return endpoint;
-                }
-
-                @Override
-                public EndpointConfiguration getEndpointConfiguration() {
-                    return null;
-                }
-
-                private TestContext getTestContext() {
-                    return testContextFactory.getObject();
-                }
-            }
-
-            return new JmsReceiveEndpointAdapter(TestContextFactory.newInstance(applicationContext), inboundChannelEndpoint(configuration, simulatorJmsConfiguration));
-        }
-    }
-
-    @Bean(name = "simulatorJmsEndpoint")
     protected JmsEndpoint jmsInboundEndpoint(ConnectionFactory connectionFactory,
                                       SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         if (isSynchronous(simulatorJmsConfiguration)) {
             JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
             JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
             endpointConfiguration.setDestinationName(getInboundDestination(simulatorJmsConfiguration));
+
+            if (StringUtils.hasText(getReplyDestination(simulatorJmsConfiguration))) {
+                endpointConfiguration.setReplyDestinationName(getReplyDestination(simulatorJmsConfiguration));
+            }
+
             endpointConfiguration.setConnectionFactory(connectionFactory);
 
             return jmsEndpoint;
@@ -142,38 +73,13 @@ public class SimulatorJmsSupport {
         }
     }
 
-    @Bean(name = "simulatorJmsOutboundEndpoint")
-    @DependsOn("simulatorJmsInboundEndpoint")
-    protected Endpoint jmsOutboundEndpoint(ConnectionFactory connectionFactory,
-                                          SimulatorConfigurationProperties configuration,
-                                          SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        if (isSynchronous(simulatorJmsConfiguration)) {
-            return inboundChannelEndpoint(configuration, simulatorJmsConfiguration);
-        } else {
-            JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
-            JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
-            endpointConfiguration.setDestinationName(getOutboundDestination(simulatorJmsConfiguration));
-            endpointConfiguration.setConnectionFactory(connectionFactory);
-
-            return jmsEndpoint;
-        }
-    }
-
-    @Bean
+    @Bean(name = "simulatorJmsEndpointAdapter")
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean
-    @DependsOn("simulatorJmsInboundEndpoint")
+    @Bean(name = "simulatorJmsMappingKeyExtractor")
     public MappingKeyExtractor simulatorMappingKeyExtractor() {
-        SimulatorMappingKeyExtractor simulatorMappingKeyExtractor = new SimulatorMappingKeyExtractor();
-        simulatorMappingKeyExtractor.setDelegate(delegateMappingKeyExtractor());
-        return simulatorMappingKeyExtractor;
-    }
-
-    @Bean
-    public MappingKeyExtractor delegateMappingKeyExtractor() {
         if (configurer != null) {
             return configurer.mappingKeyExtractor();
         }
@@ -184,7 +90,6 @@ public class SimulatorJmsSupport {
     @Bean(name = "simulatorJmsEndpointPoller")
     public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
                                                   ConnectionFactory connectionFactory,
-                                                  SimulatorConfigurationProperties configuration,
                                                   SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         SimulatorEndpointPoller endpointPoller;
 
@@ -194,14 +99,17 @@ public class SimulatorJmsSupport {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setTargetEndpoint(jmsInboundEndpoint(connectionFactory, simulatorJmsConfiguration));
+        endpointPoller.setInboundEndpoint(jmsInboundEndpoint(connectionFactory, simulatorJmsConfiguration));
+
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
 
-        endpointPoller.setEndpointAdapter(endpointAdapter);
+        if (!isSynchronous(simulatorJmsConfiguration)) {
+            endpointAdapter.setHandleResponse(false);
+        }
 
-        endpointAdapter.setResponseEndpointAdapter(inboundEndpointAdapter(applicationContext, configuration, simulatorJmsConfiguration));
+        endpointPoller.setEndpointAdapter(endpointAdapter);
 
         return endpointPoller;
     }
@@ -224,12 +132,12 @@ public class SimulatorJmsSupport {
      *
      * @return
      */
-    protected String getOutboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+    protected String getReplyDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         if (configurer != null) {
-            return configurer.outboundDestination(simulatorJmsConfiguration);
+            return configurer.replyDestination(simulatorJmsConfiguration);
         }
 
-        return simulatorJmsConfiguration.getOutboundDestination();
+        return simulatorJmsConfiguration.getReplyDestination();
     }
 
     /**

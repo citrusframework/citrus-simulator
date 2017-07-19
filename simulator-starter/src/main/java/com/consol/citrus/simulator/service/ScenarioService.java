@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +37,15 @@ public interface ScenarioService {
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
     Long run(String name, List<ScenarioParameter> scenarioParameters);
+
+    /**
+     * Starts a new scenario instance using the collection of supplied parameters.
+     *
+     * @param scenario           the scenario to start
+     * @param name               the name of the scenario to start
+     * @param scenarioParameters the list of parameters to pass to the scenario when starting
+     */
+    Long run(SimulatorScenario scenario, String name, List<ScenarioParameter> scenarioParameters);
 
     /**
      * Returns a list containing the names of all scenarios.

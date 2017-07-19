@@ -43,7 +43,7 @@ public interface SimulatorJmsConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String outboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
+    String replyDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 
     /**
      * Should operate with SOAP envelope. This automatically adds SOAP envelope

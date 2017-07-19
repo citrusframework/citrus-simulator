@@ -17,45 +17,43 @@
 package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.context.TestContext;
-import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.simulator.scenario.*;
 import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorWebServiceScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        startCorrelation(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario.correlation().start()
             .withHandler(this);
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
 
-        scenario()
-            .sendFault(designer)
+        scenario
+            .sendFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                     "</GoodNight>")
             .header("citrus_soap_action", "GoodNight");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");

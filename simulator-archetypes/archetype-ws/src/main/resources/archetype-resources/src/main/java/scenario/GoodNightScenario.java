@@ -29,31 +29,31 @@ import com.consol.citrus.ws.message.SoapMessageHeaders;
 public class GoodNightScenario extends SimulatorWebServiceScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        startCorrelation(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario.correlation().start()
             .withHandler(this);
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
 
-        scenario()
+        scenario
             .sendFault(designer)
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
 
-        scenario()
-            .receive(designer)
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                     "</GoodNight>")
             .header("citrus_soap_action", "GoodNight");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");

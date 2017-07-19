@@ -33,9 +33,9 @@ import java.util.List;
 public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
-    public void start(TestRunner runner) {
-        runner.echo("${title} ${firstname} ${lastname} ");
-        runner.echo("${greeting}");
+    public void start(ScenarioRunner scenario) {
+        scenario.echo("${title} ${firstname} ${lastname} ");
+        scenario.echo("${greeting}");
     }
 
     @Override

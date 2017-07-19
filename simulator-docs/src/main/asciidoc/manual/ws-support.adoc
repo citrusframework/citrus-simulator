@@ -32,16 +32,16 @@ After that we are ready to handle incoming SOAP Web Service calls on the simulat
 public class HelloScenario extends SimulatorWebServiceScenario {
 
     @Override
-    protected void configure() {
-        scenario()
-            .receive()
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>")
             .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
 
-        scenario()
-            .send()
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");
@@ -201,14 +201,14 @@ public class GoodNightScenario extends SimulatorWebServiceScenario {
 
     @Override
     protected void configure() {
-        scenario()
+        scenario
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
             .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
 
-        scenario()
+        scenario
             .sendFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");

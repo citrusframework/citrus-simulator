@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.correlation;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 
 /**
  * @author Christoph Deppisch
@@ -31,4 +32,10 @@ public interface CorrelationHandler {
      * @return
      */
     boolean isHandlerFor(Message message, TestContext context);
+
+    /**
+     * Gets the scenario endpoint that this handler is handling messages for.
+     * @return
+     */
+    ScenarioEndpoint getScenarioEndpoint();
 }

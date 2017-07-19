@@ -92,8 +92,7 @@ public class ScenarioController {
     @RequestMapping(method = RequestMethod.POST, value = "/launch/{name}")
     public Long launchScenario(
             @PathVariable("name") String name,
-            @RequestBody(required = false) List<ScenarioParameter> scenarioParameters
-    ) {
+            @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
         return scenarioService.run(name, scenarioParameters);
     }
 

@@ -16,13 +16,11 @@
 
 package com.consol.citrus.simulator.sample.jms.async.starter;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.jms.SimulatorJmsScenario;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.sample.jms.async.variables.*;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioStarter;
+import com.consol.citrus.simulator.sample.jms.async.scenario.AbstractFaxScenario;
+import com.consol.citrus.simulator.sample.jms.async.variables.*;
+import com.consol.citrus.simulator.scenario.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,21 +31,21 @@ import java.util.List;
  * @author Martin Maher
  */
 @Scenario("UpdateFaxStatus")
-public class StatusUpdateStarter extends SimulatorJmsScenario implements ScenarioStarter {
+public class StatusUpdateStarter extends AbstractFaxScenario implements ScenarioStarter {
 
     @Override
-    public void run(TestDesigner designer) {
-        designer.echo("Sending Status Message:  ${status}");
+    public void run(ScenarioDesigner scenario) {
+        scenario.echo("Sending Status Message:  ${status}");
 
-        scenario()
-                .send(designer)
-                .payload("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
-                            "<referenceId>${referenceId}</referenceId>" +
-                            "<status>${status}</status>" +
-                            "<statusMessage>${statusMessage}</statusMessage>" +
-                        "</StatusUpdateMessage>");
+        scenario
+            .send(getStatusEndpoint())
+            .payload("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
+                        "<referenceId>${referenceId}</referenceId>" +
+                        "<status>${status}</status>" +
+                        "<statusMessage>${statusMessage}</statusMessage>" +
+                    "</StatusUpdateMessage>");
 
-        designer.echo("Done");
+        scenario.echo("Done");
     }
 
     @Override

@@ -13,7 +13,7 @@ the scenario is a normal Java class that implements following interface _Simulat
 package com.consol.citrus.simulator.scenario;
 
 public interface SimulatorScenario {
-    ScenarioEndpoint scenario();
+    ScenarioEndpoint scenario;
 }
 ----
 
@@ -32,15 +32,15 @@ Each of these base scenario classes provide comfortable access to the endpoint s
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");
@@ -60,16 +60,16 @@ So we could also extract dynamic values from the request in order to reuse those
 public class HelloScenario extends SimulatorRestScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer)
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint())
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "<user>@ignore@</user>" +
                      "</Hello>")
             .extractFromPayload("/Hello/user", "userName");
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "<text>Hi there ${userName}!</text>" +
                      "</HelloResponse>");

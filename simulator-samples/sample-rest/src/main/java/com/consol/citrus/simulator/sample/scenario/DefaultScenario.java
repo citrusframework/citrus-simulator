@@ -16,23 +16,21 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.dsl.design.TestDesigner;
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("Default")
-public class DefaultScenario extends SimulatorRestScenario {
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(TestDesigner designer) {
-        scenario()
-            .receive(designer);
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive(scenario.inboundEndpoint());
 
-        scenario()
-            .send(designer)
+        scenario
+            .send(scenario.replyEndpoint())
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

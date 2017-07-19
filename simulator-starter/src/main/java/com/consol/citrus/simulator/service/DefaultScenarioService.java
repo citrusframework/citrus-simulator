@@ -17,17 +17,15 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.Citrus;
+import com.consol.citrus.annotations.CitrusAnnotations;
 import com.consol.citrus.context.TestContext;
-import com.consol.citrus.dsl.design.DefaultTestDesigner;
 import com.consol.citrus.dsl.design.TestDesigner;
 import com.consol.citrus.dsl.endpoint.Executable;
-import com.consol.citrus.dsl.runner.DefaultTestRunner;
 import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.scenario.ScenarioStarter;
-import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.consol.citrus.simulator.scenario.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,10 +82,14 @@ public class DefaultScenarioService implements ScenarioService {
 
     @Override
     public final Long run(String name, List<ScenarioParameter> scenarioParameters) {
+        return run(applicationContext.getBean(name, SimulatorScenario.class), name, scenarioParameters);
+    }
+
+    @Override
+    public final Long run(SimulatorScenario scenario, String name, List<ScenarioParameter> scenarioParameters) {
         log.info(String.format("Starting scenario : %s", name));
 
         ScenarioExecution es = activityService.createExecutionScenario(name, scenarioParameters);
-        SimulatorScenario scenario = applicationContext.getBean(name, SimulatorScenario.class);
 
         prepare(scenario);
 
@@ -126,23 +128,27 @@ public class DefaultScenarioService implements ScenarioService {
                         }
 
                         Class<?> parameterType = m.getParameterTypes()[0];
-                        if (parameterType.equals(TestDesigner.class)) {
-                            TestDesigner designer = new DefaultTestDesigner(citrus.getApplicationContext(), context);
+                        if (parameterType.equals(ScenarioDesigner.class)) {
+                            ScenarioDesigner designer = new ScenarioDesigner(scenario.getScenarioEndpoint(), citrus.getApplicationContext(), context);
                             if (scenarioParameters != null) {
                                 scenarioParameters.forEach(p -> designer.variable(p.getName(), p.getValue()));
                             }
 
                             designer.variable(ScenarioExecution.EXECUTION_ID, executionId);
 
+                            CitrusAnnotations.injectAll(scenario, citrus, context);
+
                             ReflectionUtils.invokeMethod(m, scenario, designer);
                             citrus.run(designer.getTestCase(), context);
-                        } else if (parameterType.equals(TestRunner.class)) {
-                            TestRunner runner = new DefaultTestRunner(citrus.getApplicationContext(), context);
+                        } else if (parameterType.equals(ScenarioRunner.class)) {
+                            ScenarioRunner runner = new ScenarioRunner(scenario.getScenarioEndpoint(), citrus.getApplicationContext(), context);
                             if (scenarioParameters != null) {
                                 scenarioParameters.forEach(p -> runner.variable(p.getName(), p.getValue()));
                             }
 
                             runner.variable(ScenarioExecution.EXECUTION_ID, executionId);
+
+                            CitrusAnnotations.injectAll(scenario, citrus, context);
 
                             try {
                                 runner.start();

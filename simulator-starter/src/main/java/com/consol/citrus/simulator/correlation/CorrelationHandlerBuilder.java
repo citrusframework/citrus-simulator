@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.correlation;
 
 import com.consol.citrus.TestAction;
 import com.consol.citrus.dsl.builder.AbstractTestActionBuilder;
+import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 
 /**
  * @author Christoph Deppisch
@@ -27,25 +28,26 @@ public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCo
     /** Stop correlation action */
     private final StopCorrelationHandlerAction stopCorrelationAction = new StopCorrelationHandlerAction();
 
+    private ScenarioEndpoint scenarioEndpoint;
+
     /**
      * Default constructor with correlation handler.
-     * @param handler
      */
-    public CorrelationHandlerBuilder(CorrelationHandler handler) {
+    public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint) {
         super(new StartCorrelationHandlerAction());
-        withHandler(handler);
+        this.scenarioEndpoint = scenarioEndpoint;
     }
 
     public CorrelationHandlerBuilder onHeader(String headerName, String value) {
-        return withHandler(new HeaderMappingCorrelationHandler(headerName, value));
+        return withHandler(new HeaderMappingCorrelationHandler(scenarioEndpoint, headerName, value));
     }
 
     public CorrelationHandlerBuilder onMessageType(String type) {
-        return withHandler(new MessageTypeCorrelationHandler(type));
+        return withHandler(new MessageTypeCorrelationHandler(scenarioEndpoint, type));
     }
 
     public CorrelationHandlerBuilder onPayload(String expression, String value) {
-        return withHandler(new XPathPayloadCorrelationHandler(expression, value));
+        return withHandler(new XPathPayloadCorrelationHandler(scenarioEndpoint, expression, value));
     }
 
     public CorrelationHandlerBuilder withHandler(CorrelationHandler handler) {

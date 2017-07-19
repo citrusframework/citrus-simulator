@@ -25,11 +25,11 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private String inboundDestination = "Citrus.Simulator.Inbound";
 
     /**
-     * The JMS outbound destination name. The simulator sends asynchronous messages to this destination.
+     * The JMS reply destination name. The simulator sends asynchronous messages to this destination.
      */
-    private static final String SIMULATOR_OUTBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.outbound.destination";
-    private static final String SIMULATOR_OUTBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_OUTBOUND_DESTINATION";
-    private String outboundDestination = "Citrus.Simulator.Outbound";
+    private static final String SIMULATOR_REPLY_DESTINATION_PROPERTY = "citrus.simulator.jms.reply.destination";
+    private static final String SIMULATOR_REPLY_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_REPLY_DESTINATION";
+    private String replyDestination = "";
 
     /**
      * En-/Disable JMS synchronous communication.
@@ -53,7 +53,7 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     @PostConstruct
     private void loadProperties() {
         inboundDestination = env.getProperty(SIMULATOR_INBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_INBOUND_DESTINATION_ENV, inboundDestination));
-        outboundDestination = env.getProperty(SIMULATOR_OUTBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_DESTINATION_ENV, outboundDestination));
+        replyDestination = env.getProperty(SIMULATOR_REPLY_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_REPLY_DESTINATION_ENV, replyDestination));
         synchronous = Boolean.valueOf(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
         useSoap = Boolean.valueOf(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
 
@@ -79,21 +79,21 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     }
 
     /**
-     * Gets the outboundDestination.
+     * Gets the replyDestination.
      *
      * @return
      */
-    public String getOutboundDestination() {
-        return outboundDestination;
+    public String getReplyDestination() {
+        return replyDestination;
     }
 
     /**
-     * Sets the outboundDestination.
+     * Sets the replyDestination.
      *
-     * @param outboundDestination
+     * @param replyDestination
      */
-    public void setOutboundDestination(String outboundDestination) {
-        this.outboundDestination = outboundDestination;
+    public void setReplyDestination(String replyDestination) {
+        this.replyDestination = replyDestination;
     }
 
     /**
@@ -136,7 +136,7 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "inboundDestination='" + inboundDestination + '\'' +
-                ", outboundDestination='" + outboundDestination + '\'' +
+                ", replyDestination='" + replyDestination + '\'' +
                 ", synchronous='" + synchronous + '\'' +
                 ", useSoap='" + useSoap + '\'' +
                 '}';

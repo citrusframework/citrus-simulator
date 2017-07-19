@@ -19,11 +19,12 @@ package com.consol.citrus.simulator.correlation;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 
 /**
  * @author Christoph Deppisch
  */
-public class MessageTypeCorrelationHandler implements CorrelationHandler {
+public class MessageTypeCorrelationHandler extends AbstractCorrelationHandler {
 
     private XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
     private final String value;
@@ -31,9 +32,11 @@ public class MessageTypeCorrelationHandler implements CorrelationHandler {
     /**
      * Default constructor.
      *
+     * @param scenarioEndpoint
      * @param value
      */
-    public MessageTypeCorrelationHandler(String value) {
+    public MessageTypeCorrelationHandler(ScenarioEndpoint scenarioEndpoint, String value) {
+        super(scenarioEndpoint);
         this.value = value;
     }
 

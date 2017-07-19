@@ -38,8 +38,8 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
     }
 
     @Override
-    public String outboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        return simulatorJmsConfiguration.getOutboundDestination();
+    public String replyDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.getReplyDestination();
     }
 
     @Override
