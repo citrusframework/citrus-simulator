@@ -73,7 +73,12 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     @Override
     public Message receive(TestContext context, long timeout) {
         try {
-            return channel.poll(timeout, TimeUnit.MILLISECONDS);
+            Message message = channel.poll(timeout, TimeUnit.MILLISECONDS);
+            if (message == null) {
+                throw new SimulatorException("Failed to receive scenario inbound message");
+            }
+
+            return message;
         } catch (InterruptedException e) {
             throw new SimulatorException(e);
         }
