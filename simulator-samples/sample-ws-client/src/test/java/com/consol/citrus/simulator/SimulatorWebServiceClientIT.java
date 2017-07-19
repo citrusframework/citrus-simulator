@@ -24,6 +24,7 @@ import com.consol.citrus.simulator.sample.variables.Name;
 import com.consol.citrus.ws.server.WebServiceServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.testng.annotations.Test;
 
@@ -45,7 +46,6 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
     @Qualifier("simulatorRestEndpoint")
     protected HttpClient restEndpoint;
 
-
     /**
      * Sends a hello request to server expecting positive response message.
      */
@@ -59,6 +59,11 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
             .post("/api/scenario/launch/HelloStarter")
             .contentType("application/json")
             .payload(asJson(name.asScenarioParameter()));
+
+        http()
+            .client(restEndpoint)
+            .receive()
+            .response(HttpStatus.OK);
 
         receive(soapServer)
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
