@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import org.springframework.jms.connection.SingleConnectionFactory;
 
 import javax.jms.ConnectionFactory;
@@ -55,5 +56,10 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
     @Override
     public MappingKeyExtractor mappingKeyExtractor() {
         return new XPathPayloadMappingKeyExtractor();
+    }
+
+    @Override
+    public Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
+        return simulatorConfiguration.getExceptionDelay();
     }
 }

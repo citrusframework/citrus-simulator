@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 
 /**
  * @author Christoph Deppisch
@@ -34,4 +35,8 @@ public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceC
         return new XPathPayloadMappingKeyExtractor();
     }
 
+    @Override
+    public Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
+        return simulatorConfiguration.getExceptionDelay();
+    }
 }

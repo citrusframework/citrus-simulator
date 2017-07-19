@@ -16,10 +16,12 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.channel.*;
+import com.consol.citrus.channel.ChannelSyncEndpoint;
+import com.consol.citrus.channel.ChannelSyncEndpointConfiguration;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -63,7 +65,8 @@ public class SimulatorEndpointComponentSupport {
     }
 
     @Bean(name = "simulatorEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
+                                                  SimulatorConfigurationProperties simulatorConfiguration) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -77,8 +80,23 @@ public class SimulatorEndpointComponentSupport {
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
 
+        endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
+
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
         return endpointPoller;
+    }
+
+    /**
+     * Gets the endpoint polling exception delay.
+     * @param simulatorConfiguration
+     * @return
+     */
+    protected Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
+        if (configurer != null) {
+            return configurer.exceptionDelay(simulatorConfiguration);
+        }
+
+        return simulatorConfiguration.getExceptionDelay();
     }
 }

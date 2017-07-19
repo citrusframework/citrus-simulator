@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.annotation;
 
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 
 /**
  * @author Christoph Deppisch
@@ -29,4 +30,12 @@ public interface SimulatorConfigurer {
      * @return
      */
     MappingKeyExtractor mappingKeyExtractor();
+
+    /**
+     * Gets the delay in milliseconds to wait after uncategorized exceptions.
+     * @param simulatorConfiguration
+     *
+     * @return
+     */
+    Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration);
 }

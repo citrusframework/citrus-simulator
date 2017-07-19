@@ -71,12 +71,29 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     private boolean autoStart = true;
 
+    /**
+     * Polling delay after uncategorized exception occurred.
+     */
+    private long exceptionDelay = 10000L;
+
     @Override
     public void run() {
         LOG.info(String.format("Simulator endpoint waiting for requests on endpoint '%s'", inboundEndpoint.getName()));
 
+        long delay = 0L;
         while (running) {
             try {
+
+                if (delay > 0) {
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException e) {
+                        LOG.error("Failed to delay after uncategorized exception", e);
+                    } finally {
+                        delay = 0;
+                    }
+                }
+
                 TestContext context = testContextFactory.getObject();
                 Message message = inboundEndpoint.createConsumer().receive(context, inboundEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
@@ -99,6 +116,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                     LOG.debug(e.getMessage(), e);
                 }
             } catch (Exception e) {
+                delay = exceptionDelay;
                 LOG.error("Unexpected error while processing", e.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(e.getMessage(), e);
@@ -182,5 +200,23 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     public void setAutoStart(boolean autoStart) {
         this.autoStart = autoStart;
+    }
+
+    /**
+     * Sets the exceptionDelay.
+     *
+     * @param exceptionDelay
+     */
+    public void setExceptionDelay(long exceptionDelay) {
+        this.exceptionDelay = exceptionDelay;
+    }
+
+    /**
+     * Gets the exceptionDelay.
+     *
+     * @return
+     */
+    public long getExceptionDelay() {
+        return exceptionDelay;
     }
 }

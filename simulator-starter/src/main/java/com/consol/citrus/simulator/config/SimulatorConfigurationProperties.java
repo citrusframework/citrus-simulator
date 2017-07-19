@@ -53,6 +53,11 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
     private boolean templateValidation = true;
 
+    /** Default delay in milliseconds to wait after uncategorized exceptions */
+    private static final String SIMULATOR_EXCEPTION_DELAY_PROPERTY = "citrus.simulator.exception.delay";
+    private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
+    private Long exceptionDelay = 5000L;
+
     /**
      * The Spring application context environment
      */
@@ -64,6 +69,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         defaultScenario = env.getProperty(SIMULATOR_SCENARIO_PROPERTY, env.getProperty(SIMULATOR_SCENARIO_ENV, defaultScenario));
         defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
         templateValidation = Boolean.valueOf(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
+        exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }
@@ -140,12 +146,31 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         return defaultTimeout;
     }
 
+    /**
+     * Gets the exceptionDelay.
+     *
+     * @return
+     */
+    public Long getExceptionDelay() {
+        return exceptionDelay;
+    }
+
+    /**
+     * Sets the exceptionDelay.
+     *
+     * @param exceptionDelay
+     */
+    public void setExceptionDelay(Long exceptionDelay) {
+        this.exceptionDelay = exceptionDelay;
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "templatePath='" + templatePath + '\'' +
                 ", defaultScenario='" + defaultScenario + '\'' +
                 ", defaultTimeout=" + defaultTimeout +
+                ", exceptionDelay=" + exceptionDelay +
                 ", templateValidation=" + templateValidation +
                 '}';
     }

@@ -19,6 +19,7 @@ package com.consol.citrus.simulator.annotation;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.*;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -90,6 +91,7 @@ public class SimulatorJmsSupport {
     @Bean(name = "simulatorJmsEndpointPoller")
     public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
                                                   ConnectionFactory connectionFactory,
+                                                  SimulatorConfigurationProperties simulatorConfiguration,
                                                   SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
         SimulatorEndpointPoller endpointPoller;
 
@@ -108,6 +110,8 @@ public class SimulatorJmsSupport {
         if (!isSynchronous(simulatorJmsConfiguration)) {
             endpointAdapter.setHandleResponse(false);
         }
+
+        endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
 
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
@@ -164,5 +168,18 @@ public class SimulatorJmsSupport {
         }
 
         return simulatorJmsConfiguration.isUseSoap();
+    }
+
+    /**
+     * Gets the endpoint polling exception delay.
+     * @param simulatorConfiguration
+     * @return
+     */
+    protected Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
+        if (configurer != null) {
+            return configurer.exceptionDelay(simulatorConfiguration);
+        }
+
+        return simulatorConfiguration.getExceptionDelay();
     }
 }
