@@ -25,8 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @RestController
-@CrossOrigin(origins = "*")
-@RequestMapping("/api/activity")
+@RequestMapping("api/activity")
 public class ActivityController {
 
     @Autowired

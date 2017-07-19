@@ -9,7 +9,7 @@ export class AppInfoService {
     constructor(private http:Http) {
     }
 
-    private serviceUrl = "manage/info";
+    private serviceUrl = "api/manage/info";
 
     cachedSimulator: Simulator;
     cachedObservable: Observable<Simulator>;

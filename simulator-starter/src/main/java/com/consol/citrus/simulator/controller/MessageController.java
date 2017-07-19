@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Date;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/message")
 public class MessageController {
 
