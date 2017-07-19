@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from "@angular/router";
 import {SummaryService} from '../../services/summary-service';
 import {Summary} from '../../model/scenario';
@@ -10,13 +10,15 @@ import {Simulator} from "../../model/simulator";
     templateUrl: 'status.html',
     styleUrls: ['status.css'],
 })
-export class StatusComponent implements OnInit {
+export class StatusComponent implements OnInit, OnDestroy {
 
     simulator: Simulator;
 
     summary: Summary;
     active: number;
     errorMessage: string;
+
+    autoRefreshId: number;
 
     constructor(
         private router: Router,
@@ -28,6 +30,12 @@ export class StatusComponent implements OnInit {
         this.getSimulatorInfo();
         this.getSummary();
         this.getActive();
+
+        this.autoRefreshId = window.setInterval(() => { this.refreshStatus() }, 2000);
+    }
+
+    ngOnDestroy(): void {
+        window.clearInterval(this.autoRefreshId);
     }
 
     getSimulatorInfo() {
@@ -58,7 +66,7 @@ export class StatusComponent implements OnInit {
         this.router.navigate(['activity', { status: status}]);
     }
 
-    clearStatusInformation() {
+    clearStatus() {
         this.summaryService.resetSummary()
             .subscribe(
                 summary => this.summary = summary,
@@ -66,7 +74,8 @@ export class StatusComponent implements OnInit {
             );
     }
 
-    refreshStatusInformation() {
+    refreshStatus() {
+        this.getActive();
         this.getSummary();
     }
 

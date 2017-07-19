@@ -1,7 +1,7 @@
 <h1 class="page-header"><i class="fa fa-envelope-o"></i> Messages
     <div class="pull-right">
         <span class="clickable" title="Refresh Messages" (click)="getMessages()"><i class="fa fa-refresh"></i></span>
-        <span class="clickable" title="Clear All Messages" (click)="clearAllMessages()"><i class="fa fa-recycle"></i></span>
+        <span class="clickable" title="Clear All Messages" (click)="clearMessages()"><i class="fa fa-recycle"></i></span>
     </div>
 </h1>
 
@@ -13,6 +13,40 @@
     </div>
 </div>
 
-<div class="table-responsive space-top-30">
+<div class="navigation space-top-30">
+    <div class="btn-group pull-right">
+        <button type="button" class="btn btn-default" style="min-width: 4em;">{{pageSize}}</button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
+        <ul class="dropdown-menu">
+            <li><a name="page_size">Page size</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a name="page_size_10" (click)="pageSize = 10" class="clickable">10</a></li>
+            <li><a name="page_size_25" (click)="pageSize = 25" class="clickable">25</a></li>
+            <li><a name="page_size_50" (click)="pageSize = 50" class="clickable">50</a></li>
+            <li><a name="page_size_100" (click)="pageSize = 100" class="clickable">100</a></li>
+            <li><a name="page_size_250" (click)="pageSize = 250" class="clickable">250</a></li>
+            <li><a name="page_size_500" (click)="pageSize = 500" class="clickable">500</a></li>
+            <li><a name="page_size_1000" (click)="pageSize = 1000" class="clickable">1000</a></li>
+        </ul>
+    </div>
+
+    <nav aria-label="Pages">
+        <ul class="pagination">
+            <li>
+                <a name="prev-step" aria-label="Previous" (click)="prev()" class="clickable">
+                    <span aria-hidden="true"><i class="fa fa-caret-left"></i></span>
+                </a>
+            </li>
+            <li><span><b>{{(page + 1)}}</b></span></li>
+            <li>
+                <a name="next-step" aria-label="Next" (click)="next()" class="clickable">
+                    <span aria-hidden="true"><i class="fa fa-caret-right"></i> </span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="table-responsive">
     <message-list [messages]="messages | messageFilter : inputValue : includeInbound : includeOutbound"></message-list>
 </div>

@@ -69,7 +69,7 @@ public class MessageService {
 
         Integer calcSize = size;
         if (calcSize == null) {
-            calcSize = 10;
+            calcSize = 25;
         }
 
         Pageable pageable = new PageRequest(calcPage, calcSize);

@@ -25,11 +25,11 @@
 
 .simulator-result .badge {
     display: inline-block;
-    font-size: 4em;
-    min-width: 2.5em;
+    font-size: 2em;
+    min-width: 5em;
     border-radius: 50%;
-    padding: 33px 35px;
-    border-width: 7px;
+    padding: 45px 35px;
+    border-width: 9px;
     border-style: solid;
     color: #404040;
     background-color: #fff;

@@ -12,43 +12,21 @@ export class MessageService {
 
     private serviceUrl = 'api/message';
 
-    getMessages(): Observable<Message[]> {
-        return this.retrieveMessages();
+    getMessages(page: number, pageSize: number): Observable<Message[]> {
+        return this.http.get(this.serviceUrl + "?page=" + page + "&size=" + pageSize)
+            .map(this.extractMessageData)
+            .catch(this.handleError);
     }
 
     getMessageById(id: number): Observable<Message> {
-        return this.retrieveMessageById(id);
+        return this.http.get(this.serviceUrl + "/" + id)
+            .map(this.extractMessage)
+            .catch(this.handleError);
     }
 
     clearMessages(): Observable<any> {
-        return this.deleteAllMessages();
-    }
-
-    private retrieveMessages(): Observable<Message[]> {
-        return this.http.get(this.serviceUrl)
-            .map(
-                this.extractMessageData
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private retrieveMessageById(id: number): Observable<Message> {
-        return this.http.get(this.serviceUrl + "/" + id)
-            .map(
-                this.extractMessage
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private deleteAllMessages(): Observable<any> {
         return this.http.delete(this.serviceUrl)
-            .catch(
-                this.handleError
-            );
+            .catch(this.handleError);
     }
 
     private extractMessageData(res: Response) {

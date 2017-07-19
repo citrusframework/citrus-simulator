@@ -12,71 +12,33 @@ export class ActivityService {
 
     private serviceUrl = 'api/activity';
 
-    getScenarioExecutions(): Observable<ScenarioExecution[]> {
-        return this.retrieveScenarioExecutions();
+    getScenarioExecutions(page: number, pageSize: number): Observable<ScenarioExecution[]> {
+        return this.http.get(this.serviceUrl + "?page=" + page + "&size=" + pageSize)
+            .map(this.extractScenarioExecutionData)
+            .catch(this.handleError);
     }
 
     getScenarioExecutionById(id: number): Observable<ScenarioExecution> {
-        return this.retrieveScenarioExecutionById(id);
+        return this.http.get(this.serviceUrl + "/" + id)
+            .map(this.extractScenarioExecution)
+            .catch(this.handleError);
     }
 
     getScenarioExecutionsByScenarioName(name: string): Observable<ScenarioExecution[]> {
-        return this.retrieveScenarioExecutionByName(name);
+        return this.http.get(this.serviceUrl + "/scenario/" + name)
+            .map(this.extractScenarioExecutionData)
+            .catch(this.handleError);
     }
 
     getScenarioExecutionsByExecutionStatus(status: string): Observable<ScenarioExecution[]> {
-        return this.retrieveScenarioExecutionByStatus(status);
+        return this.http.get(this.serviceUrl + "/status/" + status)
+            .map(this.extractScenarioExecutionData)
+            .catch(this.handleError);
     }
 
     clearScenarioExecutions(): Observable<any> {
-        return this.deleteAllScenarioExecutions();
-    }
-
-    private retrieveScenarioExecutions(): Observable<ScenarioExecution[]> {
-        return this.http.get(this.serviceUrl)
-            .map(
-                this.extractScenarioExecutionData
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private retrieveScenarioExecutionById(id: number): Observable<ScenarioExecution> {
-        return this.http.get(this.serviceUrl + "/" + id)
-            .map(
-                this.extractScenarioExecution
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private retrieveScenarioExecutionByName(name: string): Observable<ScenarioExecution[]> {
-        return this.http.get(this.serviceUrl + "/scenario/" + name)
-            .map(
-                this.extractScenarioExecutionData
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private retrieveScenarioExecutionByStatus(status: string): Observable<ScenarioExecution[]> {
-        return this.http.get(this.serviceUrl + "/status/" + status)
-            .map(
-                this.extractScenarioExecutionData
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private deleteAllScenarioExecutions(): Observable<any> {
         return this.http.delete(this.serviceUrl)
-            .catch(
-                this.handleError
-            );
+            .catch(this.handleError);
     }
 
     private extractScenarioExecutionData(res: Response) {

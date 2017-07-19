@@ -28,7 +28,7 @@ export class MessageListComponent {
         this.router.navigate(['message', this.selectedMessage.messageId]);
     }
 
-    clearAllMessages() {
+    clearMessages() {
         console.log("TODO");
     }
 

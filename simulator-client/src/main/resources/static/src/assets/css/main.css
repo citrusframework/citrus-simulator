@@ -31,6 +31,15 @@ body {
     margin-top: 30px;
 }
 
+div.navigation {
+    display: block;
+    text-align: center;
+}
+
+ul.pagination {
+    margin-top: 5px;
+}
+
 /** Tables */
 
 .table > thead > tr > th {

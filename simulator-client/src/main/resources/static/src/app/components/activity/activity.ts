@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from "@angular/core";
+import {Component, OnInit, AfterViewInit, OnDestroy} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {ActivityService} from "../../services/activity-service";
 import {ScenarioExecution} from "../../model/scenario";
@@ -8,7 +8,7 @@ import {ScenarioExecution} from "../../model/scenario";
     templateUrl: 'activity.html',
     styleUrls: ['activity.css'],
 })
-export class ActivityComponent implements OnInit, AfterViewInit {
+export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
     scenarioExecutions: ScenarioExecution[];
     errorMessage: string;
 
@@ -19,6 +19,10 @@ export class ActivityComponent implements OnInit, AfterViewInit {
     successState: string = 'active';
     failedState: string = 'active';
     activeState: string = 'active';
+
+    pageSize = 25;
+    page = 0;
+    autoRefreshId: number;
 
     constructor(
         private activityService: ActivityService,
@@ -40,13 +44,21 @@ export class ActivityComponent implements OnInit, AfterViewInit {
                 this.toggleFailed();
             }
         }
+
+        this.autoRefreshId = window.setInterval(() => { if (this.page == 0 && this.pageSize < 250) {
+            this.getActivity();
+        } }, 2000);
+    }
+
+    ngOnDestroy(): void {
+        window.clearInterval(this.autoRefreshId);
     }
 
     ngAfterViewInit(): void {
     }
 
     getActivity() {
-        this.activityService.getScenarioExecutions()
+        this.activityService.getScenarioExecutions(this.page, this.pageSize)
             .subscribe(
                 scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
                 error => this.errorMessage = <any>error
@@ -58,6 +70,20 @@ export class ActivityComponent implements OnInit, AfterViewInit {
             success => this.getActivity(),
             error => this.errorMessage = <any>error
         );
+    }
+
+    prev() {
+        if (this.page > 0) {
+            this.page--;
+            this.getActivity();
+        }
+    }
+
+    next() {
+        if (this.scenarioExecutions && this.scenarioExecutions.length) {
+            this.page++;
+            this.getActivity();
+        }
     }
 
     toggleSuccess() {
