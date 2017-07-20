@@ -16,52 +16,16 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.correlation.CorrelationHandler;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * @author Christoph Deppisch
  */
-public abstract class AbstractSimulatorScenario implements SimulatorScenario, CorrelationHandler, ApplicationContextAware {
-
-    /** Spring bean application context */
-    private ApplicationContext applicationContext;
+public abstract class AbstractSimulatorScenario implements SimulatorScenario, CorrelationHandler {
 
     /** Scenario endpoint */
     private ScenarioEndpoint scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
 
-    @Override
-    public boolean isHandlerFor(Message message, TestContext context) {
-        return false;
-    }
-
-    /**
-     * Sets the applicationContext.
-     *
-     * @param applicationContext
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    /**
-     * Gets the applicationContext.
-     *
-     * @return
-     */
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    /**
-     * Gets the scenarioEndpoint.
-     *
-     * @return
-     */
     @Override
     public ScenarioEndpoint getScenarioEndpoint() {
         return scenarioEndpoint;

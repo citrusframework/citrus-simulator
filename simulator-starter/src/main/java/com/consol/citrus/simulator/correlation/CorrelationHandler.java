@@ -31,7 +31,9 @@ public interface CorrelationHandler {
      * @param context
      * @return
      */
-    boolean isHandlerFor(Message message, TestContext context);
+    default boolean isHandlerFor(Message message, TestContext context) {
+        return false;
+    }
 
     /**
      * Gets the scenario endpoint that this handler is handling messages for.
