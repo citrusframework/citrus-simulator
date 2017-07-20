@@ -62,15 +62,8 @@ public class ScenarioRunner extends DefaultTestRunner {
      * Gets the scenario inbound endpoint.
      * @return
      */
-    public ScenarioEndpoint inboundEndpoint() {
+    public ScenarioEndpoint scenarioEndpoint() {
         return scenarioEndpoint;
     }
 
-    /**
-     * Gets the scenario reply endpoint.
-     * @return
-     */
-    public ScenarioEndpoint replyEndpoint() {
-        return scenarioEndpoint;
-    }
 }

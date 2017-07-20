@@ -31,7 +31,7 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
             .extractFromPayload(REFERENCE_ID_XPATH, REFERENCE_ID_VAR);
 
@@ -49,7 +49,7 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
             );
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .xpath(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
             .xpath(REFERENCE_ID_XPATH, REFERENCE_ID_PH);
 

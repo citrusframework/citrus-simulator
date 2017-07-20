@@ -27,7 +27,7 @@ public class DefaultScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("");
     }
 }

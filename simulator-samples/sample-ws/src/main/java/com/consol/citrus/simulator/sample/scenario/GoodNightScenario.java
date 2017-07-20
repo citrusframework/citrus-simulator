@@ -34,7 +34,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .withHandler(this);
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
@@ -46,14 +46,14 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .faultString("No sleep for me!");
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                     "</GoodNight>")
             .header("citrus_soap_action", "GoodNight");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");

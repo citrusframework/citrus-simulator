@@ -28,10 +28,10 @@ public class DefaultScenario extends SimulatorRestScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint());
+            .receive();
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

@@ -31,13 +31,13 @@ public class GoodByeScenario extends SimulatorRestScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

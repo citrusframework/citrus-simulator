@@ -29,7 +29,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
@@ -39,18 +39,18 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .selector("correlationId = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

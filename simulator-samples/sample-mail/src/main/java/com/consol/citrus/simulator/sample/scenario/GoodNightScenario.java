@@ -29,7 +29,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
@@ -46,14 +46,14 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .onMessageType("mail-message");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +
                     "</mail-response>");
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
@@ -67,7 +67,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
                     "</mail-message>");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

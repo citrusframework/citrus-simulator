@@ -27,13 +27,13 @@ public class HelloScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
                      "</HelloResponse>");

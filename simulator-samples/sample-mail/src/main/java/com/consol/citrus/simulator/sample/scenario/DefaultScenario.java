@@ -27,10 +27,10 @@ public class DefaultScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive(scenario.inboundEndpoint());
+            .receive();
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +

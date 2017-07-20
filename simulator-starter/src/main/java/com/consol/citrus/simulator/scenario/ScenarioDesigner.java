@@ -2,7 +2,7 @@ package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.actions.DelegatingTestAction;
-import com.consol.citrus.dsl.builder.SoapServerFaultResponseActionBuilder;
+import com.consol.citrus.dsl.builder.*;
 import com.consol.citrus.dsl.design.DefaultTestDesigner;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.correlation.CorrelationManager;
@@ -41,6 +41,24 @@ public class ScenarioDesigner extends DefaultTestDesigner {
     }
 
     /**
+     * Receive message from scenario endpoint.
+     * @return
+     */
+    public ReceiveMessageBuilder receive() {
+        return (ReceiveMessageBuilder) receive(scenarioEndpoint)
+                .description("Receive scenario request");
+    }
+
+    /**
+     * Send message from scenario endpoint.
+     * @return
+     */
+    public SendMessageBuilder send() {
+        return (SendMessageBuilder) send(scenarioEndpoint)
+                .description("Send scenario response");
+    }
+
+    /**
      * Sends SOAP fault as scenario response.
      * @return
      */
@@ -58,15 +76,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
      * Gets the scenario inbound endpoint.
      * @return
      */
-    public ScenarioEndpoint inboundEndpoint() {
-        return scenarioEndpoint;
-    }
-
-    /**
-     * Gets the scenario reply endpoint.
-     * @return
-     */
-    public ScenarioEndpoint replyEndpoint() {
+    public ScenarioEndpoint scenarioEndpoint() {
         return scenarioEndpoint;
     }
 }

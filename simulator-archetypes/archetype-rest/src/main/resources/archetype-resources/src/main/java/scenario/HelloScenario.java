@@ -33,7 +33,7 @@ public class HelloScenario extends SimulatorRestScenario {
         echo("Simulator: ${simulator.name}");
 
         scenario
-            .receive(scenario.inboundEndpoint())
+            .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     "Say Hello!" +
                     "</Hello>")
@@ -42,7 +42,7 @@ public class HelloScenario extends SimulatorRestScenario {
         echo("Received greeting: ${greeting}");
 
         scenario
-            .send(scenario.replyEndpoint())
+            .send()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     "Hi there!" +
                     "</HelloResponse>");
