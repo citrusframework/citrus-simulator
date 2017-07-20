@@ -17,7 +17,6 @@
 package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
-import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -28,13 +27,15 @@ public class HelloScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .soap()
             .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
                      "</Hello>")
-            .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
+            .soapAction("Hello");
 
         scenario
+            .soap()
             .send()
             .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +

@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -32,7 +33,9 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .http()
             .receive()
+            .post()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
@@ -42,18 +45,24 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
         scenario
+            .http()
             .receive()
+            .post()
             .selector("x-correlationid = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

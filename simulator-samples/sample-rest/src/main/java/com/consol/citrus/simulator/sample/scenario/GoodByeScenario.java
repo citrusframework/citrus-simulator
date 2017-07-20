@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -30,13 +31,17 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .http()
             .receive()
+            .post()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");

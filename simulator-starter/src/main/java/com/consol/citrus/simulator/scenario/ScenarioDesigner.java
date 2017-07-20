@@ -1,11 +1,13 @@
 package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.context.TestContext;
-import com.consol.citrus.dsl.actions.DelegatingTestAction;
-import com.consol.citrus.dsl.builder.*;
+import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
+import com.consol.citrus.dsl.builder.SendMessageBuilder;
 import com.consol.citrus.dsl.design.DefaultTestDesigner;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.correlation.CorrelationManager;
+import com.consol.citrus.simulator.http.HttpScenarioActionBuilder;
+import com.consol.citrus.simulator.ws.SoapScenarioActionBuilder;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -58,18 +60,22 @@ public class ScenarioDesigner extends DefaultTestDesigner {
                 .description("Send scenario response");
     }
 
-    /**
-     * Sends SOAP fault as scenario response.
-     * @return
-     */
-    public SoapServerFaultResponseActionBuilder sendFault() {
-        SoapServerFaultResponseActionBuilder actionBuilder = (SoapServerFaultResponseActionBuilder)
-                new SoapServerFaultResponseActionBuilder(new DelegatingTestAction<>(), scenarioEndpoint)
-                        .withApplicationContext(getApplicationContext())
-                        .description("Sending SOAP fault");
+    @Override
+    public HttpScenarioActionBuilder http() {
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint)
+                .withApplicationContext(getApplicationContext());
 
-        action(actionBuilder);
-        return actionBuilder;
+        action(builder);
+        return builder;
+    }
+
+    @Override
+    public SoapScenarioActionBuilder soap() {
+        SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint)
+                .withApplicationContext(getApplicationContext());
+
+        action(builder);
+        return builder;
     }
 
     /**

@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Christoph Deppisch
@@ -30,7 +31,9 @@ public class DefaultScenario extends AbstractSimulatorScenario {
             .receive();
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

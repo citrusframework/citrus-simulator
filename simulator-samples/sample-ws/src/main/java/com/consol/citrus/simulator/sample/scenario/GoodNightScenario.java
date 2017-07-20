@@ -20,7 +20,6 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.*;
-import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -34,18 +33,21 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .withHandler(this);
 
         scenario
+            .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
-            .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
+            .soapAction("GoodNight");
 
         scenario
+            .soap()
             .sendFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
 
         scenario
+            .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
@@ -53,6 +55,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .header("citrus_soap_action", "GoodNight");
 
         scenario
+            .soap()
             .send()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
