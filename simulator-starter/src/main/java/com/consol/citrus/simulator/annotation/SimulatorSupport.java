@@ -76,11 +76,19 @@ public class SimulatorSupport {
         }
     }
 
+    /**
+     * Gets the version.
+     *
+     * @return
+     */
+    public static String getVersion() {
+        return version;
+    }
+
     @Bean
     public Citrus citrus(ApplicationContext applicationContext) {
         return Citrus.newInstance(applicationContext);
     }
-
 
     @Bean
     public CorrelationHandlerRegistry correlationHandlerRegistry() {

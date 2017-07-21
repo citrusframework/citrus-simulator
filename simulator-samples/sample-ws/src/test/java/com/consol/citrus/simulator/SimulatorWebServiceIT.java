@@ -47,7 +47,6 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
                          "</HelloResponse>");
-
     }
 
     /**

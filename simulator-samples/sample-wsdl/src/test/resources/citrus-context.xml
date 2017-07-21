@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xmlns:citrus-ws="http://www.citrusframework.org/schema/ws/config"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.citrusframework.org/schema/ws/config http://www.citrusframework.org/schema/ws/config/citrus-ws-config.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
+
+  <citrus:schema-repository id="schemaRepository">
+    <citrus:locations>
+      <citrus:location path="classpath:xsd/Hello.wsdl"/>
+    </citrus:locations>
+  </citrus:schema-repository>
+
+  <!-- SOAP Message Factory -->
+  <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+
+  <!-- Test SOAP client -->
+  <citrus-ws:client id="simulatorClient"
+                    request-url="http://localhost:8080/services/ws/simulator"
+                    interceptor="clientLoggingInterceptor"
+                    fault-strategy="propagateError"/>
+
+  <bean id="clientLoggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingClientInterceptor"/>
+
+</beans>

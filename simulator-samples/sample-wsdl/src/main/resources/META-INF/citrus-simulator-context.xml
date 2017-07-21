@@ -7,7 +7,7 @@
 
     <citrus:schema-repository id="schemaRepository">
       <citrus:locations>
-        <citrus:location path="classpath:xsd/HelloService.xsd"/>
+        <citrus:location path="classpath:xsd/Hello.wsdl"/>
       </citrus:locations>
     </citrus:schema-repository>
     
