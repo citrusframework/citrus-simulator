@@ -22,7 +22,7 @@
   </jaxb:globalBindings>
 
   <jaxb:schemaBindings>
-    <jaxb:package name="com.consol.citrus.simulator.sample.model.xml.fax"/>
+    <jaxb:package name="com.consol.citrus.simulator.sample.jms.async.model"/>
   </jaxb:schemaBindings>
 
 </jaxb:bindings>
