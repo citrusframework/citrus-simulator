@@ -14,7 +14,7 @@
     </citrus:locations>
   </citrus:schema-repository>
 
-  <!-- Test SOAP client -->
+  <!-- Test Http REST client -->
   <citrus-http:client
       id="simulatorClient"
       request-url="http://localhost:8080/services/rest/simulator"
