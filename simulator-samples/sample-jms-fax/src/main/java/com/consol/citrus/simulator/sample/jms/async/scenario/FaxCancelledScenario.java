@@ -36,8 +36,7 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
             .extractFromPayload(REFERENCE_ID_XPATH, REFERENCE_ID_VAR);
 
         scenario.correlation().start()
-            // TODO MM add support for namespace
-            .onPayload("//*[local-name() = 'referenceId']", REFERENCE_ID_PH);
+                .onPayload(REFERENCE_ID_XPATH, REFERENCE_ID_PH);
 
         scenario
             .send(getStatusEndpoint())
