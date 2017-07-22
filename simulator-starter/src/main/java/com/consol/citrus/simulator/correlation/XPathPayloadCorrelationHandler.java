@@ -20,6 +20,7 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
+import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 
 /**
  * @author Christoph Deppisch
@@ -32,12 +33,14 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
     /**
      * Default constructor using expression value to match.
      *
+     * @param namespaceContextBuilder
      * @param scenarioEndpoint
      * @param expression
      * @param value
      */
-    public XPathPayloadCorrelationHandler(ScenarioEndpoint scenarioEndpoint, String expression, String value) {
+    public XPathPayloadCorrelationHandler(NamespaceContextBuilder namespaceContextBuilder, ScenarioEndpoint scenarioEndpoint, String expression, String value) {
         super(scenarioEndpoint);
+        this.xPathPayloadMappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
         this.xPathPayloadMappingKeyExtractor.setXpathExpression(expression);
         this.value = value;
     }

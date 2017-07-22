@@ -1,3 +1,19 @@
+/*
+ * Copyright 2006-2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.context.TestContext;
@@ -15,11 +31,14 @@ import org.springframework.context.ApplicationContext;
  */
 public class ScenarioDesigner extends DefaultTestDesigner {
 
-    /** Scenario direct endpoint */
+    /**
+     * Scenario direct endpoint
+     */
     private final ScenarioEndpoint scenarioEndpoint;
 
     /**
      * Default constructor using fields.
+     *
      * @param scenarioEndpoint
      * @param applicationContext
      * @param context
@@ -31,11 +50,12 @@ public class ScenarioDesigner extends DefaultTestDesigner {
 
     /**
      * Start new message correlation so scenario is provided with additional inbound messages.
+     *
      * @return
      */
     public CorrelationManager correlation() {
         return () -> {
-            CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint);
+            CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint, getApplicationContext());
             action(builder);
             doFinally().actions(builder.stop());
             return builder;
@@ -44,6 +64,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
 
     /**
      * Receive message from scenario endpoint.
+     *
      * @return
      */
     public ReceiveMessageBuilder receive() {
@@ -53,6 +74,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
 
     /**
      * Send message from scenario endpoint.
+     *
      * @return
      */
     public SendMessageBuilder send() {
@@ -80,6 +102,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
 
     /**
      * Gets the scenario inbound endpoint.
+     *
      * @return
      */
     public ScenarioEndpoint scenarioEndpoint() {
