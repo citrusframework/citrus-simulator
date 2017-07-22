@@ -28,13 +28,9 @@ import org.testng.annotations.Test;
 @Test
 public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
-    /** Test SOAP client */
     @Autowired
     private WebServiceClient soapClient;
 
-    /**
-     * Sends a hello request to server expecting positive response message.
-     */
     @CitrusTest
     public void testHelloRequest() {
         send(soapClient)
@@ -49,9 +45,6 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                          "</HelloResponse>");
     }
 
-    /**
-     * Sends goodbye request to server expecting positive response message.
-     */
     @CitrusTest
     public void testGoodByeRequest() {
         send(soapClient)
@@ -66,9 +59,6 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                          "</GoodByeResponse>");
     }
 
-    /**
-     * Sends SOAP fault forcing request type to server expecting SOAP fault response message.
-     */
     @CitrusTest
     public void testGoodNightRequest() {
         send(soapClient)
