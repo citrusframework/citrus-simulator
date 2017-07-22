@@ -35,5 +35,7 @@ public interface SimulatorWebServiceConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    EndpointInterceptor[] interceptors();
+    default EndpointInterceptor[] interceptors() {
+        return new EndpointInterceptor[0];
+    }
 }

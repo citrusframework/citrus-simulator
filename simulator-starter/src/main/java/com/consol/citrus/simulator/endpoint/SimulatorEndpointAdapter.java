@@ -30,9 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Christoph Deppisch
@@ -86,19 +90,21 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
     @Override
     public Message dispatchMessage(Message request, String mappingName) {
+        String scenarioName = mappingName;
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();
         SimulatorScenario scenario;
-        if (applicationContext.containsBean(mappingName)) {
-            scenario = applicationContext.getBean(mappingName, SimulatorScenario.class);
+        if (StringUtils.hasText(scenarioName) && applicationContext.containsBean(scenarioName)) {
+            scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         } else {
+            scenarioName = configuration.getDefaultScenario();
             LOG.info(String.format("Unable to find scenario for mapping '%s' - " +
-                    "using default scenario '%s'", mappingName, configuration.getDefaultScenario()));
-            scenario = applicationContext.getBean(configuration.getDefaultScenario(), SimulatorScenario.class);
+                    "using default scenario '%s'", mappingName, scenarioName));
+            scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         }
 
-        scenario.getScenarioEndpoint().setName(mappingName);
+        scenario.getScenarioEndpoint().setName(scenarioName);
         scenario.getScenarioEndpoint().add(request, responseFuture);
-        scenarioService.run(scenario, mappingName, Collections.EMPTY_LIST);
+        scenarioService.run(scenario, scenarioName, Collections.EMPTY_LIST);
 
         try {
             if (handleResponse) {
@@ -107,7 +113,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
                 return null;
             }
         } catch (TimeoutException e) {
-            LOG.warn(String.format("No response for scenario '%s'", mappingName));
+            LOG.warn(String.format("No response for scenario '%s'", scenarioName));
             return null;
         } catch (InterruptedException | ExecutionException e) {
             throw new SimulatorException(e);
