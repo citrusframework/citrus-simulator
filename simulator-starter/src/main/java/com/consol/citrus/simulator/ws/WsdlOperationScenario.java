@@ -2,6 +2,7 @@ package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.variable.dictionary.xml.XpathMappingDataDictionary;
 
 import javax.wsdl.BindingOperation;
 
@@ -20,8 +21,17 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
     private String input;
     private String output;
 
+    private XpathMappingDataDictionary receiveDataDictionary = new XpathMappingDataDictionary();
+    private XpathMappingDataDictionary sendDataDictionary = new XpathMappingDataDictionary();
+
     public WsdlOperationScenario(BindingOperation operation) {
         this.operation = operation;
+
+        receiveDataDictionary.getMappings().put("//*/text()/parent::*", "@ignore@");
+        receiveDataDictionary.getMappings().put("//*/@*", "@ignore@");
+
+        sendDataDictionary.getMappings().put("//*/text()/parent::*", "citrus:randomString(10)");
+        sendDataDictionary.getMappings().put("//*/@*", "citrus:randomNumber(10)");
     }
 
     @Override
@@ -32,12 +42,14 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
         scenario
             .soap()
             .receive()
+            .dictionary(receiveDataDictionary)
             .payload(input)
             .soapAction(soapAction);
 
         scenario
             .soap()
             .send()
+            .dictionary(sendDataDictionary)
             .payload(output);
     }
 

@@ -34,30 +34,42 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
     @CitrusTest
     public void testHelloRequest() {
         send(soapClient)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">string</Hello>")
+                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Say Hello!" +
+                         "</Hello>")
                 .header("citrus_soap_action", "Hello");
 
         receive(soapClient)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">string</HelloResponse>");
+                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "@ignore@" +
+                         "</HelloResponse>");
     }
 
     @CitrusTest
     public void testGoodByeRequest() {
         send(soapClient)
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">string</GoodBye>")
+                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Say GoodBye!" +
+                         "</GoodBye>")
                 .header("citrus_soap_action", "GoodBye");
 
         receive(soapClient)
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">string</GoodByeResponse>");
+                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "@ignore@" +
+                         "</GoodByeResponse>");
     }
 
     @CitrusTest
     public void testGoodNightRequest() {
         send(soapClient)
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">string</GoodNight>")
+                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                         "</GoodNight>")
                 .header("citrus_soap_action", "GoodNight");
 
         receive(soapClient)
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">string</GoodNightResponse>");
+                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "@ignore@" +
+                        "</GoodNightResponse>");
     }
 }
