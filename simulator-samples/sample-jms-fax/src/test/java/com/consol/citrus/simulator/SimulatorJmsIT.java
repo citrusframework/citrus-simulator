@@ -21,12 +21,12 @@ import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
-import com.consol.citrus.simulator.sample.jms.async.variables.Status;
-import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxType;
 import com.consol.citrus.simulator.sample.jms.async.scenario.PayloadHelper;
+import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
+import com.consol.citrus.simulator.sample.jms.async.variables.Status;
+import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -41,6 +41,8 @@ import java.util.Arrays;
 @Test
 public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
     private PayloadHelper payloadHelper = new PayloadHelper();
+
+    // TODO CD bug: when running all tests a second time all fail (looks like messages from the first execution are somehow still cached?)
 
     @Autowired
     @Qualifier("simulatorInboundEndpoint")

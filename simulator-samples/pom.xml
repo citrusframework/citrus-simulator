@@ -27,6 +27,8 @@
     <module>sample-mail</module>
   </modules>
 
+  <!-- TODO CD mvn -DskipTests is not skipping integration tests -->
+
   <build>
     <pluginManagement>
       <plugins>
