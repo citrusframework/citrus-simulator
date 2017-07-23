@@ -113,7 +113,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20</version>
+        <configuration>
+        </configuration>
         <executions>
           <execution>
             <id>integration-tests</id>
@@ -171,6 +172,33 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <wait>1000</wait>
+          <maxAttempts>180</maxAttempts>
+        </configuration>
+        <executions>
+          <execution>
+            <id>pre-integration-test</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <fork>true</fork>
+              <wait>1000</wait>
+              <maxAttempts>180</maxAttempts>
+            </configuration>
+          </execution>
+          <execution>
+            <id>post-integration-test</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <configuration>
+              <fork>true</fork>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
