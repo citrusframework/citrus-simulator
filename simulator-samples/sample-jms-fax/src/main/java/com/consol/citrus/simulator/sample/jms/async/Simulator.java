@@ -18,9 +18,11 @@ package com.consol.citrus.simulator.sample.jms.async;
 
 import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
-import com.consol.citrus.simulator.annotation.*;
+import com.consol.citrus.simulator.annotation.EnableJms;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +58,8 @@ public class Simulator extends SimulatorJmsAdapter {
 
     @Override
     public MappingKeyExtractor mappingKeyExtractor() {
-        XPathPayloadMappingKeyExtractor mappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
-        mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
-        mappingKeyExtractor.setXpathExpression("//fax:clientId");
-        return mappingKeyExtractor;
+        return new ContentBasedXPathScenarioMapper(namespaceContextBuilder)
+                .addXPathExpression("//fax:clientId");
     }
 
     @Bean(name = "simulatorJmsStatusEndpoint")
