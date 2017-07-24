@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="SmsGateway"
+<wsdl:definitions name="Hello"
                   xmlns:tns="http://citrusframework.org/schemas/hello"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

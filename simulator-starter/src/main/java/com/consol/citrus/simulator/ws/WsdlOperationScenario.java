@@ -1,5 +1,8 @@
 package com.consol.citrus.simulator.ws;
 
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.dictionary.InboundXmlDataDictionary;
+import com.consol.citrus.simulator.dictionary.OutboundXmlDataDictionary;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import com.consol.citrus.variable.dictionary.xml.XpathMappingDataDictionary;
@@ -21,35 +24,35 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
     private String input;
     private String output;
 
-    private XpathMappingDataDictionary receiveDataDictionary = new XpathMappingDataDictionary();
-    private XpathMappingDataDictionary sendDataDictionary = new XpathMappingDataDictionary();
+    private XpathMappingDataDictionary inboundDataDictionary;
+    private XpathMappingDataDictionary outboundDataDictionary;
 
-    public WsdlOperationScenario(BindingOperation operation) {
+    /**
+     * Default constructor.
+     * @param operation
+     */
+    public WsdlOperationScenario(BindingOperation operation, SimulatorConfigurationProperties simulatorConfiguration) {
         this.operation = operation;
 
-        receiveDataDictionary.getMappings().put("//*/text()/parent::*", "@ignore@");
-        receiveDataDictionary.getMappings().put("//*/@*", "@ignore@");
-
-        sendDataDictionary.getMappings().put("//*/text()/parent::*", "citrus:randomString(10)");
-        sendDataDictionary.getMappings().put("//*/@*", "citrus:randomNumber(10)");
+        inboundDataDictionary = new InboundXmlDataDictionary(simulatorConfiguration);
+        outboundDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
     }
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        scenario.echo("Scenario WSDL operation: " + operation.getName());
-        scenario.echo("${simulator.name}");
+        scenario.echo("Generated scenario from WSDL operation: " + operation.getName());
 
         scenario
             .soap()
             .receive()
-            .dictionary(receiveDataDictionary)
+            .dictionary(inboundDataDictionary)
             .payload(input)
             .soapAction(soapAction);
 
         scenario
             .soap()
             .send()
-            .dictionary(sendDataDictionary)
+            .dictionary(outboundDataDictionary)
             .payload(output);
     }
 
@@ -144,5 +147,41 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
      */
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    /**
+     * Gets the inboundDataDictionary.
+     *
+     * @return
+     */
+    public XpathMappingDataDictionary getInboundDataDictionary() {
+        return inboundDataDictionary;
+    }
+
+    /**
+     * Sets the inboundDataDictionary.
+     *
+     * @param inboundDataDictionary
+     */
+    public void setInboundDataDictionary(XpathMappingDataDictionary inboundDataDictionary) {
+        this.inboundDataDictionary = inboundDataDictionary;
+    }
+
+    /**
+     * Gets the outboundDataDictionary.
+     *
+     * @return
+     */
+    public XpathMappingDataDictionary getOutboundDataDictionary() {
+        return outboundDataDictionary;
+    }
+
+    /**
+     * Sets the outboundDataDictionary.
+     *
+     * @param outboundDataDictionary
+     */
+    public void setOutboundDataDictionary(XpathMappingDataDictionary outboundDataDictionary) {
+        this.outboundDataDictionary = outboundDataDictionary;
     }
 }

@@ -30,6 +30,13 @@ public class StopCorrelationHandlerAction extends AbstractTestAction {
      */
     private CorrelationHandler correlationHandler;
 
+    /**
+     * Default constructor setting action name.
+     */
+    public StopCorrelationHandlerAction() {
+        setName("stop-correlation");
+    }
+
     @Override
     public void doExecute(TestContext context) {
         CorrelationHandlerRegistry handlerRegistry = context.getApplicationContext().getBean(CorrelationHandlerRegistry.class);

@@ -1,6 +1,7 @@
 package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.exceptions.CitrusRuntimeException;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.xml.schema.locator.JarWSDLLocator;
 import org.apache.xmlbeans.*;
@@ -33,6 +34,21 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /** Target wsdl to generate scenarios from */
     private final Resource wsdlResource;
+
+    /** Naming strategy for generated scenarios */
+    private WsdlScenarioNamingStrategy namingStrategy = WsdlScenarioNamingStrategy.INPUT;
+
+    /** Simulator configuration */
+    private SimulatorConfigurationProperties simulatorConfiguration;
+
+    /**
+     * Enum representing different kinds of scenario naming.
+     */
+    public enum WsdlScenarioNamingStrategy {
+        INPUT,
+        OPERATION,
+        SOAP_ACTION
+    }
 
     /**
      * Constructor using wsdl file resource.
@@ -69,13 +85,39 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                     }
                 }
 
-                beanFactory.registerSingleton(operation.getOperation().getInput().getName(),
-                        new WsdlOperationScenario(operation)
-                                .withInput(generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)))
-                                .withOutput(generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)))
-                                .withSoapAction(soapAction));
+                String scenarioName;
+                switch (namingStrategy) {
+                    case INPUT:
+                        scenarioName = operation.getOperation().getInput().getName();
+                        break;
+                    case OPERATION:
+                        scenarioName = operation.getOperation().getName();
+                        break;
+                    case SOAP_ACTION:
+                        scenarioName = soapAction;
+                        break;
+                    default:
+                        throw new SimulatorException("Unknown scenario naming strategy");
+                }
+
+                beanFactory.registerSingleton(scenarioName, createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem))));
             }
         }
+    }
+
+    /**
+     * Creates the scenario with given WSDL operation information.
+     * @param operation
+     * @param soapAction
+     * @param input
+     * @param output
+     * @return
+     */
+    protected WsdlOperationScenario createScenario(BindingOperation operation, String soapAction, String input, String output) {
+        return new WsdlOperationScenario(operation, simulatorConfiguration)
+                .withInput(input)
+                .withOutput(output)
+                .withSoapAction(soapAction);
     }
 
     /**
@@ -136,7 +178,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         } catch (IOException e) {
             throw new CitrusRuntimeException("Failed to read wsdl file resource", e);
         } catch (WSDLException e) {
-            throw new CitrusRuntimeException("Failed to wsdl schema instance", e);
+            throw new CitrusRuntimeException("Failed to create wsdl schema instance", e);
         }
     }
 
@@ -269,4 +311,41 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
         return schemas.toArray(new String[] {});
     }
+
+    /**
+     * Gets the simulatorConfiguration.
+     *
+     * @return
+     */
+    public SimulatorConfigurationProperties getSimulatorConfiguration() {
+        return simulatorConfiguration;
+    }
+
+    /**
+     * Sets the simulatorConfiguration.
+     *
+     * @param simulatorConfiguration
+     */
+    public void setSimulatorConfiguration(SimulatorConfigurationProperties simulatorConfiguration) {
+        this.simulatorConfiguration = simulatorConfiguration;
+    }
+
+    /**
+     * Gets the namingStrategy.
+     *
+     * @return
+     */
+    public WsdlScenarioNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * Sets the namingStrategy.
+     *
+     * @param namingStrategy
+     */
+    public void setNamingStrategy(WsdlScenarioNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
 }

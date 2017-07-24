@@ -58,6 +58,15 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
     private Long exceptionDelay = 5000L;
 
+    /** Optional inbound/outbound data dictionary mapping file for generated test data */
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_MAPPINGS_PROPERTY = "citrus.simulator.inbound.xml.dictionary.mappings";
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_MAPPINGS_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY_MAPPINGS";
+    private String inboundXmlDictionaryMappings = "inbound-xml-dictionary.properties";
+
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_PROPERTY = "citrus.simulator.outbound.xml.dictionary.mappings";
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS";
+    private String outboundXmlDictionaryMappings = "outbound-xml-dictionary.properties";
+
     /**
      * The Spring application context environment
      */
@@ -70,6 +79,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
         templateValidation = Boolean.valueOf(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
         exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
+        inboundXmlDictionaryMappings = env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_MAPPINGS_PROPERTY, env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_MAPPINGS_ENV, inboundXmlDictionaryMappings));
+        outboundXmlDictionaryMappings = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_ENV, outboundXmlDictionaryMappings));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }
@@ -164,6 +175,42 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         this.exceptionDelay = exceptionDelay;
     }
 
+    /**
+     * Gets the inboundXmlDictionaryMappings.
+     *
+     * @return
+     */
+    public String getInboundXmlDictionaryMappings() {
+        return inboundXmlDictionaryMappings;
+    }
+
+    /**
+     * Sets the inboundXmlDictionaryMappings.
+     *
+     * @param inboundXmlDictionaryMappings
+     */
+    public void setInboundXmlDictionaryMappings(String inboundXmlDictionaryMappings) {
+        this.inboundXmlDictionaryMappings = inboundXmlDictionaryMappings;
+    }
+
+    /**
+     * Gets the outboundXmlDictionaryMappings.
+     *
+     * @return
+     */
+    public String getOutboundXmlDictionaryMappings() {
+        return outboundXmlDictionaryMappings;
+    }
+
+    /**
+     * Sets the outboundXmlDictionaryMappings.
+     *
+     * @param outboundXmlDictionaryMappings
+     */
+    public void setOutboundXmlDictionaryMappings(String outboundXmlDictionaryMappings) {
+        this.outboundXmlDictionaryMappings = outboundXmlDictionaryMappings;
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
@@ -172,6 +219,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
                 ", defaultTimeout=" + defaultTimeout +
                 ", exceptionDelay=" + exceptionDelay +
                 ", templateValidation=" + templateValidation +
+                ", inboundXmlDictionaryMappings=" + inboundXmlDictionaryMappings +
+                ", outboundXmlDictionaryMappings=" + outboundXmlDictionaryMappings +
                 '}';
     }
 

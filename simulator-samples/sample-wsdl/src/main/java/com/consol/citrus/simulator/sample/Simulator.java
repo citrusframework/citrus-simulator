@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.sample;
 
 import com.consol.citrus.simulator.annotation.EnableWebService;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.ws.WsdlScenarioGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +38,9 @@ public class Simulator {
     }
 
     @Bean
-    public WsdlScenarioGenerator scenarioGenerator() {
-        return new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
+    public WsdlScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+        WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
+        generator.setSimulatorConfiguration(simulatorConfiguration);
+        return generator;
     }
 }
