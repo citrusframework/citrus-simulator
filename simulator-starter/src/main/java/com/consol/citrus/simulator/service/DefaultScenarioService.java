@@ -28,14 +28,15 @@ import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -63,21 +64,20 @@ public class DefaultScenarioService implements ScenarioService {
      */
     private Map<String, SimulatorScenario> scenarios;
 
-    @Autowired
-    private ActivityService activityService;
+    private final ActivityService activityService;
+    private final ApplicationContext applicationContext;
+    private final Citrus citrus;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private Citrus citrus;
+    public DefaultScenarioService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
+        this.activityService = activityService;
+        this.applicationContext = applicationContext;
+        this.citrus = citrus;
+    }
 
     @PostConstruct
     private void init() {
-        scenarios = applicationContext.getBeansOfType(SimulatorScenario.class);
-        log.info(String.format("Scenarios discovered: \n%s", Arrays.toString(scenarios.keySet().toArray())));
-        scenarioStarters = applicationContext.getBeansOfType(ScenarioStarter.class);
-        log.info(String.format("Scenario Starters discovered: \n%s", Arrays.toString(scenarioStarters.keySet().toArray())));
+        scenarios = findSimulatorScenarios(applicationContext);
+        scenarioStarters = findScenarioStarters(applicationContext);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DefaultScenarioService implements ScenarioService {
     private Future<?> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         final ExecutorService executorService = Executors.newSingleThreadExecutor(
                 r -> {
-                    Thread t = ((ThreadFactory) r1 -> new Thread(r1, "Scenario:" + name)).newThread(r);
+                    Thread t = new Thread(r, "Scenario:" + name);
                     t.setDaemon(true);
                     return t;
                 });
@@ -173,8 +173,8 @@ public class DefaultScenarioService implements ScenarioService {
      * Adds a new variable to the testExecutable using the supplied key an value.
      *
      * @param scenario
-     * @param key            variable name
-     * @param value          variable value
+     * @param key      variable name
+     * @param value    variable value
      */
     private void addVariable(SimulatorScenario scenario, String key, Object value) {
         if (scenario instanceof TestDesigner) {
@@ -213,7 +213,23 @@ public class DefaultScenarioService implements ScenarioService {
         if (scenarioStarters.containsKey(scenarioName)) {
             return scenarioStarters.get(scenarioName).getScenarioParameters();
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
+    private static Map<String, SimulatorScenario> findSimulatorScenarios(ApplicationContext context) {
+        Map<String, SimulatorScenario> scenarios = context.getBeansOfType(SimulatorScenario.class).entrySet().stream()
+                .filter(map -> map.getValue().getClass().isAnnotationPresent(Scenario.class))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        log.info(String.format("Scenarios discovered: \n%s", Arrays.toString(scenarios.keySet().toArray())));
+        return scenarios;
+
+    }
+
+    private static Map<String, ScenarioStarter> findScenarioStarters(ApplicationContext context) {
+        Map<String, ScenarioStarter> starters = context.getBeansOfType(ScenarioStarter.class).entrySet().stream()
+                .filter(map -> map.getValue().getClass().isAnnotationPresent(Starter.class))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        log.info(String.format("Starters discovered: \n%s", Arrays.toString(starters.keySet().toArray())));
+        return starters;
+    }
 }

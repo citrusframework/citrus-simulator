@@ -27,35 +27,29 @@
     <module>sample-mail</module>
   </modules>
 
+  <!-- TODO CD mvn -DskipTests is not skipping integration tests -->
+
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.20</version>
+        </plugin>
+
+        <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring.boot.version}</version>
-          <configuration>
-            <fork>true</fork>
-            <wait>1000</wait>
-            <maxAttempts>180</maxAttempts>
-          </configuration>
-          <executions>
-            <execution>
-              <id>pre</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>start</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>post</id>
-              <phase>post-integration-test</phase>
-              <goals>
-                <goal>stop</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>

@@ -19,23 +19,34 @@ package com.consol.citrus.simulator.correlation;
 import com.consol.citrus.TestAction;
 import com.consol.citrus.dsl.builder.AbstractTestActionBuilder;
 import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
+import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author Christoph Deppisch
  */
 public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCorrelationHandlerAction> {
+    private static Logger log = LoggerFactory.getLogger(CorrelationHandlerBuilder.class);
 
-    /** Stop correlation action */
+    /**
+     * Stop correlation action
+     */
     private final StopCorrelationHandlerAction stopCorrelationAction = new StopCorrelationHandlerAction();
+
+    private final ApplicationContext applicationContext;
 
     private ScenarioEndpoint scenarioEndpoint;
 
     /**
      * Default constructor with correlation handler.
      */
-    public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint) {
+    public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext) {
         super(new StartCorrelationHandlerAction());
         this.scenarioEndpoint = scenarioEndpoint;
+        this.applicationContext = applicationContext;
     }
 
     public CorrelationHandlerBuilder onHeader(String headerName, String value) {
@@ -47,7 +58,7 @@ public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCo
     }
 
     public CorrelationHandlerBuilder onPayload(String expression, String value) {
-        return withHandler(new XPathPayloadCorrelationHandler(scenarioEndpoint, expression, value));
+        return withHandler(new XPathPayloadCorrelationHandler(lookupNamespaceContextBuilder(), scenarioEndpoint, expression, value));
     }
 
     public CorrelationHandlerBuilder withHandler(CorrelationHandler handler) {
@@ -58,5 +69,23 @@ public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCo
 
     public TestAction stop() {
         return stopCorrelationAction;
+    }
+
+    private NamespaceContextBuilder lookupNamespaceContextBuilder() {
+        String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
+        if (beanNames.length > 0) {
+            if (beanNames.length > 1) {
+                log.warn("Expected to find 1 beans of type {} but found instead {} ({})",
+                        beanNames.length,
+                        NamespaceContextBuilder.class.getCanonicalName(),
+                        beanNames
+                );
+            }
+            log.debug("Using NamespaceContextBuilder - {}", beanNames[0]);
+            return applicationContext.getBean(beanNames[0], NamespaceContextBuilder.class);
+        } else {
+            log.debug("Using NamespaceContextBuilder - default");
+            return new NamespaceContextBuilder();
+        }
     }
 }

@@ -19,8 +19,12 @@ package com.consol.citrus.simulator.sample.jms.async.starter;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
 import com.consol.citrus.simulator.sample.jms.async.scenario.AbstractFaxScenario;
-import com.consol.citrus.simulator.sample.jms.async.variables.*;
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
+import com.consol.citrus.simulator.sample.jms.async.variables.Status;
+import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.simulator.scenario.ScenarioStarter;
+import com.consol.citrus.simulator.scenario.Starter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,7 @@ import java.util.List;
  *
  * @author Martin Maher
  */
-@Scenario("UpdateFaxStatus")
+@Starter("UpdateFaxStatus")
 public class StatusUpdateStarter extends AbstractFaxScenario implements ScenarioStarter {
 
     @Override

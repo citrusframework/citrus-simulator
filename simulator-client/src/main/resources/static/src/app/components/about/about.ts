@@ -24,4 +24,5 @@ export class AboutComponent implements OnInit {
         this.appInfoService.getSimulatorInfo();
     }
 
+    // TODO CD include the environment properties in the about page (/api/manage/env)
 }
