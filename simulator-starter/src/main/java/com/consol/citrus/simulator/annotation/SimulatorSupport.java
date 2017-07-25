@@ -50,10 +50,8 @@ import java.util.Properties;
                 "classpath*:citrus-simulator-context.xml",
                 "classpath*:META-INF/citrus-simulator-context.xml"
         })
-@PropertySource("citrus-simulator-internal.properties")
 @PropertySource(
         value = {
-                "citrus-simulator.properties",
                 "META-INF/citrus-simulator.properties"
         }, ignoreResourceNotFound = true)
 @EnableConfigurationProperties(SimulatorConfigurationProperties.class)
