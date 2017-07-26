@@ -9,7 +9,7 @@ export class MessageFilterPipe implements PipeTransform {
         if (messages) {
             let what = name.toLowerCase();
             return messages.filter(message => {
-                let payload = message.payload.toLowerCase();
+                let payload = message.payload ? message.payload.toLowerCase() : "";
                 let direction = message.direction.toLowerCase();
 
                 if (!inbound && direction == 'inbound') {

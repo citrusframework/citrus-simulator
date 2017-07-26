@@ -22,8 +22,6 @@ import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,11 +33,6 @@ import java.util.List;
  * @author Christoph Deppisch
  */
 public class AnnotationRequestMappingKeyExtractor extends AbstractMappingKeyExtractor {
-
-    /**
-     * Logger
-     */
-    private static Logger log = LoggerFactory.getLogger(AnnotationRequestMappingKeyExtractor.class);
 
     @Autowired(required = false)
     private List<SimulatorScenario> scenarios = new ArrayList<>();

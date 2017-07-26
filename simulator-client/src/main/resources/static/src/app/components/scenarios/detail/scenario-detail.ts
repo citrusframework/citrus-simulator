@@ -71,7 +71,7 @@ export class ScenarioDetailComponent implements OnInit {
     }
 
     launchScenario() {
-        if(this.scenarioParameters.length > 0) {
+        if (this.scenarioParameters.length > 0) {
             this.gotoScenarioLaunch();
         } else {
             this.launchScenarioNow();

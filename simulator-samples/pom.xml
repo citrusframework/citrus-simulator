@@ -24,10 +24,9 @@
     <module>sample-wsdl</module>
     <module>sample-ws-client</module>
     <module>sample-rest</module>
+    <module>sample-swagger</module>
     <module>sample-mail</module>
   </modules>
-
-  <!-- TODO CD mvn -DskipTests is not skipping integration tests -->
 
   <build>
     <pluginManagement>

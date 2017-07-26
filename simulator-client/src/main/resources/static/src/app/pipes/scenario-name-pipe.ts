@@ -11,15 +11,15 @@ export class ScenarioNamePipe implements PipeTransform {
             return scenarios.filter(scenario => {
                 let type = scenario.type.toLowerCase();
 
-                if(!starter && type.indexOf('starter')) {
+                if (!starter && type.indexOf('starter')) {
                     return false;
                 }
 
-                if(!nonStarter && type.indexOf('message_triggered')) {
+                if (!nonStarter && type.indexOf('message_triggered')) {
                     return false;
                 }
 
-                if(name && name.length > 0) {
+                if (name && name.length > 0) {
                     return ~scenario.name.toLowerCase().indexOf(name.toLowerCase());
                 }
                 return true;

@@ -47,13 +47,13 @@ public class SimulatorMessageListener implements MessageListener {
 
     @Override
     public void onInboundMessage(Message message, TestContext context) {
-        String payload = message.getPayload().toString();
+        String payload = message.getPayload(String.class);
         messageService.saveMessage(com.consol.citrus.simulator.model.Message.Direction.INBOUND, payload);
     }
 
     @Override
     public void onOutboundMessage(Message message, TestContext context) {
-        String payload = message.getPayload().toString();
+        String payload = message.getPayload(String.class);
         messageService.saveMessage(com.consol.citrus.simulator.model.Message.Direction.OUTBOUND, payload);
     }
 }

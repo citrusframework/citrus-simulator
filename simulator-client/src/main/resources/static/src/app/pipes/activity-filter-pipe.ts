@@ -12,19 +12,19 @@ export class ActivityFilterPipe implements PipeTransform {
                 let scanarioName = scenarioExecution.scenarioName.toLowerCase();
                 let scanarioStatus = scenarioExecution.status.toLowerCase();
 
-                if(!success && scanarioStatus.indexOf('success') > -1) {
+                if (!success && scanarioStatus.indexOf('success') > -1) {
                     return false;
                 }
 
-                if(!failed && scanarioStatus.indexOf('failed') > -1) {
+                if (!failed && scanarioStatus.indexOf('failed') > -1) {
                     return false;
                 }
 
-                if(!active && scanarioStatus.indexOf('active') > -1) {
+                if (!active && scanarioStatus.indexOf('active') > -1) {
                     return false;
                 }
 
-                if(name && name.length > 0) {
+                if (name && name.length > 0) {
                     return ~scanarioName.indexOf(what);
                 }
                 return true;

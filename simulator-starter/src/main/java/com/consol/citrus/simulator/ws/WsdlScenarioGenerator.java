@@ -100,6 +100,8 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                         throw new SimulatorException("Unknown scenario naming strategy");
                 }
 
+                log.info("Register auto generated scenario: " + scenarioName);
+
                 beanFactory.registerSingleton(scenarioName, createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem))));
             }
         }

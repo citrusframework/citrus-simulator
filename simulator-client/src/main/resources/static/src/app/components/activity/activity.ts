@@ -33,7 +33,7 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
         this.getActivity();
         let statusFilter = this.route.snapshot.params['status'];
         if(statusFilter) {
-            if(statusFilter.toLowerCase().indexOf("success") > -1) {
+            if (statusFilter.toLowerCase().indexOf("success") > -1) {
                 this.toggleFailed();
                 this.toggleActive();
             } else if(statusFilter.toLowerCase().indexOf("failed") > -1) {

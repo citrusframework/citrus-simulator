@@ -16,10 +16,11 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.EnableWebService;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
+import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.ws.WsdlScenarioGenerator;
+import com.consol.citrus.simulator.http.HttpRequestMappingKeyExtractor;
+import com.consol.citrus.simulator.http.HttpScenarioGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -30,17 +31,28 @@ import org.springframework.core.io.ClassPathResource;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableWebService
-public class Simulator {
+@EnableRest
+public class Simulator extends SimulatorRestAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
     }
 
+    @Override
+    public MappingKeyExtractor mappingKeyExtractor() {
+        return new HttpRequestMappingKeyExtractor();
+    }
+
+    @Override
+    public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return "/petstore/v2/**";
+    }
+
     @Bean
-    public static WsdlScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
-        WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
+    public static HttpScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+        HttpScenarioGenerator generator = new HttpScenarioGenerator(new ClassPathResource("swagger/petstore-api.json"));
         generator.setSimulatorConfiguration(simulatorConfiguration);
+        generator.setContextPath("/petstore");
         return generator;
     }
 }
