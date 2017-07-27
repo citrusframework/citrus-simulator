@@ -19,7 +19,7 @@ package com.consol.citrus.simulator.sample;
 import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.http.HttpRequestMappingKeyExtractor;
+import com.consol.citrus.simulator.http.HttpScenarioMappingKeyExtractor;
 import com.consol.citrus.simulator.http.HttpScenarioGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,7 +40,7 @@ public class Simulator extends SimulatorRestAdapter {
 
     @Override
     public MappingKeyExtractor mappingKeyExtractor() {
-        return new HttpRequestMappingKeyExtractor();
+        return new HttpScenarioMappingKeyExtractor();
     }
 
     @Override

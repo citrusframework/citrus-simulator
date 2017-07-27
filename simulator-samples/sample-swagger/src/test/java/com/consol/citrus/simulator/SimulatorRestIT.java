@@ -55,6 +55,35 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     }
 
     @CitrusTest
+    public void testDeletePet() {
+        variable("id", "citrus:randomNumber(10)");
+
+        http().client(petstoreClient)
+                .send()
+                .delete("/pet/${id}");
+
+        http().client(petstoreClient)
+                .receive()
+                .response(HttpStatus.OK);
+    }
+
+    @CitrusTest
+    public void testGetPetById() {
+        variable("id", "citrus:randomNumber(10)");
+
+        http().client(petstoreClient)
+                .send()
+                .get("/pet/${id}")
+                .accept("application/json");
+
+        http().client(petstoreClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType("application/json")
+                .payload(new ClassPathResource("templates/pet-control.json"));
+    }
+
+    @CitrusTest
     public void testUpdatePet() {
         variable("name", "catty");
         variable("category", "cat");

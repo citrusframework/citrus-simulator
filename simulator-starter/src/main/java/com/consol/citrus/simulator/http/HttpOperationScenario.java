@@ -3,17 +3,16 @@ package com.consol.citrus.simulator.http;
 import com.consol.citrus.dsl.builder.HttpServerRequestActionBuilder;
 import com.consol.citrus.dsl.builder.HttpServerResponseActionBuilder;
 import com.consol.citrus.http.message.HttpMessageHeaders;
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import io.swagger.models.*;
 import io.swagger.models.parameters.*;
 import io.swagger.models.properties.*;
+import org.hamcrest.CustomMatcher;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,15 +20,13 @@ import java.util.stream.Collectors;
 /**
  * @author Christoph Deppisch
  */
-public class HttpScenario extends AbstractSimulatorScenario {
+public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /** Operation in wsdl */
     private final Operation operation;
 
+    /** Schema model definitions */
     private final Map<String, Model> definitions;
-
-    /** Base path including context path */
-    private final String basePath;
 
     /** Request path */
     private final String path;
@@ -45,17 +42,14 @@ public class HttpScenario extends AbstractSimulatorScenario {
 
     /**
      * Default constructor.
-     * @param basePath
      * @param path
      * @param method
      * @param operation
      * @param definitions
-     * @param simulatorConfiguration
      */
-    public HttpScenario(String basePath, String path, HttpMethod method, Operation operation, Map<String, Model> definitions, SimulatorConfigurationProperties simulatorConfiguration) {
+    public HttpOperationScenario(String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
         this.operation = operation;
         this.definitions = definitions;
-        this.basePath = basePath;
         this.path = path;
         this.method = method;
 
@@ -74,35 +68,43 @@ public class HttpScenario extends AbstractSimulatorScenario {
                 requestBuilder = scenario
                     .http()
                     .receive()
-                    .get(basePath + path);
+                    .get();
                 break;
             case POST:
                 requestBuilder = scenario
                     .http()
                     .receive()
-                    .post(basePath + path);
+                    .post();
                 break;
             case PUT:
                 requestBuilder = scenario
                     .http()
                     .receive()
-                    .put(basePath + path);
+                    .put();
                 break;
             case HEAD:
                 requestBuilder = scenario
                     .http()
                     .receive()
-                    .head(basePath + path);
+                    .head();
                 break;
             case DELETE:
                 requestBuilder = scenario
                     .http()
                     .receive()
-                    .delete(basePath + path);
+                    .delete();
                 break;
             default:
                 throw new SimulatorException("Unsupported request method: " + method.name());
         }
+
+        requestBuilder.
+            header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
+                @Override
+                public boolean matches(Object item) {
+                    return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
+                }
+            });
 
         if (operation.getParameters() != null) {
             operation.getParameters().stream()

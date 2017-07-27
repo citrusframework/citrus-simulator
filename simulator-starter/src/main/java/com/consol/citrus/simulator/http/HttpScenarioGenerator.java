@@ -47,18 +47,9 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
 
             for (Map.Entry<String, Path> path : swagger.getPaths().entrySet()) {
                 for (Map.Entry<io.swagger.models.HttpMethod, Operation> operation : path.getValue().getOperationMap().entrySet()) {
-                    String scenarioName = (contextPath +
-                            (swagger.getBasePath() != null ? swagger.getBasePath() : "") +
-                            path.getKey() +
-                            "#" + operation.getKey().name()).replaceAll("/", "-");
+                    log.info("Register auto generated scenario: " + operation.getValue().getOperationId());
 
-                    if (scenarioName.startsWith("-")) {
-                        scenarioName = scenarioName.substring(1);
-                    }
-
-                    log.info("Register auto generated scenario: " + scenarioName);
-
-                    beanFactory.registerSingleton(scenarioName, createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")), path.getKey(), HttpMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
+                    beanFactory.registerSingleton(operation.getValue().getOperationId(), createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey(), HttpMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
                 }
             }
         } catch (IOException e) {
@@ -68,15 +59,14 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Creates the scenario with given swagger path and operation information.
-     * @param basePath
      * @param path
      * @param method
      * @param operation
      * @param definitions
      * @return
      */
-    protected HttpScenario createScenario(String basePath, String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
-        return new HttpScenario(basePath, path, method, operation, definitions, simulatorConfiguration);
+    protected HttpOperationScenario createScenario(String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
+        return new HttpOperationScenario(path, method, operation, definitions);
     }
 
     /**
