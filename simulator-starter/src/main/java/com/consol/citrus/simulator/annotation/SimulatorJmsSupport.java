@@ -16,11 +16,11 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.jms.endpoint.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -79,13 +79,13 @@ public class SimulatorJmsSupport {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorJmsMappingKeyExtractor")
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+    @Bean(name = "simulatorJmsScenarioMapper")
+    public ScenarioMapper simulatorScenarioMapper() {
         if (configurer != null) {
-            return configurer.mappingKeyExtractor();
+            return configurer.scenarioMapper();
         }
 
-        return new XPathPayloadMappingKeyExtractor();
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
     @Bean(name = "simulatorJmsEndpointPoller")
@@ -105,7 +105,7 @@ public class SimulatorJmsSupport {
 
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
 
         if (!isSynchronous(simulatorJmsConfiguration)) {
             endpointAdapter.setHandleResponse(false);

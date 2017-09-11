@@ -17,13 +17,10 @@
 package com.consol.citrus.simulator.sample;
 
 import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.mail.server.MailServer;
-import com.consol.citrus.simulator.annotation.EnableEndpointComponent;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
-import com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import com.consol.citrus.simulator.annotation.*;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -50,12 +47,9 @@ public class Simulator extends SimulatorEndpointComponentAdapter {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        XPathPayloadMappingKeyExtractor mappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
-        NamespaceContextBuilder namespaceContextBuilder = new NamespaceContextBuilder();
-        namespaceContextBuilder.getNamespaceMappings().put("mail", "http://www.citrusframework.org/schema/mail/message");
-        mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
-        mappingKeyExtractor.setXpathExpression("/mail:mail-message/mail:subject");
-        return mappingKeyExtractor;
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper()
+                .addNamespaceMapping("mail", "http://www.citrusframework.org/schema/mail/message")
+                .addXPathExpression("/mail:mail-message/mail:subject");
     }
 }

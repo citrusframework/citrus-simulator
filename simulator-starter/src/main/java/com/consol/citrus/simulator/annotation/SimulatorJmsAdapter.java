@@ -16,9 +16,9 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.jms.connection.SingleConnectionFactory;
 
 import javax.jms.ConnectionFactory;
@@ -54,8 +54,8 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
     @Override

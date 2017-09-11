@@ -18,15 +18,19 @@ package com.consol.citrus.simulator.http;
 
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Special request annotation based scenario mapper supports path pattern matching on request path.
+ * As fallback uses default request mapping annotation based mapping.
+ *
  * @author Christoph Deppisch
  */
-public class HttpScenarioMappingKeyExtractor extends AnnotationRequestMappingKeyExtractor {
+public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenarioMapper implements ScenarioMapper {
 
     @Autowired(required = false)
     private List<HttpOperationScenario> httpScenarios = new ArrayList<>();

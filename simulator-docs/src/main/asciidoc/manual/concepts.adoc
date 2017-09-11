@@ -3,10 +3,19 @@
 
 The Citrus simulator project has the primary focus to provide messaging simulation as a standalone server. Once started the simulator
 provides different endpoints (Http REST, JMS, SOAP Web Service, and so on) and waits for incoming requests. The time a request arrives at one of the endpoints
-the simulator maps the request to a predefined link:#scenarios[simulator scenario] which is automatically executed immediately.
+the simulator maps the request to a predefined link:#scenarios[simulator scenario] which is automatically executed immediately. The scenario is responsible to create
+a response message that is sent to the calling client.
 
-The mapping is done by link:#mapping-key-extractor[extracting a mapping key] from the request data. This can be a special request header or a XPath
-expression that is evaluated on the request payload.
+The scenario mapping is done by link:#scenario-mapper[extracting a mapping key] from the request data. This scenario mapper implementation searches for a matching scenario for the current incoming
+request. The scenario mapping is done based on different identifiers on the request. The Citrus simulator knows following scenario mapper implementations:
+
+.Scenario mapper
+[horizontal]
+Content based xpath mapper:: Evaluates Xpath expressions on the request payload and uses the expression result as scenario name
+Content based jsonPath mapper:: Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name
+Header value mapper:: Evaluates header name on request and uses header value as scenario name
+SOAP action mapper:: Evaluates SOAP action header on request and uses the value as scenario name
+Request mapping annotation mapper:: Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values
 
 The link:#scenarios[simulator scenario] is capable of handling the request message and will return a proper response message to the calling client.
 With different scenarios defined the simulator is able to respond to different requests accordingly.
@@ -47,10 +56,13 @@ by using further annotations provided. In the sample above we use the *@EnableRe
 
 There are multiple annotations available for different transport endpoints:
 
-* *@EnableRest* Enables link:#rest-support[Http REST support]
-* *@EnableWs* Enables link:#ws-support[SOAP web services support]
-* *@EnableJms* Enables link:#jms-support[JMS support]
-* *@EnableEndpointComponent* Enables generic link:#endpoint-component-support[endpoint component support]
+.Simulator annotations
+[horizontal]
+@EnableRest:: Enables link:#rest-support[Http REST support]
+@EnableWebService:: Enables link:#ws-support[SOAP web services support]
+@EnableWebServiceClient:: Enables link:#ws-support[SOAP web services support]
+@EnableJms:: Enables link:#jms-support[JMS support]
+@EnableEndpointComponent:: Enables generic link:#endpoint-component-support[endpoint component support]
 
 [[concept-simulator-properties]]
 == Simulator properties
@@ -94,7 +106,7 @@ Please refer to the respective configuration property classes to see what proper
 
 In addition to that default Spring boot property replacement the simulator also supports system property and environment variables. The properties are:
 
- .System property names
+.System property names
 [horizontal]
 citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
 citrus.simulator.template.path:: Default path to message payload template files.
@@ -107,9 +119,8 @@ citrus.simulator.ws.servlet.mapping:: Message dispatcher servlet mapping for inb
 citrus.simulator.jms.inbound.destination:: JMS destination name to consume inbound messages from
 citrus.simulator.jms.reply.destination:: JMS destination name to publish outbound messages to
 
-You can set these properties as system properties when starting the Spring boot web application or you can add a property file in following location:
-
-* *META-INF/citrus-simulator.properties*
+You can set these properties as system properties when starting the Spring boot web application or you can add the properties to the default
+Spring Boot application properties file *application.properties* that is located as resource file in your project.
 
 The simulator will automatically load these properties during startup and honor this configuration.
 
@@ -145,6 +156,6 @@ the application context. The simulator automatically loads Spring beans defined 
 
 All beans defined in there get automatically loaded to the simulator Spring application context.
 
-include::mapping-key-extractor.adoc[]
+include::scenario-mapper.adoc[]
 include::scenarios.adoc[]
 include::intermediate-messages.adoc[]

@@ -49,8 +49,8 @@ public abstract class SimulatorEndpointComponentAdapter implements SimulatorEndp
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 }
 ----
@@ -87,13 +87,10 @@ public class Simulator extends SimulatorEndpointComponentAdapter {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        XPathPayloadMappingKeyExtractor mappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
-        NamespaceContextBuilder namespaceContextBuilder = new NamespaceContextBuilder();
-        namespaceContextBuilder.getNamespaceMappings().put("mail", "http://www.citrusframework.org/schema/mail/message");
-        mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
-        mappingKeyExtractor.setXpathExpression("/mail:mail-message/mail:subject");
-        return mappingKeyExtractor;
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper()
+                        .addNamespaceMapping("mail", "http://www.citrusframework.org/schema/mail/message")
+                        .addXPathExpression("/mail:mail-message/mail:subject");
     }
 }
 ----

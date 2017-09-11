@@ -16,10 +16,10 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
+import com.consol.citrus.simulator.http.HttpRequestAnnotationScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -28,8 +28,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new AnnotationRequestMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new HttpRequestAnnotationScenarioMapper();
     }
 
     @Override

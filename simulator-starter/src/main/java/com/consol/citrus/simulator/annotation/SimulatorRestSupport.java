@@ -16,14 +16,14 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
-import com.consol.citrus.simulator.http.AnnotationRequestMappingKeyExtractor;
+import com.consol.citrus.simulator.http.HttpRequestAnnotationScenarioMapper;
 import com.consol.citrus.simulator.listener.SimulatorMessageListener;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -144,7 +144,7 @@ public class SimulatorRestSupport {
 
             SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
             endpointAdapter.setApplicationContext(applicationContext);
-            endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+            endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
 
             restController.setEndpointAdapter(endpointAdapter);
         }
@@ -152,13 +152,13 @@ public class SimulatorRestSupport {
         return restController;
     }
 
-    @Bean(name = "simulatorRestMappingKeyExtractor")
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+    @Bean(name = "simulatorRestScenarioMapper")
+    public ScenarioMapper simulatorScenarioMapper() {
         if (configurer != null) {
-            return configurer.mappingKeyExtractor();
+            return configurer.scenarioMapper();
         }
 
-        return new AnnotationRequestMappingKeyExtractor();
+        return new HttpRequestAnnotationScenarioMapper();
     }
 
     @Bean

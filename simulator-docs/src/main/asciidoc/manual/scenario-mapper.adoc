@@ -1,34 +1,38 @@
-[[mapping-key-extractor]]
-== Mapping key extractor
+[[scenario-mapper]]
+== Scenario mapper
 
-The mapping key extractor implementation decides how to map incoming request message to simulator scenarios. Each incoming request
+The scenario mapper implementation decides how to map incoming request message to simulator scenarios. Each incoming request
 triggers a predefined scenario that generates the response message for the calling client. The simulator identifies the scenario based
 on a mapping key that is extracted from the incoming request.
 
 There are multiple ways to identify the simulator scenario from incoming request messages:
 
-* Message-Type: Each request message type (XML root QName) results in a separate simulator scenario
-* REST request mappings: Identifies the scenario based on Http method and resource path on server
-* SOAP Action: Each SOAP action value defines a simulator scenario
-* Message Header: Any SOAP or Http message header value specifies a new simulator scenario
-* XPath payload: An XPath expression is evaluated on the message payload to identify the scenario
-* Json payload: An JsonPath expression is evaluated on the message payload to identify the scenario
+.Scenario mapping identifiers
+[horizontal]
+Message-Type:: Each request message type (XML root QName) results in a separate simulator scenario
+REST request mappings:: Identifies the scenario based on Http method and resource path on server
+SOAP Action:: Each SOAP action value defines a simulator scenario
+Message Header:: Any SOAP or Http message header value specifies a new simulator scenario
+XPath payload:: An XPath expression is evaluated on the message payload to identify the scenario
+Json payload:: An JsonPath expression is evaluated on the message payload to identify the scenario
 
 Once the simulator scenario is identified with the respective mapping key the scenario get loaded and executed. All scenarios perform Citrus test logic in order
 to provide a proper response messages as a result. This way the simulator is able to perform complex response generating logic with dynamic values and so on. 
 
 The mentioned mapping key extraction strategies are implemented in these classes:
 
-* *AnnotationRequestMappingKeyExtractor* Evaluates REST request mappings
-* *SoapActionMappingKeyExtractor* Evaluates the SOAP action header
-* *HeaderMappingKeyExtractor* Evaluates any message header
-* *XPathPayloadMappingKeyExtractor* Evaluates a XPath expression on the message payload
-* *JsonPayloadMappingKeyExtractor* Evaluates a JsonPath expression on the message payload
+.Scenario mapper implementations
+[horizontal]
+HttpRequestAnnotationScenarioMapper:: Evaluates REST request mappings
+SoapActionScenarioMapper:: Evaluates the SOAP action header
+HeaderValueScenarioMapper:: Evaluates any message header
+ContentBasedXPathScenarioMapper:: Evaluates a XPath expression on the message payload
+ContentBasedJsonPathScenarioMapper:: Evaluates a JsonPath expression on the message payload
 
-Of course you can also implement a custom mapping key extractor. Just implement the interface methods of that API and add the implementation to the simulator
+Of course you can also implement a custom scenario mapper, too. Just implement the interface methods of that API and add the implementation to the simulator
 configuration as described later on in this document.
 
-[[mapping-key-exctractor-default]]
+[[scenario-mapper-default]]
 === Default behavior
 
 The default mapping key logic extracts the message type of incoming requests. This is done by evaluating a Xpath expression on the request payload that uses the root element of the message as the
@@ -58,22 +62,22 @@ way than for *errorMessage* types.
 [[mapping-key-exctractor-configuration]]
 === Configuration
 
-You can change the mapping key behavior by overwriting te default mapping key extractor in your simulator.
+You can change the mapping key behavior by overwriting te default scenario mapper in your simulator.
 
 [source,java]
 ----
 @Component
 public class SimulatorAdapter extends SimulatorRestAdapter {
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        HeaderMappingKeyExtractor mappingKeyExtractor = new HeaderMappingKeyExtractor();
-        mappingKeyExtractor.setHeaderName("X-simulator-scenario");
-        return mappingKeyExtractor;
+    public ScenarioMapper scenarioMapper() {
+        HeaderValueScenarioMapper scenarioMapper = new HeaderValueScenarioMapper();
+        scenarioMapper.setHeaderName("X-simulator-scenario");
+        return scenarioMapper;
     } 
 }
 ----
 
-With the configuration above we use the _HeaderMappingKeyExtractor_ implementation so the header name *X-simulator-scenario* gets evaluated for each incoming request message.
-Depending on that header value the matching scenario is executed as a result. The mapping key extractor is just a bean in the Spring application context. There is a default implementation but you can overwrite
+With the configuration above we use the _HeaderValueScenarioMapper_ implementation so the header name *X-simulator-scenario* gets evaluated for each incoming request message.
+Depending on that header value the matching scenario is executed as a result. The scenario mapper is just a bean in the Spring application context. There is a default implementation but you can overwrite
 this behavior very easy in the simulator adapter configuration. Read more about how to add simulator adapter configuration classes in configuration chapters link:#rest-config[rest-config], link:#ws-config[ws-config]
 or link:#jms-config[jms-config].

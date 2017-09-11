@@ -65,8 +65,8 @@ add a *SimulatorRestAdapter* implementation to the classpath. The adapter provid
 public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new AnnotationRequestMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new HttpRequestAnnotationScenarioMapper();
     }
 
     @Override
@@ -85,7 +85,7 @@ The adapter defines methods that configure the simulator REST handling. For inst
 add handler interceptors to the REST API call handling.
 
 *Note*
-The REST support is using a different default mapping key extractor. The *AnnotationRequestMappingKeyExtractor* is active by default and enables *@RequestMapping*
+The REST support is using a different default mapping key extractor. The *HttpRequestAnnotationScenarioMapper* is active by default and enables *@RequestMapping*
 related mapping on scenario classes. Read more about that in link:#rest-request-mapping[rest-request-mapping].
 
 The *urlMapping* defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
@@ -142,10 +142,10 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        HeaderMappingKeyExtractor mappingKeyExtractor = new HeaderMappingKeyExtractor();
-        mappingKeyExtractor.setHeaderName("X-simulator-scenario");
-        return mappingKeyExtractor;
+    public ScenarioMapper scenarioMapper() {
+        HeaderValueScenarioMapper scenarioMapper = new HeaderValueScenarioMapper();
+        scenarioMapper.setHeaderName("X-simulator-scenario");
+        return scenarioMapper;
     }
 
     public static void main(String[] args) {
@@ -250,5 +250,5 @@ As you can see the example above uses *@RequestMapping* annotation in addition t
 on methods, request paths and parameters.
 
 The mapping strategy requires a special mapping key extractor implementation that automatically scans for scenarios with *@RequestMapping* annotations.
-The *AnnotationRequestMappingKeyExtractor* is active by default so in case you need to apply different mapping strategies you must overwrite the mapping key extractor
+The *HttpRequestAnnotationScenarioMapper* is active by default so in case you need to apply different mapping strategies you must overwrite the mapping key extractor
 in configuration adapter.

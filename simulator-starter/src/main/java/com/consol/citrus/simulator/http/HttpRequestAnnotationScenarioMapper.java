@@ -20,6 +20,7 @@ import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Scenario mapper performs mapping logic on request mapping annotations on given scenarios. Scenarios match on request method as well as
+ * request path pattern matching.
+ *
  * @author Christoph Deppisch
  */
-public class AnnotationRequestMappingKeyExtractor extends AbstractMappingKeyExtractor {
+public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtractor implements ScenarioMapper {
 
     @Autowired(required = false)
     private List<SimulatorScenario> scenarios = new ArrayList<>();

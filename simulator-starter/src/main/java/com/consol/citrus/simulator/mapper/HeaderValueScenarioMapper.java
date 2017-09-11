@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.annotation;
+package com.consol.citrus.simulator.mapper;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.mapper.ScenarioMapper;
+import com.consol.citrus.endpoint.adapter.mapping.HeaderMappingKeyExtractor;
 
 /**
  * @author Christoph Deppisch
  */
-public interface SimulatorConfigurer {
-
-    /**
-     * Gets the scenario mapper.
-     *
-     * @return
-     */
-    ScenarioMapper scenarioMapper();
-
-    /**
-     * Gets the delay in milliseconds to wait after uncategorized exceptions.
-     * @param simulatorConfiguration
-     *
-     * @return
-     */
-    Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration);
+public class HeaderValueScenarioMapper extends HeaderMappingKeyExtractor implements ScenarioMapper {
 }

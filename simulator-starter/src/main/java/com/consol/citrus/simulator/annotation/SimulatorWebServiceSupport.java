@@ -16,9 +16,9 @@
 
 package com.consol.citrus.simulator.annotation;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class SimulatorWebServiceSupport {
         WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
         return webServiceEndpoint;
@@ -91,13 +91,13 @@ public class SimulatorWebServiceSupport {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorWsMappingKeyExtractor")
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+    @Bean(name = "simulatorWsScenarioMapper")
+    public ScenarioMapper simulatorScenarioMapper() {
         if (configurer != null) {
-            return configurer.mappingKeyExtractor();
+            return configurer.scenarioMapper();
         }
 
-        return new XPathPayloadMappingKeyExtractor();
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
     /**

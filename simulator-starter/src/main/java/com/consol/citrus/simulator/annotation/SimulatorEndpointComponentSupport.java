@@ -19,10 +19,10 @@ package com.consol.citrus.simulator.annotation;
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.channel.ChannelSyncEndpointConfiguration;
 import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
+import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -55,13 +55,13 @@ public class SimulatorEndpointComponentSupport {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorMappingKeyExtractor")
-    public MappingKeyExtractor simulatorMappingKeyExtractor() {
+    @Bean(name = "simulatorScenarioMapper")
+    public ScenarioMapper simulatorScenarioMapper() {
         if (configurer != null) {
-            return configurer.mappingKeyExtractor();
+            return configurer.scenarioMapper();
         }
 
-        return new XPathPayloadMappingKeyExtractor();
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
     @Bean(name = "simulatorEndpointPoller")
@@ -78,7 +78,7 @@ public class SimulatorEndpointComponentSupport {
         endpointPoller.setInboundEndpoint(simulatorEndpoint(applicationContext));
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorMappingKeyExtractor());
+        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
 
         endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
 

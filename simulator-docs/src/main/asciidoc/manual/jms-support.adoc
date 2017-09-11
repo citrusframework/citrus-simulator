@@ -53,8 +53,8 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 }
 ----

@@ -1,8 +1,8 @@
 [[introduction]]
 = Introduction
 
-This is a standalone simulator for different message transports such as Http REST, SOAP WebService,
-JMS, RMI and mail messaging.
+This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
+JMS, RMI, mail messaging and more.
 
 The simulator provides server APIs for clients and responds with predefined messages according to
 defined scenarios. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
@@ -12,17 +12,25 @@ code simulator scenarios in Java or XML. Each scenario execution on the simulato
 
 Feedback and contributions are highly appreciated!
 
-[[limitations]]
-== Limitations
+[[project-status]]
+== Project status
 
 *NOTE:* _This project is considered stable but still under construction!_
 
 The simulator application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet.
 
-Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
-However the simulator is usable and most features are considered to be stable.
+.Experimental features
+[horizontal]
+WSDL generated scenarios:: Auto generate simulator scenarios from WSDL file
+Swagger generated scenarios:: Auto generate simulator scenarios from Swagger API file
 
-Please consider following limitations that we have right now:
+Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
+However the simulator is usable and all main features are considered to be stable.
+
+[[project-prerequisites]]
+== Prerequisites
+
+You may want to check the following prerequisites for using the simulator application.
 
 [[limitations-java-8]]
 === Java 8

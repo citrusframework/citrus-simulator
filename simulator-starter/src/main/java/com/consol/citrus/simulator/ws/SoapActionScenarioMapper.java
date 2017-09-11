@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.annotation;
+package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.endpoint.adapter.mapping.SoapActionMappingKeyExtractor;
 import com.consol.citrus.simulator.mapper.ScenarioMapper;
 
 /**
  * @author Christoph Deppisch
  */
-public abstract class SimulatorEndpointComponentAdapter implements SimulatorEndpointComponentConfigurer {
-
-    @Override
-    public boolean useSoapEnvelope() {
-        return false;
-    }
-
-    @Override
-    public ScenarioMapper scenarioMapper() {
-        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
-    }
-
-    @Override
-    public Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
-        return simulatorConfiguration.getExceptionDelay();
-    }
+public class SoapActionScenarioMapper extends SoapActionMappingKeyExtractor implements ScenarioMapper {
 }

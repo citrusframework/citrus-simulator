@@ -69,8 +69,8 @@ public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceC
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new XPathPayloadMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
     @Override
@@ -137,8 +137,8 @@ public class Simulator extends SimulatorWebServiceAdapter {
     }
 
     @Override
-    public MappingKeyExtractor mappingKeyExtractor() {
-        return new SoapActionMappingKeyExtractor();
+    public ScenarioMapper scenarioMapper() {
+        return new SoapActionScenarioMapper();
     }
 
     public static void main(String[] args) {

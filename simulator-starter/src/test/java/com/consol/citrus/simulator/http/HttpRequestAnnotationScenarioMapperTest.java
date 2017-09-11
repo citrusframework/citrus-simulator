@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
 /**
  * @author Christoph Deppisch
  */
-public class AnnotationRequestMappingKeyExtractorTest {
+public class HttpRequestAnnotationScenarioMapperTest {
 
-    private AnnotationRequestMappingKeyExtractor mappingKeyExtractor = new AnnotationRequestMappingKeyExtractor();
+    private HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
 
     @Mock
     private SimulatorConfigurationProperties simulatorConfiguration;
@@ -25,43 +25,43 @@ public class AnnotationRequestMappingKeyExtractorTest {
     @BeforeClass
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mappingKeyExtractor.setConfiguration(simulatorConfiguration);
+        scenarioMapper.setConfiguration(simulatorConfiguration);
 
         when(simulatorConfiguration.getDefaultScenario()).thenReturn("default");
     }
 
     @Test
     public void testGetMappingKey() {
-        mappingKeyExtractor.getScenarios().add(new FooListScenario());
-        mappingKeyExtractor.getScenarios().add(new FooScenario());
-        mappingKeyExtractor.getScenarios().add(new FooDetailScenario());
-        mappingKeyExtractor.getScenarios().add(new BarListScenario());
-        mappingKeyExtractor.getScenarios().add(new BarScenario());
-        mappingKeyExtractor.getScenarios().add(new BarDetailScenario());
+        scenarioMapper.getScenarios().add(new FooListScenario());
+        scenarioMapper.getScenarios().add(new FooScenario());
+        scenarioMapper.getScenarios().add(new FooDetailScenario());
+        scenarioMapper.getScenarios().add(new BarListScenario());
+        scenarioMapper.getScenarios().add(new BarScenario());
+        scenarioMapper.getScenarios().add(new BarDetailScenario());
 
         HttpMessage request = new HttpMessage();
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
 
         request.path("/issues");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
 
         request.path("/issues/foos");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "fooListScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooListScenario");
 
         request.path("/issues/bars");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "barListScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barListScenario");
 
         request.path("/issues/foo/1");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "fooScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooScenario");
 
         request.path("/issues/bar/1");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "barScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barScenario");
 
         request.path("/issues/foo/detail");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "fooDetailScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooDetailScenario");
 
         request.path("/issues/bar/detail");
-        Assert.assertEquals(mappingKeyExtractor.getMappingKey(request), "barDetailScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barDetailScenario");
     }
 
     @Scenario("fooListScenario")

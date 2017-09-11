@@ -4,23 +4,107 @@
 The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
 or as container/pod in Docker, Kubernetes or Openshift.
 
-[[download]]
-== Download
+[[maven]]
+== Maven
 
-You can download an executable web archive representing the the latest simulator distribution located at
-https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web[labs.consol.de/maven/repository]:
+You can use the simulator in your Maven project. Maven will automatically download all required dependencies and project artifacts for you. The simulator is then executable
+as a web archive representing the the latest simulator distribution.
+
+See the following sample Maven project POM file that defines the project sources as Spring boot application.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-simulator-sample</artifactId>
+  <name>${project.artifactId}</name>
+  <version>1.0.0</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <citrus.simulator.version>1.0.0</citrus.simulator.version>
+    <spring.boot.version>1.5.6.RELEASE</spring.boot.version>
+    <testng.version>6.11</testng.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- Citrus Simulator -->
+
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-starter</artifactId>
+      <version>${citrus.simulator.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+        <configuration>
+          <fork>true</fork>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+----
+
+You can now build and run the simulator with Maven from a command line. Use following command:
 
 [source,bash]
 ----
-curl -o citrus-simulator.war https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web/1.0.1-SNAPSHOT/citrus-simulator-web-1.0.1-SNAPSHOT-executable.war
-----
-
-Save the Java web archive to a folder on your local machine and start the Spring boot web application. The downloaded artifact should be executable
-from command line like this:
-
-[source,bash]
-----
-java -jar citrus-simulator.war
+mvn clean install
+mvn spring-boot:run
 ----
 
 You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
@@ -68,20 +152,5 @@ You will see the application starting up. Usually you will see some console log 
 you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
 
 Now everything is set up and you can start to create some simulator scenarios. 
-
-[[simulator-artifacts]]
-=== Simulator artifacts
-
-The simulator project creates a web application artifact. After building you can find this WAR file in target/citrus-simulator-1.0.war
-
-Name and version of that archive file may be different according to your project settings. You can start the simulator with Java
-
-[source,bash]
-----
-java -jar citrus-simulator-1.0.war
-----
-
-You will see the application starting up. Usually you will see some console log output. The web server should start within seconds.
-Once the application is up and running you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
 
 That's it you are ready to use the Citrus simulator.
