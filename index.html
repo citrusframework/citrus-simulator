@@ -528,72 +528,104 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Christoph Deppisch</span><br>
 <span id="author2" class="author">Martin Maher</span><br>
 <span id="author3" class="author">Georgi Todorov</span><br>
-<span id="revnumber">version 0.10.0-SNAPSHOT,</span>
-<span id="revdate">2017-07-06</span>
+<span id="revnumber">version 1.0.0-SNAPSHOT,</span>
+<span id="revdate">2017-09-12</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">citrus-simulator</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">1. Introduction</a>
 <ul class="sectlevel2">
-<li><a href="#limitations">1.1. Limitations</a>
+<li><a href="#project-status">1.1. Project status</a></li>
+<li><a href="#project-prerequisites">1.2. Prerequisites</a>
 <ul class="sectlevel3">
-<li><a href="#java-8">1.1.1. Java 8</a></li>
-<li><a href="#build-tools">1.1.2. Build tools</a></li>
-<li><a href="#browsers">1.1.3. Browsers</a></li>
+<li><a href="#limitations-java-8">1.2.1. Java 8</a></li>
+<li><a href="#limitations-browser">1.2.2. Browser</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a href="#installation">2. Installation</a>
 <ul class="sectlevel2">
-<li><a href="#download">2.1. Download</a></li>
+<li><a href="#maven">2.1. Maven</a></li>
 <li><a href="#maven-archetype">2.2. Maven archetype</a>
 <ul class="sectlevel3">
-<li><a href="#build-sources">2.2.1. Build sources</a></li>
-<li><a href="#simulator-artifacts">2.2.2. Simulator artifacts</a></li>
+<li><a href="#development">2.2.1. Development</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a href="#concepts">3. Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#simulator-application">3.1. Simulator application</a></li>
-<li><a href="#properties">3.2. Properties</a></li>
-<li><a href="#spring-bean-configuration">3.3. Spring bean configuration</a></li>
+<li><a href="#concept-simulator-application">3.1. Simulator application</a></li>
+<li><a href="#concept-simulator-properties">3.2. Simulator properties</a>
+<ul class="sectlevel3">
+<li><a href="#concept-simulator-system-properties">3.2.1. System properties</a></li>
+<li><a href="#concept-simulator-environment-variables">3.2.2. Environment variables</a></li>
 </ul>
 </li>
-<li><a href="#rest-support">4. REST support</a>
+<li><a href="#concept-simulator-spring-configuration">3.3. Spring bean configuration</a></li>
+<li><a href="#scenario-mapper">3.4. Scenario mapper</a>
+<ul class="sectlevel3">
+<li><a href="#scenario-mapper-default">3.4.1. Default behavior</a></li>
+<li><a href="#mapping-key-exctractor-configuration">3.4.2. Configuration</a></li>
+</ul>
+</li>
+<li><a href="#scenarios">3.5. Simulator scenarios</a></li>
+<li><a href="#intermediate-messages">3.6. Intermediate Messages</a></li>
+</ul>
+</li>
+<li><a href="#rest">4. REST support</a>
 <ul class="sectlevel2">
 <li><a href="#rest-config">4.1. Configuration</a></li>
-<li><a href="#advanced-customizations">4.2. Advanced customizations</a></li>
+<li><a href="#rest-customization">4.2. Advanced customizations</a></li>
 <li><a href="#rest-request-mapping">4.3. Request mapping</a></li>
+<li><a href="#rest-status-code">4.4. Http responses</a></li>
 </ul>
 </li>
-<li><a href="#ws-support">5. Web Service support</a>
+<li><a href="#web-service">5. Web Service support</a>
 <ul class="sectlevel2">
-<li><a href="#ws-config">5.1. Configuration</a></li>
-<li><a href="#advanced-customizations-2">5.2. Advanced customizations</a></li>
-<li><a href="#ws-soap-faults">5.3. SOAP faults</a></li>
+<li><a href="#web-service-config">5.1. Configuration</a></li>
+<li><a href="#web-service-customization">5.2. Advanced customizations</a></li>
+<li><a href="#web-service-response">5.3. SOAP response</a></li>
+<li><a href="#web-service-faults">5.4. SOAP faults</a></li>
 </ul>
 </li>
-<li><a href="#jms-support">6. JMS support</a>
+<li><a href="#jms">6. JMS support</a>
 <ul class="sectlevel2">
 <li><a href="#jms-config">6.1. Configuration</a></li>
+<li><a href="#jms-async">6.2. Asynchronous communication</a></li>
+<li><a href="#jms-sync">6.3. Synchronous communication</a></li>
 </ul>
 </li>
-<li><a href="#endpoint-support">7. Endpoint support</a>
+<li><a href="#endpoint">7. Endpoint support</a>
 <ul class="sectlevel2">
 <li><a href="#endpoint-config">7.1. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#user-interface">8. User interface</a>
 <ul class="sectlevel2">
-<li><a href="#user-interface-status">8.1. Status</a></li>
-<li><a href="#user-interface-run">8.2. Run scenarios</a></li>
+<li><a href="#ui-dashboard">8.1. Dashboard</a></li>
+<li><a href="#ui-scenarios">8.2. Scenarios</a></li>
+<li><a href="#ui-activity">8.3. Activities</a></li>
+<li><a href="#messages">8.4. Messages</a></li>
 </ul>
 </li>
-<li><a href="#links">9. Links &amp; Further reading</a></li>
+<li><a href="#starter">9. Starter</a>
+<ul class="sectlevel2">
+<li><a href="#starter-parameter">9.1. Starter Parameter</a></li>
+</ul>
+</li>
+<li><a href="#samples">10. Samples</a>
+<ul class="sectlevel2">
+<li><a href="#samples-rest">10.1. REST sample</a></li>
+<li><a href="#samples-soap">10.2. SOAP sample</a></li>
+<li><a href="#samples-jms">10.3. JMS sample</a></li>
+<li><a href="#samples-mail">10.4. Mail sample</a></li>
+<li><a href="#samples-combined">10.5. Combined sample</a></li>
+</ul>
+</li>
+<li><a href="#links">11. Links &amp; Further reading</a></li>
 </ul>
 </div>
 </div>
@@ -602,7 +634,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Copyright © 2017 ConSol Software GmbH</strong><br>
-<strong>Version: 0.10.0-SNAPSHOT</strong></p>
+<strong>Version: 1.0.0-SNAPSHOT</strong></p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/citrus-logo-small.png" alt="citrus-logo"></span></p>
@@ -614,36 +646,70 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This is a standalone simulator application for different message transports such as Http REST APIs, SOAP WebService interface and
-JMS messaging.</p>
+<p>This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
+JMS, RMI, mail messaging and more.</p>
 </div>
 <div class="paragraph">
-<p>Clients are able to access the simulator endpoints and the simulator answers with predefined response
-messages. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
+<p>The simulator provides server APIs for clients and responds with predefined messages according to
+defined scenarios. The simulator response logic is very powerful and enables us to simulate any kind of server interface.</p>
 </div>
 <div class="paragraph">
-<p>The simulator uses the test framework Citrus <a href="https://www.citrusframework.org">https://www.citrusframework.org</a></p>
+<p>The simulator uses <a href="https://projects.spring.io/spring-boot/">Spring Boot</a> in combination with the test framework <a href="https://www.citrusframework.org">Citrus</a>. You can
+code simulator scenarios in Java or XML. Each scenario execution on the simulator is stored to an internal database and can be reviewed via web UI in the browser.</p>
 </div>
 <div class="paragraph">
-<p>Contributions and feedback is highly appreciated!</p>
+<p>Feedback and contributions are highly appreciated!</p>
 </div>
 <div class="sect2">
-<h3 id="limitations"><a class="anchor" href="#limitations"></a>1.1. Limitations</h3>
+<h3 id="project-status"><a class="anchor" href="#project-status"></a>1.1. Project status</h3>
 <div class="paragraph">
 <p><strong>NOTE:</strong> <em>This project is considered stable but still under construction!</em></p>
 </div>
 <div class="paragraph">
-<p>The administration UI is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet.</p>
+<p>The simulator application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet. Please see the following experimental
+features.</p>
+</div>
+<div class="hdlist">
+<div class="title">Experimental features</div>
+<table>
+<tr>
+<td class="hdlist1">
+WSDL generated scenarios
+</td>
+<td class="hdlist2">
+<p>Auto generate simulator scenarios from WSDL file</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Swagger generated scenarios
+</td>
+<td class="hdlist2">
+<p>Auto generate simulator scenarios from Swagger API file</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Combined simulator
+</td>
+<td class="hdlist2">
+<p>Use multiple message transports in one simulator instance</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
-However the administration UI is usable and most features are considered to be stable.</p>
+However the simulator is usable and all main features are considered to be stable.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="project-prerequisites"><a class="anchor" href="#project-prerequisites"></a>1.2. Prerequisites</h3>
 <div class="paragraph">
-<p>Please consider following limitations that we have right now:</p>
+<p>You may want to check the following prerequisites for using the simulator application.</p>
 </div>
 <div class="sect3">
-<h4 id="java-8"><a class="anchor" href="#java-8"></a>1.1.1. Java 8</h4>
+<h4 id="limitations-java-8"><a class="anchor" href="#limitations-java-8"></a>1.2.1. Java 8</h4>
 <div class="paragraph">
 <p>The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application.
 Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.</p>
@@ -655,20 +721,7 @@ Please make sure that you have Java development kit installed and set up. You ca
 </div>
 </div>
 <div class="sect3">
-<h4 id="build-tools"><a class="anchor" href="#build-tools"></a>1.1.2. Build tools</h4>
-<div class="paragraph">
-<p>The simulator uses Maven as build tool. If you only want to run a distribution artifact of the simulator you are fine with just Java on your machine. In case
-you want to build and maintain your simulator instance you need Maven to build your simulator application. We used Maven 3 when coding the simulator. You can verify
-the Maven installation on your host with this command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn -version</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="browsers"><a class="anchor" href="#browsers"></a>1.1.3. Browsers</h4>
+<h4 id="limitations-browser"><a class="anchor" href="#limitations-browser"></a>1.2.2. Browser</h4>
 <div class="paragraph">
 <p>The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
 invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working
@@ -686,23 +739,108 @@ on these two browsers. Of course other browsers might work without any limitatio
 or as container/pod in Docker, Kubernetes or Openshift.</p>
 </div>
 <div class="sect2">
-<h3 id="download"><a class="anchor" href="#download"></a>2.1. Download</h3>
+<h3 id="maven"><a class="anchor" href="#maven"></a>2.1. Maven</h3>
 <div class="paragraph">
-<p>You can download an executable web archive representing the the latest simulator distribution located at
-<a href="https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web">labs.consol.de/maven/repository</a>:</p>
+<p>You can use the simulator in your Maven project. Maven will automatically download all required dependencies and project artifacts for you. The simulator is then executable
+as a web archive representing the the latest simulator distribution.</p>
+</div>
+<div class="paragraph">
+<p>See the following sample Maven project POM file that defines the project sources as Spring boot application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">curl -o citrus-simulator.war https://labs.consol.de/maven/repository/com/consol/citrus/citrus-simulator-web/1.0.1-SNAPSHOT/citrus-simulator-web-1.0.1-SNAPSHOT-executable.war</code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;project</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span><span class="delimiter">&quot;</span></span>
+         <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+         <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+
+  <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>citrus-simulator-sample<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;name&gt;</span>${project.artifactId}<span class="tag">&lt;/name&gt;</span>
+  <span class="tag">&lt;version&gt;</span>1.0.0<span class="tag">&lt;/version&gt;</span>
+
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.build.sourceEncoding&gt;</span>
+    <span class="tag">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.reporting.outputEncoding&gt;</span>
+    <span class="tag">&lt;citrus.simulator.version&gt;</span>1.0.0<span class="tag">&lt;/citrus.simulator.version&gt;</span>
+    <span class="tag">&lt;spring.boot.version&gt;</span>1.5.6.RELEASE<span class="tag">&lt;/spring.boot.version&gt;</span>
+    <span class="tag">&lt;testng.version&gt;</span>6.11<span class="tag">&lt;/testng.version&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+
+  <span class="tag">&lt;dependencyManagement&gt;</span>
+    <span class="tag">&lt;dependencies&gt;</span>
+      <span class="tag">&lt;dependency&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>spring-boot-dependencies<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;version&gt;</span>${spring.boot.version}<span class="tag">&lt;/version&gt;</span>
+        <span class="tag">&lt;type&gt;</span>pom<span class="tag">&lt;/type&gt;</span>
+        <span class="tag">&lt;scope&gt;</span>import<span class="tag">&lt;/scope&gt;</span>
+      <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;/dependencies&gt;</span>
+  <span class="tag">&lt;/dependencyManagement&gt;</span>
+
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+
+    <span class="comment">&lt;!-- Citrus Simulator --&gt;</span>
+
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>citrus-simulator-starter<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>${citrus.simulator.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+
+  <span class="tag">&lt;build&gt;</span>
+    <span class="tag">&lt;plugins&gt;</span>
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;version&gt;</span>3.5.1<span class="tag">&lt;/version&gt;</span>
+        <span class="tag">&lt;configuration&gt;</span>
+          <span class="tag">&lt;encoding&gt;</span>${project.build.sourceEncoding}<span class="tag">&lt;/encoding&gt;</span>
+          <span class="tag">&lt;source&gt;</span>1.8<span class="tag">&lt;/source&gt;</span>
+          <span class="tag">&lt;target&gt;</span>1.8<span class="tag">&lt;/target&gt;</span>
+        <span class="tag">&lt;/configuration&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>maven-war-plugin<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;version&gt;</span>3.0.0<span class="tag">&lt;/version&gt;</span>
+        <span class="tag">&lt;configuration&gt;</span>
+          <span class="tag">&lt;failOnMissingWebXml&gt;</span>false<span class="tag">&lt;/failOnMissingWebXml&gt;</span>
+        <span class="tag">&lt;/configuration&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;version&gt;</span>${spring.boot.version}<span class="tag">&lt;/version&gt;</span>
+        <span class="tag">&lt;configuration&gt;</span>
+          <span class="tag">&lt;fork&gt;</span>true<span class="tag">&lt;/fork&gt;</span>
+        <span class="tag">&lt;/configuration&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+    <span class="tag">&lt;/plugins&gt;</span>
+  <span class="tag">&lt;/build&gt;</span>
+
+<span class="tag">&lt;/project&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Save the Java web archive to a folder on your local machine and start the Spring boot web application. The downloaded artifact should be executable
-from command line like this:</p>
+<p>You can now build and run the simulator with Maven from a command line. Use following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">java -jar citrus-simulator.war</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">mvn clean install
+mvn spring-boot:run</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -730,21 +868,37 @@ you get a new Maven project that is ready to use. The project is created in a ne
 <div class="paragraph">
 <p>There are different simulator archetypes available. Please pick the most convenient archetype according to your project purpose.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>citrus-simulator-archetypes-rest</strong> Http REST simulator sample</p>
-</li>
-<li>
-<p><strong>citrus-simulator-archetypes-ws</strong> SOAP web service simulator sample</p>
-</li>
-<li>
-<p><strong>citrus-simulator-archetypes-jms</strong> JMS simulator sample</p>
-</li>
-</ul>
+<div class="hdlist">
+<div class="title">Maven archetypes</div>
+<table>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetypes-rest
+</td>
+<td class="hdlist2">
+<p>Http REST simulator sample</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetypes-ws
+</td>
+<td class="hdlist2">
+<p>SOAP web service simulator sample</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetypes-jms
+</td>
+<td class="hdlist2">
+<p>JMS simulator sample</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
-<h4 id="build-sources"><a class="anchor" href="#build-sources"></a>2.2.1. Build sources</h4>
+<h4 id="development"><a class="anchor" href="#development"></a>2.2.1. Development</h4>
 <div class="paragraph">
 <p>You can directly build the new simulator project with</p>
 </div>
@@ -768,24 +922,6 @@ you can open your browser and point to <a href="http://localhost:8080">http://lo
 <div class="paragraph">
 <p>Now everything is set up and you can start to create some simulator scenarios.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="simulator-artifacts"><a class="anchor" href="#simulator-artifacts"></a>2.2.2. Simulator artifacts</h4>
-<div class="paragraph">
-<p>The simulator project creates a web application artifact. After building you can find this WAR file in target/citrus-simulator-1.0.war</p>
-</div>
-<div class="paragraph">
-<p>Name and version of that archive file may be different according to your project settings. You can start the simulator with Java</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">java -jar citrus-simulator-1.0.war</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds.
-Once the application is up and running you can open your browser and point to <a href="http://localhost:8080">http://localhost:8080</a>.</p>
-</div>
 <div class="paragraph">
 <p>That&#8217;s it you are ready to use the Citrus simulator.</p>
 </div>
@@ -799,11 +935,57 @@ Once the application is up and running you can open your browser and point to <a
 <div class="paragraph">
 <p>The Citrus simulator project has the primary focus to provide messaging simulation as a standalone server. Once started the simulator
 provides different endpoints (Http REST, JMS, SOAP Web Service, and so on) and waits for incoming requests. The time a request arrives at one of the endpoints
-the simulator maps the request to a predefined <a href="#scenarios">simulator scenario</a> which is automatically executed immediately.</p>
+the simulator maps the request to a predefined <a href="#scenarios">simulator scenario</a> which is automatically executed immediately. The scenario is responsible to create
+a response message that is sent to the calling client.</p>
 </div>
 <div class="paragraph">
-<p>The mapping is done by <a href="#mapping-key-extractor">extracting a mapping key</a> from the request data. This can be a special request header or a XPath
-expression that is evaluated on the request payload.</p>
+<p>The scenario mapping is done by <a href="#scenario-mapper">extracting a mapping key</a> from the request data. This scenario mapper implementation searches for a matching scenario for the current incoming
+request. The scenario mapping is done based on different identifiers on the request. The Citrus simulator knows following scenario mapper implementations:</p>
+</div>
+<div class="hdlist">
+<div class="title">Scenario mapper</div>
+<table>
+<tr>
+<td class="hdlist1">
+Content based xpath mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates Xpath expressions on the request payload and uses the expression result as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Content based jsonPath mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Header value mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates header name on request and uses header value as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+SOAP action mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates SOAP action header on request and uses the value as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Request mapping annotation mapper
+</td>
+<td class="hdlist2">
+<p>Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The <a href="#scenarios">simulator scenario</a> is capable of handling the request message and will return a proper response message to the calling client.
@@ -821,20 +1003,20 @@ each simulator.</p>
 Also you can trigger scenarios manually.</p>
 </div>
 <div class="sect2">
-<h3 id="simulator-application"><a class="anchor" href="#simulator-application"></a>3.1. Simulator application</h3>
+<h3 id="concept-simulator-application"><a class="anchor" href="#concept-simulator-application"></a>3.1. Simulator application</h3>
 <div class="paragraph">
 <p>The simulator is based on Spring boot. This means we have a main class that loads the Spring boot application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRest</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRest</span>
+<span class="annotation">@EnableRestSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -845,69 +1027,388 @@ Also you can trigger scenarios manually.</p>
 <div class="paragraph">
 <p>This class is the main entrance for all configuration and customization statements. First of all the class is annotated as <strong>@SpringBootApplication</strong>
 and <strong>@SimulatorApplication</strong>. This enables auto configuration for the simulator application. In addition to that we enable different aspects of the simulator
-by using further annotations provided. In the sample above we use the <strong>@EnableRest</strong> annotation for Http REST endpoint support.</p>
+by using further annotations provided. In the sample above we use the <strong>@EnableRestSimulation</strong> annotation for Http REST endpoint support.</p>
 </div>
 <div class="paragraph">
 <p>There are multiple annotations available for different transport endpoints:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>@EnableRest</strong> Enables <a href="#rest-support">Http REST support</a></p>
-</li>
-<li>
-<p><strong>@EnableWs</strong> Enables <a href="#ws-support">SOAP web services support</a></p>
-</li>
-<li>
-<p><strong>@EnableJms</strong> Enables <a href="#jms-support">JMS support</a></p>
-</li>
-<li>
-<p><strong>@EnableEndpointComponent</strong> Enables generic <a href="#endpoint-component-support">endpoint component support</a></p>
-</li>
-</ul>
+<div class="hdlist">
+<div class="title">Simulator annotations</div>
+<table>
+<tr>
+<td class="hdlist1">
+@EnableRestSimulation
+</td>
+<td class="hdlist2">
+<p>Enables <a href="#rest-support">Http REST support</a></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+@EnableWebServiceSimulation
+</td>
+<td class="hdlist2">
+<p>Enables <a href="#ws-support">SOAP web services support</a></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+@EnableWebServiceClientSimulation
+</td>
+<td class="hdlist2">
+<p>Enables <a href="#ws-support">SOAP web services support</a></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+@EnableJmsSimulation
+</td>
+<td class="hdlist2">
+<p>Enables <a href="#jms-support">JMS support</a></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+@EnableEndpointSimulation
+</td>
+<td class="hdlist2">
+<p>Enables generic <a href="#endpoint-component-support">endpoint component support</a></p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="properties"><a class="anchor" href="#properties"></a>3.2. Properties</h3>
+<h3 id="concept-simulator-properties"><a class="anchor" href="#concept-simulator-properties"></a>3.2. Simulator properties</h3>
 <div class="paragraph">
-<p>The simulator is capable of loading configuration from system properties and property files. There are several properties that you can use in order to customize the simulator behavior. These
+<p>The simulator is capable of loading configuration from system properties, environment variables and property files. First of all the default Spring boot properties configuration mechanism
+is supported. Following from that you can add properties to the <code>application.properties</code> file in your project resources in order to adjust simulator behavior.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.defaultTimeout=10000
+citrus.simulator.templatePath=com/company/simulator/templates</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The available simulator properties are grouped in following configuration classes:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+com.consol.citrus.simulator.config.SimulatorConfigurationProperties
+</td>
+<td class="hdlist2">
+<p>prefix=<strong>citrus.simulator</strong></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+com.consol.citrus.simulator.annotation.SimulatorRestConfigurationProperties
+</td>
+<td class="hdlist2">
+<p>prefix=<strong>citrus.simulator.rest</strong></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+com.consol.citrus.simulator.annotation.SimulatorWebServiceConfigurationProperties
+</td>
+<td class="hdlist2">
+<p>prefix=<strong>citrus.simulator.ws</strong></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+com.consol.citrus.simulator.annotation.SimulatorJmsConfigurationProperties
+</td>
+<td class="hdlist2">
+<p>prefix=<strong>citrus.simulator.jms</strong></p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There are several properties that you can use in order to customize the simulator behavior. These
 properties are:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>citrus.simulator.configuration.class</strong> Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)</p>
-</li>
-<li>
-<p><strong>citrus.simulator.template.path</strong> Default path to message payload template files.</p>
-</li>
-<li>
-<p><strong>citrus.simulator.default.scenario</strong> Default scenario name.</p>
-</li>
-<li>
-<p><strong>citrus.simulator.timeout</strong> Timeout when waiting for inbound messages.</p>
-</li>
-<li>
-<p><strong>citrus.simulator.template.validation</strong> Enable/disable schema validation.</p>
-</li>
-</ul>
+<div class="hdlist">
+<div class="title">Spring boot application properties</div>
+<table>
+<tr>
+<td class="hdlist1">
+citrus.simulator.templatePath
+</td>
+<td class="hdlist2">
+<p>Default path to message payload template files.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.defaultScenario
+</td>
+<td class="hdlist2">
+<p>Default scenario name.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.defaultTimeout
+</td>
+<td class="hdlist2">
+<p>Timeout when waiting for inbound messages.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.templateValidation
+</td>
+<td class="hdlist2">
+<p>Enable/disable schema validation.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.exceptionDelay
+</td>
+<td class="hdlist2">
+<p>Default delay in milliseconds to wait after uncategorized exceptions.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.rest.urlMapping
+</td>
+<td class="hdlist2">
+<p>Handler adapter url mapping for inbound requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.ws.servletMapping
+</td>
+<td class="hdlist2">
+<p>Message dispatcher servlet mapping for inbound SOAP requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.jms.inboundDestination
+</td>
+<td class="hdlist2">
+<p>JMS destination name to consume inbound messages from</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.jms.replyDestination
+</td>
+<td class="hdlist2">
+<p>JMS destination name to publish reply messages to</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>You can set these properties as system properties or you can add a property file in following location:</p>
+<p>Please refer to the respective configuration property classes to see what property settings are supported.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>META-INF/citrus-simulator.properties</strong></p>
-</li>
-</ul>
+<div class="sect3">
+<h4 id="concept-simulator-system-properties"><a class="anchor" href="#concept-simulator-system-properties"></a>3.2.1. System properties</h4>
+<div class="paragraph">
+<p>In addition to that default Spring boot property replacement the simulator also supports system property and environment variables. The properties are:</p>
+</div>
+<div class="hdlist">
+<div class="title">System property names</div>
+<table>
+<tr>
+<td class="hdlist1">
+citrus.simulator.configuration.class
+</td>
+<td class="hdlist2">
+<p>Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.template.path
+</td>
+<td class="hdlist2">
+<p>Default path to message payload template files.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.default.scenario
+</td>
+<td class="hdlist2">
+<p>Default scenario name.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.default.timeout
+</td>
+<td class="hdlist2">
+<p>Timeout when waiting for inbound messages.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.template.validation
+</td>
+<td class="hdlist2">
+<p>Enable/disable schema validation.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.exception.delay
+</td>
+<td class="hdlist2">
+<p>Default delay in milliseconds to wait after uncategorized exceptions.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.rest.url.mapping
+</td>
+<td class="hdlist2">
+<p>Handler adapter url mapping for inbound requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.ws.servlet.mapping
+</td>
+<td class="hdlist2">
+<p>Message dispatcher servlet mapping for inbound SOAP requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.jms.inbound.destination
+</td>
+<td class="hdlist2">
+<p>JMS destination name to consume inbound messages from</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus.simulator.jms.reply.destination
+</td>
+<td class="hdlist2">
+<p>JMS destination name to publish outbound messages to</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The simulator will automatically load these properties during startup.</p>
+<p>You can set these properties as system properties when starting the Spring boot web application or you can add the properties to the default
+Spring Boot application properties file <strong>application.properties</strong> that is located as resource file in your project.</p>
+</div>
+<div class="paragraph">
+<p>The simulator will automatically load these properties during startup and honor this configuration.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="concept-simulator-environment-variables"><a class="anchor" href="#concept-simulator-environment-variables"></a>3.2.2. Environment variables</h4>
+<div class="paragraph">
+<p>Same settings that are editable via system properties are also accessible via environment variables. This is extremely helpful when running the simulator in a containerized
+infrastructure such as Docker or Kubernetes.</p>
+</div>
+<div class="hdlist">
+<div class="title">Environment settings</div>
+<table>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_CONFIGURATION_CLASS
+</td>
+<td class="hdlist2">
+<p>Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_TEMPLATE_PATH
+</td>
+<td class="hdlist2">
+<p>Default path to message payload template files.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_DEFAULT_SCENARIO
+</td>
+<td class="hdlist2">
+<p>Default scenario name.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_DEFAULT_TIMEOUT
+</td>
+<td class="hdlist2">
+<p>Timeout when waiting for inbound messages.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_TEMPLATE_VALIDATION
+</td>
+<td class="hdlist2">
+<p>Enable/disable schema validation.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_EXCEPTION_DELAY
+</td>
+<td class="hdlist2">
+<p>Default delay in milliseconds to wait after uncategorized exceptions.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_REST_URL_MAPPING
+</td>
+<td class="hdlist2">
+<p>Handler adapter url mapping for inbound requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_WS_SERVLET_MAPPING
+</td>
+<td class="hdlist2">
+<p>Message dispatcher servlet mapping for inbound SOAP requests</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION
+</td>
+<td class="hdlist2">
+<p>JMS destination name to consume inbound messages from</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CITRUS_SIMULATOR_JMS_REPLY_DESTINATION
+</td>
+<td class="hdlist2">
+<p>JMS destination name to publish outbound messages to</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In case these environment variables are present on your local system the simulator will automatically load these settings during startup and honor the configuration.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="spring-bean-configuration"><a class="anchor" href="#spring-bean-configuration"></a>3.3. Spring bean configuration</h3>
+<h3 id="concept-simulator-spring-configuration"><a class="anchor" href="#concept-simulator-spring-configuration"></a>3.3. Spring bean configuration</h3>
 <div class="paragraph">
 <p>Citrus works with the Spring framework and the simulator is a Spring boot application. Therefore the configuration is done by adding and overwriting Spring beans in
 the application context. The simulator automatically loads Spring beans defined in following locations:</p>
@@ -925,60 +1426,228 @@ the application context. The simulator automatically loads Spring beans defined 
 <div class="paragraph">
 <p>All beans defined in there get automatically loaded to the simulator Spring application context.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="scenario-mapper"><a class="anchor" href="#scenario-mapper"></a>3.4. Scenario mapper</h3>
 <div class="paragraph">
-<p>Unresolved directive in manual/concepts.adoc - include::manual/mapping-key-extractor.adoc[]
-Unresolved directive in manual/concepts.adoc - include::manual/scenarios.adoc[]
-Unresolved directive in manual/concepts.adoc - include::manual/intermediate-messages.adoc[]</p>
+<p>The scenario mapper implementation decides how to map incoming request message to simulator scenarios. Each incoming request
+triggers a predefined scenario that generates the response message for the calling client. The simulator identifies the scenario based
+on a mapping key that is extracted from the incoming request.</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="rest-support"><a class="anchor" href="#rest-support"></a>4. REST support</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The simulator is able to handle REST API calls such as Http GET, POST, PUT, DELETE and so on. The simulator defines a special
-REST enabling annotation that we can use on the application class:</p>
+<p>There are multiple ways to identify the simulator scenario from incoming request messages:</p>
+</div>
+<div class="hdlist">
+<div class="title">Scenario mapping identifiers</div>
+<table>
+<tr>
+<td class="hdlist1">
+Message-Type
+</td>
+<td class="hdlist2">
+<p>Each request message type (XML root QName) results in a separate simulator scenario</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+REST request mappings
+</td>
+<td class="hdlist2">
+<p>Identifies the scenario based on Http method and resource path on server</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+SOAP Action
+</td>
+<td class="hdlist2">
+<p>Each SOAP action value defines a simulator scenario</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Message Header
+</td>
+<td class="hdlist2">
+<p>Any SOAP or Http message header value specifies a new simulator scenario</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+XPath payload
+</td>
+<td class="hdlist2">
+<p>An XPath expression is evaluated on the message payload to identify the scenario</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Json payload
+</td>
+<td class="hdlist2">
+<p>An JsonPath expression is evaluated on the message payload to identify the scenario</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once the simulator scenario is identified with the respective mapping key the scenario get loaded and executed. All scenarios perform Citrus test logic in order
+to provide a proper response messages as a result. This way the simulator is able to perform complex response generating logic with dynamic values and so on.</p>
+</div>
+<div class="paragraph">
+<p>The mentioned mapping key extraction strategies are implemented in these classes:</p>
+</div>
+<div class="hdlist">
+<div class="title">Scenario mapper implementations</div>
+<table>
+<tr>
+<td class="hdlist1">
+HttpRequestAnnotationScenarioMapper
+</td>
+<td class="hdlist2">
+<p>Evaluates REST request mappings</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+SoapActionScenarioMapper
+</td>
+<td class="hdlist2">
+<p>Evaluates the SOAP action header</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+HeaderValueScenarioMapper
+</td>
+<td class="hdlist2">
+<p>Evaluates any message header</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+ContentBasedXPathScenarioMapper
+</td>
+<td class="hdlist2">
+<p>Evaluates a XPath expression on the message payload</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+ContentBasedJsonPathScenarioMapper
+</td>
+<td class="hdlist2">
+<p>Evaluates a JsonPath expression on the message payload</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Of course you can also implement a custom scenario mapper, too. Just implement the interface methods of that API and add the implementation to the simulator
+configuration as described later on in this document.</p>
+</div>
+<div class="sect3">
+<h4 id="scenario-mapper-default"><a class="anchor" href="#scenario-mapper-default"></a>3.4.1. Default behavior</h4>
+<div class="paragraph">
+<p>The default mapping key logic extracts the message type of incoming requests. This is done by evaluating a Xpath expression on the request payload that uses the root element of the message as the
+mapping key. Each message type gets its own simulator scenario.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s demonstrate that in a simple example. We know three different message types named <strong>successMessage</strong>, <strong>warningMessage</strong> and <strong>errorMessage</strong>. We create a simulator scenario for each of these message types with
+respective naming. Given the following incoming requests the simulator will pick the matching scenario for execution.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRest</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;successMessage&gt;</span>
+    <span class="tag">&lt;text&gt;</span>This is a success message<span class="tag">&lt;/text&gt;</span>
+<span class="tag">&lt;/successMessage&gt;</span>
 
-<span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRest</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
-        SpringApplication.run(Simulator.class, args);
+<span class="tag">&lt;warningMessage&gt;</span>
+    <span class="tag">&lt;text&gt;</span>This is a warning message<span class="tag">&lt;/text&gt;</span>
+<span class="tag">&lt;/warningMessage&gt;</span>
+
+<span class="tag">&lt;errorMessage&gt;</span>
+    <span class="tag">&lt;text&gt;</span>This is a error message<span class="tag">&lt;/text&gt;</span>
+<span class="tag">&lt;/errorMessage&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The simulator evaluates the root element name and maps the requests to the matching scenario. Each scenario implements different response generating logic so the simulator is able to respond to a <strong>successMessage</strong> in a different
+way than for <strong>errorMessage</strong> types.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mapping-key-exctractor-configuration"><a class="anchor" href="#mapping-key-exctractor-configuration"></a>3.4.2. Configuration</h4>
+<div class="paragraph">
+<p>You can change the mapping key behavior by overwriting te default scenario mapper in your simulator.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">SimulatorAdapter</span> <span class="directive">extends</span> SimulatorRestAdapter {
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        HeaderValueScenarioMapper scenarioMapper = <span class="keyword">new</span> HeaderValueScenarioMapper();
+        scenarioMapper.setHeaderName(<span class="string"><span class="delimiter">&quot;</span><span class="content">X-simulator-scenario</span><span class="delimiter">&quot;</span></span>);
+        <span class="keyword">return</span> scenarioMapper;
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableRest</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
-in the Spring boot application.</p>
+<p>With the configuration above we use the <em>HeaderValueScenarioMapper</em> implementation so the header name <strong>X-simulator-scenario</strong> gets evaluated for each incoming request message.
+Depending on that header value the matching scenario is executed as a result. The scenario mapper is just a bean in the Spring application context. There is a default implementation but you can overwrite
+this behavior very easy in the simulator adapter configuration. Read more about how to add simulator adapter configuration classes in configuration chapters <a href="#rest-config">rest-config</a>, <a href="#ws-config">ws-config</a>
+or <a href="#jms-config">jms-config</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="scenarios"><a class="anchor" href="#scenarios"></a>3.5. Simulator scenarios</h3>
+<div class="paragraph">
+<p>The simulator provides the response generating logic by defining one to many scenarios that get executed based on the incoming request. The different scenarios on the simulator
+describe different response messages and stand for individual simulation logic. Each scenario is capable of receiving and validating the incoming request message. Based on that the scenario
+is in charge of constructing a proper response message.</p>
 </div>
 <div class="paragraph">
-<p>After that we are ready to handle incoming REST API calls on the simulator. The simulator REST support provides a base REST scenario class.</p>
+<p>First of all the scenario gets a name under which mapping strategies can identify the scenario. This name is very important when it comes to mapping incoming requests to scenarios. Besides that
+the scenario is a normal Java class that implements following interface <em>SimulatorScenario</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator.scenario</span>;
+
+<span class="directive">public</span> <span class="type">interface</span> <span class="class">SimulatorScenario</span> {
+    ScenarioEndpoint getScenarioEndpoint();
+
+    <span class="keyword">default</span> <span class="type">void</span> run(ScenarioDesigner designer) {}
+
+    <span class="keyword">default</span> <span class="type">void</span> run(ScenarioRunner runner) {}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The simulator scenario provides access to the endpoint that has been invoked to start this scenario. In the scenario logic you can receive that request message using this endpoint. Also you can send back a
+response using this scenario endpoint. The scenario logic goes to one of the default run methods depending on what designer or runner Java DSL API you want to use. Fortunately there is an abstract default
+implementation <code>com.consol.citrus.simulator.scenario.AbstractSimulatorScenario</code> that you can inherit from.</p>
+</div>
+<div class="paragraph">
+<p>So a typical simulator scenario can look like the following code sample.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
-<span class="annotation">@RequestMapping</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/rest/simulator/hello</span><span class="delimiter">&quot;</span></span>, method = RequestMethod.POST)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> SimulatorRestScenario {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
 
     <span class="annotation">@Override</span>
-    <span class="directive">protected</span> <span class="type">void</span> configure() {
-        scenario()
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
             .receive()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">Say Hello!</span><span class="delimiter">&quot;</span></span> +
                      <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>);
 
-        scenario()
+        scenario
             .send()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span> +
@@ -988,11 +1657,187 @@ in the Spring boot application.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now the base REST scenario provides the basic receive and send operations for the scenario. Also note that we can use <strong>@RequestMapping</strong> annotations
-for advanced <a href="#rest-request-mapping">REST request mapping</a>.</p>
+<p>As you can see we extend from <strong>AbstractSimulatorScenario</strong>. We just add receive and send logic for generating the response message in the designer run method. The scenario above is annotated with <strong>@Scenario</strong>
+for defining a scenario name. There is one single <strong>configure</strong> method to be implemented. We can use Citrus Java DSL methods in the method body in order to receive the incoming request and send back a proper response message.
+Of course we can use the full Citrus power here in order to construct different message payloads such as XML, JSON, PLAINTEXT and so on.</p>
 </div>
 <div class="paragraph">
-<p>Besides that you can have several REST related configuration options as described in the following sections.</p>
+<p>So we could also extract dynamic values from the request in order to reuse those in our response message:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;user&gt;@ignore@&lt;/user&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>)
+            .extractFromPayload(<span class="string"><span class="delimiter">&quot;</span><span class="content">/Hello/user</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">userName</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;text&gt;Hi there ${userName}!&lt;/text&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the receive operation the user name value is extracted to a test variable <strong>${userName}</strong>. In the response we are able to use this variable in order to greet the user by name. This way
+we can use the Citrus test power for generating dynamic response messages. Of course this mechanism works for XML, Json and Plaintext payloads.</p>
+</div>
+<div class="paragraph">
+<p>Now you are ready to write different scenarios that generate different response messages for the calling client. Just remember the scenarios do get unique names that match a value that is evaluated through the scenario mapper. With this
+mechanism we are able to code different simulator scenarios for different incoming request messages. Also with the Citrus send and receive operations we are able to handle messages of different transport types.</p>
+</div>
+<div class="paragraph">
+<p>Read more about special message transport support in chapters <a href="#rest">rest-support</a>, <a href="#web-service">web-service-support</a>, <a href="#jms">jms-support</a>, <a href="#endpoint">endpoint-support</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="intermediate-messages"><a class="anchor" href="#intermediate-messages"></a>3.6. Intermediate Messages</h3>
+<div class="paragraph">
+<p>The simulator starts a new scenario instance for each incoming request based on the defined scenario mapping. Sometimes a running scenario instance needs to receive another
+incoming request. The simulator has to handle things in a different way then because the incoming request should not trigger an new scenario instance but forward that request to the running
+scenario.</p>
+</div>
+<div class="paragraph">
+<p>This mechanism is called intermediate message handling in scenarios. The scenario can activate the message correlation for a certain request. The simulator will always check all running scenarios
+for matching intermediate message correlations before starting a new scenario. This mechanism enables us to receive further incoming request within the same scenario instance.</p>
+</div>
+<div class="paragraph">
+<p>Let us clarify this with a simple example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">GoodNightScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;GoodNight xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Go to sleep!</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/GoodNight&gt;</span><span class="delimiter">&quot;</span></span>)
+            .extractFromHeader(<span class="string"><span class="delimiter">&quot;</span><span class="content">X-CorrelationId</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">correlationId</span><span class="delimiter">&quot;</span></span>);
+
+        scenario.correlation().start()
+            .onHeader(<span class="string"><span class="delimiter">&quot;</span><span class="content">X-CorrelationId</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">${correlationId}</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;GoodNightResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Good Night!</span><span class="delimiter">&quot;</span></span> +
+                    <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/GoodNightResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;IntermediateRequest&gt;In between!&lt;/IntermediateRequest&gt;</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;IntermediateResponse&gt;In between!&lt;/IntermediateResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The scenario above starts a new correlation on the header entry <strong>"X-CorrelationId"</strong> and the variable value <strong>${correlationId}</strong> that has been extracted from first request message. Now the scenario is able to receive
+further incoming request messages with the correlation identifier. This makes sure that no other running scenario is catching this message before. The scenario is provided with that specific message first.</p>
+</div>
+<div class="paragraph">
+<p>This is how a scenario instance is able to receive more than one single incoming request. The message correlation is able to run on header values as well as based on XPath expressions evaluated within the message payload.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">FaxCancelled</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">FaxCancelledScenario</span> <span class="directive">extends</span> AbstractFaxScenario {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> ROOT_ELEMENT_XPATH = <span class="string"><span class="delimiter">&quot;</span><span class="content">string:local-name(/*)</span><span class="delimiter">&quot;</span></span>;
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> REFERENCE_ID_XPATH = <span class="string"><span class="delimiter">&quot;</span><span class="content">//fax:referenceId</span><span class="delimiter">&quot;</span></span>;
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .xpath(ROOT_ELEMENT_XPATH, <span class="string"><span class="delimiter">&quot;</span><span class="content">SendFaxMessage</span><span class="delimiter">&quot;</span></span>)
+            .extractFromPayload(REFERENCE_ID_XPATH, <span class="string"><span class="delimiter">&quot;</span><span class="content">referenceId</span><span class="delimiter">&quot;</span></span>);
+
+        scenario.correlation().start()
+                .onPayload(REFERENCE_ID_XPATH, <span class="string"><span class="delimiter">&quot;</span><span class="content">${referenceId}</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage(<span class="string"><span class="delimiter">&quot;</span><span class="content">${referenceId}</span><span class="delimiter">&quot;</span></span>,
+                            FaxStatusEnumType.QUEUED,
+                            <span class="string"><span class="delimiter">&quot;</span><span class="content">The fax message has been queued and will be send shortly</span><span class="delimiter">&quot;</span></span>),
+                    getPayloadHelper().getMarshaller()
+            );
+
+        scenario
+            .receive()
+            .xpath(ROOT_ELEMENT_XPATH, <span class="string"><span class="delimiter">&quot;</span><span class="content">CancelFaxMessage</span><span class="delimiter">&quot;</span></span>)
+            .xpath(REFERENCE_ID_XPATH, <span class="string"><span class="delimiter">&quot;</span><span class="content">${referenceId}</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage(<span class="string"><span class="delimiter">&quot;</span><span class="content">${referenceId}</span><span class="delimiter">&quot;</span></span>,
+                            FaxStatusEnumType.CANCELLED,
+                            <span class="string"><span class="delimiter">&quot;</span><span class="content">The fax message has been cancelled</span><span class="delimiter">&quot;</span></span>),
+                    getPayloadHelper().getMarshaller()
+            );
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The sample above uses XPath expressions to start a new correlation within the scenario. This makes sure that the second incoming request <strong>CancelFaxMessage</strong> is forwarded to this very same scenario.</p>
+</div>
+<div class="paragraph">
+<p>With intermediate message handling we are able to create more complex scenarios that require multiple request/response messages. The message correlation makes sure that the
+needed requests are handled within the same scenarion and other parallel running scenarios are not affected.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="rest"><a class="anchor" href="#rest"></a>4. REST support</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The simulator is able to provide Http REST APIs as a server. Clients can call the simulator on request paths using methods such as
+Http GET, POST, PUT, DELETE and so on. The simulator defines a special REST enabling annotation that we can use on the application class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+
+<span class="annotation">@SpringBootApplication</span>
+<span class="annotation">@SimulatorApplication</span>
+<span class="annotation">@EnableRestSimulation</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>@EnableRestSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+in the Spring boot application.</p>
+</div>
+<div class="paragraph">
+<p>After that we are ready to handle incoming REST API calls on the simulator.</p>
 </div>
 <div class="sect2">
 <h3 id="rest-config"><a class="anchor" href="#rest-config"></a>4.1. Configuration</h3>
@@ -1005,8 +1850,8 @@ add a <strong>SimulatorRestAdapter</strong> implementation to the classpath. The
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="directive">abstract</span> <span class="type">class</span> <span class="class">SimulatorRestAdapter</span> <span class="directive">implements</span> SimulatorRestConfigurer {
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        <span class="keyword">return</span> <span class="keyword">new</span> AnnotationRequestMappingKeyExtractor();
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> HttpRequestAnnotationScenarioMapper();
     }
 
     <span class="annotation">@Override</span>
@@ -1022,13 +1867,13 @@ add a <strong>SimulatorRestAdapter</strong> implementation to the classpath. The
 </div>
 </div>
 <div class="paragraph">
-<p>The adapter defines methods that configure the simulator REST handling. For instance we can add another mapping key extractor implementation or
+<p>The adapter defines methods that configure the simulator REST handling. For instance we can add another scenario mapper implementation or
 add handler interceptors to the REST API call handling.</p>
 </div>
 <div class="paragraph">
 <p><strong>Note</strong>
-The REST support is using a different default mapping key extractor. The <strong>AnnotationRequestMappingKeyExtractor</strong> is active by default and enables <strong>@RequestMapping</strong>
-related mapping on scenario classes. Read more about that in <a href="#rest-request-mapping">rest-request-mapping</a>.</p>
+The REST support is using the default scenario mapper <strong>HttpRequestAnnotationScenarioMapper</strong> that searches for <strong>@RequestMapping</strong> annotations
+on scenario classes. Read more about that in <a href="#rest-request-mapping">rest-request-mapping</a>.</p>
 </div>
 <div class="paragraph">
 <p>The <strong>urlMapping</strong> defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
@@ -1072,7 +1917,7 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRest</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorRestAdapter</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
@@ -1080,7 +1925,7 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRest</span>
+<span class="annotation">@EnableRestSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
 
     <span class="annotation">@Override</span>
@@ -1089,10 +1934,10 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        HeaderMappingKeyExtractor mappingKeyExtractor = <span class="keyword">new</span> HeaderMappingKeyExtractor();
-        mappingKeyExtractor.setHeaderName(<span class="string"><span class="delimiter">&quot;</span><span class="content">X-simulator-scenario</span><span class="delimiter">&quot;</span></span>);
-        <span class="keyword">return</span> mappingKeyExtractor;
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        HeaderValueScenarioMapper scenarioMapper = <span class="keyword">new</span> HeaderValueScenarioMapper();
+        scenarioMapper.setHeaderName(<span class="string"><span class="delimiter">&quot;</span><span class="content">X-simulator-scenario</span><span class="delimiter">&quot;</span></span>);
+        <span class="keyword">return</span> scenarioMapper;
     }
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
@@ -1102,11 +1947,11 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 </div>
 <div class="paragraph">
-<p>So we have <strong>@EnableRest</strong> and REST adapter customizations combined on one single class.</p>
+<p>So we have <strong>@EnableRestSimulation</strong> and REST adapter customizations combined on one single class.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="advanced-customizations"><a class="anchor" href="#advanced-customizations"></a>4.2. Advanced customizations</h3>
+<h3 id="rest-customization"><a class="anchor" href="#rest-customization"></a>4.2. Advanced customizations</h3>
 <div class="paragraph">
 <p>For a more advanced configuration option we can extend the <strong>SimulatorRestSupport</strong> implementation.</p>
 </div>
@@ -1162,14 +2007,14 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 <div class="paragraph">
 <p>With that configuration option we can overwrite REST support auto configuration features on the simulator such as the <strong>requestCachingFilter</strong> or the <strong>handlerMapping</strong>.
-We can not use the <strong>@EnableRest</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorRestSupport</strong> implementation directly.</p>
+We can not use the <strong>@EnableRestSimulation</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorRestSupport</strong> implementation directly.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="rest-request-mapping"><a class="anchor" href="#rest-request-mapping"></a>4.3. Request mapping</h3>
 <div class="paragraph">
-<p>Usually we define simulator scenarios and map them to incoming requests by their names. When using REST support on the simulator we can also
-use request mapping annotations on scenarios in order to map incoming requests.</p>
+<p>By default the simulator will map incoming requests to scenarios using so called mapping keys that are evaluated on the incoming request. When using REST support on
+the simulator we can also use <strong>@RequestMapping</strong> annotations on scenarios in order to map incoming requests.</p>
 </div>
 <div class="paragraph">
 <p>This looks like follows:</p>
@@ -1178,17 +2023,17 @@ use request mapping annotations on scenarios in order to map incoming requests.<
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
 <span class="annotation">@RequestMapping</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/rest/simulator/hello</span><span class="delimiter">&quot;</span></span>, method = RequestMethod.POST)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> SimulatorRestScenario {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
 
     <span class="annotation">@Override</span>
-    <span class="directive">protected</span> <span class="type">void</span> configure() {
-        scenario()
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
             .receive()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">Say Hello!</span><span class="delimiter">&quot;</span></span> +
                      <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>);
 
-        scenario()
+        scenario
             .send()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span> +
@@ -1200,18 +2045,56 @@ use request mapping annotations on scenarios in order to map incoming requests.<
 <div class="paragraph">
 <p>As you can see the example above uses <strong>@RequestMapping</strong> annotation in addition to the <strong>@Scenario</strong> annotation. All requests on the request path
 <strong>/services/rest/simulator/hello</strong> of method <strong>POST</strong> will be mapped to the scenario. With this strategy the simulator is able to map requests based
-on methods, request paths and parameters.</p>
+on methods, request paths and query parameters.</p>
 </div>
 <div class="paragraph">
-<p>The mapping strategy requires a special mapping key extractor implementation that automatically scans for scenarios with <strong>@RequestMapping</strong> annotations.
-The <strong>AnnotationRequestMappingKeyExtractor</strong> is active by default so in case you need to apply different mapping strategies you must overwrite the mapping key extractor
-in configuration adapter.</p>
+<p>The mapping strategy requires a special scenario mapper implementation that is used by default. This scenario mapper automatically scans for scenarios with <strong>@RequestMapping</strong> annotations.
+The <strong>HttpRequestAnnotationScenarioMapper</strong> is active by default when enabling REST support on the simulator. Of course you can use traditional scenario mappers, too when using REST.
+So in case you need to apply different mapping strategies you can overwrite the scenario mapper implementation in the configuration adapter.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="rest-status-code"><a class="anchor" href="#rest-status-code"></a>4.4. Http responses</h3>
+<div class="paragraph">
+<p>As Http is a synchronous messaging transport by its nature we can provide response messages to the calling client. In Http REST APIs this should include some Http status code.
+You can specify the Http status code very easy when using the Citrus Java DSL methods as shown in the next example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
+<span class="annotation">@RequestMapping</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/rest/simulator/hello</span><span class="delimiter">&quot;</span></span>, method = RequestMethod.POST)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .http()
+            .receive()
+            .post()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                    <span class="string"><span class="delimiter">&quot;</span><span class="content">Say Hello!</span><span class="delimiter">&quot;</span></span> +
+                    <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .http()
+            .send()
+            .response(HttpStatus.OK)
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                    <span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span> +
+                    <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Http Java DSL extension in Citrus provides easy access to Http related identities such as request methods, query parameters and status codes. Please
+see the official Citrus documentation for more details how to use this Http specific Java fluent API.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="ws-support"><a class="anchor" href="#ws-support"></a>5. Web Service support</h2>
+<h2 id="web-service"><a class="anchor" href="#web-service"></a>5. Web Service support</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The simulator is able to handle SOAP Web Service calls as a server. The simulator defines a special
@@ -1219,14 +2102,14 @@ SOAP enabling annotation that we can use on the application class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebService</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebServiceSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableWebService</span>
+<span class="annotation">@EnableWebServiceSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -1235,44 +2118,32 @@ SOAP enabling annotation that we can use on the application class:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableWebService</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>@EnableWebServiceSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
 </div>
 <div class="paragraph">
-<p>After that we are ready to handle incoming SOAP Web Service calls on the simulator. We can use the default scenario base class for SOAP Web Services.</p>
+<p>As SOAP web service support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> SimulatorWebServiceScenario {
-
-    <span class="annotation">@Override</span>
-    <span class="directive">protected</span> <span class="type">void</span> configure() {
-        scenario()
-            .receive()
-            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
-                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Say Hello!</span><span class="delimiter">&quot;</span></span> +
-                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>)
-            .header(SoapMessageHeaders.SOAP_ACTION, <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>);
-
-        scenario()
-            .send()
-            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
-                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span> +
-                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="comment">&lt;!-- Citrus web service support --&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>citrus-ws<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${citrus.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>SimulatorWebServiceScenario</strong> automatically handles the SOAP envelope so we do not have to deal with that in the scenario receive and send operations. Also
+<p>After that we are ready to handle incoming SOAP Web Service calls on the simulator. When SOAP web service handling is enabled on the simulator
+the SOAP envelope handling is done automatically. This means we do not have to deal with that SOAP envelope in the scenario receive and send operations. Also
 the scenario receive operation has access to the SOAP action of the incoming request call. Besides that we can also <a href="#ws-soap-faults">return a SOAP fault</a> message as scenario outcome.</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s move on with having a look at the SOAP related configuration options as described in the following sections.</p>
 </div>
 <div class="sect2">
-<h3 id="ws-config"><a class="anchor" href="#ws-config"></a>5.1. Configuration</h3>
+<h3 id="web-service-config"><a class="anchor" href="#web-service-config"></a>5.1. Configuration</h3>
 <div class="paragraph">
 <p>Once the SOAP support is enabled on the simulator we have different configuration options. The most comfortable way is to
 add a <strong>SimulatorWebServiceAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
@@ -1286,8 +2157,8 @@ add a <strong>SimulatorWebServiceAdapter</strong> implementation to the classpat
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        <span class="keyword">return</span> <span class="keyword">new</span> XPathPayloadMappingKeyExtractor();
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ContentBasedXPathScenarioMapper().addXPathExpression(<span class="string"><span class="delimiter">&quot;</span><span class="content">local-name(/*)</span><span class="delimiter">&quot;</span></span>);
     }
 
     <span class="annotation">@Override</span>
@@ -1343,7 +2214,7 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebService</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebServiceSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorWebServiceAdapter</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
@@ -1351,7 +2222,7 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableWebService</span>
+<span class="annotation">@EnableWebServiceSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorWebServiceAdapter {
 
     <span class="annotation">@Override</span>
@@ -1360,8 +2231,8 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        <span class="keyword">return</span> <span class="keyword">new</span> SoapActionMappingKeyExtractor();
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> SoapActionScenarioMapper();
     }
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
@@ -1371,11 +2242,11 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 </div>
 <div class="paragraph">
-<p>So we have <strong>@EnableWebService</strong> and SOAP adapter customizations combined on one single class.</p>
+<p>So we have <strong>@EnableWebServiceSimulation</strong> and SOAP adapter customizations combined on one single class.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="advanced-customizations-2"><a class="anchor" href="#advanced-customizations-2"></a>5.2. Advanced customizations</h3>
+<h3 id="web-service-customization"><a class="anchor" href="#web-service-customization"></a>5.2. Advanced customizations</h3>
 <div class="paragraph">
 <p>For a more advanced configuration option we can extend the <strong>SimulatorWebServiceSupport</strong> implementation.</p>
 </div>
@@ -1412,11 +2283,50 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 <div class="paragraph">
 <p>With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the <strong>messageDispatcherServlet</strong>.
-We can not use the <strong>@EnableWebService</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorWebServiceSupport</strong> implementation directly.</p>
+We can not use the <strong>@EnableWebServiceSimulation</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorWebServiceSupport</strong> implementation directly.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ws-soap-faults"><a class="anchor" href="#ws-soap-faults"></a>5.3. SOAP faults</h3>
+<h3 id="web-service-response"><a class="anchor" href="#web-service-response"></a>5.3. SOAP response</h3>
+<div class="paragraph">
+<p>When using Http SOAP services we may want to respond to the calling client with a synchronous SOAP response message. As the SOAP communication is automatically handled
+within the simulator we can simply send back a response message in the scenario.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .soap()
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Say Hello!</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>)
+            .soapAction(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .soap()
+            .send()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see the Citrus Java DSL provides special SOAP related methods that specify the SOAP request and response data. Once again the SOAP envelope is automatically handled
+so we do not have to add this here. The receive operation is able to verify the SOAP action header value. In addition to that we are able to specify the synchronous SOAP response message.</p>
+</div>
+<div class="paragraph">
+<p>When using SOAP message protocols we may need to send SOAP faults as response message. This is handled in the next section.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="web-service-faults"><a class="anchor" href="#web-service-faults"></a>5.4. SOAP faults</h3>
 <div class="paragraph">
 <p>The simulator is in charge of sending proper response messages to the calling client. When using SOAP we might also want to send
 back a SOAP fault message. Therefore the default Web Service scenario implementation also provides fault responses as scenario result.</p>
@@ -1424,18 +2334,18 @@ back a SOAP fault message. Therefore the default Web Service scenario implementa
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">GoodNightScenario</span> <span class="directive">extends</span> SimulatorWebServiceScenario {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">GoodNightScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
 
     <span class="annotation">@Override</span>
     <span class="directive">protected</span> <span class="type">void</span> configure() {
-        scenario()
+        scenario
             .receive()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;GoodNight xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">Go to sleep!</span><span class="delimiter">&quot;</span></span> +
                      <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/GoodNight&gt;</span><span class="delimiter">&quot;</span></span>)
             .header(SoapMessageHeaders.SOAP_ACTION, <span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span>);
 
-        scenario()
+        scenario
             .sendFault()
             .faultCode(<span class="string"><span class="delimiter">&quot;</span><span class="content">{http://citrusframework.org}CITRUS:SIM-1001</span><span class="delimiter">&quot;</span></span>)
             .faultString(<span class="string"><span class="delimiter">&quot;</span><span class="content">No sleep for me!</span><span class="delimiter">&quot;</span></span>);
@@ -1452,23 +2362,23 @@ message details for you. So we can decide wheather to provide a success response
 </div>
 </div>
 <div class="sect1">
-<h2 id="jms-support"><a class="anchor" href="#jms-support"></a>6. JMS support</h2>
+<h2 id="jms"><a class="anchor" href="#jms"></a>6. JMS support</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The simulator is able to receive messages from any JMS message broker. The simulator will constantly poll a JMS destination (queue or topic)
+<p>The simulator is able to receive messages from message brokers using the <strong>Java Message Service</strong> API (JMS). As a consumer the simulator constantly polls JMS destinations (queue or topic)
 for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages. The simulator defines a special
 JMS enabling annotation that we can use on the application class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJms</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJms</span>
+<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -1477,8 +2387,44 @@ JMS enabling annotation that we can use on the application class:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableJms</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>@EnableJmsSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
+</div>
+<div class="paragraph">
+<p>As JMS support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="comment">&lt;!-- Citrus web service support --&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>citrus-jms<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${citrus.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also we might want to add JMS vendor specific connection factory implementations depending on what JMS message broker you are using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="comment">&lt;!-- ActiveMQ message broker support --&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>org.apache.activemq<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>activemq-broker<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${activemq.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>org.apache.activemq<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>activemq-spring<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${activemq.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>org.apache.xbean<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>xbean-spring<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>4.4<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>With that piece of configuration we are ready to handle incoming JMS messages on the simulator. Of course we need a JMS connection factory and other JMS related
@@ -1488,7 +2434,7 @@ configuration options as described in the following sections.</p>
 <h3 id="jms-config"><a class="anchor" href="#jms-config"></a>6.1. Configuration</h3>
 <div class="paragraph">
 <p>Once the JMS support is enabled on the simulator we have different configuration options. The most comfortable way is to
-add a <strong>SimulatorJmsAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
+add a <strong>SimulatorJmsAdapter</strong> implementation to the project. The adapter provides several configuration methods.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1509,18 +2455,18 @@ add a <strong>SimulatorJmsAdapter</strong> implementation to the classpath. The 
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        <span class="keyword">return</span> <span class="keyword">new</span> XPathPayloadMappingKeyExtractor();
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ContentBasedXPathScenarioMapper().addXPathExpression(<span class="string"><span class="delimiter">&quot;</span><span class="content">local-name(/*)</span><span class="delimiter">&quot;</span></span>);
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The adapter defines methods that configure the simulator JMS handling. For instance we can add another mapping key extractor implementation or
+<p>The adapter defines methods that configure the simulator JMS handling. For instance we can add another scenario mapper implementation or
 enable automatic SOAP envelope handling.</p>
 </div>
 <div class="paragraph">
-<p>The <strong>destinationName</strong> defines the incoming JMS destination to poll. The <strong>connectionFactory</strong> is mandatory in order to connect to a JMS
+<p>The <strong>destinationName</strong> defines the incoming JMS destination to poll as a consumer. The <strong>connectionFactory</strong> is mandatory in order to connect to a JMS
 message broker.</p>
 </div>
 <div class="paragraph">
@@ -1546,14 +2492,14 @@ message broker.</p>
 <div class="paragraph">
 <p>As you can see the class is annotated with <strong>@Component</strong> annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
 JMS adapter behavior. The custom adapter just overwrites the <strong>connectionFactory</strong> and <strong>destinationName</strong> methods so the JMS simulator will connect to the ActiveMQ message broker
-and listen for incoming requests on that queue.</p>
+and listen for incoming requests on that queue <strong>JMS.Queue.simulator.inbound</strong>.</p>
 </div>
 <div class="paragraph">
 <p>This is the simplest way to customize the simulator JMS support. We can also use the adapter extension directly on the Spring boot main application class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJms</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorJmsAdapter</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
@@ -1561,7 +2507,7 @@ and listen for incoming requests on that queue.</p>
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJms</span>
+<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorJmsAdapter {
 
     <span class="annotation">@Override</span>
@@ -1581,32 +2527,183 @@ and listen for incoming requests on that queue.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>So we have <strong>@EnableJms</strong> and JMS adapter customizations combined on one single class.</p>
+<p>Once this is done the simulator polls the target destination for new incoming request messages. As usual the simulator maps incoming requests to simulator scenarios for execution. Inside
+the scenario you can receive the JMS request messages as usual using the scenario endpoint. The scenario logic is then able to provide a response message that is sent back to the synchronous reply
+destination if any is specified.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="endpoint-support"><a class="anchor" href="#endpoint-support"></a>7. Endpoint support</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="jms-async"><a class="anchor" href="#jms-async"></a>6.2. Asynchronous communication</h3>
 <div class="paragraph">
-<p>We have seen how the simulator handles different transports such as <a href="#rest-support">Http REST</a>, <a href="#ws-support">SOAP web services</a> and <a href="#jms-support">JMS</a>.
-Now the simulator is also able to handle other message transports such as mail communication, JMX mbean server, RMI invocations and much more. The
-simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.</p>
-</div>
-<div class="paragraph">
-<p>The generic endpoint support is added with <strong>@EnableEndpointComponent</strong> annotation.</p>
+<p>For asynchronous communication we can define normal JMS destination endpoints in Citrus in order to autowire those in the scenario.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointComponent</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableEndpointComponent</span>
+<span class="annotation">@EnableJmsSimulation</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> destinationName() {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">JMS.Queue.simulator.inbound</span><span class="delimiter">&quot;</span></span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> ConnectionFactory connectionFactory() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string"><span class="delimiter">&quot;</span><span class="content">tcp://localhost:61616</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="annotation">@Bean</span>
+    <span class="directive">public</span> JmsEndpoint replyEndpoint() {
+        <span class="keyword">return</span> CitrusEndpoints.jms()
+                              .asynchronous()
+                              .destinationName(<span class="string"><span class="delimiter">&quot;</span><span class="content">JMS.Queue.simulator.reply</span><span class="delimiter">&quot;</span></span>)
+                              .connectionFactory(connectionFactory())
+                              .build();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see we are able to create several JMS endpoints in Citrus. We can autowire those endpoints in a scenario for sending back an asynchronous response.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloJmsScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Autowired</span>
+    <span class="directive">private</span> JmsEndpoint replyEndpoint;
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;user&gt;@ignore@&lt;/user&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>)
+            .extractFromPayload(<span class="string"><span class="delimiter">&quot;</span><span class="content">/Hello/user</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">userName</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send(replyEndpoint)
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;text&gt;Hi there ${userName}!&lt;/text&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this sample above we receive the scenario request message as usual using the scenario endpoint. After that we send back a response on the replyEndpoint which has been
+injected to the scenario using the <code>@Autowired</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>In general scenarios can interact with all Citrus endpoints that get defined as Spring beans in the application context configuration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jms-sync"><a class="anchor" href="#jms-sync"></a>6.3. Synchronous communication</h3>
+<div class="paragraph">
+<p>When dealing with synchronous communication the message producer waits for a reply message on a reply destination. This reply destination handling is automatically done
+within the simulator. So when we have synchronous communication we simply send back a response message using the scenario endpoint. The simulator makes sure that the response is
+provided to the waiting producer on the reply destination.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloJmsScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;Hello xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;user&gt;@ignore@&lt;/user&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/Hello&gt;</span><span class="delimiter">&quot;</span></span>)
+            .extractFromPayload(<span class="string"><span class="delimiter">&quot;</span><span class="content">/Hello/user</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">userName</span><span class="delimiter">&quot;</span></span>);
+
+        scenario
+            .send()
+            .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;HelloResponse xmlns=</span><span class="char">\&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
+                        <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;text&gt;Hi there ${userName}!&lt;/text&gt;</span><span class="delimiter">&quot;</span></span> +
+                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/HelloResponse&gt;</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The synchronous JMS communication needs to be enabled on the JMS simulator adapter.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorJmsAdapter</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+
+<span class="annotation">@SpringBootApplication</span>
+<span class="annotation">@SimulatorApplication</span>
+<span class="annotation">@EnableJmsSimulation</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorJmsAdapter {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> destinationName() {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">JMS.Queue.simulator.inbound</span><span class="delimiter">&quot;</span></span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> ConnectionFactory connectionFactory() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ActiveMQConnectionFactory(<span class="string"><span class="delimiter">&quot;</span><span class="content">tcp://localhost:61616</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">boolean</span> synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        <span class="keyword">return</span> <span class="predefined-constant">true</span>;
+    }
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This completes the JMS communication support within the simulator. Read more about other messaging transports such as Http REST or SOAP in this documentation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="endpoint"><a class="anchor" href="#endpoint"></a>7. Endpoint support</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have seen how the simulator handles different transports such as <a href="#rest">Http REST</a>, <a href="#web-service">SOAP web services</a> and <a href="#jms">JMS</a>.
+Now the simulator is also able to handle other message transports such as mail communication, JMX mbean server, RMI invocations and much more. The
+simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.</p>
+</div>
+<div class="paragraph">
+<p>The generic endpoint support is added with <strong>@EnableEndpointSimulation</strong> annotation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointSimulation</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+
+<span class="annotation">@SpringBootApplication</span>
+<span class="annotation">@SimulatorApplication</span>
+<span class="annotation">@EnableEndpointSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -1615,17 +2712,14 @@ simulator is able to deal with any kind of endpoint component that is supported 
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableEndpointComponent</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>@EnableEndpointSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application. Once we use that feature we can have any Citrus endpoint component as inbound source for simulator scenarios. This means
 we can have a mail server or a RMI server that is simulated with proper response messages.</p>
-</div>
-<div class="paragraph">
-<p>As we are using generic endpoint components as inbound source we need to set the endpoint in the configuration. Read about that in the following sections.</p>
 </div>
 <div class="sect2">
 <h3 id="endpoint-config"><a class="anchor" href="#endpoint-config"></a>7.1. Configuration</h3>
 <div class="paragraph">
-<p>When using generic Citrus endpoints as simulator inbound source we need to configure those endpoint components. The most comfortable way is to
+<p>As we are using generic Citrus endpoint components as inbound source we need to configure those endpoint components. The most comfortable way is to
 add a <strong>SimulatorEndpointComponentAdapter</strong> implementation to the classpath. The adapter provides several configuration methods.</p>
 </div>
 <div class="listingblock">
@@ -1641,14 +2735,14 @@ add a <strong>SimulatorEndpointComponentAdapter</strong> implementation to the c
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        <span class="keyword">return</span> <span class="keyword">new</span> XPathPayloadMappingKeyExtractor();
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ContentBasedXPathScenarioMapper().addXPathExpression(<span class="string"><span class="delimiter">&quot;</span><span class="content">local-name(/*)</span><span class="delimiter">&quot;</span></span>);
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The adapter defines methods that configure the endpoint component used as inbound source. As usual we can set the mapping key extractor implementation or
+<p>The adapter defines methods that configure the endpoint component used as inbound source. As usual we can set the scenario mapper implementation or
 add automatic SOAP envelope support.</p>
 </div>
 <div class="paragraph">
@@ -1656,7 +2750,7 @@ add automatic SOAP envelope support.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointComponent</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointSimulation</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter</span>;
 <span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
@@ -1664,7 +2758,7 @@ add automatic SOAP envelope support.</p>
 
 <span class="annotation">@SpringBootApplication</span>
 <span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableEndpointComponent</span>
+<span class="annotation">@EnableEndpointSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorEndpointComponentAdapter {
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
@@ -1681,20 +2775,31 @@ add automatic SOAP envelope support.</p>
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> MappingKeyExtractor mappingKeyExtractor() {
-        XPathPayloadMappingKeyExtractor mappingKeyExtractor = <span class="keyword">new</span> XPathPayloadMappingKeyExtractor();
-        NamespaceContextBuilder namespaceContextBuilder = <span class="keyword">new</span> NamespaceContextBuilder();
-        namespaceContextBuilder.getNamespaceMappings().put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.citrusframework.org/schema/mail/message</span><span class="delimiter">&quot;</span></span>);
-        mappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
-        mappingKeyExtractor.setXpathExpression(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail:mail-message/mail:subject</span><span class="delimiter">&quot;</span></span>);
-        <span class="keyword">return</span> mappingKeyExtractor;
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> ContentBasedXPathScenarioMapper()
+                        .addNamespaceMapping(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.citrusframework.org/schema/mail/message</span><span class="delimiter">&quot;</span></span>)
+                        .addXPathExpression(<span class="string"><span class="delimiter">&quot;</span><span class="content">/mail:mail-message/mail:subject</span><span class="delimiter">&quot;</span></span>);
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>The custom adapter defines a Citrus mail server endpoint that should be used as inbound source. Any mail message that arrives at this mail server component will
-trigger a new simulator scenario then. Also we overwrite the mapping key extractor implementation so that the mail subject evaluates to the scenario that should be executed.</p>
+trigger a new simulator scenario then. Also we overwrite the scenario mapper implementation. The sample uses a content based XPath mapper that uses the mail subject
+value as scenario mapping key.</p>
+</div>
+<div class="paragraph">
+<p>As mail server endpoint support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="comment">&lt;!-- Citrus web service support --&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>citrus-mail<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${citrus.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>This configuration would lead us to a mail server that responds to incoming mail messages base on the mail subject. So we can have several simulator
@@ -1703,11 +2808,11 @@ scenarios for different mail messages.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> SimulatorEndpointScenario {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
 
     <span class="annotation">@Override</span>
-    <span class="directive">protected</span> <span class="type">void</span> configure() {
-        scenario()
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner scenario) {
+        scenario
             .receive()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;mail-message xmlns=</span><span class="char">\&quot;</span><span class="content">http://www.citrusframework.org/schema/mail/message</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;from&gt;user@citrusframework.org&lt;/from&gt;</span><span class="delimiter">&quot;</span></span> +
@@ -1721,7 +2826,7 @@ scenarios for different mail messages.</p>
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/body&gt;</span><span class="delimiter">&quot;</span></span> +
                     <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;/mail-message&gt;</span><span class="delimiter">&quot;</span></span>);
 
-        scenario()
+        scenario
             .send()
             .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;mail-response xmlns=</span><span class="char">\&quot;</span><span class="content">http://www.citrusframework.org/schema/mail/message</span><span class="char">\&quot;</span><span class="content">&gt;</span><span class="delimiter">&quot;</span></span> +
                         <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;code&gt;250&lt;/code&gt;</span><span class="delimiter">&quot;</span></span> +
@@ -1732,7 +2837,7 @@ scenarios for different mail messages.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The scenario implementation above uses the base class <strong>SimulatorEndpointScenario</strong> and listens for mail messages of subject <strong>Hello</strong>. The
+<p>The scenario implementation above is listening for mail messages of subject <strong>Hello</strong>. The
 mail XML marshalling is automatically done by Citrus. This is the usual way how the Citrus mail component handles mail messages and responses. That means we can use the default Citrus
 features in our simulator, too. The scenario sends back a positive mail response to the calling client.</p>
 </div>
@@ -1747,63 +2852,361 @@ message types in our simulator applications. Each incoming request on the endpoi
 <h2 id="user-interface"><a class="anchor" href="#user-interface"></a>8. User interface</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The simulator application is started as a Spring boot web application. Users can access an administrative user interface
-for reviewing the simulator status and executed scenarios and their outcome.</p>
+<p>The simulator application is started as a Spring boot web application. If you open your browser and point to the running simulator instance at <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code>
+you will see the default welcome page.</p>
 </div>
 <div class="paragraph">
-<p>Open your browser and point to the simulator UI:</p>
+<p><span class="image"><img src="images/default-ui.png" alt="default ui"></span></p>
+</div>
+<div class="paragraph">
+<p>The default ui is straight forward and limited to viewing Json response data returned by the simulator REST API. Fortunately there is also a more comfortable user interface based
+on Angular2 available. Users can then access an administrative web user interface in order to review the simulator status and list all executed scenarios and their outcome.</p>
+</div>
+<div class="paragraph">
+<p>The simulator Angular2 user interface comes as dependency that is added to the simulator project. In Maven we simply add the following dependency:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code>http://localhost:8080</code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="comment">&lt;!-- Simulator web ui --&gt;</span>
+<span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.consol.citrus<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>citrus-simulator-ui<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>${citrus.simulator.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You will see a simple web application that gives you information about the simulator.</p>
+<p>Now you can start the simulator and open your browser pointing to the simulator UI at <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code>. You will see the extended
+web application user interface that gives you information about the simulator.</p>
 </div>
 <div class="sect2">
-<h3 id="user-interface-status"><a class="anchor" href="#user-interface-status"></a>8.1. Status</h3>
+<h3 id="ui-dashboard"><a class="anchor" href="#ui-dashboard"></a>8.1. Dashboard</h3>
 <div class="paragraph">
-<p>TODO</p>
+<p>The simulator dashboard gives you a quick overview of the numbers and facts on your simulator project.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/dashboard.png" alt="dashboard"></span></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="user-interface-run"><a class="anchor" href="#user-interface-run"></a>8.2. Run scenarios</h3>
+<h3 id="ui-scenarios"><a class="anchor" href="#ui-scenarios"></a>8.2. Scenarios</h3>
 <div class="paragraph">
-<p>TODO</p>
+<p>The user interface lists all available scenarios. These are scenarios that are available for automatic mapping when incoming requests are handled.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-list.png" alt="scenario list"></span></p>
+</div>
+<div class="paragraph">
+<p>In case you open one of the listed scenarios you get a detailed information page of that specific scenario.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-details.png" alt="scenario details"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ui-activity"><a class="anchor" href="#ui-activity"></a>8.3. Activities</h3>
+<div class="paragraph">
+<p>Each time a scenario instance is started the user interface will display that scenario as running activity.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-activity-list.png" alt="scenario activity list"></span></p>
+</div>
+<div class="paragraph">
+<p>You can view the details of that scenario activity when opening a specific activity entry.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-activity-details.png" alt="scenario activity details"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="messages"><a class="anchor" href="#messages"></a>8.4. Messages</h3>
+<div class="paragraph">
+<p>When scenarios get executed they usually exchange several messages in request and response communication. These messages are also stored in the simulator so you
+can review all exchanged messages on a scenario in the user interface.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/messages.png" alt="messages"></span></p>
+</div>
+<div class="paragraph">
+<p>Open a specific message entry and you will see the details such as header information and message payload details.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="links"><a class="anchor" href="#links"></a>9. Links &amp; Further reading</h2>
+<h2 id="starter"><a class="anchor" href="#starter"></a>9. Starter</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>The <a href="https://www.citrusframework.org/reference/html/">Citrus reference manual</a>
-gives you a detailed description of all Citrus features.</p>
-</li>
-<li>
-<p><a href="https://github.com/christophd/citrus-simulator/blob/master/simulator-samples">Sample projects</a>
-demonstrate typical simulator scenarios with different message transports</p>
-</li>
-<li>
-<p><a href="https://www.citrusframework.org/docs/history">ChangeLog</a> shows the release history.</p>
-</li>
-<li>
-<p><a href="https://github.com/christophd/citrus-simulator/blob/master/simulator-docs/contributing.md">Contributing</a>
-explains how you can contribute to this project. Pull requests are highly appreciated!</p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Usually the simulator provides simulation for server APIs so clients are able to call the simulator. In some cases things may go the other way round. The simulator is able to start
+scenarios via web user interface. This way the simulator is able to start a communication instead of waiting for requests to arrive. In this case the simulator is able to
+act as client in order to call other server APIs.</p>
+</div>
+<div class="paragraph">
+<p>This mechanism is covered by starter implementations on the simulator. In fact the starter implementations are simulator scenarios that also implement the <code>ScenarioStarter</code>
+interface.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">interface</span> <span class="class">ScenarioStarter</span> <span class="directive">extends</span> SimulatorScenario {
+
+    <span class="keyword">default</span> <span class="predefined-type">Collection</span>&lt;ScenarioParameter&gt; getScenarioParameters() {
+        <span class="keyword">return</span> <span class="predefined-type">Collections</span>.EMPTY_LIST;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>ScenarioStarter</strong> extends the <strong>SimulatorScenario</strong> interface. So each scenario can also act as a starter. See the following sample starter implementation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Starter</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloStarter</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloStarter</span> <span class="directive">extends</span> AbstractScenarioStarter {
+
+    <span class="annotation">@Autowired</span>
+    <span class="directive">private</span> JmsEndpoint outboundEndpoint;
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioRunner scenario) {
+        scenario.send(outboundEndpoint)
+                .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello from simulator!</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The starter class is annotated with <code>@Starter</code> annotation and gets a unique name. The class extends from <code>AbstractScenarioStarter</code> for most comfortable setup. In the run
+method we can add custom scenario logic as usual. Inthe sample above we send a JMS message to some endpoint that has been injected as Spring bean component.</p>
+</div>
+<div class="paragraph">
+<p>All these starter implementations in the project are automatically loaded in the simulator user interface so you can launch those scenarios.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-starter-list.png" alt="scenario starter list"></span></p>
+</div>
+<div class="paragraph">
+<p>The list of available scenarios now also contains the starter implementations. The launch button brings you to the starter detail page.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/scenario-starter-details.png" alt="scenario starter details"></span></p>
+</div>
+<div class="paragraph">
+<p>The scenario starter is able to define parameters that need to be filled before the starter is executed. In case you press the <strong>Launch</strong> button the scenario is executed with those parameters.
+The parameter HTML form is auto generated from the starter class. In the following section we see how the starter class is able to define those parameters.</p>
+</div>
+<div class="sect2">
+<h3 id="starter-parameter"><a class="anchor" href="#starter-parameter"></a>9.1. Starter Parameter</h3>
+<div class="paragraph">
+<p>Starter implementations are executable in the simulator user interface. The starter is able to define parameters that should be filled out before the starter performs its actions. In
+the starter class you can specify the parameters as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Starter</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloStarter</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloStarter</span> <span class="directive">extends</span> AbstractScenarioStarter {
+
+    <span class="annotation">@Autowired</span>
+    <span class="directive">private</span> JmsEndpoint outboundEndpoint;
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioRunner scenario) {
+        scenario.send(outboundEndpoint)
+                .payload(<span class="string"><span class="delimiter">&quot;</span><span class="content">${greeting}</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">List</span>&lt;ScenarioParameter&gt; getScenarioParameters() {
+        <span class="predefined-type">List</span>&lt;ScenarioParameter&gt; scenarioParameters = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+
+        <span class="comment">// greeting (text box)</span>
+        scenarioParameters.add(<span class="keyword">new</span> ScenarioParameterBuilder()
+                .name(<span class="string"><span class="delimiter">&quot;</span><span class="content">greeting</span><span class="delimiter">&quot;</span></span>)
+                .label(<span class="string"><span class="delimiter">&quot;</span><span class="content">Greeting Text</span><span class="delimiter">&quot;</span></span>)
+                .required()
+                .textbox()
+                .value(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hi there!</span><span class="delimiter">&quot;</span></span>)
+                .build());
+
+        <span class="keyword">return</span> scenarioParameters;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The sample above defines a parameter called <strong>greeting</strong>. The parameter is of type <code>textbox</code> and has a default value <strong>Hi there!</strong>. This parameter
+information is used to aut generate a HTML form in the simulator user interface. You can specify as multiple parameters of different types.</p>
+</div>
+<div class="hdlist">
+<div class="title">Parameter types</div>
+<table>
+<tr>
+<td class="hdlist1">
+textbox
+</td>
+<td class="hdlist2">
+<p>Renders a normal HTML input field</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+textarea
+</td>
+<td class="hdlist2">
+<p>Renders a textarea input field</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+dropdown
+</td>
+<td class="hdlist2">
+<p>Renders a dropdown select field with predefined options</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Parameters can be required or optional and receive a label that is displayed in the HTML form. Also you can add default values.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="samples"><a class="anchor" href="#samples"></a>10. Samples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Documentation can only provide theoretical insights of what the application is capable to do or not to do. Good sample projects
+help both beginners and experts to reach complete understanding of how the simulator works in different environments.</p>
+</div>
+<div class="paragraph">
+<p>Following from that we try to provide sample project that demonstrate the simulator usage in real world examples. Please see the following
+sample projects with complete code available on <a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples">github</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="samples-rest"><a class="anchor" href="#samples-rest"></a>10.1. REST sample</h3>
+<div class="dlist">
+<div class="title">Sample repositories</div>
+<dl>
+<dt class="hdlist1">Http REST</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-rest" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-rest</a></p>
+</dd>
+<dt class="hdlist1">Auto generated from swagger</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-swagger" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-swagger</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="samples-soap"><a class="anchor" href="#samples-soap"></a>10.2. SOAP sample</h3>
+<div class="dlist">
+<div class="title">Sample repositories</div>
+<dl>
+<dt class="hdlist1">Http SOAP</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws</a></p>
+</dd>
+<dt class="hdlist1">Http SOAP client</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws-client" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws-client</a></p>
+</dd>
+<dt class="hdlist1">Auto generated from WSDL</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-wsdl" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-wsdl</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="samples-jms"><a class="anchor" href="#samples-jms"></a>10.3. JMS sample</h3>
+<div class="dlist">
+<div class="title">Sample repositories</div>
+<dl>
+<dt class="hdlist1">JMS synchronous</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms</a></p>
+</dd>
+<dt class="hdlist1">JMS asynchronous</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms-fax" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms-fax</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="samples-mail"><a class="anchor" href="#samples-mail"></a>10.4. Mail sample</h3>
+<div class="dlist">
+<div class="title">Sample repositories</div>
+<dl>
+<dt class="hdlist1">Mail endpoint simulator</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-mail" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-mail</a></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="samples-combined"><a class="anchor" href="#samples-combined"></a>10.5. Combined sample</h3>
+<div class="dlist">
+<div class="title">Sample repositories</div>
+<dl>
+<dt class="hdlist1">Http REST and JMS combined</dt>
+<dd>
+<p><a href="https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-combined" class="bare">https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-combined</a></p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="links"><a class="anchor" href="#links"></a>11. Links &amp; Further reading</h2>
+<div class="sectionbody">
+<div class="hdlist">
+<div class="title">Reading material</div>
+<table>
+<tr>
+<td class="hdlist1">
+<a href="https://www.citrusframework.org/reference/html/">Citrus manual</a>
+</td>
+<td class="hdlist2">
+<p>gives you a detailed description of all Citrus features</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a href="https://github.com/christophd/citrus-simulator/blob/master/simulator-samples">Sample projects</a>
+</td>
+<td class="hdlist2">
+<p>demonstrate typical simulator scenarios with different message transports</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a href="https://www.citrusframework.org/docs/history">ChangeLog</a>
+</td>
+<td class="hdlist2">
+<p>shows the release history</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a href="https://github.com/christophd/citrus-simulator/blob/master/simulator-docs/contributing.md">Contributing</a>
+</td>
+<td class="hdlist2">
+<p>explains how you can contribute to this project</p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.10.0-SNAPSHOT<br>
-Last updated 2017-07-06 14:14:24 MESZ
+Version 1.0.0-SNAPSHOT<br>
+Last updated 2017-09-12 09:44:23 MESZ
 </div>
 </div>
 <style>
