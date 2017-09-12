@@ -55,7 +55,7 @@
 
   <modules>
     <module>simulator-starter</module>
-    <module>simulator-client</module>
+    <module>simulator-ui</module>
     <module>simulator-docs</module>
     <module>simulator-samples</module>
     <module>simulator-archetypes</module>
@@ -128,7 +128,7 @@
       <!-- Citrus Simulator -->
       <dependency>
         <groupId>com.consol.citrus</groupId>
-        <artifactId>citrus-simulator-client</artifactId>
+        <artifactId>citrus-simulator-ui</artifactId>
         <version>${project.version}</version>
       </dependency>
 

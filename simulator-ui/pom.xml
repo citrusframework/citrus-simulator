@@ -10,7 +10,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>citrus-simulator-client</artifactId>
+  <artifactId>citrus-simulator-ui</artifactId>
   <name>${project.artifactId}</name>
 
   <build>
