@@ -41,14 +41,16 @@
     </dependency>
 
     <!-- Citrus Simulator -->
-
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-starter</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
-
-    <!-- Citrus -->
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-simulator-ui</artifactId>
+      <version>${citrus.simulator.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>

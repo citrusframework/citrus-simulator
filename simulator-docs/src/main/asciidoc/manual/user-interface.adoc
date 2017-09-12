@@ -1,10 +1,15 @@
 [[user-interface]]
 = User interface
 
-The simulator application is started as a Spring boot web application. Users can access an administrative web user interface
-for reviewing the simulator status and listing all executed scenarios and their outcome.
+The simulator application is started as a Spring boot web application. If you open your browser and point to the running simulator instance at `http://localhost:8080`
+you will see the default welcome page.
 
-The simulator user interface comes as dependency that is added to the simulator project. In Maven we somply add the following dependency:
+image:default-ui.png[]
+
+The default ui is straight forward and limited to viewing Json response data returned by the simulator REST API. Fortunately there is also a more comfortable user interface based
+on Angular2 available. Users can then access an administrative web user interface in order to review the simulator status and list all executed scenarios and their outcome.
+
+The simulator Angular2 user interface comes as dependency that is added to the simulator project. In Maven we simply add the following dependency:
 
 [source, xml]
 ----
@@ -16,15 +21,44 @@ The simulator user interface comes as dependency that is added to the simulator 
 </dependency>
 ----
 
-Now you can start the simulator and open your browser pointing to the simulator UI at `http://localhost:8080`. You will see a simple
+Now you can start the simulator and open your browser pointing to the simulator UI at `http://localhost:8080`. You will see the extended
 web application user interface that gives you information about the simulator.
 
-[[user-interface-status]]
-== Status
+[[ui-dashboard]]
+== Dashboard
 
-TODO
+The simulator dashboard gives you a quick overview of the numbers and facts on your simulator project.
 
-[[user-interface-run]]
-== Run scenarios
+image:dashboard.png[]
 
-TODO
+[[ui-scenarios]]
+== Scenarios
+
+The user interface lists all available scenarios. These are scenarios that are available for automatic mapping when incoming requests are handled.
+
+image:scenario-list.png[]
+
+In case you open one of the listed scenarios you get a detailed information page of that specific scenario.
+
+image:scenario-details.png[]
+
+[[ui-activity]]
+== Activities
+
+Each time a scenario instance is started the user interface will display that scenario as running activity.
+
+image:scenario-activity-list.png[]
+
+You can view the details of that scenario activity when opening a specific activity entry.
+
+image:scenario-activity-details.png[]
+
+[ui-messages]
+== Messages
+
+When scenarios get executed they usually exchange several messages in request and response communication. These messages are also stored in the simulator so you
+can review all exchanged messages on a scenario in the user interface.
+
+image:messages.png[]
+
+Open a specific message entry and you will see the details such as header information and message payload details.

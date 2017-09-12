@@ -1,9 +1,100 @@
 [[starter]]
 = Starter
 
-TODO
+Usually the simulator provides simulation for server APIs so clients are able to call the simulator. In some cases things may go the other way round. The simulator is able to start
+scenarios via web user interface. This way the simulator is able to start a communication instead of waiting for requests to arrive. In this case the simulator is able to
+act as client in order to call other server APIs.
+
+This mechanism is covered by starter implementations on the simulator. In fact the starter implementations are simulator scenarios that also implement the `ScenarioStarter`
+interface.
+
+[source,java]
+----
+public interface ScenarioStarter extends SimulatorScenario {
+
+    default Collection<ScenarioParameter> getScenarioParameters() {
+        return Collections.EMPTY_LIST;
+    }
+}
+----
+
+The *ScenarioStarter* extends the *SimulatorScenario* interface. So each scenario can also act as a starter. See the following sample starter implementation.
+
+[source,java]
+----
+@Starter("HelloStarter")
+public class HelloStarter extends AbstractScenarioStarter {
+
+    @Autowired
+    private JmsEndpoint outboundEndpoint;
+
+    @Override
+    public void run(ScenarioRunner scenario) {
+        scenario.send(outboundEndpoint)
+                .payload("Hello from simulator!");
+    }
+}
+----
+
+The starter class is annotated with `@Starter` annotation and gets a unique name. The class extends from `AbstractScenarioStarter` for most comfortable setup. In the run
+method we can add custom scenario logic as usual. Inthe sample above we send a JMS message to some endpoint that has been injected as Spring bean component.
+
+All these starter implementations in the project are automatically loaded in the simulator user interface so you can launch those scenarios.
+
+image:scenario-starter-list.png[]
+
+The list of available scenarios now also contains the starter implementations. The launch button brings you to the starter detail page.
+
+image:scenario-starter-details.png[]
+
+The scenario starter is able to define parameters that need to be filled before the starter is executed. In case you press the *Launch* button the scenario is executed with those parameters.
+The parameter HTML form is auto generated from the starter class. In the following section we see how the starter class is able to define those parameters.
 
 [[starter-parameter]]
-== Parameter
+== Starter Parameter
 
-TODO
+Starter implementations are executable in the simulator user interface. The starter is able to define parameters that should be filled out before the starter performs its actions. In
+the starter class you can specify the parameters as follows:
+
+[source,java]
+----
+@Starter("HelloStarter")
+public class HelloStarter extends AbstractScenarioStarter {
+
+    @Autowired
+    private JmsEndpoint outboundEndpoint;
+
+    @Override
+    public void run(ScenarioRunner scenario) {
+        scenario.send(outboundEndpoint)
+                .payload("${greeting}");
+    }
+
+    @Override
+    public List<ScenarioParameter> getScenarioParameters() {
+        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+
+        // greeting (text box)
+        scenarioParameters.add(new ScenarioParameterBuilder()
+                .name("greeting")
+                .label("Greeting Text")
+                .required()
+                .textbox()
+                .value("Hi there!")
+                .build());
+
+        return scenarioParameters;
+    }
+}
+----
+
+The sample above defines a parameter called *greeting*. The parameter is of type `textbox` and has a default value *Hi there!*. This parameter
+information is used to aut generate a HTML form in the simulator user interface. You can specify as multiple parameters of different types.
+
+.Parameter types
+[horizontal]
+textbox:: Renders a normal HTML input field
+textarea:: Renders a textarea input field
+dropdown:: Renders a dropdown select field with predefined options
+
+Parameters can be required or optional and receive a label that is displayed in the HTML form. Also you can add default values.

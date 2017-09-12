@@ -16,18 +16,18 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("Default")
-public class DefaultScenario extends SimulatorWebServiceScenario {
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .soap()
             .send()
             .payload("");
     }

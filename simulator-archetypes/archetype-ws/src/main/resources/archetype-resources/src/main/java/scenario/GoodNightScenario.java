@@ -18,44 +18,47 @@ package ${package};
 
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.simulator.scenario.*;
 import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorWebServiceScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.correlation().start()
-            .withHandler(this);
+                .withHandler(this);
 
         scenario
+            .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
-            .header(SoapMessageHeaders.SOAP_ACTION, "GoodNight");
+                    "Go to sleep!" +
+                    "</GoodNight>")
+            .soapAction("GoodNight");
 
         scenario
-            .sendFault(designer)
+            .soap()
+            .sendFault()
             .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
             .faultString("No sleep for me!");
 
         scenario
+            .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
+                    "Go to sleep!" +
                     "</GoodNight>")
-            .header("citrus_soap_action", "GoodNight");
+            .soapAction("GoodNight");
 
         scenario
+            .soap()
             .send()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
+                    "Good Night!" +
                     "</GoodNightResponse>");
     }
 

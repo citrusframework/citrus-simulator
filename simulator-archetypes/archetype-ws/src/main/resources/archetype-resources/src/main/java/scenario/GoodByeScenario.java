@@ -16,29 +16,30 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.ws.SimulatorWebServiceScenario;
+import com.consol.citrus.simulator.scenario.*;
 import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("GoodBye")
-public class GoodByeScenario extends SimulatorWebServiceScenario {
+public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .soap()
             .receive()
             .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                     "</GoodBye>")
-            .header(SoapMessageHeaders.SOAP_ACTION, "GoodBye");
+                    "Say GoodBye!" +
+                    "</GoodBye>")
+            .soapAction("GoodBye");
 
         scenario
+            .soap()
             .send()
             .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                     "</GoodByeResponse>");
+                    "Bye bye!" +
+                    "</GoodByeResponse>");
     }
 }

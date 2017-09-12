@@ -16,14 +16,14 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Christoph Deppisch
  */
 @Scenario("Default")
-public class DefaultScenario extends SimulatorRestScenario {
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -31,7 +31,9 @@ public class DefaultScenario extends SimulatorRestScenario {
             .receive();
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

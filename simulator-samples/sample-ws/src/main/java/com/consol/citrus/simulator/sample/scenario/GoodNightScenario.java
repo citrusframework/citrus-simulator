@@ -52,7 +52,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                     "</GoodNight>")
-            .header("citrus_soap_action", "GoodNight");
+            .soapAction("GoodNight");
 
         scenario
             .soap()

@@ -16,8 +16,8 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.http.SimulatorRestScenario;
-import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -26,35 +26,43 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Scenario("GoodNight")
 @RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
-public class GoodNightScenario extends SimulatorRestScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
+            .http()
             .receive()
+            .post()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
+                    "Go to sleep!" +
+                    "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
         scenario.correlation().start()
-            .onHeader(CORRELATION_ID, "${correlationId}");
+                .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
+                    "Good Night!" +
                     "</GoodNightResponse>");
 
         scenario
+            .http()
             .receive()
+            .post()
             .selector("x-correlationid = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario
+            .http()
             .send()
+            .response(HttpStatus.OK)
             .payload("<InterveningResponse>In between!</InterveningResponse>");
     }
 }
