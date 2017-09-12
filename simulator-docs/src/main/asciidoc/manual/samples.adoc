@@ -1,19 +1,43 @@
 [[samples]]
 = Samples
 
-TODO
+Documentation can only provide theoretical insights of what the application is capable to do or not to do. Good sample projects
+help both beginners and experts to reach complete understanding of how the simulator works in different environments.
+
+Following from that we try to provide sample project that demonstrate the simulator usage in real world examples. Please see the following
+sample projects with complete code available on link:https://github.com/christophd/citrus-simulator/tree/master/simulator-samples[github].
 
 [[samples-rest]]
 == REST sample
 
-TODO
+.Sample repositories
+Http REST:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-rest
+Auto generated from swagger:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-swagger
 
 [[samples-soap]]
 == SOAP sample
 
-TODO
+.Sample repositories
+Http SOAP:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws
+Http SOAP client:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-ws-client
+Auto generated from WSDL:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-wsdl
 
 [[samples-jms]]
 == JMS sample
 
-TODO
+.Sample repositories
+JMS synchronous:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms
+JMS asynchronous:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-jms-fax
+
+[[samples-mail]]
+== Mail sample
+
+.Sample repositories
+Mail endpoint simulator:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-mail
+
+[[samples-combined]]
+== Combined sample
+
+.Sample repositories
+Http REST and JMS combined:: https://github.com/christophd/citrus-simulator/tree/master/simulator-samples/sample-combined
+

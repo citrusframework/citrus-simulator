@@ -1,19 +1,19 @@
 [[rest]]
 = REST support
 
-The simulator is able to handle REST API calls such as Http GET, POST, PUT, DELETE and so on. The simulator defines a special
-REST enabling annotation that we can use on the application class:
+The simulator is able to provide Http REST APIs as a server. Clients can call the simulator on request paths using methods such as
+Http GET, POST, PUT, DELETE and so on. The simulator defines a special REST enabling annotation that we can use on the application class:
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRest;
+import com.consol.citrus.simulator.annotation.EnableRestSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableRest
+@EnableRestSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -21,38 +21,10 @@ public class Simulator {
 }
 ----
 
-The *@EnableRest* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *@EnableRestSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
-After that we are ready to handle incoming REST API calls on the simulator. The simulator REST support provides a base REST scenario class.
-
-[source,java]
-----
-@Scenario("Hello")
-@RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
-public class HelloScenario extends SimulatorRestScenario {
-
-    @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>");
-
-        scenario
-            .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>");
-    }
-}
-----
-
-Now the base REST scenario provides the basic receive and send operations for the scenario. Also note that we can use *@RequestMapping* annotations
-for advanced link:#rest-request-mapping[REST request mapping].
-
-Besides that you can have several REST related configuration options as described in the following sections.
+After that we are ready to handle incoming REST API calls on the simulator.
 
 [[rest-config]]
 == Configuration
@@ -81,12 +53,12 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 }
 ----
 
-The adapter defines methods that configure the simulator REST handling. For instance we can add another mapping key extractor implementation or
+The adapter defines methods that configure the simulator REST handling. For instance we can add another scenario mapper implementation or
 add handler interceptors to the REST API call handling.
 
 *Note*
-The REST support is using a different default mapping key extractor. The *HttpRequestAnnotationScenarioMapper* is active by default and enables *@RequestMapping*
-related mapping on scenario classes. Read more about that in link:#rest-request-mapping[rest-request-mapping].
+The REST support is using the default scenario mapper *HttpRequestAnnotationScenarioMapper* that searches for *@RequestMapping* annotations
+on scenario classes. Read more about that in link:#rest-request-mapping[rest-request-mapping].
 
 The *urlMapping* defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
 REST API would be accessible on this URI:
@@ -125,7 +97,7 @@ This is the simplest way to customize the simulator REST support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRest;
+import com.consol.citrus.simulator.annotation.EnableRestSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
@@ -133,7 +105,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableRest
+@EnableRestSimulation
 public class Simulator extends SimulatorRestAdapter {
 
     @Override
@@ -154,7 +126,7 @@ public class Simulator extends SimulatorRestAdapter {
 }
 ----
 
-So we have *@EnableRest* and REST adapter customizations combined on one single class.
+So we have *@EnableRestSimulation* and REST adapter customizations combined on one single class.
 
 [[rest-customization]]
 == Advanced customizations
@@ -212,13 +184,13 @@ public class Simulator extends SimulatorRestSupport {
 ----
 
 With that configuration option we can overwrite REST support auto configuration features on the simulator such as the *requestCachingFilter* or the *handlerMapping*.
-We can not use the *@EnableRest* auto configuration annotation then. Instead we extend the *SimulatorRestSupport* implementation directly.
+We can not use the *@EnableRestSimulation* auto configuration annotation then. Instead we extend the *SimulatorRestSupport* implementation directly.
 
 [[rest-request-mapping]]
 == Request mapping
 
-Usually we define simulator scenarios and map them to incoming requests by their names. When using REST support on the simulator we can also
-use request mapping annotations on scenarios in order to map incoming requests.
+By default the simulator will map incoming requests to scenarios using so called mapping keys that are evaluated on the incoming request. When using REST support on
+the simulator we can also use *@RequestMapping* annotations on scenarios in order to map incoming requests.
 
 This looks like follows:
 
@@ -226,7 +198,7 @@ This looks like follows:
 ----
 @Scenario("Hello")
 @RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
-public class HelloScenario extends SimulatorRestScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -247,8 +219,44 @@ public class HelloScenario extends SimulatorRestScenario {
 
 As you can see the example above uses *@RequestMapping* annotation in addition to the *@Scenario* annotation. All requests on the request path
 */services/rest/simulator/hello* of method *POST* will be mapped to the scenario. With this strategy the simulator is able to map requests based
-on methods, request paths and parameters.
+on methods, request paths and query parameters.
 
-The mapping strategy requires a special mapping key extractor implementation that automatically scans for scenarios with *@RequestMapping* annotations.
-The *HttpRequestAnnotationScenarioMapper* is active by default so in case you need to apply different mapping strategies you must overwrite the mapping key extractor
-in configuration adapter.
+The mapping strategy requires a special scenario mapper implementation that is used by default. This scenario mapper automatically scans for scenarios with *@RequestMapping* annotations.
+The *HttpRequestAnnotationScenarioMapper* is active by default when enabling REST support on the simulator. Of course you can use traditional scenario mappers, too when using REST.
+So in case you need to apply different mapping strategies you can overwrite the scenario mapper implementation in the configuration adapter.
+
+[[rest-status-code]]
+== Http responses
+
+As Http is a synchronous messaging transport by its nature we can provide response messages to the calling client. In Http REST APIs this should include some Http status code.
+You can specify the Http status code very easy when using the Citrus Java DSL methods as shown in the next example.
+
+[source,java]
+----
+@Scenario("Hello")
+@RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
+public class HelloScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .http()
+            .receive()
+            .post()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                    "</Hello>");
+
+        scenario
+            .http()
+            .send()
+            .response(HttpStatus.OK)
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                    "</HelloResponse>");
+    }
+}
+----
+
+The Http Java DSL extension in Citrus provides easy access to Http related identities such as request methods, query parameters and status codes. Please
+see the official Citrus documentation for more details how to use this Http specific Java fluent API.

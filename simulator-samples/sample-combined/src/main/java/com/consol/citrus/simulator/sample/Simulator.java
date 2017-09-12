@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableRest
-@EnableJms
+@EnableRestSimulation
+@EnableJmsSimulation
 public class Simulator {
 
     public static void main(String[] args) {

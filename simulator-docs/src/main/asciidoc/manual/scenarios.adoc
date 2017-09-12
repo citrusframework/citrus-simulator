@@ -13,23 +13,24 @@ the scenario is a normal Java class that implements following interface _Simulat
 package com.consol.citrus.simulator.scenario;
 
 public interface SimulatorScenario {
-    ScenarioEndpoint scenario;
+    ScenarioEndpoint getScenarioEndpoint();
+
+    default void run(ScenarioDesigner designer) {}
+
+    default void run(ScenarioRunner runner) {}
 }
 ----
 
-The simulator scenario has to provide message receive and send operations for the simulator endpoint. Fortunately there are default implementations that you can inherit from:
+The simulator scenario provides access to the endpoint that has been invoked to start this scenario. In the scenario logic you can receive that request message using this endpoint. Also you can send back a
+response using this scenario endpoint. The scenario logic goes to one of the default run methods depending on what designer or runner Java DSL API you want to use. Fortunately there is an abstract default
+implementation `com.consol.citrus.simulator.scenario.AbstractSimulatorScenario` that you can inherit from.
 
-* *SimulatorRestScenario*
-* *SimulatorWebServiceScenario*
-* *SimulatorJmsScenario*
-* *SimulatorEndpointScenario*
-
-Each of these base scenario classes provide comfortable access to the endpoint so we can just add receive and send logic for generating the response message.
+So a typical simulator scenario can look like the following code sample.
 
 [source,java]
 ----
 @Scenario("Hello")
-public class HelloScenario extends SimulatorRestScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -48,16 +49,16 @@ public class HelloScenario extends SimulatorRestScenario {
 }
 ----
 
-The scenario above is annotated with *@Scenario* for defining a scenario name. There is one single *configure* method to be implemented.
-We can use Citrus Java DSL methods in the method body in order to receive the incoming request and send back a proper response message. Of course we can use the full Citrus power here
-in order to construct different message payloads such as XML, JSON, PLAINTEXT and so on.
+As you can see we extend from *AbstractSimulatorScenario*. We just add receive and send logic for generating the response message in the designer run method. The scenario above is annotated with *@Scenario*
+for defining a scenario name. There is one single *configure* method to be implemented. We can use Citrus Java DSL methods in the method body in order to receive the incoming request and send back a proper response message.
+Of course we can use the full Citrus power here in order to construct different message payloads such as XML, JSON, PLAINTEXT and so on.
 
 So we could also extract dynamic values from the request in order to reuse those in our response message:
 
 [source,java]
 ----
 @Scenario("Hello")
-public class HelloScenario extends SimulatorRestScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -80,4 +81,7 @@ public class HelloScenario extends SimulatorRestScenario {
 In the receive operation the user name value is extracted to a test variable *${userName}*. In the response we are able to use this variable in order to greet the user by name. This way
 we can use the Citrus test power for generating dynamic response messages. Of course this mechanism works for XML, Json and Plaintext payloads.
 
-Now you are ready to write different scenarios that generate different response messages for the calling client.
+Now you are ready to write different scenarios that generate different response messages for the calling client. Just remember the scenarios do get unique names that match a value that is evaluated through the scenario mapper. With this
+mechanism we are able to code different simulator scenarios for different incoming request messages. Also with the Citrus send and receive operations we are able to handle messages of different transport types.
+
+Read more about special message transport support in chapters link:#rest[rest-support], link:#web-service[web-service-support], link:#jms[jms-support], link:#endpoint[endpoint-support].

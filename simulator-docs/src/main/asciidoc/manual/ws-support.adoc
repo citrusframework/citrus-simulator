@@ -6,14 +6,14 @@ SOAP enabling annotation that we can use on the application class:
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableWebService;
+import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableWebService
+@EnableWebServiceSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -21,35 +21,23 @@ public class Simulator {
 }
 ----
 
-The *@EnableWebService* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *@EnableWebServiceSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
-After that we are ready to handle incoming SOAP Web Service calls on the simulator. We can use the default scenario base class for SOAP Web Services.
+As SOAP web service support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
 
-[source,java]
+[source, xml]
 ----
-@Scenario("Hello")
-public class HelloScenario extends SimulatorWebServiceScenario {
-
-    @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive(scenario.inboundEndpoint())
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>")
-            .header(SoapMessageHeaders.SOAP_ACTION, "Hello");
-
-        scenario
-            .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>");
-    }
-}
+<!-- Citrus web service support -->
+<dependency>
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-ws</artifactId>
+  <version>${citrus.version}</version>
+</dependency>
 ----
 
-The *SimulatorWebServiceScenario* automatically handles the SOAP envelope so we do not have to deal with that in the scenario receive and send operations. Also
+After that we are ready to handle incoming SOAP Web Service calls on the simulator. When SOAP web service handling is enabled on the simulator
+the SOAP envelope handling is done automatically. This means we do not have to deal with that SOAP envelope in the scenario receive and send operations. Also
 the scenario receive operation has access to the SOAP action of the incoming request call. Besides that we can also link:#ws-soap-faults[return a SOAP fault] message as scenario outcome.
 
 Let's move on with having a look at the SOAP related configuration options as described in the following sections.
@@ -120,7 +108,7 @@ This is the simplest way to customize the simulator SOAP support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableWebService;
+import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorWebServiceAdapter;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
@@ -128,7 +116,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableWebService
+@EnableWebServiceSimulation
 public class Simulator extends SimulatorWebServiceAdapter {
 
     @Override
@@ -147,7 +135,7 @@ public class Simulator extends SimulatorWebServiceAdapter {
 }
 ----
 
-So we have *@EnableWebService* and SOAP adapter customizations combined on one single class.
+So we have *@EnableWebServiceSimulation* and SOAP adapter customizations combined on one single class.
 
 [[web-service-customization]]
 == Advanced customizations
@@ -186,7 +174,43 @@ public class Simulator extends SimulatorWebServiceSupport {
 ----
 
 With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the *messageDispatcherServlet*.
-We can not use the *@EnableWebService* auto configuration annotation then. Instead we extend the *SimulatorWebServiceSupport* implementation directly.
+We can not use the *@EnableWebServiceSimulation* auto configuration annotation then. Instead we extend the *SimulatorWebServiceSupport* implementation directly.
+
+[[web-service-response]]
+== SOAP response
+
+When using Http SOAP services we may want to respond to the calling client with a synchronous SOAP response message. As the SOAP communication is automatically handled
+within the simulator we can simply send back a response message in the scenario.
+
+[source,java]
+----
+@Scenario("Hello")
+public class HelloScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .soap()
+            .receive()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                     "</Hello>")
+            .soapAction("Hello");
+
+        scenario
+            .soap()
+            .send()
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                     "</HelloResponse>");
+    }
+}
+----
+
+As you can see the Citrus Java DSL provides special SOAP related methods that specify the SOAP request and response data. Once again the SOAP envelope is automatically handled
+so we do not have to add this here. The receive operation is able to verify the SOAP action header value. In addition to that we are able to specify the synchronous SOAP response message.
+
+When using SOAP message protocols we may need to send SOAP faults as response message. This is handled in the next section.
 
 [[web-service-faults]]
 == SOAP faults
@@ -197,7 +221,7 @@ back a SOAP fault message. Therefore the default Web Service scenario implementa
 [source,java]
 ----
 @Scenario("GoodNight")
-public class GoodNightScenario extends SimulatorWebServiceScenario {
+public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     protected void configure() {

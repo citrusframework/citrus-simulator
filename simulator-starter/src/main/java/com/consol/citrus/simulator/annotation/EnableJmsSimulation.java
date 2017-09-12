@@ -34,5 +34,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(SimulatorJmsSupport.class)
-public @interface EnableJms {
+public @interface EnableJmsSimulation {
 }

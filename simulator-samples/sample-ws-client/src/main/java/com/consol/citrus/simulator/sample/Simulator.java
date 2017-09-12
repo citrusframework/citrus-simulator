@@ -16,14 +16,14 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.EnableWebServiceClient;
+import com.consol.citrus.simulator.annotation.EnableWebServiceClientSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableWebServiceClient
+@EnableWebServiceClientSimulation
 public class Simulator {
 
     public static void main(String[] args) {

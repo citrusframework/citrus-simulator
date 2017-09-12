@@ -127,9 +127,11 @@ you get a new Maven project that is ready to use. The project is created in a ne
 
 There are different simulator archetypes available. Please pick the most convenient archetype according to your project purpose.
 
-* *citrus-simulator-archetypes-rest* Http REST simulator sample
-* *citrus-simulator-archetypes-ws* SOAP web service simulator sample
-* *citrus-simulator-archetypes-jms* JMS simulator sample
+.Maven archetypes
+[horizontal]
+citrus-simulator-archetypes-rest:: Http REST simulator sample
+citrus-simulator-archetypes-ws:: SOAP web service simulator sample
+citrus-simulator-archetypes-jms:: JMS simulator sample
 
 [[development]]
 === Development

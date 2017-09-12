@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(SimulatorWebServiceClientSupport.class)
-public @interface EnableWebServiceClient {
+public @interface EnableWebServiceClientSimulation {
 }

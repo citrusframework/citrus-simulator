@@ -1,10 +1,9 @@
 [[links]]
 = Links & Further reading
 
-* The https://www.citrusframework.org/reference/html/[Citrus reference manual]
- gives you a detailed description of all Citrus features.
-* https://github.com/christophd/citrus-simulator/blob/master/simulator-samples[Sample projects]
- demonstrate typical simulator scenarios with different message transports
-* https://www.citrusframework.org/docs/history[ChangeLog] shows the release history.
-* https://github.com/christophd/citrus-simulator/blob/master/simulator-docs/contributing.md[Contributing]
- explains how you can contribute to this project. Pull requests are highly appreciated!
+.Reading material
+[horizontal]
+link:https://www.citrusframework.org/reference/html/[Citrus manual]:: gives you a detailed description of all Citrus features
+link:https://github.com/christophd/citrus-simulator/blob/master/simulator-samples[Sample projects]:: demonstrate typical simulator scenarios with different message transports
+link:https://www.citrusframework.org/docs/history[ChangeLog]:: shows the release history
+link:https://github.com/christophd/citrus-simulator/blob/master/simulator-docs/contributing.md[Contributing]:: explains how you can contribute to this project

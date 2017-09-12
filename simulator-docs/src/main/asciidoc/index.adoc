@@ -35,4 +35,7 @@ include::manual/endpoint-support.adoc[]
 
 include::manual/user-interface.adoc[]
 
+include::manual/starter.adoc[]
+
+include::manual/samples.adoc[]
 include::manual/links.adoc[]

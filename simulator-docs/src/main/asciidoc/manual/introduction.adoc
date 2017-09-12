@@ -17,12 +17,14 @@ Feedback and contributions are highly appreciated!
 
 *NOTE:* _This project is considered stable but still under construction!_
 
-The simulator application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet.
+The simulator application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet. Please see the following experimental
+features.
 
 .Experimental features
 [horizontal]
 WSDL generated scenarios:: Auto generate simulator scenarios from WSDL file
 Swagger generated scenarios:: Auto generate simulator scenarios from Swagger API file
+Combined simulator:: Use multiple message transports in one simulator instance
 
 Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
 However the simulator is usable and all main features are considered to be stable.

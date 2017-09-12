@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(SimulatorRestSupport.class)
-public @interface EnableRest {
+public @interface EnableRestSimulation {
 }

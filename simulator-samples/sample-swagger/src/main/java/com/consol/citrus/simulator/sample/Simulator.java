@@ -31,7 +31,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableRest
+@EnableRestSimulation
 public class Simulator extends SimulatorRestAdapter {
 
     public static void main(String[] args) {

@@ -1,20 +1,20 @@
 [[jms]]
 = JMS support
 
-The simulator is able to receive messages from any JMS message broker. The simulator will constantly poll a JMS destination (queue or topic)
+The simulator is able to receive messages from message brokers using the *Java Message Service* API (JMS). As a consumer the simulator constantly polls JMS destinations (queue or topic)
 for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages. The simulator defines a special
 JMS enabling annotation that we can use on the application class:
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJms;
+import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableJms
+@EnableJmsSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -22,8 +22,42 @@ public class Simulator {
 }
 ----
 
-The *@EnableJms* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *@EnableJmsSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
+
+As JMS support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
+
+[source, xml]
+----
+<!-- Citrus web service support -->
+<dependency>
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-jms</artifactId>
+  <version>${citrus.version}</version>
+</dependency>
+----
+
+Also we might want to add JMS vendor specific connection factory implementations depending on what JMS message broker you are using:
+
+[source, xml]
+----
+<!-- ActiveMQ message broker support -->
+<dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>activemq-broker</artifactId>
+  <version>${activemq.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>activemq-spring</artifactId>
+  <version>${activemq.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.xbean</groupId>
+  <artifactId>xbean-spring</artifactId>
+  <version>4.4</version>
+</dependency>
+----
 
 With that piece of configuration we are ready to handle incoming JMS messages on the simulator. Of course we need a JMS connection factory and other JMS related
 configuration options as described in the following sections.
@@ -32,7 +66,7 @@ configuration options as described in the following sections.
 == Configuration
 
 Once the JMS support is enabled on the simulator we have different configuration options. The most comfortable way is to
-add a *SimulatorJmsAdapter* implementation to the classpath. The adapter provides several configuration methods.
+add a *SimulatorJmsAdapter* implementation to the project. The adapter provides several configuration methods.
 
 [source,java]
 ----
@@ -59,10 +93,10 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
 }
 ----
 
-The adapter defines methods that configure the simulator JMS handling. For instance we can add another mapping key extractor implementation or
+The adapter defines methods that configure the simulator JMS handling. For instance we can add another scenario mapper implementation or
 enable automatic SOAP envelope handling.
 
-The *destinationName* defines the incoming JMS destination to poll. The *connectionFactory* is mandatory in order to connect to a JMS
+The *destinationName* defines the incoming JMS destination to poll as a consumer. The *connectionFactory* is mandatory in order to connect to a JMS
 message broker.
 
 You can simply extend the adapter in a custom class for adding customizations.
@@ -86,13 +120,13 @@ public class MySimulatorJmsAdapter extends SimulatorJmsAdapter {
 
 As you can see the class is annotated with *@Component* annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
 JMS adapter behavior. The custom adapter just overwrites the *connectionFactory* and *destinationName* methods so the JMS simulator will connect to the ActiveMQ message broker
-and listen for incoming requests on that queue.
+and listen for incoming requests on that queue *JMS.Queue.simulator.inbound*.
 
 This is the simplest way to customize the simulator JMS support. We can also use the adapter extension directly on the Spring boot main application class:
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJms;
+import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
@@ -100,7 +134,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableJms
+@EnableJmsSimulation
 public class Simulator extends SimulatorJmsAdapter {
 
     @Override
@@ -119,4 +153,148 @@ public class Simulator extends SimulatorJmsAdapter {
 }
 ----
 
-So we have *@EnableJms* and JMS adapter customizations combined on one single class.
+Once this is done the simulator polls the target destination for new incoming request messages. As usual the simulator maps incoming requests to simulator scenarios for execution. Inside
+the scenario you can receive the JMS request messages as usual using the scenario endpoint. The scenario logic is then able to provide a response message that is sent back to the synchronous reply
+destination if any is specified.
+
+[[jms-async]]
+== Asynchronous communication
+
+For asynchronous communication we can define normal JMS destination endpoints in Citrus in order to autowire those in the scenario.
+
+[source,java]
+----
+import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@SimulatorApplication
+@EnableJmsSimulation
+public class Simulator {
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+
+    @Override
+    public String destinationName() {
+        return "JMS.Queue.simulator.inbound";
+    }
+
+    @Override
+    public ConnectionFactory connectionFactory() {
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
+
+    @Bean
+    public JmsEndpoint replyEndpoint() {
+        return CitrusEndpoints.jms()
+                              .asynchronous()
+                              .destinationName("JMS.Queue.simulator.reply")
+                              .connectionFactory(connectionFactory())
+                              .build();
+    }
+}
+----
+
+As you can see we are able to create several JMS endpoints in Citrus. We can autowire those endpoints in a scenario for sending back an asynchronous response.
+
+[source,java]
+----
+@Scenario("Hello")
+public class HelloJmsScenario extends AbstractSimulatorScenario {
+
+    @Autowired
+    private JmsEndpoint replyEndpoint;
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "<user>@ignore@</user>" +
+                     "</Hello>")
+            .extractFromPayload("/Hello/user", "userName");
+
+        scenario
+            .send(replyEndpoint)
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "<text>Hi there ${userName}!</text>" +
+                     "</HelloResponse>");
+    }
+}
+----
+
+In this sample above we receive the scenario request message as usual using the scenario endpoint. After that we send back a response on the replyEndpoint which has been
+injected to the scenario using the `@Autowired` annotation.
+
+In general scenarios can interact with all Citrus endpoints that get defined as Spring beans in the application context configuration.
+
+[[jms-sync]]
+== Synchronous communication
+
+When dealing with synchronous communication the message producer waits for a reply message on a reply destination. This reply destination handling is automatically done
+within the simulator. So when we have synchronous communication we simply send back a response message using the scenario endpoint. The simulator makes sure that the response is
+provided to the waiting producer on the reply destination.
+
+[source,java]
+----
+@Scenario("Hello")
+public class HelloJmsScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "<user>@ignore@</user>" +
+                     "</Hello>")
+            .extractFromPayload("/Hello/user", "userName");
+
+        scenario
+            .send()
+            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "<text>Hi there ${userName}!</text>" +
+                     "</HelloResponse>");
+    }
+}
+----
+
+The synchronous JMS communication needs to be enabled on the JMS simulator adapter.
+
+[source,java]
+----
+import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
+import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
+import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@SimulatorApplication
+@EnableJmsSimulation
+public class Simulator extends SimulatorJmsAdapter {
+
+    @Override
+    public String destinationName() {
+        return "JMS.Queue.simulator.inbound";
+    }
+
+    @Override
+    public ConnectionFactory connectionFactory() {
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
+
+    @Override
+    public boolean synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return true;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+----
+
+This completes the JMS communication support within the simulator. Read more about other messaging transports such as Http REST or SOAP in this documentation.

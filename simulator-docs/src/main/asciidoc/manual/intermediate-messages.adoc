@@ -1,4 +1,99 @@
 [[intermediate-messages]]
 == Intermediate Messages
 
-TODO
+The simulator starts a new scenario instance for each incoming request based on the defined scenario mapping. Sometimes a running scenario instance needs to receive another
+incoming request. The simulator has to handle things in a different way then because the incoming request should not trigger an new scenario instance but forward that request to the running
+scenario.
+
+This mechanism is called intermediate message handling in scenarios. The scenario can activate the message correlation for a certain request. The simulator will always check all running scenarios
+for matching intermediate message correlations before starting a new scenario. This mechanism enables us to receive further incoming request within the same scenario instance.
+
+Let us clarify this with a simple example.
+
+[source,java]
+----
+@Scenario("GoodNight")
+public class GoodNightScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Go to sleep!" +
+                     "</GoodNight>")
+            .extractFromHeader("X-CorrelationId", "correlationId");
+
+        scenario.correlation().start()
+            .onHeader("X-CorrelationId", "${correlationId}");
+
+        scenario
+            .send()
+            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Good Night!" +
+                    "</GoodNightResponse>");
+
+        scenario
+            .receive()
+            .payload("<IntermediateRequest>In between!</IntermediateRequest>");
+
+        scenario
+            .send()
+            .payload("<IntermediateResponse>In between!</IntermediateResponse>");
+    }
+}
+----
+
+The scenario above starts a new correlation on the header entry *"X-CorrelationId"* and the variable value *${correlationId}* that has been extracted from first request message. Now the scenario is able to receive
+further incoming request messages with the correlation identifier. This makes sure that no other running scenario is catching this message before. The scenario is provided with that specific message first.
+
+This is how a scenario instance is able to receive more than one single incoming request. The message correlation is able to run on header values as well as based on XPath expressions evaluated within the message payload.
+
+[source,java]
+----
+@Scenario("FaxCancelled")
+public class FaxCancelledScenario extends AbstractFaxScenario {
+
+    public static final String ROOT_ELEMENT_XPATH = "string:local-name(/*)";
+    public static final String REFERENCE_ID_XPATH = "//fax:referenceId";
+
+    @Override
+    public void run(ScenarioDesigner scenario) {
+        scenario
+            .receive()
+            .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
+            .extractFromPayload(REFERENCE_ID_XPATH, "referenceId");
+
+        scenario.correlation().start()
+                .onPayload(REFERENCE_ID_XPATH, "${referenceId}");
+
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage("${referenceId}",
+                            FaxStatusEnumType.QUEUED,
+                            "The fax message has been queued and will be send shortly"),
+                    getPayloadHelper().getMarshaller()
+            );
+
+        scenario
+            .receive()
+            .xpath(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
+            .xpath(REFERENCE_ID_XPATH, "${referenceId}");
+
+        scenario
+            .send(getStatusEndpoint())
+            .payload(
+                    getPayloadHelper().generateFaxStatusMessage("${referenceId}",
+                            FaxStatusEnumType.CANCELLED,
+                            "The fax message has been cancelled"),
+                    getPayloadHelper().getMarshaller()
+            );
+    }
+}
+----
+
+The sample above uses XPath expressions to start a new correlation within the scenario. This makes sure that the second incoming request *CancelFaxMessage* is forwarded to this very same scenario.
+
+With intermediate message handling we are able to create more complex scenarios that require multiple request/response messages. The message correlation makes sure that the
+needed requests are handled within the same scenarion and other parallel running scenarios are not affected.

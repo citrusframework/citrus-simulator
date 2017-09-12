@@ -41,7 +41,6 @@
     </dependency>
 
     <!-- Citrus Simulator -->
-
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-starter</artifactId>

@@ -35,14 +35,14 @@ The simulator is based on Spring boot. This means we have a main class that load
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRest;
+import com.consol.citrus.simulator.annotation.EnableRestSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableRest
+@EnableRestSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -52,17 +52,17 @@ public class Simulator {
 
 This class is the main entrance for all configuration and customization statements. First of all the class is annotated as *@SpringBootApplication*
 and *@SimulatorApplication*. This enables auto configuration for the simulator application. In addition to that we enable different aspects of the simulator
-by using further annotations provided. In the sample above we use the *@EnableRest* annotation for Http REST endpoint support.
+by using further annotations provided. In the sample above we use the *@EnableRestSimulation* annotation for Http REST endpoint support.
 
 There are multiple annotations available for different transport endpoints:
 
 .Simulator annotations
 [horizontal]
-@EnableRest:: Enables link:#rest-support[Http REST support]
-@EnableWebService:: Enables link:#ws-support[SOAP web services support]
-@EnableWebServiceClient:: Enables link:#ws-support[SOAP web services support]
-@EnableJms:: Enables link:#jms-support[JMS support]
-@EnableEndpointComponent:: Enables generic link:#endpoint-component-support[endpoint component support]
+@EnableRestSimulation:: Enables link:#rest-support[Http REST support]
+@EnableWebServiceSimulation:: Enables link:#ws-support[SOAP web services support]
+@EnableWebServiceClientSimulation:: Enables link:#ws-support[SOAP web services support]
+@EnableJmsSimulation:: Enables link:#jms-support[JMS support]
+@EnableEndpointSimulation:: Enables generic link:#endpoint-component-support[endpoint component support]
 
 [[concept-simulator-properties]]
 == Simulator properties

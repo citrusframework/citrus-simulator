@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(SimulatorEndpointComponentSupport.class)
-public @interface EnableEndpointComponent {
+public @interface EnableEndpointSimulation {
 }

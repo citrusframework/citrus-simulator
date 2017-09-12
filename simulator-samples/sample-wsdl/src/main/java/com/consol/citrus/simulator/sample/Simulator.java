@@ -16,7 +16,7 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.EnableWebService;
+import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.ws.WsdlScenarioGenerator;
@@ -30,7 +30,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableWebService
+@EnableWebServiceSimulation
 public class Simulator {
 
     public static void main(String[] args) {

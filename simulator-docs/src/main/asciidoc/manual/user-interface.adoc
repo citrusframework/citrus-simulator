@@ -1,17 +1,23 @@
 [[user-interface]]
 = User interface
 
-The simulator application is started as a Spring boot web application. Users can access an administrative user interface
-for reviewing the simulator status and executed scenarios and their outcome.
+The simulator application is started as a Spring boot web application. Users can access an administrative web user interface
+for reviewing the simulator status and listing all executed scenarios and their outcome.
 
-Open your browser and point to the simulator UI:
+The simulator user interface comes as dependency that is added to the simulator project. In Maven we somply add the following dependency:
 
-[source]
+[source, xml]
 ----
-http://localhost:8080
+<!-- Simulator web ui -->
+<dependency>
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-simulator-ui</artifactId>
+  <version>${citrus.simulator.version}</version>
+</dependency>
 ----
 
-You will see a simple web application that gives you information about the simulator.
+Now you can start the simulator and open your browser pointing to the simulator UI at `http://localhost:8080`. You will see a simple
+web application user interface that gives you information about the simulator.
 
 [[user-interface-status]]
 == Status

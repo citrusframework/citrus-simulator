@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableEndpointComponent
+@EnableEndpointSimulation
 public class Simulator extends SimulatorEndpointComponentAdapter {
 
     public static void main(String[] args) {

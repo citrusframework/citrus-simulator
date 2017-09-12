@@ -1,22 +1,22 @@
-[[endpoint-support]]
+[[endpoint]]
 = Endpoint support
 
-We have seen how the simulator handles different transports such as link:#rest-support[Http REST], link:#ws-support[SOAP web services] and link:#jms-support[JMS].
+We have seen how the simulator handles different transports such as link:#rest[Http REST], link:#web-service[SOAP web services] and link:#jms[JMS].
 Now the simulator is also able to handle other message transports such as mail communication, JMX mbean server, RMI invocations and much more. The
 simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.
 
-The generic endpoint support is added with *@EnableEndpointComponent* annotation.
+The generic endpoint support is added with *@EnableEndpointSimulation* annotation.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableEndpointComponent;
+import com.consol.citrus.simulator.annotation.EnableEndpointSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableEndpointComponent
+@EnableEndpointSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -24,16 +24,14 @@ public class Simulator {
 }
 ----
 
-The *@EnableEndpointComponent* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *@EnableEndpointSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application. Once we use that feature we can have any Citrus endpoint component as inbound source for simulator scenarios. This means
 we can have a mail server or a RMI server that is simulated with proper response messages.
-
-As we are using generic endpoint components as inbound source we need to set the endpoint in the configuration. Read about that in the following sections.
 
 [[endpoint-config]]
 == Configuration
 
-When using generic Citrus endpoints as simulator inbound source we need to configure those endpoint components. The most comfortable way is to
+As we are using generic Citrus endpoint components as inbound source we need to configure those endpoint components. The most comfortable way is to
 add a *SimulatorEndpointComponentAdapter* implementation to the classpath. The adapter provides several configuration methods.
 
 [source,java]
@@ -55,14 +53,14 @@ public abstract class SimulatorEndpointComponentAdapter implements SimulatorEndp
 }
 ----
 
-The adapter defines methods that configure the endpoint component used as inbound source. As usual we can set the mapping key extractor implementation or
+The adapter defines methods that configure the endpoint component used as inbound source. As usual we can set the scenario mapper implementation or
 add automatic SOAP envelope support.
 
 More importantly we need to define an inbound endpoint that is used as source for scenarios. Let's have a simple endpoint component adapter example.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableEndpointComponent;
+import com.consol.citrus.simulator.annotation.EnableEndpointSimulation;
 import com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter;
 import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
@@ -70,7 +68,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @SimulatorApplication
-@EnableEndpointComponent
+@EnableEndpointSimulation
 public class Simulator extends SimulatorEndpointComponentAdapter {
 
     public static void main(String[] args) {
@@ -96,7 +94,20 @@ public class Simulator extends SimulatorEndpointComponentAdapter {
 ----
 
 The custom adapter defines a Citrus mail server endpoint that should be used as inbound source. Any mail message that arrives at this mail server component will
-trigger a new simulator scenario then. Also we overwrite the mapping key extractor implementation so that the mail subject evaluates to the scenario that should be executed.
+trigger a new simulator scenario then. Also we overwrite the scenario mapper implementation. The sample uses a content based XPath mapper that uses the mail subject
+value as scenario mapping key.
+
+As mail server endpoint support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
+
+[source, xml]
+----
+<!-- Citrus web service support -->
+<dependency>
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-mail</artifactId>
+  <version>${citrus.version}</version>
+</dependency>
+----
 
 This configuration would lead us to a mail server that responds to incoming mail messages base on the mail subject. So we can have several simulator
 scenarios for different mail messages.
@@ -104,7 +115,7 @@ scenarios for different mail messages.
 [source,java]
 ----
 @Scenario("Hello")
-public class HelloScenario extends SimulatorEndpointScenario {
+public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
@@ -132,7 +143,7 @@ public class HelloScenario extends SimulatorEndpointScenario {
 }
 ----
 
-The scenario implementation above uses the base class *SimulatorEndpointScenario* and listens for mail messages of subject *Hello*. The
+The scenario implementation above is listening for mail messages of subject *Hello*. The
 mail XML marshalling is automatically done by Citrus. This is the usual way how the Citrus mail component handles mail messages and responses. That means we can use the default Citrus
 features in our simulator, too. The scenario sends back a positive mail response to the calling client.
 

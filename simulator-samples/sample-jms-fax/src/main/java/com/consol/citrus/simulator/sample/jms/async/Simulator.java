@@ -36,7 +36,7 @@ import javax.jms.ConnectionFactory;
  */
 @SpringBootApplication
 @SimulatorApplication
-@EnableJms
+@EnableJmsSimulation
 public class Simulator extends SimulatorJmsAdapter {
 
     public static void main(String[] args) {
