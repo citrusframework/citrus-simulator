@@ -32,9 +32,9 @@ public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
             if (toTranslate.equals("true") || toTranslate.equals("false")) {
                 return (T) toTranslate;
             } else if (Character.isDigit(toTranslate.charAt(0))) {
-                return (T) ("citrus:randomNumber(" + toTranslate.length() + ")");
+                return (T) (context.replaceDynamicContentInString("citrus:randomNumber(" + toTranslate.length() + ")"));
             } else if (toTranslate.startsWith("string")) {
-                return (T) ("citrus:randomString(" + toTranslate.length() + ")");
+                return (T) (context.replaceDynamicContentInString("citrus:randomString(" + toTranslate.length() + ")"));
             }
         }
 

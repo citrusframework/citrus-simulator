@@ -18,9 +18,8 @@
 
   <!-- Test SOAP client -->
   <citrus-ws:client id="simulatorClient"
-                    request-url="http://localhost:8080/services/ws/simulator"
-                    interceptor="clientLoggingInterceptor"
-                    fault-strategy="propagateError"/>
+                    request-url="http://localhost:8080/services/ws/HelloService/v1"
+                    interceptor="clientLoggingInterceptor"/>
 
   <bean id="clientLoggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingClientInterceptor"/>
 

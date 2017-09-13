@@ -69,7 +69,7 @@
   <wsdl:service name="HelloService">
     <wsdl:port name="HelloServiceHTTP"
                binding="tns:HelloServiceHTTPBinding">
-      <soap:address location="http://localhost:8080/services/ws/simulator/HelloService/v1"/>
+      <soap:address location="http://localhost:8080/services/ws/HelloService/v1"/>
     </wsdl:port>
   </wsdl:service>
 

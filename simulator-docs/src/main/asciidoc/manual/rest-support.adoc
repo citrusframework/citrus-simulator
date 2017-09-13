@@ -311,10 +311,10 @@ public class Simulator extends SimulatorRestAdapter {
 }
 ----
 
-The listing above add a `HttpScenarioGenerator` as Spring bean to the simulator application. The generator receives the swagger api file location `swagger/petstore-api.json` and the
+The listing above adds a `HttpScenarioGenerator` as Spring bean to the simulator application. The generator receives the swagger api file location `swagger/petstore-api.json` and the
 context path for this API. In addition to that we need to set a special scenario mapper implementation `HttpRequestPathScenarioMapper` that is aware of generated REST scenarios.
 
-Also we set a custom fallback endpoint adapter. This one is used when no scenario matched the incoming request or when the scenario itself did not produce a proper response because of
+Also we set a custom fallback endpoint adapter. This one is used when no scenario matches the incoming request or when the scenario itself did not produce a proper response because of
 some validation error.
 
 On startup the generator dynamically generates a scenario for each operation defined in that swagger api file. You can review all generated scenarios in the user interface.

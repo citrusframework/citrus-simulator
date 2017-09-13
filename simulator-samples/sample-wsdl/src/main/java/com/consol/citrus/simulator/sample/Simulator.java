@@ -16,10 +16,13 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
+import com.consol.citrus.message.Message;
+import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.ws.WsdlScenarioGenerator;
+import com.consol.citrus.ws.message.SoapFault;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -31,10 +34,28 @@ import org.springframework.core.io.ClassPathResource;
 @SpringBootApplication
 @SimulatorApplication
 @EnableWebServiceSimulation
-public class Simulator {
+public class Simulator extends SimulatorWebServiceAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
+    }
+
+    @Override
+    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        return "/services/ws/HelloService/v1/*";
+    }
+
+    @Override
+    public EndpointAdapter fallbackEndpointAdapter() {
+        return new StaticEndpointAdapter() {
+            @Override
+            protected Message handleMessageInternal(Message message) {
+                return new SoapFault()
+                        .faultActor("SERVER")
+                        .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1001")
+                        .faultString("Internal server error");
+            }
+        };
     }
 
     @Bean

@@ -33,13 +33,15 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
     @CitrusTest
     public void testHelloRequest() {
-        send(soapClient)
+        soap().client(soapClient)
+                .send()
+                .soapAction("Hello")
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>")
-                .header("citrus_soap_action", "Hello");
+                         "</Hello>");
 
-        receive(soapClient)
+        soap().client(soapClient)
+                .receive()
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "@ignore@" +
                          "</HelloResponse>");
@@ -47,13 +49,15 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
     @CitrusTest
     public void testGoodByeRequest() {
-        send(soapClient)
+        soap().client(soapClient)
+                .send()
+                .soapAction("GoodBye")
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>")
-                .header("citrus_soap_action", "GoodBye");
+                         "</GoodBye>");
 
-        receive(soapClient)
+        soap().client(soapClient)
+                .receive()
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "@ignore@" +
                          "</GoodByeResponse>");
@@ -61,15 +65,32 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
     @CitrusTest
     public void testGoodNightRequest() {
-        send(soapClient)
+        soap().client(soapClient)
+                .send()
+                .soapAction("GoodNight")
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
-                         "</GoodNight>")
-                .header("citrus_soap_action", "GoodNight");
+                         "</GoodNight>");
 
-        receive(soapClient)
+        soap().client(soapClient)
+                .receive()
                 .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "@ignore@" +
                         "</GoodNightResponse>");
+    }
+
+    @CitrusTest
+    public void testInvalidSoapAction() {
+        assertSoapFault()
+                .faultActor("SERVER")
+                .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1001")
+                .faultString("Internal server error")
+                .when(
+                    soap().client(soapClient)
+                        .send()
+                        .soapAction("SomethingElse")
+                        .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Say Hello!" +
+                                "</Hello>"));
     }
 }
