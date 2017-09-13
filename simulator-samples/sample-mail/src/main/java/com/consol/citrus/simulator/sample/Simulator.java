@@ -18,9 +18,9 @@ package com.consol.citrus.simulator.sample;
 
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.mail.server.MailServer;
-import com.consol.citrus.simulator.annotation.*;
-import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
-import com.consol.citrus.simulator.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointComponentAdapter;
+import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
+import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -29,8 +29,6 @@ import org.springframework.context.ApplicationContext;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-@SimulatorApplication
-@EnableEndpointSimulation
 public class Simulator extends SimulatorEndpointComponentAdapter {
 
     public static void main(String[] args) {

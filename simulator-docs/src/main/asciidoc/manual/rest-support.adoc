@@ -2,18 +2,17 @@
 = REST support
 
 The simulator is able to provide Http REST APIs as a server. Clients can call the simulator on request paths using methods such as
-Http GET, POST, PUT, DELETE and so on. The simulator defines a special REST enabling annotation that we can use on the application class:
+Http GET, POST, PUT, DELETE and so on.
+
+The generic rest support is activated by setting the property *citrus.simulator.rest.enabled=true*. You can do so in the basic `application.properties`
+file or via system property or environment variable setting.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRestSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -21,7 +20,7 @@ public class Simulator {
 }
 ----
 
-The *@EnableRestSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *citrus.simulator.rest.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
 After that we are ready to handle incoming REST API calls on the simulator.
@@ -97,15 +96,11 @@ This is the simplest way to customize the simulator REST support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRestSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorRestAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.http.SimulatorRestAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
 public class Simulator extends SimulatorRestAdapter {
 
     @Override
@@ -126,8 +121,6 @@ public class Simulator extends SimulatorRestAdapter {
 }
 ----
 
-So we have *@EnableRestSimulation* and REST adapter customizations combined on one single class.
-
 [[rest-customization]]
 == Advanced customizations
 
@@ -135,15 +128,12 @@ For a more advanced configuration option we can extend the *SimulatorRestSupport
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRest;
-import com.consol.citrus.simulator.annotation.SimulatorRestSupport;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.http.SimulatorRestAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-public class Simulator extends SimulatorRestSupport {
+public class Simulator extends SimulatorRestAutoConfiguration {
 
     @Override
     protected String getUrlMapping() {
@@ -184,7 +174,7 @@ public class Simulator extends SimulatorRestSupport {
 ----
 
 With that configuration option we can overwrite REST support auto configuration features on the simulator such as the *requestCachingFilter* or the *handlerMapping*.
-We can not use the *@EnableRestSimulation* auto configuration annotation then. Instead we extend the *SimulatorRestSupport* implementation directly.
+We extend the *SimulatorRestAutoConfiguration* implementation directly.
 
 [[rest-request-mapping]]
 == Request mapping
@@ -273,8 +263,6 @@ See the following sample how to do that:
 [source,java]
 ----
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
 public class Simulator extends SimulatorRestAdapter {
 
     public static void main(String[] args) {

@@ -1,7 +1,7 @@
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorJmsConfigurationProperties;
+import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
+import com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.ConnectionFactory;

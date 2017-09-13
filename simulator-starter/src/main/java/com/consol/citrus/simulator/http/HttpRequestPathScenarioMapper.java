@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.http;
 
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

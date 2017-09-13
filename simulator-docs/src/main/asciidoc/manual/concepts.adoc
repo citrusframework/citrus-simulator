@@ -31,18 +31,14 @@ Also you can trigger scenarios manually.
 [[concept-simulator-application]]
 == Simulator application
 
-The simulator is based on Spring boot. This means we have a main class that loads the Spring boot application.
+The simulator is a usual Spring boot application. This means we have a main class that loads the Spring boot application.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableRestSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -50,19 +46,31 @@ public class Simulator {
 }
 ----
 
-This class is the main entrance for all configuration and customization statements. First of all the class is annotated as *@SpringBootApplication*
-and *@SimulatorApplication*. This enables auto configuration for the simulator application. In addition to that we enable different aspects of the simulator
-by using further annotations provided. In the sample above we use the *@EnableRestSimulation* annotation for Http REST endpoint support.
+This class is the main entrance for all configuration and customization statements. As we have added the *citrus-simulator-starter* as dependency in our project
+auto configuration is enabled for the simulator application. By default REST support is enabled with all configuration needed. You can enable/disable the message transport
+support for different technologies via application properties.
 
-There are multiple annotations available for different transport endpoints:
+.application.properties
+[source,properties]
+----
+citrus.simulator.rest.enabled=true
+citrus.simulator.jms.enabled=true
+citrus.simulator.ws.enabled=true
+citrus.simulator.ws.client.enabled=true
+citrus.simulator.endpoint.enabled=true
+----
 
-.Simulator annotations
+When enabled the simulator auto configuration for this specific message transport is activated and all required beans and configuration is loaded at startup.
+
+.Simulator support
 [horizontal]
-@EnableRestSimulation:: Enables link:#rest-support[Http REST support]
-@EnableWebServiceSimulation:: Enables link:#ws-support[SOAP web services support]
-@EnableWebServiceClientSimulation:: Enables link:#ws-support[SOAP web services support]
-@EnableJmsSimulation:: Enables link:#jms-support[JMS support]
-@EnableEndpointSimulation:: Enables generic link:#endpoint-component-support[endpoint component support]
+citrus.simulator.rest.enabled:: Enables link:#rest-support[Http REST support]
+citrus.simulator.ws.enabled:: Enables link:#ws-support[SOAP web services support]
+citrus.simulator.ws.client.enabled:: Enables link:#ws-support[SOAP web services support]
+citrus.simulator.jms.enabled:: Enables link:#jms-support[JMS support]
+citrus.simulator.endpoint.enabled:: Enables generic link:#endpoint-component-support[endpoint component support]
+
+You can also combine message transports on the simulator application although this feature is of experimental nature up to now.
 
 [[concept-simulator-properties]]
 == Simulator properties
@@ -72,6 +80,7 @@ is supported. Following from that you can add properties to the `application.pro
 
 [source,properties]
 ----
+citrus.simulator.rest.enabled=true
 citrus.simulator.defaultTimeout=10000
 citrus.simulator.templatePath=com/company/simulator/templates
 ----
@@ -80,9 +89,10 @@ The available simulator properties are grouped in following configuration classe
 
 [horizontal]
 com.consol.citrus.simulator.config.SimulatorConfigurationProperties:: prefix=*citrus.simulator*
-com.consol.citrus.simulator.annotation.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
-com.consol.citrus.simulator.annotation.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
-com.consol.citrus.simulator.annotation.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
+com.consol.citrus.simulator.http.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
+com.consol.citrus.simulator.ws.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
+com.consol.citrus.simulator.ws.SimulatorWebServiceClientConfigurationProperties:: prefix=*citrus.simulator.ws.client*
+com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
 
 There are several properties that you can use in order to customize the simulator behavior. These
 properties are:

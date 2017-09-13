@@ -16,7 +16,8 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.*;
+import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
+import com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,8 +28,6 @@ import javax.jms.ConnectionFactory;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-@SimulatorApplication
-@EnableJmsSimulation
 public class Simulator extends SimulatorJmsAdapter {
 
     public static void main(String[] args) {

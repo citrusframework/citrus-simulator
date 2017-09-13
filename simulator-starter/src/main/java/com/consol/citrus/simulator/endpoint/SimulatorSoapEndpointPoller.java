@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.endpoint;
 
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.exception.SimulatorException;
-import com.consol.citrus.simulator.util.SoapMessageHelper;
+import com.consol.citrus.simulator.ws.SoapMessageHelper;
 import com.consol.citrus.ws.message.SoapMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 

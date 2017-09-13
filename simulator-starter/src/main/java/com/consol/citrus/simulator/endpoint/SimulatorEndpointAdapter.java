@@ -29,24 +29,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * @author Christoph Deppisch
  */
-@Component
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter implements ApplicationContextAware {
 
-    /**
-     * Logger
-     */
+    /** Logger */
     private static Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
     @Autowired

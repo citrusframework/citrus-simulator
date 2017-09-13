@@ -19,9 +19,8 @@ package com.consol.citrus.simulator.sample;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.ws.WsdlScenarioGenerator;
+import com.consol.citrus.simulator.ws.*;
 import com.consol.citrus.ws.message.SoapFault;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,8 +31,6 @@ import org.springframework.core.io.ClassPathResource;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-@SimulatorApplication
-@EnableWebServiceSimulation
 public class Simulator extends SimulatorWebServiceAdapter {
 
     public static void main(String[] args) {

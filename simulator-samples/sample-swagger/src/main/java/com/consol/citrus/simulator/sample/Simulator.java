@@ -20,11 +20,9 @@ import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.http.HttpRequestPathScenarioMapper;
-import com.consol.citrus.simulator.http.HttpScenarioGenerator;
-import com.consol.citrus.simulator.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.http.*;
+import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +33,6 @@ import org.springframework.http.HttpStatus;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
 public class Simulator extends SimulatorRestAdapter {
 
     public static void main(String[] args) {

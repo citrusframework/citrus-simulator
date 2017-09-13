@@ -17,7 +17,7 @@
 package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.endpoint.adapter.mapping.SoapActionMappingKeyExtractor;
-import com.consol.citrus.simulator.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 
 /**
  * @author Christoph Deppisch

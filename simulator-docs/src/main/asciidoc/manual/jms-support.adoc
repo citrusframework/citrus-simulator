@@ -2,19 +2,17 @@
 = JMS support
 
 The simulator is able to receive messages from message brokers using the *Java Message Service* API (JMS). As a consumer the simulator constantly polls JMS destinations (queue or topic)
-for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages. The simulator defines a special
-JMS enabling annotation that we can use on the application class:
+for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages.
+
+The generic jms support is activated by setting the property *citrus.simulator.jms.enabled=true*. You can do so in the basic `application.properties`
+file or via system property or environment variable setting.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableJmsSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -22,7 +20,7 @@ public class Simulator {
 }
 ----
 
-The *@EnableJmsSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *citrus.simulator.jms.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
 As JMS support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
@@ -126,15 +124,11 @@ This is the simplest way to customize the simulator JMS support. We can also use
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableJmsSimulation
 public class Simulator extends SimulatorJmsAdapter {
 
     @Override
@@ -164,14 +158,10 @@ For asynchronous communication we can define normal JMS destination endpoints in
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableJmsSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -265,15 +255,11 @@ The synchronous JMS communication needs to be enabled on the JMS simulator adapt
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableJmsSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorJmsAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableJmsSimulation
 public class Simulator extends SimulatorJmsAdapter {
 
     @Override

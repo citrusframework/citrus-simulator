@@ -1,19 +1,17 @@
 [[web-service]]
 = Web Service support
 
-The simulator is able to handle SOAP Web Service calls as a server. The simulator defines a special
-SOAP enabling annotation that we can use on the application class:
+The simulator is able to handle SOAP Web Service calls as a server.
+
+The generic SOAP web service support is activated by setting the property *citrus.simulator.ws.enabled=true*. You can do so in the basic `application.properties`
+file or via system property or environment variable setting.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableWebServiceSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -21,7 +19,7 @@ public class Simulator {
 }
 ----
 
-The *@EnableWebServiceSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *citrus.simulator.ws.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.
 
 As SOAP web service support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
@@ -108,15 +106,11 @@ This is the simplest way to customize the simulator SOAP support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableWebServiceSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorWebServiceAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.ws.SimulatorWebServiceAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableWebServiceSimulation
 public class Simulator extends SimulatorWebServiceAdapter {
 
     @Override
@@ -135,8 +129,6 @@ public class Simulator extends SimulatorWebServiceAdapter {
 }
 ----
 
-So we have *@EnableWebServiceSimulation* and SOAP adapter customizations combined on one single class.
-
 [[web-service-customization]]
 == Advanced customizations
 
@@ -144,15 +136,12 @@ For a more advanced configuration option we can extend the *SimulatorWebServiceS
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableWebService;
-import com.consol.citrus.simulator.annotation.SimulatorWebServiceSupport;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.ws.SimulatorWebServiceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-public class Simulator extends SimulatorWebServiceSupport {
+public class Simulator extends SimulatorWebServiceAutoConfiguration {
 
     @Override
     protected String getServletMapping() {
@@ -174,7 +163,7 @@ public class Simulator extends SimulatorWebServiceSupport {
 ----
 
 With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the *messageDispatcherServlet*.
-We can not use the *@EnableWebServiceSimulation* auto configuration annotation then. Instead we extend the *SimulatorWebServiceSupport* implementation directly.
+We extend the *SimulatorWebServiceAutoConfiguration* implementation directly.
 
 [[web-service-response]]
 == SOAP response
@@ -255,8 +244,6 @@ See the following sample how to do that:
 [source,java]
 ----
 @SpringBootApplication
-@SimulatorApplication
-@EnableWebServiceSimulation
 public class Simulator extends SimulatorWebServiceAdapter {
 
     public static void main(String[] args) {

@@ -5,18 +5,15 @@ We have seen how the simulator handles different transports such as link:#rest[H
 Now the simulator is also able to handle other message transports such as mail communication, JMX mbean server, RMI invocations and much more. The
 simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.
 
-The generic endpoint support is added with *@EnableEndpointSimulation* annotation.
+The generic endpoint support is activated by setting the property *citrus.simulator.endpoint.enabled=true*. You can do so in the basic `application.properties`
+file or via system property or environment variable setting.
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableEndpointSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableEndpointSimulation
 public class Simulator {
     public static void main(String[] args) {
         SpringApplication.run(Simulator.class, args);
@@ -24,7 +21,7 @@ public class Simulator {
 }
 ----
 
-The *@EnableEndpointSimulation* annotation performs some auto configuration steps and loads required beans for the Spring application context
+The *citrus.simulator.endpoint.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application. Once we use that feature we can have any Citrus endpoint component as inbound source for simulator scenarios. This means
 we can have a mail server or a RMI server that is simulated with proper response messages.
 
@@ -60,15 +57,11 @@ More importantly we need to define an inbound endpoint that is used as source fo
 
 [source,java]
 ----
-import com.consol.citrus.simulator.annotation.EnableEndpointSimulation;
-import com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter;
-import com.consol.citrus.simulator.annotation.SimulatorApplication;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointComponentAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@SimulatorApplication
-@EnableEndpointSimulation
 public class Simulator extends SimulatorEndpointComponentAdapter {
 
     public static void main(String[] args) {

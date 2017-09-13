@@ -16,7 +16,6 @@
 
 package com.consol.citrus.simulator.sample;
 
-import com.consol.citrus.simulator.annotation.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +24,6 @@ import org.springframework.context.annotation.Bean;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-@SimulatorApplication
-@EnableRestSimulation
-@EnableJmsSimulation
 public class Simulator {
 
     public static void main(String[] args) {

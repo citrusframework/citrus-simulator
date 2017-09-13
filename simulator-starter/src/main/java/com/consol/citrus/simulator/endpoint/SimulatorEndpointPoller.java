@@ -38,9 +38,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
  */
 public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean {
 
-    /**
-     * Logger
-     */
+    /** Logger */
     private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
 
     @Autowired
