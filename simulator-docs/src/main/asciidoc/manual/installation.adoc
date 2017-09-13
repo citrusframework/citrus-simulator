@@ -131,7 +131,7 @@ There are different simulator archetypes available. Please pick the most conveni
 [horizontal]
 citrus-simulator-archetypes-rest:: Http REST simulator sample
 citrus-simulator-archetypes-ws:: SOAP web service simulator sample
-citrus-simulator-archetypes-jms:: JMS simulator sample
+citrus-simulator-archetypes-jms:: JMS simulator sample (TODO)
 
 [[development]]
 === Development
