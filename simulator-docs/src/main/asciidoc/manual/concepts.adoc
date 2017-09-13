@@ -1,32 +1,17 @@
 [[concepts]]
 = Concepts
 
-The Citrus simulator project has the primary focus to provide messaging simulation as a standalone server. Once started the simulator
-provides different endpoints (Http REST, JMS, SOAP Web Service, and so on) and waits for incoming requests. The time a request arrives at one of the endpoints
-the simulator maps the request to a predefined link:#scenarios[simulator scenario] which is automatically executed immediately. The scenario is responsible to create
-a response message that is sent to the calling client.
+The Citrus simulator's primary focus is to provide a simple means to simulate one or more endpoints (HTTP, JMS, SMTP, etc). Once the simulator is up and running it waits for an incoming request (JSON, SOAP, XML, etc) to arrive on any of its configured endpoints and reacts accordingly. The simulator examines the incoming request and determines which link:#scenarios[simulator scenario] should be executed for handling the request. Typically the selected scenario creates a response message to send back to the calling client.
 
-The scenario mapping is done by link:#scenario-mapper[extracting a mapping key] from the request data. This scenario mapper implementation searches for a matching scenario for the current incoming
-request. The scenario mapping is done based on different identifiers on the request. The Citrus simulator knows following scenario mapper implementations:
+A link:#scenario-mapper[scenario mapper] is used to help the simulator determine the correct scenario to be executed. Different scenario mappers are supported that use the request header data or payload data to determine the appropriate scenario to run.
 
-.Scenario mapper
-[horizontal]
-Content based xpath mapper:: Evaluates Xpath expressions on the request payload and uses the expression result as scenario name
-Content based jsonPath mapper:: Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name
-Header value mapper:: Evaluates header name on request and uses header value as scenario name
-SOAP action mapper:: Evaluates SOAP action header on request and uses the value as scenario name
-Request mapping annotation mapper:: Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values
+A link:#scenarios[simulator scenario] is capable of handling one or more request messages. When executed it receives the request and can return an appropriate response message to the calling client.
+By defining multiple simulator scenarios the citrus simulator is able to respond to different requests accordingly.
 
-The link:#scenarios[simulator scenario] is capable of handling the request message and will return a proper response message to the calling client.
-With different scenarios defined the simulator is able to respond to different requests accordingly.
+A simulator scenario is composed of one or more actions. For the most trivial scenarios there is generally an action for receiving a request and an action for sending a response.
+Because the Citrus simulator has access to the underlying Citrus framework functionality you can access a wide range of actions that are available within the Citrus framework and use these when configuring a scenario.
 
-Each scenario defines a very special simulation logic by using Citrus test actions that perform once the scenario is triggered by incoming requests.
-
-This way each incoming request is processed and a proper response message is provided to the client. You can define default and fallback scenarios for
-each simulator.
-
-In addition to that the simulator provides a link:#user-interface[user interface] where executed scenarios state success or failure.
-Also you can trigger scenarios manually.
+To keep an eye on what the simulator is doing, what requests were received or sent or what scenarios were executed a link:#user-interface[user interface] is provided. In addition to seeing what is going on it is also possible to trigger scenarios manually.
 
 [[concept-simulator-application]]
 == Simulator application

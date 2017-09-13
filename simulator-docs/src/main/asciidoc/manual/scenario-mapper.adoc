@@ -7,7 +7,7 @@ on a mapping key that is extracted from the incoming request.
 
 There are multiple ways to identify the simulator scenario from incoming request messages:
 
-.Scenario mapping identifiers
+.Scenario mapping identifiers (TODO update list)
 [horizontal]
 Message-Type:: Each request message type (XML root QName) results in a separate simulator scenario
 REST request mappings:: Identifies the scenario based on Http method and resource path on server
@@ -15,6 +15,11 @@ SOAP Action:: Each SOAP action value defines a simulator scenario
 Message Header:: Any SOAP or Http message header value specifies a new simulator scenario
 XPath payload:: An XPath expression is evaluated on the message payload to identify the scenario
 Json payload:: An JsonPath expression is evaluated on the message payload to identify the scenario
+Content based xpath mapper:: Evaluates Xpath expressions on the request payload and uses the expression result as scenario name
+Content based jsonPath mapper:: Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name
+Header value mapper:: Evaluates header name on request and uses header value as scenario name
+SOAP action mapper:: Evaluates SOAP action header on request and uses the value as scenario name
+Request mapping annotation mapper:: Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values
 
 Once the simulator scenario is identified with the respective mapping key the scenario get loaded and executed. All scenarios perform Citrus test logic in order
 to provide a proper response messages as a result. This way the simulator is able to perform complex response generating logic with dynamic values and so on. 
