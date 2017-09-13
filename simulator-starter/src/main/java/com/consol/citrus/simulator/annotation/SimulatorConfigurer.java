@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.mapper.ScenarioMapper;
 
@@ -30,6 +31,13 @@ public interface SimulatorConfigurer {
      * @return
      */
     ScenarioMapper scenarioMapper();
+
+    /**
+     * Gets the fallback endpoint adapter that is used when no response has been generated from scenario.
+     *
+     * @return
+     */
+    EndpointAdapter fallbackEndpointAdapter();
 
     /**
      * Gets the delay in milliseconds to wait after uncategorized exceptions.

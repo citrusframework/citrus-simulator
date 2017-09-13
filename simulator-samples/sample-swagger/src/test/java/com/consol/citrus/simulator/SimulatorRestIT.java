@@ -118,6 +118,18 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     }
 
     @CitrusTest
+    public void testFindByStatusMissingQueryParameter() {
+        http().client(petstoreClient)
+                .send()
+                .get("/pet/findByStatus")
+                .accept("application/json");
+
+        http().client(petstoreClient)
+                .receive()
+                .response(HttpStatus.NOT_FOUND);
+    }
+
+    @CitrusTest
     public void testFindByTags() {
         http().client(petstoreClient)
                 .send()

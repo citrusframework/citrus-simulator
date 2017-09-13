@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.mapper.ScenarioMapper;
@@ -81,6 +83,8 @@ public class SimulatorWebServiceSupport {
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
         return webServiceEndpoint;
@@ -98,6 +102,15 @@ public class SimulatorWebServiceSupport {
         }
 
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
+    }
+
+    @Bean(name = "simulatorWsFallbackEndpointAdapter")
+    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+        if (configurer != null) {
+            return configurer.fallbackEndpointAdapter();
+        }
+
+        return new EmptyResponseEndpointAdapter();
     }
 
     /**

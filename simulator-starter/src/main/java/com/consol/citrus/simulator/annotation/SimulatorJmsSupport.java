@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.jms.endpoint.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
@@ -106,6 +108,7 @@ public class SimulatorJmsSupport {
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
         if (!isSynchronous(simulatorJmsConfiguration)) {
             endpointAdapter.setHandleResponse(false);
@@ -116,6 +119,15 @@ public class SimulatorJmsSupport {
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
         return endpointPoller;
+    }
+
+    @Bean(name = "simulatorJmsFallbackEndpointAdapter")
+    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+        if (configurer != null) {
+            return configurer.fallbackEndpointAdapter();
+        }
+
+        return new EmptyResponseEndpointAdapter();
     }
 
     /**

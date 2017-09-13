@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
@@ -132,6 +134,15 @@ public class SimulatorRestSupport {
         return new SimulatorEndpointAdapter();
     }
 
+    @Bean(name = "simulatorRestFallbackEndpointAdapter")
+    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+        if (configurer != null) {
+            return configurer.fallbackEndpointAdapter();
+        }
+
+        return new EmptyResponseEndpointAdapter();
+    }
+
     /**
      * Gets the Citrus Http REST controller.
      *
@@ -145,6 +156,7 @@ public class SimulatorRestSupport {
             SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
             endpointAdapter.setApplicationContext(applicationContext);
             endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
+            endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
             restController.setEndpointAdapter(endpointAdapter);
         }

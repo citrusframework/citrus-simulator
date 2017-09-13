@@ -19,6 +19,8 @@ package com.consol.citrus.simulator.annotation;
 import com.consol.citrus.channel.ChannelSyncEndpoint;
 import com.consol.citrus.channel.ChannelSyncEndpointConfiguration;
 import com.consol.citrus.endpoint.Endpoint;
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
 import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
@@ -79,12 +81,22 @@ public class SimulatorEndpointComponentSupport {
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
         endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
 
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
         return endpointPoller;
+    }
+
+    @Bean(name = "simulatorFallbackEndpointAdapter")
+    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+        if (configurer != null) {
+            return configurer.fallbackEndpointAdapter();
+        }
+
+        return new EmptyResponseEndpointAdapter();
     }
 
     /**

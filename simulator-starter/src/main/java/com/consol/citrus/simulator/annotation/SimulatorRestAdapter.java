@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.http.HttpRequestAnnotationScenarioMapper;
@@ -40,6 +42,11 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
     @Override
     public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
         return simulatorRestConfiguration.getUrlMapping();
+    }
+
+    @Override
+    public EndpointAdapter fallbackEndpointAdapter() {
+        return new EmptyResponseEndpointAdapter();
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.annotation;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.mapper.ScenarioMapper;
@@ -33,6 +35,11 @@ public abstract class SimulatorEndpointComponentAdapter implements SimulatorEndp
     @Override
     public ScenarioMapper scenarioMapper() {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
+    }
+
+    @Override
+    public EndpointAdapter fallbackEndpointAdapter() {
+        return new EmptyResponseEndpointAdapter();
     }
 
     @Override

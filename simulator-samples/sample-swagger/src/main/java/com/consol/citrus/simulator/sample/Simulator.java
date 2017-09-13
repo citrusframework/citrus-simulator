@@ -16,6 +16,10 @@
 
 package com.consol.citrus.simulator.sample;
 
+import com.consol.citrus.endpoint.EndpointAdapter;
+import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
+import com.consol.citrus.http.message.HttpMessage;
+import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.annotation.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.http.HttpRequestPathScenarioMapper;
@@ -25,6 +29,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Christoph Deppisch
@@ -46,6 +51,16 @@ public class Simulator extends SimulatorRestAdapter {
     @Override
     public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
         return "/petstore/v2/**";
+    }
+
+    @Override
+    public EndpointAdapter fallbackEndpointAdapter() {
+        return new StaticEndpointAdapter() {
+            @Override
+            protected Message handleMessageInternal(Message message) {
+                return new HttpMessage().status(HttpStatus.NOT_FOUND);
+            }
+        };
     }
 
     @Bean
