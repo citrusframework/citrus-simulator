@@ -31,7 +31,12 @@ import javax.annotation.PostConstruct;
 public class SimulatorConfigurationProperties implements EnvironmentAware {
 
     /** Logger */
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    private static Logger log = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
+
+    /**
+     * Global option to enable/disable simulator support, default is true.
+     */
+    private boolean enabled = true;
 
     /** Template path */
     private static final String SIMULATOR_TEMPLATE_PATH_PROPERTY = "citrus.simulator.template.path";
@@ -83,6 +88,24 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         outboundXmlDictionaryMappings = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_MAPPINGS_ENV, outboundXmlDictionaryMappings));
 
         log.info("Using the simulator configuration: {}", this.toString());
+    }
+
+    /**
+     * Gets the enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled.
+     *
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -214,7 +237,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "templatePath='" + templatePath + '\'' +
+                "enabled='" + enabled + '\'' +
+                ", templatePath='" + templatePath + '\'' +
                 ", defaultScenario='" + defaultScenario + '\'' +
                 ", defaultTimeout=" + defaultTimeout +
                 ", exceptionDelay=" + exceptionDelay +

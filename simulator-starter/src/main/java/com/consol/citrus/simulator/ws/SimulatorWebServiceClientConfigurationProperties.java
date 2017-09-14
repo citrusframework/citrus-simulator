@@ -35,6 +35,11 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     private static Logger log = LoggerFactory.getLogger(SimulatorWebServiceClientConfigurationProperties.class);
 
     /**
+     * Global option to enable/disable SOAP web service client support, default is false.
+     */
+    private boolean enabled;
+
+    /**
      * This is where the SOAP client sends the requests to.
      */
     private static final String SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY = "citrus.simulator.ws.client.request.url";
@@ -54,6 +59,24 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
         );
 
         log.info("Using the simulator configuration: {}", this.toString());
+    }
+
+    /**
+     * Gets the enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled.
+     *
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -77,7 +100,8 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "requestUrl='" + requestUrl + '\'' +
+                "enabled='" + enabled + '\'' +
+                ", requestUrl='" + requestUrl + '\'' +
                 '}';
     }
 

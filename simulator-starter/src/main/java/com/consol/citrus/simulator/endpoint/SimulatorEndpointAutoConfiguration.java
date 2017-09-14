@@ -21,10 +21,12 @@ import com.consol.citrus.channel.ChannelSyncEndpointConfiguration;
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
+import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,11 +36,15 @@ import org.springframework.context.annotation.Configuration;
  * @author Christoph Deppisch
  */
 @Configuration
+@AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.endpoint", value = "enabled", havingValue = "true")
 public class SimulatorEndpointAutoConfiguration {
 
     @Autowired(required = false)
     private SimulatorEndpointComponentConfigurer configurer;
+
+    @Autowired
+    private SimulatorConfigurationProperties simulatorConfiguration;
 
     @Bean(name = "simulatorEndpoint")
     protected Endpoint simulatorEndpoint(ApplicationContext applicationContext) {
@@ -68,8 +74,7 @@ public class SimulatorEndpointAutoConfiguration {
     }
 
     @Bean(name = "simulatorEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
-                                                  SimulatorConfigurationProperties simulatorConfiguration) {
+    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -84,7 +89,7 @@ public class SimulatorEndpointAutoConfiguration {
         endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
         endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
-        endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
+        endpointPoller.setExceptionDelay(exceptionDelay());
 
         endpointPoller.setEndpointAdapter(endpointAdapter);
 
@@ -102,10 +107,9 @@ public class SimulatorEndpointAutoConfiguration {
 
     /**
      * Gets the endpoint polling exception delay.
-     * @param simulatorConfiguration
      * @return
      */
-    protected Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
+    protected Long exceptionDelay() {
         if (configurer != null) {
             return configurer.exceptionDelay(simulatorConfiguration);
         }

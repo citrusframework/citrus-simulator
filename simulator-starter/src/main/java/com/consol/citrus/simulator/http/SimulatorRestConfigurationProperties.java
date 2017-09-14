@@ -18,6 +18,11 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
     private static Logger log = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
 
     /**
+     * Global option to enable/disable REST support, default is true.
+     */
+    private boolean enabled = true;
+
+    /**
      * The web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
      */
@@ -35,6 +40,24 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
         urlMapping = env.getProperty(SIMULATOR_URL_MAPPING_PROPERTY, env.getProperty(SIMULATOR_URL_MAPPING_ENV, urlMapping));
 
         log.info("Using the simulator configuration: {}", this.toString());
+    }
+
+    /**
+     * Gets the enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled.
+     *
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -58,7 +81,8 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "urlMapping='" + urlMapping + '\'' +
+                "enabled='" + enabled + '\'' +
+                ", urlMapping='" + urlMapping + '\'' +
                 '}';
     }
 

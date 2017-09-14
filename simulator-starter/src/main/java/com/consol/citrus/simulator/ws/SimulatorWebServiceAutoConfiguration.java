@@ -18,12 +18,14 @@ package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
+import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,6 +46,7 @@ import java.util.*;
  * @author Christoph Deppisch
  */
 @Configuration
+@AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @Import(SimulatorWebServiceLoggingAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorWebServiceConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.ws", value = "enabled", havingValue = "true")
@@ -56,18 +59,20 @@ public class SimulatorWebServiceAutoConfiguration {
     @Autowired
     private LoggingEndpointInterceptor loggingEndpointInterceptor;
 
+    @Autowired
+    private SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration;
+
     @Bean
     public MessageEndpointAdapter messageEndpointAdapter() {
         return new MessageEndpointAdapter();
     }
 
     @Bean
-    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext,
-                                                            SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, getServletMapping(simulatorWebServiceConfiguration));
+        return new ServletRegistrationBean(servlet, getServletMapping());
     }
 
     @Bean(name = "simulatorWsEndpointMapping")
@@ -123,7 +128,7 @@ public class SimulatorWebServiceAutoConfiguration {
      *
      * @return
      */
-    protected String getServletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+    protected String getServletMapping() {
         if (configurer != null) {
             return configurer.servletMapping(simulatorWebServiceConfiguration);
         }

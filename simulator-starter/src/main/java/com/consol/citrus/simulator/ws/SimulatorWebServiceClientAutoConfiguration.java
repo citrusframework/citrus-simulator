@@ -17,9 +17,11 @@
 package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.message.ErrorHandlingStrategy;
+import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.ws.client.WebServiceClient;
 import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
@@ -33,6 +35,7 @@ import java.util.*;
  * @author Martin Maher
  */
 @Configuration
+@AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @Import(SimulatorWebServiceLoggingAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorWebServiceClientConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.ws.client", value = "enabled", havingValue = "true")
@@ -44,10 +47,13 @@ public class SimulatorWebServiceClientAutoConfiguration {
     @Autowired
     private LoggingClientInterceptor loggingClientInterceptor;
 
+    @Autowired
+    private SimulatorWebServiceClientConfigurationProperties simulatorConfiguration;
+
     @Bean(name = "simulatorWsClientEndpoint")
-    public WebServiceClient webServiceClientEndpoint(SimulatorWebServiceClientConfigurationProperties configProperties) {
+    public WebServiceClient webServiceClientEndpoint() {
         WebServiceClient endpoint = new WebServiceClient();
-        endpoint.getEndpointConfiguration().setDefaultUri(getRequestUrl(configProperties));
+        endpoint.getEndpointConfiguration().setDefaultUri(getRequestUrl());
         endpoint.getEndpointConfiguration().setMessageFactory(getMessageFactory());
         endpoint.getEndpointConfiguration().setInterceptors(Arrays.asList(interceptors()));
         endpoint.getEndpointConfiguration().setErrorHandlingStrategy(ErrorHandlingStrategy.PROPAGATE);
@@ -59,11 +65,11 @@ public class SimulatorWebServiceClientAutoConfiguration {
         return new SaajSoapMessageFactory();
     }
 
-    protected String getRequestUrl(SimulatorWebServiceClientConfigurationProperties configProperties) {
+    protected String getRequestUrl() {
         if (configurer != null) {
             return configurer.requestUrl();
         }
-        return configProperties.getRequestUrl();
+        return simulatorConfiguration.getRequestUrl();
     }
 
     /**

@@ -19,12 +19,15 @@ package com.consol.citrus.simulator.jms;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.jms.endpoint.*;
+import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.endpoint.*;
 import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,12 +38,19 @@ import org.springframework.util.StringUtils;
 import javax.jms.ConnectionFactory;
 
 @Configuration
+@AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorJmsConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.jms", value = "enabled", havingValue = "true")
 public class SimulatorJmsAutoConfiguration {
 
     @Autowired(required = false)
     private SimulatorJmsConfigurer configurer;
+
+    @Autowired
+    private SimulatorJmsConfigurationProperties simulatorJmsConfiguration;
+
+    @Autowired
+    private SimulatorConfigurationProperties simulatorConfiguration;
 
     @Bean
     @ConditionalOnMissingBean
@@ -53,15 +63,14 @@ public class SimulatorJmsAutoConfiguration {
     }
 
     @Bean(name = "simulatorJmsInboundEndpoint")
-    protected JmsEndpoint jmsInboundEndpoint(ConnectionFactory connectionFactory,
-                                      SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
-        if (isSynchronous(simulatorJmsConfiguration)) {
+    protected JmsEndpoint jmsInboundEndpoint(ConnectionFactory connectionFactory) {
+        if (isSynchronous()) {
             JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
             JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
-            endpointConfiguration.setDestinationName(getInboundDestination(simulatorJmsConfiguration));
+            endpointConfiguration.setDestinationName(getInboundDestination());
 
-            if (StringUtils.hasText(getReplyDestination(simulatorJmsConfiguration))) {
-                endpointConfiguration.setReplyDestinationName(getReplyDestination(simulatorJmsConfiguration));
+            if (StringUtils.hasText(getReplyDestination())) {
+                endpointConfiguration.setReplyDestinationName(getReplyDestination());
             }
 
             endpointConfiguration.setConnectionFactory(connectionFactory);
@@ -70,7 +79,7 @@ public class SimulatorJmsAutoConfiguration {
         } else {
             JmsEndpointConfiguration endpointConfiguration = new JmsEndpointConfiguration();
             JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
-            endpointConfiguration.setDestinationName(getInboundDestination(simulatorJmsConfiguration));
+            endpointConfiguration.setDestinationName(getInboundDestination());
             endpointConfiguration.setConnectionFactory(connectionFactory);
 
             return jmsEndpoint;
@@ -93,25 +102,23 @@ public class SimulatorJmsAutoConfiguration {
 
     @Bean(name = "simulatorJmsEndpointPoller")
     public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
-                                                  ConnectionFactory connectionFactory,
-                                                  SimulatorConfigurationProperties simulatorConfiguration,
-                                                  SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+                                                  ConnectionFactory connectionFactory) {
         SimulatorEndpointPoller endpointPoller;
 
-        if (useSoap(simulatorJmsConfiguration)) {
+        if (useSoap()) {
             endpointPoller = new SimulatorSoapEndpointPoller();
         } else {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setInboundEndpoint(jmsInboundEndpoint(connectionFactory, simulatorJmsConfiguration));
+        endpointPoller.setInboundEndpoint(jmsInboundEndpoint(connectionFactory));
 
         SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
         endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
         endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
-        if (!isSynchronous(simulatorJmsConfiguration)) {
+        if (!isSynchronous()) {
             endpointAdapter.setHandleResponse(false);
         }
 
@@ -136,7 +143,7 @@ public class SimulatorJmsAutoConfiguration {
      *
      * @return
      */
-    protected String getInboundDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+    protected String getInboundDestination() {
         if (configurer != null) {
             return configurer.inboundDestination(simulatorJmsConfiguration);
         }
@@ -149,7 +156,7 @@ public class SimulatorJmsAutoConfiguration {
      *
      * @return
      */
-    protected String getReplyDestination(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+    protected String getReplyDestination() {
         if (configurer != null) {
             return configurer.replyDestination(simulatorJmsConfiguration);
         }
@@ -159,10 +166,9 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Should the endpoint use synchronous reply communication.
-     * @param simulatorJmsConfiguration
      * @return
      */
-    protected boolean isSynchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+    protected boolean isSynchronous() {
         if (configurer != null) {
             return configurer.synchronous(simulatorJmsConfiguration);
         }
@@ -172,10 +178,9 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Should the endpoint use SOAP envelope handling.
-     * @param simulatorJmsConfiguration
      * @return
      */
-    protected boolean useSoap(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+    protected boolean useSoap() {
         if (configurer != null) {
             return configurer.useSoap(simulatorJmsConfiguration);
         }

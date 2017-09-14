@@ -18,6 +18,11 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
     private static Logger log = LoggerFactory.getLogger(SimulatorWebServiceConfigurationProperties.class);
 
     /**
+     * Global option to enable/disable SOAP web service support, default is false.
+     */
+    private boolean enabled;
+
+    /**
      * The web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
      */
@@ -35,6 +40,24 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
         servletMapping = env.getProperty(SIMULATOR_SERVLET_MAPPING_PROPERTY, env.getProperty(SIMULATOR_SERVLET_MAPPING_ENV, servletMapping));
 
         log.info("Using the simulator configuration: {}", this.toString());
+    }
+
+    /**
+     * Gets the enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled.
+     *
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -58,7 +81,8 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "servletMapping='" + servletMapping + '\'' +
+                "enabled='" + enabled + '\'' +
+                ", servletMapping='" + servletMapping + '\'' +
                 '}';
     }
 

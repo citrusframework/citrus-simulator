@@ -22,10 +22,12 @@ import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.report.MessageListeners;
+import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
 import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,6 +50,7 @@ import java.util.*;
  * @author Christoph Deppisch
  */
 @Configuration
+@AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorRestConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnWebApplication
@@ -66,16 +69,19 @@ public class SimulatorRestAutoConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
+    @Autowired
+    private SimulatorRestConfigurationProperties simulatorRestConfiguration;
+
     /**
      * Target Citrus Http controller
      */
     private HttpMessageController restController;
 
     @Bean
-    public FilterRegistrationBean requestCachingFilter(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+    public FilterRegistrationBean requestCachingFilter() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new RequestCachingServletFilter());
 
-        String urlMapping = getUrlMapping(simulatorRestConfiguration);
+        String urlMapping = getUrlMapping();
         if (urlMapping.endsWith("**")) {
             urlMapping = urlMapping.substring(0, urlMapping.length() - 1);
         }
@@ -84,14 +90,13 @@ public class SimulatorRestAutoConfiguration {
     }
 
     @Bean(name = "simulatorRestHandlerMapping")
-    public HandlerMapping handlerMapping(ApplicationContext applicationContext,
-                                         SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+    public HandlerMapping handlerMapping(ApplicationContext applicationContext) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         handlerMapping.setAlwaysUseFullPath(true);
 
         Map<String, Object> mappings = new HashMap<>();
-        mappings.put(getUrlMapping(simulatorRestConfiguration), getRestController(applicationContext));
+        mappings.put(getUrlMapping(), getRestController(applicationContext));
 
         handlerMapping.setUrlMap(mappings);
         handlerMapping.setInterceptors(interceptors());
@@ -188,7 +193,7 @@ public class SimulatorRestAutoConfiguration {
      *
      * @return
      */
-    protected String getUrlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+    protected String getUrlMapping() {
         if (configurer != null) {
             return configurer.urlMapping(simulatorRestConfiguration);
         }

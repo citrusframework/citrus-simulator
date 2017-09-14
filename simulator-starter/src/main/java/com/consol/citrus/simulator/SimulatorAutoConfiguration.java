@@ -18,11 +18,11 @@ package com.consol.citrus.simulator;
 
 import com.consol.citrus.Citrus;
 import com.consol.citrus.config.CitrusSpringConfig;
-import com.consol.citrus.simulator.repository.RepositoryConfig;
-import com.consol.citrus.simulator.scenario.ScenarioBeanNameGenerator;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerRegistry;
+import com.consol.citrus.simulator.repository.RepositoryConfig;
+import com.consol.citrus.simulator.scenario.ScenarioBeanNameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

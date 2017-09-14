@@ -18,6 +18,11 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private static Logger log = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
 
     /**
+     * Global option to enable/disable JMS support, default is false.
+     */
+    private boolean enabled;
+
+    /**
      * The JMS inbound destination name. The simulator receives asynchronous messages from this destination.
      */
     private static final String SIMULATOR_INBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.inbound.destination";
@@ -58,6 +63,24 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
         useSoap = Boolean.valueOf(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
 
         log.info("Using the simulator configuration: {}", this.toString());
+    }
+
+    /**
+     * Gets the enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled.
+     *
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -135,7 +158,8 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "inboundDestination='" + inboundDestination + '\'' +
+                "enabled='" + enabled + '\'' +
+                ", inboundDestination='" + inboundDestination + '\'' +
                 ", replyDestination='" + replyDestination + '\'' +
                 ", synchronous='" + synchronous + '\'' +
                 ", useSoap='" + useSoap + '\'' +
