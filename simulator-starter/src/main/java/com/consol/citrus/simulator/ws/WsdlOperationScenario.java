@@ -1,11 +1,8 @@
 package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.dictionary.InboundXmlDataDictionary;
-import com.consol.citrus.simulator.dictionary.OutboundXmlDataDictionary;
+import com.consol.citrus.message.MessageHeaders;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
-import com.consol.citrus.variable.dictionary.xml.XpathMappingDataDictionary;
 
 import javax.wsdl.BindingOperation;
 
@@ -24,18 +21,12 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
     private String input;
     private String output;
 
-    private XpathMappingDataDictionary inboundDataDictionary;
-    private XpathMappingDataDictionary outboundDataDictionary;
-
     /**
      * Default constructor.
      * @param operation
      */
-    public WsdlOperationScenario(BindingOperation operation, SimulatorConfigurationProperties simulatorConfiguration) {
+    public WsdlOperationScenario(BindingOperation operation) {
         this.operation = operation;
-
-        inboundDataDictionary = new InboundXmlDataDictionary(simulatorConfiguration);
-        outboundDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
     }
 
     @Override
@@ -45,14 +36,14 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
         scenario
             .soap()
             .receive()
-            .dictionary(inboundDataDictionary)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .payload(input)
             .soapAction(soapAction);
 
         scenario
             .soap()
             .send()
-            .dictionary(outboundDataDictionary)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .payload(output);
     }
 
@@ -147,41 +138,5 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
      */
     public void setOutput(String output) {
         this.output = output;
-    }
-
-    /**
-     * Gets the inboundDataDictionary.
-     *
-     * @return
-     */
-    public XpathMappingDataDictionary getInboundDataDictionary() {
-        return inboundDataDictionary;
-    }
-
-    /**
-     * Sets the inboundDataDictionary.
-     *
-     * @param inboundDataDictionary
-     */
-    public void setInboundDataDictionary(XpathMappingDataDictionary inboundDataDictionary) {
-        this.inboundDataDictionary = inboundDataDictionary;
-    }
-
-    /**
-     * Gets the outboundDataDictionary.
-     *
-     * @return
-     */
-    public XpathMappingDataDictionary getOutboundDataDictionary() {
-        return outboundDataDictionary;
-    }
-
-    /**
-     * Sets the outboundDataDictionary.
-     *
-     * @param outboundDataDictionary
-     */
-    public void setOutboundDataDictionary(XpathMappingDataDictionary outboundDataDictionary) {
-        this.outboundDataDictionary = outboundDataDictionary;
     }
 }

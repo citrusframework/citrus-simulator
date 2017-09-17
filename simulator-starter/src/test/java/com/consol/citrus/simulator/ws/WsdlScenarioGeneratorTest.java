@@ -1,6 +1,5 @@
 package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -34,7 +33,6 @@ public class WsdlScenarioGeneratorTest {
     @Test(dataProvider = "wsdlDataProvider")
     public void testGenerateScenarios(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
         WsdlScenarioGenerator scenarioGenerator = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
-        scenarioGenerator.setSimulatorConfiguration(new SimulatorConfigurationProperties());
 
         scenarioGenerator.setNamingStrategy(namingStrategy);
 

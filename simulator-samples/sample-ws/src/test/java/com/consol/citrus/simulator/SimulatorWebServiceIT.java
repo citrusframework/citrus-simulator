@@ -72,7 +72,7 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                 .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                             "<faultcode>CITRUS:SIM-1001</faultcode>\n" +
                             "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +
-                                    "No sleep for me!" +
+                                "No sleep for me!" +
                             "</faultstring>\n" +
                         "</SOAP-ENV:Fault>");
 
@@ -86,5 +86,26 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                 .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
                         "</GoodNightResponse>");
+    }
+
+    @CitrusTest
+    public void testUnknownRequest() {
+        soap().client(soapClient)
+                .send()
+                .soapAction("SomethingElse")
+                .payload("<SomethingElse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Say something else!" +
+                        "</SomethingElse>");
+
+        soap().client(soapClient)
+                .receive()
+                .schemaValidation(false)
+                .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                            "<faultcode>CITRUS:SIM-1100</faultcode>\n" +
+                            "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +
+                                "No matching scenario found" +
+                            "</faultstring>\n" +
+                            "<faultactor>SERVER</faultactor>\n" +
+                        "</SOAP-ENV:Fault>");
     }
 }

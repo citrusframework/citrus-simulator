@@ -19,7 +19,6 @@ package com.consol.citrus.simulator.sample;
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.ws.*;
 import com.consol.citrus.ws.message.SoapFault;
 import org.springframework.boot.SpringApplication;
@@ -56,9 +55,8 @@ public class Simulator extends SimulatorWebServiceAdapter {
     }
 
     @Bean
-    public static WsdlScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+    public static WsdlScenarioGenerator scenarioGenerator() {
         WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
-        generator.setSimulatorConfiguration(simulatorConfiguration);
         return generator;
     }
 }

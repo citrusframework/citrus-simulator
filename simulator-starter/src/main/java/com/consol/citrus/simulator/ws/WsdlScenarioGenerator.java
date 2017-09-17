@@ -1,7 +1,6 @@
 package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.xml.schema.locator.JarWSDLLocator;
 import org.apache.xmlbeans.*;
@@ -9,8 +8,7 @@ import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.*;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.xml.sax.InputSource;
@@ -37,9 +35,6 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /** Naming strategy for generated scenarios */
     private WsdlScenarioNamingStrategy namingStrategy = WsdlScenarioNamingStrategy.INPUT;
-
-    /** Simulator configuration */
-    private SimulatorConfigurationProperties simulatorConfiguration;
 
     /**
      * Enum representing different kinds of scenario naming.
@@ -116,7 +111,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      * @return
      */
     protected WsdlOperationScenario createScenario(BindingOperation operation, String soapAction, String input, String output) {
-        return new WsdlOperationScenario(operation, simulatorConfiguration)
+        return new WsdlOperationScenario(operation)
                 .withInput(input)
                 .withOutput(output)
                 .withSoapAction(soapAction);
@@ -312,24 +307,6 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         }
 
         return schemas.toArray(new String[] {});
-    }
-
-    /**
-     * Gets the simulatorConfiguration.
-     *
-     * @return
-     */
-    public SimulatorConfigurationProperties getSimulatorConfiguration() {
-        return simulatorConfiguration;
-    }
-
-    /**
-     * Sets the simulatorConfiguration.
-     *
-     * @param simulatorConfiguration
-     */
-    public void setSimulatorConfiguration(SimulatorConfigurationProperties simulatorConfiguration) {
-        this.simulatorConfiguration = simulatorConfiguration;
     }
 
     /**

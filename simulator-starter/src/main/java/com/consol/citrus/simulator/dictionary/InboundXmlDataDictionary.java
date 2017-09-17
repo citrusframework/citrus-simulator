@@ -4,8 +4,9 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.variable.dictionary.xml.XpathMappingDataDictionary;
 import com.consol.citrus.xml.xpath.XPathUtils;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -20,15 +21,14 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
     /**
      * Default constructor setting default mappings and mappings file.
      */
+    @Autowired
     public InboundXmlDataDictionary(SimulatorConfigurationProperties simulatorConfiguration) {
         mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
         mappings.put("//@*", "@ignore@");
 
-        if (simulatorConfiguration != null) {
-            Resource inboundMappingFile = new ClassPathResource(simulatorConfiguration.getInboundXmlDictionaryMappings());
-            if (!inboundMappingFile.exists()) {
-                mappingFile = inboundMappingFile;
-            }
+        Resource inboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundXmlDictionaryMappings());
+        if (inboundMappingFile.exists()) {
+            mappingFile = inboundMappingFile;
         }
     }
 

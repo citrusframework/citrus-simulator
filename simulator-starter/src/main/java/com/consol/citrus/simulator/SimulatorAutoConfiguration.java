@@ -21,10 +21,14 @@ import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerRegistry;
+import com.consol.citrus.simulator.dictionary.InboundXmlDataDictionary;
+import com.consol.citrus.simulator.dictionary.OutboundXmlDataDictionary;
 import com.consol.citrus.simulator.repository.RepositoryConfig;
 import com.consol.citrus.simulator.scenario.ScenarioBeanNameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -64,6 +68,9 @@ public class SimulatorAutoConfiguration {
     /** Application version */
     private static String version;
 
+    @Autowired
+    private SimulatorConfigurationProperties simulatorConfiguration;
+
     /* Load application version */
     static {
         try (final InputStream in = new ClassPathResource("META-INF/app.version").getInputStream()) {
@@ -93,5 +100,19 @@ public class SimulatorAutoConfiguration {
     @Bean
     public CorrelationHandlerRegistry correlationHandlerRegistry() {
         return new CorrelationHandlerRegistry();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "citrus.simulator.inbound.xml.dictionary", value = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean(InboundXmlDataDictionary.class)
+    public InboundXmlDataDictionary inboundXmlDataDictionary() {
+        return new InboundXmlDataDictionary(simulatorConfiguration);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "citrus.simulator.outbound.xml.dictionary", value = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean(OutboundXmlDataDictionary.class)
+    public OutboundXmlDataDictionary outboundXmlDataDictionary() {
+        return new OutboundXmlDataDictionary(simulatorConfiguration);
     }
 }

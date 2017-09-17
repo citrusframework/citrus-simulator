@@ -1,6 +1,5 @@
 package com.consol.citrus.simulator.http;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import io.swagger.models.*;
 import io.swagger.parser.SwaggerParser;
@@ -25,9 +24,6 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
 
     /** Target swagger API to generate scenarios from */
     private final Resource swaggerResource;
-
-    /** Simulator configuration */
-    private SimulatorConfigurationProperties simulatorConfiguration;
 
     /** Optional context path */
     private String contextPath = "";
@@ -67,24 +63,6 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
      */
     protected HttpOperationScenario createScenario(String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
         return new HttpOperationScenario(path, method, operation, definitions);
-    }
-
-    /**
-     * Gets the simulatorConfiguration.
-     *
-     * @return
-     */
-    public SimulatorConfigurationProperties getSimulatorConfiguration() {
-        return simulatorConfiguration;
-    }
-
-    /**
-     * Sets the simulatorConfiguration.
-     *
-     * @param simulatorConfiguration
-     */
-    public void setSimulatorConfiguration(SimulatorConfigurationProperties simulatorConfiguration) {
-        this.simulatorConfiguration = simulatorConfiguration;
     }
 
     /**

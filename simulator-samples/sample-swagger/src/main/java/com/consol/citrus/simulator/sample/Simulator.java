@@ -20,7 +20,6 @@ import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.http.*;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.boot.SpringApplication;
@@ -60,9 +59,8 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Bean
-    public static HttpScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+    public static HttpScenarioGenerator scenarioGenerator() {
         HttpScenarioGenerator generator = new HttpScenarioGenerator(new ClassPathResource("swagger/petstore-api.json"));
-        generator.setSimulatorConfiguration(simulatorConfiguration);
         generator.setContextPath("/petstore");
         return generator;
     }

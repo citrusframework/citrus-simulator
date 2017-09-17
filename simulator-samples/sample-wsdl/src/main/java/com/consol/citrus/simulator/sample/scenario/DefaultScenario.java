@@ -28,7 +28,9 @@ public class DefaultScenario extends AbstractSimulatorScenario {
     public void run(ScenarioDesigner scenario) {
         scenario
             .soap()
-            .send()
-            .payload("");
+            .sendFault()
+                .faultActor("SERVER")
+                .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1100")
+                .faultString("No matching scenario found");
     }
 }

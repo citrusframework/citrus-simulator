@@ -1,6 +1,5 @@
 package com.consol.citrus.simulator.http;
 
-import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +22,6 @@ public class HttpScenarioGeneratorTest {
     @Test
     public void testGenerateScenarios() {
         HttpScenarioGenerator scenarioGenerator = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
-        scenarioGenerator.setSimulatorConfiguration(new SimulatorConfigurationProperties());
 
         doAnswer(invocation -> {
             HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];

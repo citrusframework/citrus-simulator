@@ -80,6 +80,21 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
     }
 
     @CitrusTest
+    public void testUnknownRequest() {
+        assertSoapFault()
+                .faultActor("SERVER")
+                .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1100")
+                .faultString("No matching scenario found")
+                .when(
+                    soap().client(soapClient)
+                        .send()
+                        .soapAction("SomethingElse")
+                        .payload("<SomethingElse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Say something else!" +
+                                "</SomethingElse>"));
+    }
+
+    @CitrusTest
     public void testInvalidSoapAction() {
         assertSoapFault()
                 .faultActor("SERVER")
