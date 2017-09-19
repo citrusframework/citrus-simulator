@@ -18,7 +18,7 @@ public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
      */
     @Autowired
     public OutboundXmlDataDictionary(SimulatorConfigurationProperties simulatorConfiguration) {
-        Resource outboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getOutboundXmlDictionaryMappings());
+        Resource outboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getOutboundXmlDictionary());
         if (outboundMappingFile.exists()) {
             mappingFile = outboundMappingFile;
         }
@@ -27,14 +27,23 @@ public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
     @Override
     public <T> T translate(Node node, T value, TestContext context) {
         if (value instanceof String) {
-            String toTranslate = (String) value;
+            String toTranslate;
+            if (!mappings.isEmpty()) {
+                toTranslate = (String) super.translate(node, value, context);
+            } else {
+                toTranslate = (String) value;
+            }
 
-            if (toTranslate.equals("true") || toTranslate.equals("false")) {
+            if (toTranslate.equals(value)) {
+                if (toTranslate.equals("true") || toTranslate.equals("false")) {
+                    return (T) toTranslate;
+                } else if (Character.isDigit(toTranslate.charAt(0))) {
+                    return (T) (context.replaceDynamicContentInString("citrus:randomNumber(" + toTranslate.length() + ")"));
+                } else if (toTranslate.startsWith("string")) {
+                    return (T) (context.replaceDynamicContentInString("citrus:randomString(" + toTranslate.length() + ")"));
+                }
+            } else {
                 return (T) toTranslate;
-            } else if (Character.isDigit(toTranslate.charAt(0))) {
-                return (T) (context.replaceDynamicContentInString("citrus:randomNumber(" + toTranslate.length() + ")"));
-            } else if (toTranslate.startsWith("string")) {
-                return (T) (context.replaceDynamicContentInString("citrus:randomString(" + toTranslate.length() + ")"));
             }
         }
 

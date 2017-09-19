@@ -3,6 +3,7 @@ package com.consol.citrus.simulator.dictionary;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.*;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -25,9 +26,11 @@ public class InboundXmlDataDictionaryTest {
             "</v1:TestRequest>";
 
     @Test
-    public void testInboundDictionary() {
+    public void testInboundDictionary() throws Exception {
         InboundXmlDataDictionary dictionary = new InboundXmlDataDictionary(new SimulatorConfigurationProperties());
+        dictionary.afterPropertiesSet();
 
+        when(context.getNamespaceContextBuilder()).thenReturn(new NamespaceContextBuilder());
         when(context.replaceDynamicContentInString(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
 
         Message request = new DefaultMessage(input);

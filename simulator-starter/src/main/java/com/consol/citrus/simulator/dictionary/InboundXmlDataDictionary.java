@@ -7,6 +7,7 @@ import com.consol.citrus.xml.xpath.XPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -23,10 +24,7 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
      */
     @Autowired
     public InboundXmlDataDictionary(SimulatorConfigurationProperties simulatorConfiguration) {
-        mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
-        mappings.put("//@*", "@ignore@");
-
-        Resource inboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundXmlDictionaryMappings());
+        Resource inboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundXmlDictionary());
         if (inboundMappingFile.exists()) {
             mappingFile = inboundMappingFile;
         }
@@ -37,7 +35,10 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
         for (Map.Entry<String, String> expressionEntry : mappings.entrySet()) {
             String expression = expressionEntry.getKey();
 
-            NodeList findings = (NodeList) XPathUtils.evaluateExpression(node.getOwnerDocument(), expression, null, XPathConstants.NODESET);
+            SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext();
+            namespaceContext.setBindings(context.getNamespaceContextBuilder().getNamespaceMappings());
+
+            NodeList findings = (NodeList) XPathUtils.evaluateExpression(node.getOwnerDocument(), expression, namespaceContext, XPathConstants.NODESET);
 
             if (findings != null && containsNode(findings, node)) {
                 return convertIfNecessary(context.replaceDynamicContentInString(expressionEntry.getValue()), value);
@@ -61,5 +62,13 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
         }
 
         return false;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+
+        mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
+        mappings.put("//@*", "@ignore@");
     }
 }
