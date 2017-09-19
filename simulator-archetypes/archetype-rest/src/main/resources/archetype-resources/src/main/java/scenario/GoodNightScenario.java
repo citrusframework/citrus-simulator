@@ -37,20 +37,20 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .receive()
             .post()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Go to sleep!" +
-                    "</GoodNight>")
+                        "Go to sleep!" +
+                     "</GoodNight>")
             .extractFromHeader(CORRELATION_ID, "correlationId");
 
         scenario.correlation().start()
-                .onHeader(CORRELATION_ID, "${correlationId}");
+            .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario
             .http()
             .send()
             .response(HttpStatus.OK)
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Good Night!" +
-                    "</GoodNightResponse>");
+                        "Good Night!" +
+                     "</GoodNightResponse>");
 
         scenario
             .http()

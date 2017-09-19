@@ -36,10 +36,10 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {
-        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+        List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // title (dropdown)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("title")
                 .label("Title")
                 .required()
@@ -51,7 +51,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // firstname (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("firstname")
                 .label("First Name")
                 .required()
@@ -60,7 +60,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // lastname (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("lastname")
                 .label("Last Name")
                 .required()
@@ -70,7 +70,7 @@ public class HelloStarter extends AbstractScenarioStarter {
 
 
         // greeting (text area)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("greeting")
                 .label("Greeting")
                 .required()
@@ -78,6 +78,6 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .value("Hey there Mini")
                 .build());
 
-        return scenarioParameters;
+        return scenarioParameter;
     }
 }

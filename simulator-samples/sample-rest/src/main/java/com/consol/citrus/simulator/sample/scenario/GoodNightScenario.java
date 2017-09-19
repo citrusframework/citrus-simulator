@@ -50,7 +50,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .response(HttpStatus.OK)
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
-                    "</GoodNightResponse>");
+                     "</GoodNightResponse>");
 
         scenario
             .http()

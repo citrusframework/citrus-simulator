@@ -16,10 +16,10 @@
 
 package ${package};
 
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.*;
-import com.consol.citrus.ws.message.SoapMessageHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -30,14 +30,14 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.correlation().start()
-                .withHandler(this);
+            .withHandler(this);
 
         scenario
             .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Go to sleep!" +
-                    "</GoodNight>")
+                        "Go to sleep!" +
+                     "</GoodNight>")
             .soapAction("GoodNight");
 
         scenario
@@ -50,20 +50,20 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .soap()
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Go to sleep!" +
-                    "</GoodNight>")
+                        "Go to sleep!" +
+                     "</GoodNight>")
             .soapAction("GoodNight");
 
         scenario
             .soap()
             .send()
             .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Good Night!" +
-                    "</GoodNightResponse>");
+                        "Good Night!" +
+                     "</GoodNightResponse>");
     }
 
     @Override
-    public boolean isHandlerFor(Message message) {
+    public boolean isHandlerFor(Message message, TestContext context) {
         return new XPathPayloadMappingKeyExtractor().getMappingKey(message).equals("GoodNight");
     }
 }

@@ -28,74 +28,84 @@ import org.testng.annotations.Test;
 @Test
 public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
-    /** Test SOAP client */
     @Autowired
     private WebServiceClient soapClient;
 
-    /**
-     * Sends a hello request to server expecting positive response message.
-     */
     @CitrusTest
     public void testHelloRequest() {
         send(soapClient)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                        "</Hello>")
+                            "Say Hello!" +
+                         "</Hello>")
                 .header("citrus_soap_action", "Hello");
 
         receive(soapClient)
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                        "</HelloResponse>");
-
+                            "Hi there!" +
+                         "</HelloResponse>");
     }
 
-    /**
-     * Sends goodbye request to server expecting positive response message.
-     */
     @CitrusTest
     public void testGoodByeRequest() {
         send(soapClient)
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                        "</GoodBye>")
+                            "Say GoodBye!" +
+                         "</GoodBye>")
                 .header("citrus_soap_action", "GoodBye");
 
         receive(soapClient)
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                        "</GoodByeResponse>");
+                            "Bye bye!" +
+                         "</GoodByeResponse>");
     }
 
-    /**
-     * Sends SOAP fault forcing request type to server expecting SOAP fault response message.
-     */
     @CitrusTest
     public void testGoodNightRequest() {
         send(soapClient)
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                        "</GoodNight>")
+                            "Go to sleep!" +
+                         "</GoodNight>")
                 .header("citrus_soap_action", "GoodNight");
 
         receive(soapClient)
                 .schemaValidation(false)
                 .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
-                        "<faultcode>CITRUS:SIM-1001</faultcode>\n" +
-                        "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +
-                        "No sleep for me!" +
-                        "</faultstring>\n" +
+                            "<faultcode>CITRUS:SIM-1001</faultcode>\n" +
+                            "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +
+                                "No sleep for me!" +
+                            "</faultstring>\n" +
                         "</SOAP-ENV:Fault>");
 
         send(soapClient)
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
+                            "Go to sleep!" +
                         "</GoodNight>")
                 .header("citrus_soap_action", "GoodNight");
 
         receive(soapClient)
                 .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
+                            "Good Night!" +
                         "</GoodNightResponse>");
+    }
+
+    @CitrusTest
+    public void testUnknownRequest() {
+        soap().client(soapClient)
+                .send()
+                .soapAction("SomethingElse")
+                .payload("<SomethingElse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Say something else!" +
+                        "</SomethingElse>");
+
+        soap().client(soapClient)
+                .receive()
+                .schemaValidation(false)
+                .payload("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                            "<faultcode>CITRUS:SIM-1100</faultcode>\n" +
+                            "<faultstring xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xml:lang=\"en\">" +
+                                "No matching scenario found" +
+                            "</faultstring>\n" +
+                            "<faultactor>SERVER</faultactor>\n" +
+                        "</SOAP-ENV:Fault>");
     }
 }

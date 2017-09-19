@@ -18,7 +18,6 @@
   <citrus-http:client
       id="simulatorClient"
       request-url="http://localhost:8080/services/rest/simulator"
-      timeout="5000"
-  />
+      timeout="5000"/>
 
 </beans>
