@@ -290,9 +290,8 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Bean
-    public static HttpScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+    public static HttpScenarioGenerator scenarioGenerator() {
         HttpScenarioGenerator generator = new HttpScenarioGenerator(new ClassPathResource("swagger/petstore-api.json"));
-        generator.setSimulatorConfiguration(simulatorConfiguration);
         generator.setContextPath("/petstore");
         return generator;
     }
@@ -431,4 +430,27 @@ Date:Wed, 13 Sep 2017 08:42:56 GMT
 The sample request above is missing the required *status* query parameter on the *findByStatus* operation. As a result we get a *404 NOT_FOUND* response from the fallback endpoint adapter
 as the scenario did not complete because of validation errors. You will see the failed scenario activity with proper error message on that missing *status* parameter in the user interface then.
 
-This completes the auto generated scenario functionality based on Swagger Open API specifications.
+[rest-swagger-properties]
+=== Swagger system properties
+
+The simulator Swagger API auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean `HttpScenarioGenerator` in your
+simulator configuration you could just set the following properties on the simulator application:
+
+[source, properties]
+----
+# Enable swagger api support
+citrus.simulator.rest.swagger.enabled=true
+citrus.simulator.rest.swagger.api=classpath:swagger/petstore-api.json
+citrus.simulator.rest.swagger.contextPath=/petstore
+----
+
+Of course you can also use environment variables.
+
+[source, properties]
+----
+CITRUS_SIMULATOR_REST_SWAGGER_ENABLED=true
+CITRUS_SIMULATOR_REST_SWAGGER_API=classpath:swagger/petstore-api.json
+CITRUS_SIMULATOR_REST_SWAGGER_CONTEXT_PATH=/petstore
+----
+
+We just add the api file location and everything else is auto configuration done in the simulator application.

@@ -236,8 +236,8 @@ message details for you. So we can decide wheather to provide a success response
 [[web-service-wsdl]]
 == WSDL support
 
-The simulator is able to read your WSDL web service specifications for auto generating simulator scenarios for each operation. Usually the WSDL defines available request and response messages when clients
-call that SOAP API operations on the server. The simulator reads the WSDL information and generates basic scenarios for these SOAP operations.
+The simulator is able to read your WSDL web service specifications for auto generating simulator scenarios. The WSDL defines multiple operations with request and response message data.
+The simulator reads the WSDL information and generates basic scenarios for these operations.
 
 See the following sample how to do that:
 
@@ -269,9 +269,8 @@ public class Simulator extends SimulatorWebServiceAdapter {
     }
 
     @Bean
-    public static WsdlScenarioGenerator scenarioGenerator(SimulatorConfigurationProperties simulatorConfiguration) {
+    public static WsdlScenarioGenerator scenarioGenerator() {
         WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
-        generator.setSimulatorConfiguration(simulatorConfiguration);
         return generator;
     }
 }
@@ -406,9 +405,10 @@ The WSDL above defines a *hello* operation with *Hello* as input and *HelloRespo
 
 The generated scenario for this operation verifies that the request is a valid *Hello* request according to the XSD schema definition in the WSDL. Also the scenario verifies the basic XML structure of that message.
 
-Only in case these verification steps are performed successfully the simulator scenario generates a proper response *HelloResponse* that contains dynamic values according to the XSD schema in the WSDL.
+Only in case these verification steps are performed successfully the simulator scenario generates a proper response *HelloResponse*. The generated scenario is able to create dynamic values in the response according to the XSD schema in the WSDL. We will cover this feature in
+more detail on later in this chapter.
 
-Let's have a look at the communication on that scenario:
+Let's have a look at the communication that the generated scenario is going to perform:
 
 .Request
 [source]
@@ -457,5 +457,107 @@ Just in case we sent an invalid request to the simulator we do not get a proper 
 As a result we get a SOAP fault message with fault code *ERROR-1001* and message *"Internal server error"* as defined in the fallback endpoint adapter.
 You will also see the failed scenario activity with proper error message in the user interface then.
 
-This completes the auto generated scenario functionality based on SOAP WSDL specifications.
+[web-service-wsdl-properties]
+=== WSDL system properties
+
+The simulator WSDL auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean `WsdlScenarioGenerator` in your
+simulator configuration you could just set the following properties on the simulator application:
+
+[source, properties]
+----
+# Enable SOAP web service support
+citrus.simulator.ws.wsdl.enabled=true
+citrus.simulator.ws.wsdl.location=classpath:xsd/Hello.wsdl
+----
+
+Of course you can also use environment variables.
+
+[source, properties]
+----
+CITRUS_SIMULATOR_WS_WSDL_ENABLED=true
+CITRUS_SIMULATOR_WS_WSDL_LOCATION=classpath:xsd/Hello.wsdl
+----
+
+We just add the WSDL location and everything else is auto configuration done in the simulator application.
+
+[web-service-data-dictionary]
+=== Data dictionaries
+
+The auto generated WSDL scenarios make us of so called data dictionaries in order to create dynamic values both in request and response messages. The data dictionaries
+are a well known Citrus functionality that enable us to centralize data manipulation via XPath expressions for example. Each XML message construction will consult the data dictionary
+for some translation of elements and attributes.
+
+The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot `application.properties` file:
+
+[source, properties]
+----
+citrus.simulator.inbound.xml.dictionary.enabled=true
+citrus.simulator.outbound.xml.dictionary.enabled=true
+----
+
+These property settings automatically activate the data dictionaries and you will get random numbers and strings in all generated WSDL messages. For incoming requests the dictionary makes sure
+that elements and attributes are ignored in validation by default. This is a good idea as we can not know all data that is sent to the simulator.
+
+Fortunately you have the possibility to define mapping files that map XPath expression evaluation with pre defined values in the dictionary:
+
+[source, properties]
+----
+citrus.simulator.inbound.xml.dictionary.enabled=true
+citrus.simulator.inboundXmlDictionary=classpath:dictionary/inbound_mappings.xml
+citrus.simulator.outbound.xml.dictionary.enabled=true
+citrus.simulator.outboundXmlDictionary=classpath:dictionary/outbound_mappings.xml
+----
+
+Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:
+
+[source, xml]
+----
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="//sim:Hello">Say Hello!</entry>
+  <entry key="//sim:GoodBye">Say GoodBye!</entry>
+</properties>
+----
+
+The inbound mapping file defines two XPath expressions that should set predefined values before incoming request are validated. So in this case we set `Say Hello!` as string element value
+to the element `<Hello>` in the request. When dealing with XML and XPath we need to take care on proper namespace handling. In the XPath expression above we make use of the namespace prefix `sim:`. This prefix resoves to a
+proper namespace in the WSDL schema for `Hello` messages and is defined in a global namespace context within the Spring application.
+
+You can add that namespace context as Spring bean for instance.
+
+[source, java]
+----
+@Bean
+public NamespaceContextBuilder namespaceContextBuilder() {
+    NamespaceContextBuilder namespaceContextBuilder = new NamespaceContextBuilder();
+    namespaceContextBuilder.getNamespaceMappings().put("sim", "http://citrusframework.org/schemas/hello");
+
+    return namespaceContextBuilder;
+}
+----
+
+After that we are able to use the global `sim` namespace prefix in all XPath expressions. The XPath expression evaluation will take care on proper namespace handling then.
+
+Of course we can also add outbound bindings for creating special response element values.
+
+[source, xml]
+----
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="//sim:HelloResponse">Hello!</entry>
+  <entry key="//sim:GoodByeResponse">GoodBye!</entry>
+</properties>
+----
+
+Now the auto generated response for `HelloResponse` messages will always use `Hello!` as value. in combination with Citrus functions we are able to define more complex response element values in auto generated messages.
+
+[source, xml]
+----
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="//sim:HelloResponse">citrus:randomString(10)</entry>
+  <entry key="//sim:GoodByeResponse">citrus:randomEnumValue('GoodBye!', 'SeeYaLater!', 'ByeBye!')</entry>
+</properties>
+----
+
 

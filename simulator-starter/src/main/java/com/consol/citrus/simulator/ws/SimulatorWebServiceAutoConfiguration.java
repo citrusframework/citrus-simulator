@@ -26,13 +26,13 @@ import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import com.consol.citrus.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
 import org.springframework.ws.server.endpoint.MessageEndpoint;
@@ -120,6 +120,13 @@ public class SimulatorWebServiceAutoConfiguration {
         }
 
         return new EmptyResponseEndpointAdapter();
+    }
+
+    @Bean(name = "simulatorWsdlScenarioGenerator")
+    @ConditionalOnMissingBean(WsdlScenarioGenerator.class)
+    @ConditionalOnProperty(prefix = "citrus.simulator.ws.wsdl", value = "enabled", havingValue = "true")
+    public static WsdlScenarioGenerator scenarioGenerator(Environment environment) {
+        return new WsdlScenarioGenerator(environment);
     }
 
     /**

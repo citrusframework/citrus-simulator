@@ -8,10 +8,14 @@ import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.xml.sax.InputSource;
 
@@ -38,6 +42,10 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
     /** Naming strategy for generated scenarios */
     private WsdlScenarioNamingStrategy namingStrategy = WsdlScenarioNamingStrategy.INPUT;
 
+    /** Optional WSDL file location system property for auto generated scenarios */
+    private static final String SIMULATOR_WSDL_LOCATION_PROPERTY = "citrus.simulator.ws.wsdl.location";
+    private static final String SIMULATOR_WSDL_LOCATION_ENV = "CITRUS_SIMULATOR_WS_WSDL_LOCATION";
+
     /**
      * Enum representing different kinds of scenario naming.
      */
@@ -45,6 +53,13 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         INPUT,
         OPERATION,
         SOAP_ACTION
+    }
+
+    /**
+     * Default constructor.
+     */
+    public WsdlScenarioGenerator(Environment environment) {
+        wsdlResource = new PathMatchingResourcePatternResolver().getResource(environment.getProperty(SIMULATOR_WSDL_LOCATION_PROPERTY, environment.getProperty(SIMULATOR_WSDL_LOCATION_ENV, "")));
     }
 
     /**
@@ -57,6 +72,9 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        Assert.notNull(wsdlResource,
+                "Missing either WSDL location system property setting or explicit WSDL resource for scenario auto generation");
+
         Definition wsdl = getWsdlDefinition(wsdlResource);
         XmlObject wsdlObject = compileWsdl(wsdlResource);
         SchemaTypeSystem schemaTypeSystem = compileXsd(wsdlObject);
