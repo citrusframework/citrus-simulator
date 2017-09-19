@@ -17,6 +17,7 @@
 
     <citrus:namespace-context>
         <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
+        <citrus:namespace prefix="sim" uri="http://citrusframework.org/schemas/hello"/>
     </citrus:namespace-context>
 
 </beans>

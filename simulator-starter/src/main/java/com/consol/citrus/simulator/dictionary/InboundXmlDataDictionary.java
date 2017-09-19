@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,6 +25,8 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
      */
     @Autowired
     public InboundXmlDataDictionary(SimulatorConfigurationProperties simulatorConfiguration) {
+        setMappings(new LinkedHashMap<>());
+
         Resource inboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundXmlDictionary());
         if (inboundMappingFile.exists()) {
             mappingFile = inboundMappingFile;

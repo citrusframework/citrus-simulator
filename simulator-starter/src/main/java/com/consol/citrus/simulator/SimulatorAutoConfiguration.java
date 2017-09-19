@@ -106,13 +106,17 @@ public class SimulatorAutoConfiguration {
     @ConditionalOnProperty(prefix = "citrus.simulator.inbound.xml.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(InboundXmlDataDictionary.class)
     public InboundXmlDataDictionary inboundXmlDataDictionary() {
-        return new InboundXmlDataDictionary(simulatorConfiguration);
+        InboundXmlDataDictionary inboundXmlDataDictionary = new InboundXmlDataDictionary(simulatorConfiguration);
+        inboundXmlDataDictionary.setGlobalScope(false);
+        return inboundXmlDataDictionary;
     }
 
     @Bean
     @ConditionalOnProperty(prefix = "citrus.simulator.outbound.xml.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(OutboundXmlDataDictionary.class)
     public OutboundXmlDataDictionary outboundXmlDataDictionary() {
-        return new OutboundXmlDataDictionary(simulatorConfiguration);
+        OutboundXmlDataDictionary outboundXmlDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
+        outboundXmlDataDictionary.setGlobalScope(false);
+        return outboundXmlDataDictionary;
     }
 }

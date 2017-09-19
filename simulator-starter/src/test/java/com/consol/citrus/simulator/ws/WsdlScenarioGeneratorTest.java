@@ -1,7 +1,9 @@
 package com.consol.citrus.simulator.ws;
 
 import org.mockito.Mockito;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.*;
 public class WsdlScenarioGeneratorTest {
 
     private ConfigurableListableBeanFactory beanFactory = Mockito.mock(ConfigurableListableBeanFactory.class);
+    private DefaultListableBeanFactory beanRegistry = Mockito.mock(DefaultListableBeanFactory.class);
 
     private String input = "<v1:TestRequest name=\"string\" id=\"100\" flag=\"false\" xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\">\n" +
             "  <v1:name>string</v1:name>\n" +
@@ -34,6 +37,8 @@ public class WsdlScenarioGeneratorTest {
     public void testGenerateScenarios(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
         WsdlScenarioGenerator scenarioGenerator = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
 
+        reset(beanRegistry);
+
         scenarioGenerator.setNamingStrategy(namingStrategy);
 
         doAnswer(invocation -> {
@@ -49,6 +54,63 @@ public class WsdlScenarioGeneratorTest {
         scenarioGenerator.postProcessBeanFactory(beanFactory);
 
         verify(beanFactory).registerSingleton(eq(scenarioName), any(WsdlOperationScenario.class));
+    }
+
+    @Test(dataProvider = "wsdlDataProvider")
+    public void testGenerateScenariosWithRegistry(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
+        WsdlScenarioGenerator scenarioGenerator = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
+
+        reset(beanRegistry);
+        
+        scenarioGenerator.setNamingStrategy(namingStrategy);
+
+        doAnswer(invocation -> {
+            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+
+            Assert.assertEquals(scenario.getPropertyValues().get("soapAction"), soapAction);
+            Assert.assertEquals(scenario.getPropertyValues().get("input"), input);
+            Assert.assertEquals(scenario.getPropertyValues().get("output"), output);
+            Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+
+            return null;
+        }).when(beanRegistry).registerBeanDefinition(eq(scenarioName), any(BeanDefinition.class));
+
+        scenarioGenerator.postProcessBeanFactory(beanRegistry);
+
+        verify(beanRegistry).registerBeanDefinition(eq(scenarioName), any(BeanDefinition.class));
+    }
+
+    @Test
+    public void testGenerateScenariosWithDataDictionaries() {
+        WsdlScenarioGenerator scenarioGenerator = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
+
+        reset(beanRegistry);
+        
+        BeanDefinition inboundXmlDataDictionary = Mockito.mock(BeanDefinition.class);
+        BeanDefinition outboundXmlDataDictionary = Mockito.mock(BeanDefinition.class);
+
+        when(beanRegistry.containsBeanDefinition("inboundXmlDataDictionary")).thenReturn(true);
+        when(beanRegistry.containsBeanDefinition("outboundXmlDataDictionary")).thenReturn(true);
+
+        when(beanRegistry.getBeanDefinition("inboundXmlDataDictionary")).thenReturn(inboundXmlDataDictionary);
+        when(beanRegistry.getBeanDefinition("outboundXmlDataDictionary")).thenReturn(outboundXmlDataDictionary);
+
+        doAnswer(invocation -> {
+            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+
+            Assert.assertEquals(scenario.getPropertyValues().get("soapAction"), "/TestService/test");
+            Assert.assertEquals(scenario.getPropertyValues().get("input"), input);
+            Assert.assertEquals(scenario.getPropertyValues().get("output"), output);
+            Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+
+            return null;
+        }).when(beanRegistry).registerBeanDefinition(eq("TestRequest"), any(BeanDefinition.class));
+
+        scenarioGenerator.postProcessBeanFactory(beanRegistry);
+
+        verify(beanRegistry).registerBeanDefinition(eq("TestRequest"), any(BeanDefinition.class));
     }
 
     @DataProvider

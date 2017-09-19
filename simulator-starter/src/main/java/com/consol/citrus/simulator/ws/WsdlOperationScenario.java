@@ -1,6 +1,8 @@
 package com.consol.citrus.simulator.ws;
 
 import com.consol.citrus.message.MessageHeaders;
+import com.consol.citrus.simulator.dictionary.InboundXmlDataDictionary;
+import com.consol.citrus.simulator.dictionary.OutboundXmlDataDictionary;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
@@ -21,6 +23,9 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
     private String input;
     private String output;
 
+    private InboundXmlDataDictionary inboundDataDictionary;
+    private OutboundXmlDataDictionary outboundDataDictionary;
+
     /**
      * Default constructor.
      * @param operation
@@ -37,6 +42,7 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
             .soap()
             .receive()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .dictionary(inboundDataDictionary)
             .payload(input)
             .soapAction(soapAction);
 
@@ -44,6 +50,7 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
             .soap()
             .send()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .dictionary(outboundDataDictionary)
             .payload(output);
     }
 
@@ -138,5 +145,41 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
      */
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    /**
+     * Gets the inboundDataDictionary.
+     *
+     * @return
+     */
+    public InboundXmlDataDictionary getInboundDataDictionary() {
+        return inboundDataDictionary;
+    }
+
+    /**
+     * Sets the inboundDataDictionary.
+     *
+     * @param inboundDataDictionary
+     */
+    public void setInboundDataDictionary(InboundXmlDataDictionary inboundDataDictionary) {
+        this.inboundDataDictionary = inboundDataDictionary;
+    }
+
+    /**
+     * Gets the outboundDataDictionary.
+     *
+     * @return
+     */
+    public OutboundXmlDataDictionary getOutboundDataDictionary() {
+        return outboundDataDictionary;
+    }
+
+    /**
+     * Sets the outboundDataDictionary.
+     *
+     * @param outboundDataDictionary
+     */
+    public void setOutboundDataDictionary(OutboundXmlDataDictionary outboundDataDictionary) {
+        this.outboundDataDictionary = outboundDataDictionary;
     }
 }

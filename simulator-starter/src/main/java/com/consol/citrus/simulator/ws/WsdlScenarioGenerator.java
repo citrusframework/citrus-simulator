@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.xml.sax.InputSource;
@@ -95,9 +97,28 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                         throw new SimulatorException("Unknown scenario naming strategy");
                 }
 
-                log.info("Register auto generated scenario: " + scenarioName);
+                if (beanFactory instanceof BeanDefinitionRegistry) {
+                    log.info("Register auto generated scenario as bean definition: " + scenarioName);
+                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(WsdlOperationScenario.class)
+                            .addConstructorArgValue(operation)
+                            .addPropertyValue("soapAction", soapAction)
+                            .addPropertyValue("input", generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)))
+                            .addPropertyValue("output", generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
 
-                beanFactory.registerSingleton(scenarioName, createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem))));
+                    if (beanFactory.containsBeanDefinition("inboundXmlDataDictionary")) {
+                        beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundXmlDataDictionary");
+                    }
+
+                    if (beanFactory.containsBeanDefinition("outboundXmlDataDictionary")) {
+                        beanDefinitionBuilder.addPropertyReference("outboundDataDictionary", "outboundXmlDataDictionary");
+                    }
+
+                    ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(scenarioName, beanDefinitionBuilder.getBeanDefinition());
+                } else {
+                    log.info("Register auto generated scenario as singleton: " + scenarioName);
+                    WsdlOperationScenario scenario = createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
+                    beanFactory.registerSingleton(scenarioName, scenario);
+                }
             }
         }
     }

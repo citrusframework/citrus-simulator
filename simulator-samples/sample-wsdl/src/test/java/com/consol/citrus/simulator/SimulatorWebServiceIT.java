@@ -43,7 +43,7 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
         soap().client(soapClient)
                 .receive()
                 .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "@ignore@" +
+                            "Hello!" +
                          "</HelloResponse>");
     }
 
@@ -59,7 +59,7 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
         soap().client(soapClient)
                 .receive()
                 .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "@ignore@" +
+                            "GoodBye!" +
                          "</GoodByeResponse>");
     }
 
