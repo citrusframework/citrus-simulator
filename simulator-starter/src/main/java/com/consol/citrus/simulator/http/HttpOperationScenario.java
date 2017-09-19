@@ -3,9 +3,12 @@ package com.consol.citrus.simulator.http;
 import com.consol.citrus.dsl.builder.HttpServerRequestActionBuilder;
 import com.consol.citrus.dsl.builder.HttpServerResponseActionBuilder;
 import com.consol.citrus.http.message.HttpMessageHeaders;
+import com.consol.citrus.message.MessageHeaders;
+import com.consol.citrus.message.MessageType;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
 import io.swagger.models.*;
 import io.swagger.models.parameters.*;
 import io.swagger.models.properties.*;
@@ -40,6 +43,9 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     /** Response status code */
     private HttpStatus statusCode = HttpStatus.OK;
 
+    private JsonPathMappingDataDictionary inboundDataDictionary;
+    private JsonPathMappingDataDictionary outboundDataDictionary;
+
     /**
      * Default constructor.
      * @param path
@@ -60,6 +66,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
+        scenario.name(operation.getOperationId());
         scenario.echo("Generated scenario from swagger operation: " + operation.getOperationId());
 
         HttpServerRequestActionBuilder requestBuilder;
@@ -98,6 +105,10 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
                 throw new SimulatorException("Unsupported request method: " + method.name());
         }
 
+        requestBuilder
+            .messageType(MessageType.JSON)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
+
         requestBuilder.
             header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
                 @Override
@@ -126,12 +137,18 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
                     .filter(p -> p instanceof BodyParameter)
                     .filter(Parameter::getRequired)
                     .forEach(p -> requestBuilder.payload(createValidationPayload((BodyParameter) p)));
+
+            if (inboundDataDictionary != null) {
+                requestBuilder.dictionary(inboundDataDictionary);
+            }
         }
 
         HttpServerResponseActionBuilder responseBuilder = scenario
             .http()
             .send()
             .response(statusCode)
+            .messageType(MessageType.JSON)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .contentType("application/json");
 
         if (response != null) {
@@ -142,6 +159,11 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             }
 
             if (response.getSchema() != null) {
+                if (outboundDataDictionary != null &&
+                        (response.getSchema() instanceof RefProperty || response.getSchema() instanceof ArrayProperty)) {
+                    responseBuilder.dictionary(outboundDataDictionary);
+                }
+
                 responseBuilder.payload(createRandomValue(response.getSchema(), false));
             }
         }
@@ -385,5 +407,41 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
      */
     public void setStatusCode(HttpStatus statusCode) {
         this.statusCode = statusCode;
+    }
+
+    /**
+     * Gets the inboundDataDictionary.
+     *
+     * @return
+     */
+    public JsonPathMappingDataDictionary getInboundDataDictionary() {
+        return inboundDataDictionary;
+    }
+
+    /**
+     * Sets the inboundDataDictionary.
+     *
+     * @param inboundDataDictionary
+     */
+    public void setInboundDataDictionary(JsonPathMappingDataDictionary inboundDataDictionary) {
+        this.inboundDataDictionary = inboundDataDictionary;
+    }
+
+    /**
+     * Gets the outboundDataDictionary.
+     *
+     * @return
+     */
+    public JsonPathMappingDataDictionary getOutboundDataDictionary() {
+        return outboundDataDictionary;
+    }
+
+    /**
+     * Sets the outboundDataDictionary.
+     *
+     * @param outboundDataDictionary
+     */
+    public void setOutboundDataDictionary(JsonPathMappingDataDictionary outboundDataDictionary) {
+        this.outboundDataDictionary = outboundDataDictionary;
     }
 }

@@ -53,7 +53,7 @@ public class Simulator extends SimulatorRestAdapter {
         return new StaticEndpointAdapter() {
             @Override
             protected Message handleMessageInternal(Message message) {
-                return new HttpMessage().status(HttpStatus.NOT_FOUND);
+                return new HttpMessage().status(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         };
     }

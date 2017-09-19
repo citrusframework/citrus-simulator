@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -64,9 +66,28 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
 
             for (Map.Entry<String, Path> path : swagger.getPaths().entrySet()) {
                 for (Map.Entry<io.swagger.models.HttpMethod, Operation> operation : path.getValue().getOperationMap().entrySet()) {
-                    log.info("Register auto generated scenario: " + operation.getValue().getOperationId());
 
-                    beanFactory.registerSingleton(operation.getValue().getOperationId(), createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey(), HttpMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
+                    if (beanFactory instanceof BeanDefinitionRegistry) {
+                        log.info("Register auto generated scenario as bean definition: " + operation.getValue().getOperationId());
+                        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpOperationScenario.class)
+                                .addConstructorArgValue((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey())
+                                .addConstructorArgValue(HttpMethod.valueOf(operation.getKey().name()))
+                                .addConstructorArgValue(operation.getValue())
+                                .addConstructorArgValue(swagger.getDefinitions());
+
+                        if (beanFactory.containsBeanDefinition("inboundJsonDataDictionary")) {
+                            beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundJsonDataDictionary");
+                        }
+
+                        if (beanFactory.containsBeanDefinition("outboundJsonDataDictionary")) {
+                            beanDefinitionBuilder.addPropertyReference("outboundDataDictionary", "outboundJsonDataDictionary");
+                        }
+
+                        ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(operation.getValue().getOperationId(), beanDefinitionBuilder.getBeanDefinition());
+                    } else {
+                        log.info("Register auto generated scenario as singleton: " + operation.getValue().getOperationId());
+                        beanFactory.registerSingleton(operation.getValue().getOperationId(), createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey(), HttpMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
+                    }
                 }
             }
         } catch (IOException e) {

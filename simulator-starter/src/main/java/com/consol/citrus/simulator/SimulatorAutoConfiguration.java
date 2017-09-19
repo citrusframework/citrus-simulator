@@ -25,6 +25,7 @@ import com.consol.citrus.simulator.dictionary.InboundXmlDataDictionary;
 import com.consol.citrus.simulator.dictionary.OutboundXmlDataDictionary;
 import com.consol.citrus.simulator.repository.RepositoryConfig;
 import com.consol.citrus.simulator.scenario.ScenarioBeanNameGenerator;
+import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 /**
@@ -118,5 +122,37 @@ public class SimulatorAutoConfiguration {
         OutboundXmlDataDictionary outboundXmlDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
         outboundXmlDataDictionary.setGlobalScope(false);
         return outboundXmlDataDictionary;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "citrus.simulator.inbound.json.dictionary", value = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean(name = "inboundJsonDataDictionary")
+    public JsonPathMappingDataDictionary inboundJsonDataDictionary() {
+        JsonPathMappingDataDictionary inboundJsonDataDictionary = new JsonPathMappingDataDictionary();
+        inboundJsonDataDictionary.setMappings(new LinkedHashMap<>());
+        inboundJsonDataDictionary.setGlobalScope(false);
+
+        Resource mappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundJsonDictionary());
+        if (mappingFile.exists()) {
+            inboundJsonDataDictionary.setMappingFile(mappingFile);
+        }
+
+        return inboundJsonDataDictionary;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "citrus.simulator.outbound.json.dictionary", value = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean(name = "outboundJsonDataDictionary")
+    public JsonPathMappingDataDictionary outboundJsonDataDictionary() {
+        JsonPathMappingDataDictionary outboundJsonDataDictionary = new JsonPathMappingDataDictionary();
+        outboundJsonDataDictionary.setMappings(new LinkedHashMap<>());
+        outboundJsonDataDictionary.setGlobalScope(false);
+
+        Resource mappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getOutboundJsonDictionary());
+        if (mappingFile.exists()) {
+            outboundJsonDataDictionary.setMappingFile(mappingFile);
+        }
+
+        return outboundJsonDataDictionary;
     }
 }

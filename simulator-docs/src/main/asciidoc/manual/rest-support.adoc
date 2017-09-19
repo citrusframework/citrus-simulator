@@ -454,3 +454,42 @@ CITRUS_SIMULATOR_REST_SWAGGER_CONTEXT_PATH=/petstore
 ----
 
 We just add the api file location and everything else is auto configuration done in the simulator application.
+
+[rest-swagger-data-dictionary]
+=== Data dictionaries
+
+Data dictionaries enable us to centralize data manipulation via JsonPath expressions in order to have more dynamic message values in generated request and response message.
+When a scenario receives and sends messages the data dictionary is asked for available translations for message elements. This means that
+data dictionaries are able to manipulate message content before they are processed.
+
+The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot `application.properties` file:
+
+[source, properties]
+----
+citrus.simulator.inbound.json.dictionary.enabled=true
+citrus.simulator.inboundJsonDictionary=classpath:dictionary/inbound_mappings.properties
+citrus.simulator.outbound.json.dictionary.enabled=true
+citrus.simulator.outboundJsonDictionary=classpath:dictionary/outbound_mappings.properties
+----
+
+As you can see you have the possibility to define mapping files that map JsonPath expression evaluation with pre defined values in the dictionary:
+
+Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:
+
+.inbound mappings
+[source, properties]
+----
+$.category.name=@assertThat(anyOf(is(dog),is(cat)))@
+$.status=@matches(available|pending|sold|placed)@
+$.quantity=@greaterThan(0)@
+----
+
+.outbound mappings
+[source, properties]
+----
+$.category.name=citrus:randomEnumValue('dog', 'cat')
+$.name=citrus:randomEnumValue('hasso', 'cutie', 'fluffy')
+----
+
+The inbound and outbound mapping files defines several JsonPath expressions that should set predefined values before incoming and outgoing messages are validated respectively sent out.
+As you can see we can use Citrus validation matchers and functions in order to get more complex value generation.

@@ -37,7 +37,7 @@ public class WsdlScenarioGeneratorTest {
     public void testGenerateScenarios(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
         WsdlScenarioGenerator scenarioGenerator = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
 
-        reset(beanRegistry);
+        reset(beanFactory);
 
         scenarioGenerator.setNamingStrategy(namingStrategy);
 

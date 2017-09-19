@@ -1,7 +1,7 @@
 {
-  "id": "citrus:randomNumber(10)",
-  "petId": "citrus:randomNumber(10)",
-  "quantity": "1",
+  "id": citrus:randomNumber(10),
+  "petId": citrus:randomNumber(10),
+  "quantity": 1,
   "shipDate": "citrus:currentDate('yyyy-MM-dd'T'hh:mm:ss')",
   "status": "placed",
   "complete": false

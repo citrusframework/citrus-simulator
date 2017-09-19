@@ -66,11 +66,20 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     /** Optional inbound/outbound data dictionary mapping file for generated test data */
     private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary";
     private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY";
-    private String inboundXmlDictionary = "inbound-xml-dictionary.properties";
+    private String inboundXmlDictionary = "inbound-xml-dictionary.xml";
 
     private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary";
     private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY";
-    private String outboundXmlDictionary = "outbound-xml-dictionary.properties";
+    private String outboundXmlDictionary = "outbound-xml-dictionary.xml";
+
+    /** Optional inbound/outbound data dictionary mapping file for generated test data */
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.inbound.json.dictionary";
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY";
+    private String inboundJsonDictionary = "inbound-json-dictionary.properties";
+
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary";
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY";
+    private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
     /**
      * The Spring application context environment
@@ -86,6 +95,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
         inboundXmlDictionary = env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
         outboundXmlDictionary = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
+        inboundJsonDictionary = env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
+        outboundJsonDictionary = env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV, outboundJsonDictionary));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }
@@ -234,6 +245,42 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         this.outboundXmlDictionary = outboundXmlDictionary;
     }
 
+    /**
+     * Gets the inboundJsonDictionary.
+     *
+     * @return
+     */
+    public String getInboundJsonDictionary() {
+        return inboundJsonDictionary;
+    }
+
+    /**
+     * Sets the inboundJsonDictionary.
+     *
+     * @param inboundJsonDictionary
+     */
+    public void setInboundJsonDictionary(String inboundJsonDictionary) {
+        this.inboundJsonDictionary = inboundJsonDictionary;
+    }
+
+    /**
+     * Gets the outboundJsonDictionary.
+     *
+     * @return
+     */
+    public String getOutboundJsonDictionary() {
+        return outboundJsonDictionary;
+    }
+
+    /**
+     * Sets the outboundJsonDictionary.
+     *
+     * @param outboundJsonDictionary
+     */
+    public void setOutboundJsonDictionary(String outboundJsonDictionary) {
+        this.outboundJsonDictionary = outboundJsonDictionary;
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
@@ -245,6 +292,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
                 ", templateValidation=" + templateValidation +
                 ", inboundXmlDictionary=" + inboundXmlDictionary +
                 ", outboundXmlDictionary=" + outboundXmlDictionary +
+                ", inboundJsonDictionary=" + inboundJsonDictionary +
+                ", outboundJsonDictionary=" + outboundJsonDictionary +
                 '}';
     }
 

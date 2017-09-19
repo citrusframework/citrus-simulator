@@ -126,7 +126,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 
         http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.NOT_FOUND);
+                .response(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @CitrusTest
