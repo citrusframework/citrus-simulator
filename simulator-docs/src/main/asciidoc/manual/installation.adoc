@@ -99,11 +99,12 @@ See the following sample Maven project POM file that defines the project sources
 </project>
 ----
 
-You can now build and run the simulator with Maven from a command line. Use following command:
+You can now build and run the simulator with Maven from a command line. Use following commands:
 
 [source,bash]
 ----
 mvn clean install
+
 mvn spring-boot:run
 ----
 
@@ -119,7 +120,12 @@ The easiest way to get started with a new simulator project is to use a Maven ar
 
 [source,bash]
 ----
-mvn archetype:generate -DarchetypeGroupId=com.consol.citrus.archetypes -DarchetypeArtifactId=citrus-simulator-archetypes-rest
+mvn archetype:generate -B -DarchetypeGroupId=com.consol.citrus.archetypes \
+                            -DarchetypeArtifactId=citrus-simulator-archetype-rest \
+                            -DarchetypeVersion=${citrus.simulator.version} \
+                            -DgroupId=com.consol.citrus.simulator \
+                            -DartifactId=citrus-simulator-rest \
+                            -Dversion=1.0.0
 ----
 
 If you execute the command above the Maven archetype generator will ask you some questions about versions and project names. Once you have completed the generation
@@ -129,9 +135,12 @@ There are different simulator archetypes available. Please pick the most conveni
 
 .Maven archetypes
 [horizontal]
-citrus-simulator-archetypes-rest:: Http REST simulator sample
-citrus-simulator-archetypes-ws:: SOAP web service simulator sample
-citrus-simulator-archetypes-jms:: JMS simulator sample (TODO)
+citrus-simulator-archetype-rest:: Http REST simulator sample
+citrus-simulator-archetype-ws:: SOAP web service simulator sample
+citrus-simulator-archetype-jms:: JMS simulator sample
+citrus-simulator-archetype-mail:: Mail simulator sample
+citrus-simulator-archetype-swagger:: Auto generate simulator from Swagger Open API specification (_experimental_)
+citrus-simulator-archetype-wsdl:: Auto generate simulator from SOAP WSDL specification (_experimental_)
 
 [[development]]
 === Development
