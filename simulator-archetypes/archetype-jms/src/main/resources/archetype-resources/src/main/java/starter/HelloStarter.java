@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.starter;
+package ${package};
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
@@ -26,12 +26,12 @@ import java.util.List;
 /**
  * @author Christoph Deppisch
  */
-@Starter("GoodByeStarter")
-public class GoodByeStarter extends AbstractScenarioStarter {
+@Starter("HelloStarter")
+public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("GoodBye starter was executed!");
+        scenario.echo("${greeting}");
         scenario.echo("${payload}");
     }
 
@@ -39,13 +39,22 @@ public class GoodByeStarter extends AbstractScenarioStarter {
     public List<ScenarioParameter> getScenarioParameters() {
         List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
+        // greeting (text box)
+        scenarioParameter.add(new ScenarioParameterBuilder()
+                .name("greeting")
+                .label("Greeting Text")
+                .required()
+                .textbox()
+                .value("Hi there!")
+                .build());
+
         // payload (text area)
         scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("payload")
                 .label("Payload")
                 .required()
                 .textarea()
-                .value(getMessageTemplate("Goodbye"))
+                .value(getMessageTemplate("Hello"))
                 .build());
 
         return scenarioParameter;

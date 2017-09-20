@@ -37,10 +37,10 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public List<ScenarioParameter> getScenarioParameters() {
-        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+        List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // greeting (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("greeting")
                 .label("Greeting Text")
                 .required()
@@ -49,7 +49,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // payload (text area)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("payload")
                 .label("Payload")
                 .required()
@@ -57,6 +57,6 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .value(getMessageTemplate("Hello"))
                 .build());
 
-        return scenarioParameters;
+        return scenarioParameter;
     }
 }

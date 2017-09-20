@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.scenario;
+package ${package};
 
 import com.consol.citrus.simulator.scenario.*;
 
 /**
  * @author Christoph Deppisch
  */
-@Scenario("Hello")
-public class HelloScenario extends AbstractSimulatorScenario {
+@Scenario("Default")
+public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        scenario.echo("Simulator: ${simulator.name}");
-
         scenario
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>");
+            .receive();
 
         scenario
             .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>");
+            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }
