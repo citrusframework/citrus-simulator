@@ -24,8 +24,6 @@ import com.consol.citrus.simulator.scenario.*;
 @Scenario("GoodNight")
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
-    private static final String CORRELATION_ID = "correlationId";
-
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario

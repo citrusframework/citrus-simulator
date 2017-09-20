@@ -20,6 +20,7 @@
     <module>archetype-rest</module>
     <module>archetype-ws</module>
     <module>archetype-jms</module>
+    <module>archetype-mail</module>
   </modules>
 
 </project>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.simulator.sample.scenario;
+package ${package};
 
 import com.consol.citrus.simulator.scenario.*;
 

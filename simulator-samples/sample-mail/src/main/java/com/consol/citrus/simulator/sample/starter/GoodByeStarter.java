@@ -37,10 +37,10 @@ public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
     public List<ScenarioParameter> getScenarioParameters() {
-        List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+        List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // payload (text area)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("payload")
                 .label("Payload")
                 .required()
@@ -48,7 +48,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
                 .value(getMessageTemplate("Goodbye"))
                 .build());
 
-        return scenarioParameters;
+        return scenarioParameter;
     }
 
 }
