@@ -21,7 +21,7 @@ import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
 import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,13 +32,15 @@ import org.springframework.context.annotation.Configuration;
  * @author Martin Maher
  */
 @Configuration
+@ConditionalOnClass({ LoggingEndpointInterceptor.class, LoggingClientInterceptor.class })
+@ConditionalOnWebApplication
 public class SimulatorWebServiceLoggingAutoConfiguration {
 
     @Autowired
     private MessageListeners messageListeners;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "simulatorLoggingEndpointInterceptor")
     public LoggingEndpointInterceptor loggingEndpointInterceptor() {
         LoggingEndpointInterceptor loggingEndpointInterceptor = new LoggingEndpointInterceptor();
         loggingEndpointInterceptor.setMessageListener(messageListeners);
@@ -46,7 +48,7 @@ public class SimulatorWebServiceLoggingAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "simulatorLoggingClientInterceptor")
     public LoggingClientInterceptor loggingClientInterceptor() {
         LoggingClientInterceptor loggingClientInterceptor = new LoggingClientInterceptor();
         loggingClientInterceptor.setMessageListener(messageListeners);
