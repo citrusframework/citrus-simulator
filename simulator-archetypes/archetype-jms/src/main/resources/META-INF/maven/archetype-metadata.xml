@@ -21,6 +21,8 @@
       <directory>src/main/resources</directory>
       <includes>
         <include>**/*.xml</include>
+        <include>**/*.xsd</include>
+        <include>**/*.xjb</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
