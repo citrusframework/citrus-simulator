@@ -528,8 +528,8 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Christoph Deppisch</span><br>
 <span id="author2" class="author">Martin Maher</span><br>
 <span id="author3" class="author">Georgi Todorov</span><br>
-<span id="revnumber">version 1.0.0-SNAPSHOT,</span>
-<span id="revdate">2017-09-12</span>
+<span id="revnumber">version 1.0.0,</span>
+<span id="revdate">2017-09-20</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">citrus-simulator</div>
@@ -581,6 +581,12 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#rest-customization">4.2. Advanced customizations</a></li>
 <li><a href="#rest-request-mapping">4.3. Request mapping</a></li>
 <li><a href="#rest-status-code">4.4. Http responses</a></li>
+<li><a href="#rest-swagger">4.5. Swagger support</a>
+<ul class="sectlevel3">
+<li><a href="#swagger-system-properties">4.5.1. Swagger system properties</a></li>
+<li><a href="#data-dictionaries">4.5.2. Data dictionaries</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#web-service">5. Web Service support</a>
@@ -589,6 +595,12 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#web-service-customization">5.2. Advanced customizations</a></li>
 <li><a href="#web-service-response">5.3. SOAP response</a></li>
 <li><a href="#web-service-faults">5.4. SOAP faults</a></li>
+<li><a href="#web-service-wsdl">5.5. WSDL support</a>
+<ul class="sectlevel3">
+<li><a href="#wsdl-system-properties">5.5.1. WSDL system properties</a></li>
+<li><a href="#data-dictionaries-2">5.5.2. Data dictionaries</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#jms">6. JMS support</a>
@@ -634,7 +646,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Copyright © 2017 ConSol Software GmbH</strong><br>
-<strong>Version: 1.0.0-SNAPSHOT</strong></p>
+<strong>Version: 1.0.0</strong></p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/citrus-logo-small.png" alt="citrus-logo"></span></p>
@@ -892,7 +904,7 @@ citrus-simulator-archetypes-ws
 citrus-simulator-archetypes-jms
 </td>
 <td class="hdlist2">
-<p>JMS simulator sample</p>
+<p>JMS simulator sample (TODO)</p>
 </td>
 </tr>
 </table>
@@ -933,90 +945,33 @@ you can open your browser and point to <a href="http://localhost:8080">http://lo
 <h2 id="concepts"><a class="anchor" href="#concepts"></a>3. Concepts</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Citrus simulator project has the primary focus to provide messaging simulation as a standalone server. Once started the simulator
-provides different endpoints (Http REST, JMS, SOAP Web Service, and so on) and waits for incoming requests. The time a request arrives at one of the endpoints
-the simulator maps the request to a predefined <a href="#scenarios">simulator scenario</a> which is automatically executed immediately. The scenario is responsible to create
-a response message that is sent to the calling client.</p>
+<p>The Citrus simulator&#8217;s primary focus is to provide a simple means to simulate one or more endpoints (HTTP, JMS, SMTP, etc). Once the simulator is up and running it waits for an incoming request (JSON, SOAP, XML, etc) to arrive on any of its configured endpoints and reacts accordingly. The simulator examines the incoming request and determines which <a href="#scenarios">simulator scenario</a> should be executed for handling the request. Typically the selected scenario creates a response message to send back to the calling client.</p>
 </div>
 <div class="paragraph">
-<p>The scenario mapping is done by <a href="#scenario-mapper">extracting a mapping key</a> from the request data. This scenario mapper implementation searches for a matching scenario for the current incoming
-request. The scenario mapping is done based on different identifiers on the request. The Citrus simulator knows following scenario mapper implementations:</p>
-</div>
-<div class="hdlist">
-<div class="title">Scenario mapper</div>
-<table>
-<tr>
-<td class="hdlist1">
-Content based xpath mapper
-</td>
-<td class="hdlist2">
-<p>Evaluates Xpath expressions on the request payload and uses the expression result as scenario name</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Content based jsonPath mapper
-</td>
-<td class="hdlist2">
-<p>Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Header value mapper
-</td>
-<td class="hdlist2">
-<p>Evaluates header name on request and uses header value as scenario name</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-SOAP action mapper
-</td>
-<td class="hdlist2">
-<p>Evaluates SOAP action header on request and uses the value as scenario name</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Request mapping annotation mapper
-</td>
-<td class="hdlist2">
-<p>Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values</p>
-</td>
-</tr>
-</table>
+<p>A <a href="#scenario-mapper">scenario mapper</a> is used to help the simulator determine the correct scenario to be executed. Different scenario mappers are supported that use the request header data or payload data to determine the appropriate scenario to run.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="#scenarios">simulator scenario</a> is capable of handling the request message and will return a proper response message to the calling client.
-With different scenarios defined the simulator is able to respond to different requests accordingly.</p>
+<p>A <a href="#scenarios">simulator scenario</a> is capable of handling one or more request messages. When executed it receives the request and can return an appropriate response message to the calling client.
+By defining multiple simulator scenarios the citrus simulator is able to respond to different requests accordingly.</p>
 </div>
 <div class="paragraph">
-<p>Each scenario defines a very special simulation logic by using Citrus test actions that perform once the scenario is triggered by incoming requests.</p>
+<p>A simulator scenario is composed of one or more actions. For the most trivial scenarios there is generally an action for receiving a request and an action for sending a response.
+Because the Citrus simulator has access to the underlying Citrus framework functionality you can access a wide range of actions that are available within the Citrus framework and use these when configuring a scenario.</p>
 </div>
 <div class="paragraph">
-<p>This way each incoming request is processed and a proper response message is provided to the client. You can define default and fallback scenarios for
-each simulator.</p>
-</div>
-<div class="paragraph">
-<p>In addition to that the simulator provides a <a href="#user-interface">user interface</a> where executed scenarios state success or failure.
-Also you can trigger scenarios manually.</p>
+<p>To keep an eye on what the simulator is doing, what requests were received or sent or what scenarios were executed a <a href="#user-interface">user interface</a> is provided. In addition to seeing what is going on it is also possible to trigger scenarios manually.</p>
 </div>
 <div class="sect2">
 <h3 id="concept-simulator-application"><a class="anchor" href="#concept-simulator-application"></a>3.1. Simulator application</h3>
 <div class="paragraph">
-<p>The simulator is based on Spring boot. This means we have a main class that loads the Spring boot application.</p>
+<p>The simulator is a usual Spring boot application. This means we have a main class that loads the Spring boot application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRestSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -1025,19 +980,29 @@ Also you can trigger scenarios manually.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This class is the main entrance for all configuration and customization statements. First of all the class is annotated as <strong>@SpringBootApplication</strong>
-and <strong>@SimulatorApplication</strong>. This enables auto configuration for the simulator application. In addition to that we enable different aspects of the simulator
-by using further annotations provided. In the sample above we use the <strong>@EnableRestSimulation</strong> annotation for Http REST endpoint support.</p>
+<p>This class is the main entrance for all configuration and customization statements. As we have added the <strong>citrus-simulator-starter</strong> as dependency in our project
+auto configuration is enabled for the simulator application. By default REST support is enabled with all configuration needed. You can enable/disable the message transport
+support for different technologies via application properties.</p>
+</div>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.rest.enabled=true
+citrus.simulator.jms.enabled=true
+citrus.simulator.ws.enabled=true
+citrus.simulator.ws.client.enabled=true
+citrus.simulator.endpoint.enabled=true</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>There are multiple annotations available for different transport endpoints:</p>
+<p>When enabled the simulator auto configuration for this specific message transport is activated and all required beans and configuration is loaded at startup.</p>
 </div>
 <div class="hdlist">
-<div class="title">Simulator annotations</div>
+<div class="title">Simulator support</div>
 <table>
 <tr>
 <td class="hdlist1">
-@EnableRestSimulation
+citrus.simulator.rest.enabled
 </td>
 <td class="hdlist2">
 <p>Enables <a href="#rest-support">Http REST support</a></p>
@@ -1045,7 +1010,7 @@ by using further annotations provided. In the sample above we use the <strong>@E
 </tr>
 <tr>
 <td class="hdlist1">
-@EnableWebServiceSimulation
+citrus.simulator.ws.enabled
 </td>
 <td class="hdlist2">
 <p>Enables <a href="#ws-support">SOAP web services support</a></p>
@@ -1053,7 +1018,7 @@ by using further annotations provided. In the sample above we use the <strong>@E
 </tr>
 <tr>
 <td class="hdlist1">
-@EnableWebServiceClientSimulation
+citrus.simulator.ws.client.enabled
 </td>
 <td class="hdlist2">
 <p>Enables <a href="#ws-support">SOAP web services support</a></p>
@@ -1061,7 +1026,7 @@ by using further annotations provided. In the sample above we use the <strong>@E
 </tr>
 <tr>
 <td class="hdlist1">
-@EnableJmsSimulation
+citrus.simulator.jms.enabled
 </td>
 <td class="hdlist2">
 <p>Enables <a href="#jms-support">JMS support</a></p>
@@ -1069,13 +1034,16 @@ by using further annotations provided. In the sample above we use the <strong>@E
 </tr>
 <tr>
 <td class="hdlist1">
-@EnableEndpointSimulation
+citrus.simulator.endpoint.enabled
 </td>
 <td class="hdlist2">
 <p>Enables generic <a href="#endpoint-component-support">endpoint component support</a></p>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>You can also combine message transports on the simulator application although this feature is of experimental nature up to now.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1086,7 +1054,8 @@ is supported. Following from that you can add properties to the <code>applicatio
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.defaultTimeout=10000
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.rest.enabled=true
+citrus.simulator.defaultTimeout=10000
 citrus.simulator.templatePath=com/company/simulator/templates</code></pre>
 </div>
 </div>
@@ -1105,7 +1074,7 @@ com.consol.citrus.simulator.config.SimulatorConfigurationProperties
 </tr>
 <tr>
 <td class="hdlist1">
-com.consol.citrus.simulator.annotation.SimulatorRestConfigurationProperties
+com.consol.citrus.simulator.http.SimulatorRestConfigurationProperties
 </td>
 <td class="hdlist2">
 <p>prefix=<strong>citrus.simulator.rest</strong></p>
@@ -1113,7 +1082,7 @@ com.consol.citrus.simulator.annotation.SimulatorRestConfigurationProperties
 </tr>
 <tr>
 <td class="hdlist1">
-com.consol.citrus.simulator.annotation.SimulatorWebServiceConfigurationProperties
+com.consol.citrus.simulator.ws.SimulatorWebServiceConfigurationProperties
 </td>
 <td class="hdlist2">
 <p>prefix=<strong>citrus.simulator.ws</strong></p>
@@ -1121,7 +1090,15 @@ com.consol.citrus.simulator.annotation.SimulatorWebServiceConfigurationPropertie
 </tr>
 <tr>
 <td class="hdlist1">
-com.consol.citrus.simulator.annotation.SimulatorJmsConfigurationProperties
+com.consol.citrus.simulator.ws.SimulatorWebServiceClientConfigurationProperties
+</td>
+<td class="hdlist2">
+<p>prefix=<strong>citrus.simulator.ws.client</strong></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties
 </td>
 <td class="hdlist2">
 <p>prefix=<strong>citrus.simulator.jms</strong></p>
@@ -1438,7 +1415,7 @@ on a mapping key that is extracted from the incoming request.</p>
 <p>There are multiple ways to identify the simulator scenario from incoming request messages:</p>
 </div>
 <div class="hdlist">
-<div class="title">Scenario mapping identifiers</div>
+<div class="title">Scenario mapping identifiers (TODO update list)</div>
 <table>
 <tr>
 <td class="hdlist1">
@@ -1486,6 +1463,46 @@ Json payload
 </td>
 <td class="hdlist2">
 <p>An JsonPath expression is evaluated on the message payload to identify the scenario</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Content based xpath mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates Xpath expressions on the request payload and uses the expression result as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Content based jsonPath mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates JsonPath expressions on the request payload and uses the expression result as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Header value mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates header name on request and uses header value as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+SOAP action mapper
+</td>
+<td class="hdlist2">
+<p>Evaluates SOAP action header on request and uses the value as scenario name</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Request mapping annotation mapper
+</td>
+<td class="hdlist2">
+<p>Uses Spring @RequestMapping annotations on scenarios in order to map incoming requests based on request method and/or request path values</p>
 </td>
 </tr>
 </table>
@@ -1813,18 +1830,18 @@ needed requests are handled within the same scenarion and other parallel running
 <div class="sectionbody">
 <div class="paragraph">
 <p>The simulator is able to provide Http REST APIs as a server. Clients can call the simulator on request paths using methods such as
-Http GET, POST, PUT, DELETE and so on. The simulator defines a special REST enabling annotation that we can use on the application class:</p>
+Http GET, POST, PUT, DELETE and so on.</p>
+</div>
+<div class="paragraph">
+<p>The generic rest support is activated by setting the property <strong>citrus.simulator.rest.enabled=true</strong>. You can do so in the basic <code>application.properties</code>
+file or via system property or environment variable setting.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRestSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -1833,7 +1850,7 @@ Http GET, POST, PUT, DELETE and so on. The simulator defines a special REST enab
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableRestSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>citrus.simulator.rest.enabled</strong> property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
 </div>
 <div class="paragraph">
@@ -1917,15 +1934,11 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRestSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorRestAdapter</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableRestSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
 
     <span class="annotation">@Override</span>
@@ -1946,9 +1959,6 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>So we have <strong>@EnableRestSimulation</strong> and REST adapter customizations combined on one single class.</p>
-</div>
 </div>
 <div class="sect2">
 <h3 id="rest-customization"><a class="anchor" href="#rest-customization"></a>4.2. Advanced customizations</h3>
@@ -1957,15 +1967,12 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableRest</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorRestSupport</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAutoConfiguration</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestSupport {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAutoConfiguration {
 
     <span class="annotation">@Override</span>
     <span class="directive">protected</span> <span class="predefined-type">String</span> getUrlMapping() {
@@ -2007,7 +2014,7 @@ REST adapter behavior. The custom adapter just overwrites the <strong>urlMapping
 </div>
 <div class="paragraph">
 <p>With that configuration option we can overwrite REST support auto configuration features on the simulator such as the <strong>requestCachingFilter</strong> or the <strong>handlerMapping</strong>.
-We can not use the <strong>@EnableRestSimulation</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorRestSupport</strong> implementation directly.</p>
+We extend the <strong>SimulatorRestAutoConfiguration</strong> implementation directly.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2091,25 +2098,290 @@ You can specify the Http status code very easy when using the Citrus Java DSL me
 see the official Citrus documentation for more details how to use this Http specific Java fluent API.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="rest-swagger"><a class="anchor" href="#rest-swagger"></a>4.5. Swagger support</h3>
+<div class="paragraph">
+<p>The simulator application is able to read <a href="https://swagger.io/">Swagger</a> <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md">Open API V3.0</a> specifications for auto
+generating simulator scenarios for each operation. The Open API specification defines available REST request paths, supported methods (GET, POST, PUT, DELETE, &#8230;&#8203;) and their outcome when clients
+call that API operations. The simulator generates basic scenarios for these specification information.</p>
+</div>
+<div class="paragraph">
+<p>See the following sample how to do that:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@SpringBootApplication</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> ScenarioMapper scenarioMapper() {
+        <span class="keyword">return</span> <span class="keyword">new</span> HttpRequestPathScenarioMapper();
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/petstore/v2/**</span><span class="delimiter">&quot;</span></span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> EndpointAdapter fallbackEndpointAdapter() {
+        <span class="keyword">return</span> <span class="keyword">new</span> StaticEndpointAdapter() {
+            <span class="annotation">@Override</span>
+            <span class="directive">protected</span> Message handleMessageInternal(Message message) {
+                <span class="keyword">return</span> <span class="keyword">new</span> HttpMessage().status(HttpStatus.NOT_FOUND);
+            }
+        };
+    }
+
+    <span class="annotation">@Bean</span>
+    <span class="directive">public</span> <span class="directive">static</span> HttpScenarioGenerator scenarioGenerator() {
+        HttpScenarioGenerator generator = <span class="keyword">new</span> HttpScenarioGenerator(<span class="keyword">new</span> ClassPathResource(<span class="string"><span class="delimiter">&quot;</span><span class="content">swagger/petstore-api.json</span><span class="delimiter">&quot;</span></span>));
+        generator.setContextPath(<span class="string"><span class="delimiter">&quot;</span><span class="content">/petstore</span><span class="delimiter">&quot;</span></span>);
+        <span class="keyword">return</span> generator;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The listing above adds a <code>HttpScenarioGenerator</code> as Spring bean to the simulator application. The generator receives the swagger api file location <code>swagger/petstore-api.json</code> and the
+context path for this API. In addition to that we need to set a special scenario mapper implementation <code>HttpRequestPathScenarioMapper</code> that is aware of generated REST scenarios.</p>
+</div>
+<div class="paragraph">
+<p>Also we set a custom fallback endpoint adapter. This one is used when no scenario matches the incoming request or when the scenario itself did not produce a proper response because of
+some validation error.</p>
+</div>
+<div class="paragraph">
+<p>On startup the generator dynamically generates a scenario for each operation defined in that swagger api file. You can review all generated scenarios in the user interface.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a look at a sample operation in that <strong>petstore</strong> swagger api file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json"><span class="key"><span class="delimiter">&quot;</span><span class="content">/pet/findByStatus</span><span class="delimiter">&quot;</span></span>: {
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">get</span><span class="delimiter">&quot;</span></span>: {
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">tags</span><span class="delimiter">&quot;</span></span>: [
+      <span class="string"><span class="delimiter">&quot;</span><span class="content">pet</span><span class="delimiter">&quot;</span></span>
+    ],
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">summary</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Finds Pets by status</span><span class="delimiter">&quot;</span></span>,
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Multiple status values can be provided with comma separated strings</span><span class="delimiter">&quot;</span></span>,
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">operationId</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">findPetsByStatus</span><span class="delimiter">&quot;</span></span>,
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">produces</span><span class="delimiter">&quot;</span></span>: [
+      <span class="string"><span class="delimiter">&quot;</span><span class="content">application/xml</span><span class="delimiter">&quot;</span></span>,
+      <span class="string"><span class="delimiter">&quot;</span><span class="content">application/json</span><span class="delimiter">&quot;</span></span>
+    ],
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span>: [
+      {
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">status</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">in</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">query</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Status values that need to be considered for filter</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">required</span><span class="delimiter">&quot;</span></span>: <span class="value">true</span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">array</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">items</span><span class="delimiter">&quot;</span></span>: {
+          <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">string</span><span class="delimiter">&quot;</span></span>,
+          <span class="key"><span class="delimiter">&quot;</span><span class="content">enum</span><span class="delimiter">&quot;</span></span>: [
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">available</span><span class="delimiter">&quot;</span></span>,
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">pending</span><span class="delimiter">&quot;</span></span>,
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">sold</span><span class="delimiter">&quot;</span></span>
+          ],
+          <span class="key"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">available</span><span class="delimiter">&quot;</span></span>
+        },
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">collectionFormat</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">multi</span><span class="delimiter">&quot;</span></span>
+      }
+    ],
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">responses</span><span class="delimiter">&quot;</span></span>: {
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">200</span><span class="delimiter">&quot;</span></span>: {
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">successful operation</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">schema</span><span class="delimiter">&quot;</span></span>: {
+          <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">array</span><span class="delimiter">&quot;</span></span>,
+          <span class="key"><span class="delimiter">&quot;</span><span class="content">items</span><span class="delimiter">&quot;</span></span>: {
+            <span class="key"><span class="delimiter">&quot;</span><span class="content">$ref</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">#/definitions/Pet</span><span class="delimiter">&quot;</span></span>
+          }
+        }
+      },
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">400</span><span class="delimiter">&quot;</span></span>: {
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">description</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Invalid status value</span><span class="delimiter">&quot;</span></span>
+      }
+    },
+    <span class="key"><span class="delimiter">&quot;</span><span class="content">security</span><span class="delimiter">&quot;</span></span>: [
+      {
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">petstore_auth</span><span class="delimiter">&quot;</span></span>: [
+          <span class="string"><span class="delimiter">&quot;</span><span class="content">write:pets</span><span class="delimiter">&quot;</span></span>,
+          <span class="string"><span class="delimiter">&quot;</span><span class="content">read:pets</span><span class="delimiter">&quot;</span></span>
+        ]
+      }
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The REST operation above defines a <strong>GET</strong> method on <strong>/pet/findByStatus</strong>. The required query parameter <strong>status</strong> is defined to filter the returned list of pets. As a response
+the API defines <strong>200 OK</strong> with an array of <strong>Pet</strong> objects. In addition to that <strong>400</strong> response is defined when the <strong>status</strong> parameter is not within its restriction enumeration <strong>available, pending, sold</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>IMPORTANT:</strong> <em>The simulator will always generate the success case exclusively. Here this would be the <strong>200 OK</strong> response. Other response variations are not generated up to now!</em></p>
+</div>
+<div class="paragraph">
+<p>The generated scenario for this operation verifies that the request is using <strong>GET</strong> method on request path <strong>/pet/findByStatus</strong>. Also the scenario verifies the existence of the <strong>status</strong> query
+parameter and that the value is within the enumeration boundaries.</p>
+</div>
+<div class="paragraph">
+<p>Only in case these verification steps are performed successfully the simulator scenario generates a proper response <strong>200 OK</strong> that contains a dynamic array of pet objects.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a look at the communication on that scenario:</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>GET http://localhost:8080/petstore/v2/pet/findByStatus?status=pending
+Accept:application/json
+Content-Type:text/plain;charset=UTF-8
+Content-Length:0</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>HTTP/1.1 200
+X-Application-Context:application
+Content-Type:application/json
+Content-Length:193
+Date:Wed, 13 Sep 2017 08:13:52 GMT
+
+[{"id": 5243024128,"category": {"id": 5032916791,"name": "hneBENfFDq"},"name": "JjZhcsvSRA","photoUrls": ["GwSVIBOhsi"],"tags": [{"id": 8074462757,"name": "DYwotNekKc"}],"status": "available"}]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The request did match all verification steps on the simulator for this operation. Following from that we receive a generated response message with some sample data as array of pet objects. The simulator
+is able to generate dynamic identifier such as <strong>id</strong>, <strong>category</strong> and <strong>name</strong> values. According to the field type the simulator generates dynamic number of string values. When there is a enumeration value restriction as seen in <strong>status</strong>
+the simulator generates a dynamic enumeration value.</p>
+</div>
+<div class="paragraph">
+<p>This is how we always get a proper generated response from the simulator API. The petstore swagger Open API specification defines the returned objects and how to validate the incoming requests.</p>
+</div>
+<div class="paragraph">
+<p>Just in case we sent an invalid request according to the Open API specification we do not get a proper response.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>GET http://localhost:8080/petstore/v2/pet/findByStatus
+Accept:application/json
+Content-Type:text/plain;charset=UTF-8
+Content-Length:0</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>HTTP/1.1 404
+X-Application-Context:application
+Content-Type:text/plain;charset=UTF-8
+Content-Length:0
+Date:Wed, 13 Sep 2017 08:42:56 GMT</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The sample request above is missing the required <strong>status</strong> query parameter on the <strong>findByStatus</strong> operation. As a result we get a <strong>404 NOT_FOUND</strong> response from the fallback endpoint adapter
+as the scenario did not complete because of validation errors. You will see the failed scenario activity with proper error message on that missing <strong>status</strong> parameter in the user interface then.</p>
+</div>
+<div class="sect3">
+<h4 id="swagger-system-properties"><a class="anchor" href="#swagger-system-properties"></a>4.5.1. Swagger system properties</h4>
+<div class="paragraph">
+<p>The simulator Swagger API auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean <code>HttpScenarioGenerator</code> in your
+simulator configuration you could just set the following properties on the simulator application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties"># Enable swagger api support
+citrus.simulator.rest.swagger.enabled=true
+citrus.simulator.rest.swagger.api=classpath:swagger/petstore-api.json
+citrus.simulator.rest.swagger.contextPath=/petstore</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Of course you can also use environment variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">CITRUS_SIMULATOR_REST_SWAGGER_ENABLED=true
+CITRUS_SIMULATOR_REST_SWAGGER_API=classpath:swagger/petstore-api.json
+CITRUS_SIMULATOR_REST_SWAGGER_CONTEXT_PATH=/petstore</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We just add the api file location and everything else is auto configuration done in the simulator application.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="data-dictionaries"><a class="anchor" href="#data-dictionaries"></a>4.5.2. Data dictionaries</h4>
+<div class="paragraph">
+<p>Data dictionaries enable us to centralize data manipulation via JsonPath expressions in order to have more dynamic message values in generated request and response message.
+When a scenario receives and sends messages the data dictionary is asked for available translations for message elements. This means that
+data dictionaries are able to manipulate message content before they are processed.</p>
+</div>
+<div class="paragraph">
+<p>The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot <code>application.properties</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.inbound.json.dictionary.enabled=true
+citrus.simulator.inboundJsonDictionary=classpath:dictionary/inbound_mappings.properties
+citrus.simulator.outbound.json.dictionary.enabled=true
+citrus.simulator.outboundJsonDictionary=classpath:dictionary/outbound_mappings.properties</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see you have the possibility to define mapping files that map JsonPath expression evaluation with pre defined values in the dictionary:</p>
+</div>
+<div class="paragraph">
+<p>Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">inbound mappings</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">$.category.name=@assertThat(anyOf(is(dog),is(cat)))@
+$.status=@matches(available|pending|sold|placed)@
+$.quantity=@greaterThan(0)@</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">outbound mappings</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">$.category.name=citrus:randomEnumValue('dog', 'cat')
+$.name=citrus:randomEnumValue('hasso', 'cutie', 'fluffy')</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The inbound and outbound mapping files defines several JsonPath expressions that should set predefined values before incoming and outgoing messages are validated respectively sent out.
+As you can see we can use Citrus validation matchers and functions in order to get more complex value generation.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="web-service"><a class="anchor" href="#web-service"></a>5. Web Service support</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The simulator is able to handle SOAP Web Service calls as a server. The simulator defines a special
-SOAP enabling annotation that we can use on the application class:</p>
+<p>The simulator is able to handle SOAP Web Service calls as a server.</p>
+</div>
+<div class="paragraph">
+<p>The generic SOAP web service support is activated by setting the property <strong>citrus.simulator.ws.enabled=true</strong>. You can do so in the basic <code>application.properties</code>
+file or via system property or environment variable setting.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebServiceSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableWebServiceSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -2118,7 +2390,7 @@ SOAP enabling annotation that we can use on the application class:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableWebServiceSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>citrus.simulator.ws.enabled</strong> property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
 </div>
 <div class="paragraph">
@@ -2214,15 +2486,11 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebServiceSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorWebServiceAdapter</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.ws.SimulatorWebServiceAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableWebServiceSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorWebServiceAdapter {
 
     <span class="annotation">@Override</span>
@@ -2241,9 +2509,6 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>So we have <strong>@EnableWebServiceSimulation</strong> and SOAP adapter customizations combined on one single class.</p>
-</div>
 </div>
 <div class="sect2">
 <h3 id="web-service-customization"><a class="anchor" href="#web-service-customization"></a>5.2. Advanced customizations</h3>
@@ -2252,15 +2517,12 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableWebService</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorWebServiceSupport</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.ws.SimulatorWebServiceAutoConfiguration</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorWebServiceSupport {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorWebServiceAutoConfiguration {
 
     <span class="annotation">@Override</span>
     <span class="directive">protected</span> <span class="predefined-type">String</span> getServletMapping() {
@@ -2283,7 +2545,7 @@ SOAP adapter behavior. The custom adapter just overwrites the <strong>servletMap
 </div>
 <div class="paragraph">
 <p>With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the <strong>messageDispatcherServlet</strong>.
-We can not use the <strong>@EnableWebServiceSimulation</strong> auto configuration annotation then. Instead we extend the <strong>SimulatorWebServiceSupport</strong> implementation directly.</p>
+We extend the <strong>SimulatorWebServiceAutoConfiguration</strong> implementation directly.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2359,6 +2621,360 @@ the <strong>sendFault()</strong> method in order to create proper SOAP fault mes
 message details for you. So we can decide wheather to provide a success response or SOAP fault.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="web-service-wsdl"><a class="anchor" href="#web-service-wsdl"></a>5.5. WSDL support</h3>
+<div class="paragraph">
+<p>The simulator is able to read your WSDL web service specifications for auto generating simulator scenarios. The WSDL defines multiple operations with request and response message data.
+The simulator reads the WSDL information and generates basic scenarios for these operations.</p>
+</div>
+<div class="paragraph">
+<p>See the following sample how to do that:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@SpringBootApplication</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorWebServiceAdapter {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/ws/HelloService/v1/*</span><span class="delimiter">&quot;</span></span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> EndpointAdapter fallbackEndpointAdapter() {
+        <span class="keyword">return</span> <span class="keyword">new</span> StaticEndpointAdapter() {
+            <span class="annotation">@Override</span>
+            <span class="directive">protected</span> Message handleMessageInternal(Message message) {
+                <span class="keyword">return</span> <span class="keyword">new</span> SoapFault()
+                        .faultActor(<span class="string"><span class="delimiter">&quot;</span><span class="content">SERVER</span><span class="delimiter">&quot;</span></span>)
+                        .faultCode(<span class="string"><span class="delimiter">&quot;</span><span class="content">{http://localhost:8080/HelloService/v1}HELLO:ERROR-1001</span><span class="delimiter">&quot;</span></span>)
+                        .faultString(<span class="string"><span class="delimiter">&quot;</span><span class="content">Internal server error</span><span class="delimiter">&quot;</span></span>);
+            }
+        };
+    }
+
+    <span class="annotation">@Bean</span>
+    <span class="directive">public</span> <span class="directive">static</span> WsdlScenarioGenerator scenarioGenerator() {
+        WsdlScenarioGenerator generator = <span class="keyword">new</span> WsdlScenarioGenerator(<span class="keyword">new</span> ClassPathResource(<span class="string"><span class="delimiter">&quot;</span><span class="content">xsd/Hello.wsdl</span><span class="delimiter">&quot;</span></span>));
+        <span class="keyword">return</span> generator;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The listing above uses a <code>WsdlScenarioGenerator</code> as Spring bean. The generator requires the WSDL file location <code>xsd/Hello.wsdl</code> and the
+servlet mapping path for this API.</p>
+</div>
+<div class="paragraph">
+<p>Also we set a custom fallback endpoint adapter. This one is used when no scenario matches the incoming request or when the scenario itself did not produce a proper response because of
+some validation error. The fallback endpoint adapter sends a default SOAP fault message with <strong>"Internal server error"</strong>.</p>
+</div>
+<div class="paragraph">
+<p>On startup the generator dynamically generates a scenario for each operation defined in that WSDL file. You can review all generated scenarios in the user interface.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a look at the sample WSDL file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;wsdl:definitions</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>
+                  <span class="attribute-name">xmlns:tns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="delimiter">&quot;</span></span>
+                  <span class="attribute-name">xmlns:wsdl</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schemas.xmlsoap.org/wsdl/</span><span class="delimiter">&quot;</span></span>
+                  <span class="attribute-name">xmlns:soap</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schemas.xmlsoap.org/wsdl/soap/</span><span class="delimiter">&quot;</span></span>
+                  <span class="attribute-name">targetNamespace</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="delimiter">&quot;</span></span>
+                  <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;wsdl:documentation&gt;</span>Version 1.0<span class="tag">&lt;/wsdl:documentation&gt;</span>
+
+  <span class="tag">&lt;wsdl:types&gt;</span>
+    <span class="tag">&lt;xs:schema</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">xmlns:xs</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">targetNamespace</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">version</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">1.0</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">elementFormDefault</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">qualified</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">attributeFormDefault</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">unqualified</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodBye</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodByeResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;xs:element</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNightResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">xs:string</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/xs:schema&gt;</span>
+  <span class="tag">&lt;/wsdl:types&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:Hello</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodNight</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:message</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNightResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:part</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">parameters</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">element</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodNightResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/wsdl:message&gt;</span>
+
+  <span class="tag">&lt;wsdl:portType</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloPortType</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:Hello</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodBye</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodByeResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">goodnight</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodNight</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNightResponse</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">message</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:GoodNightResponse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+  <span class="tag">&lt;/wsdl:portType&gt;</span>
+
+  <span class="tag">&lt;wsdl:service</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloService</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;wsdl:port</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloServiceHTTP</span><span class="delimiter">&quot;</span></span>
+               <span class="attribute-name">binding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:HelloServiceHTTPBinding</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;soap:address</span> <span class="attribute-name">location</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8080/services/ws/HelloService/v1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/wsdl:port&gt;</span>
+  <span class="tag">&lt;/wsdl:service&gt;</span>
+
+  <span class="tag">&lt;wsdl:binding</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloServiceHTTPBinding</span><span class="delimiter">&quot;</span></span>
+                <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">tns:HelloPortType</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;soap:binding</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">document</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">transport</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schemas.xmlsoap.org/soap/http</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;soap:operation</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">document</span><span class="delimiter">&quot;</span></span>
+                      <span class="attribute-name">soapAction</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:input&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:output&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;soap:operation</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">document</span><span class="delimiter">&quot;</span></span>
+                      <span class="attribute-name">soapAction</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:input&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:output&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+    <span class="tag">&lt;wsdl:operation</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">goodnight</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+      <span class="tag">&lt;soap:operation</span> <span class="attribute-name">style</span>=<span class="string"><span class="delimiter">&quot;</span><span class="key">document</span><span class="delimiter">&quot;</span></span>
+                      <span class="attribute-name">soapAction</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;wsdl:input</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNight</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:input&gt;</span>
+      <span class="tag">&lt;wsdl:output</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">GoodNightResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;soap:body</span> <span class="attribute-name">use</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">literal</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;/wsdl:output&gt;</span>
+    <span class="tag">&lt;/wsdl:operation&gt;</span>
+  <span class="tag">&lt;/wsdl:binding&gt;</span>
+
+<span class="tag">&lt;/wsdl:definitions&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The WSDL above defines a <strong>hello</strong> operation with <strong>Hello</strong> as input and <strong>HelloResponse</strong> as output. The SOAP action is defined as <strong>Hello</strong>.</p>
+</div>
+<div class="paragraph">
+<p>The generated scenario for this operation verifies that the request is a valid <strong>Hello</strong> request according to the XSD schema definition in the WSDL. Also the scenario verifies the basic XML structure of that message.</p>
+</div>
+<div class="paragraph">
+<p>Only in case these verification steps are performed successfully the simulator scenario generates a proper response <strong>HelloResponse</strong>. The generated scenario is able to create dynamic values in the response according to the XSD schema in the WSDL. We will cover this feature in
+more detail on later in this chapter.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a look at the communication that the generated scenario is going to perform:</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>&lt;SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+    &lt;SOAP-ENV:Header/&gt;
+    &lt;SOAP-ENV:Body&gt;
+        &lt;Hello xmlns="http://citrusframework.org/schemas/hello"&gt;Say Hello!&lt;/Hello&gt;
+    &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>&lt;SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+    &lt;SOAP-ENV:Header/&gt;
+    &lt;SOAP-ENV:Body&gt;
+        &lt;HelloResponse xmlns="http://citrusframework.org/schemas/hello"&gt;GL29HT&lt;/hel:HelloResponse&gt;
+    &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>Hello</strong> SOAP request matches all verification steps on the simulator for this operation. Following from that we receive a generated <strong>HelloResponse</strong> response message with some sample data. The simulator
+is able to generate dynamic values such as <strong>GL29HT</strong> which is according to the WSDL schema rules a string value.</p>
+</div>
+<div class="paragraph">
+<p>This is how we always get a proper generated response from the simulator API. The <strong>HelloService</strong> WSDL specification defines the returned objects and how to validate the incoming requests.</p>
+</div>
+<div class="paragraph">
+<p>Just in case we sent an invalid request to the simulator we do not get a proper response. For instance if we sent a wrong SOAP action we receive following fault response:</p>
+</div>
+<div class="listingblock">
+<div class="title">Fault response</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>&lt;SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+    &lt;SOAP-ENV:Header/&gt;
+    &lt;SOAP-ENV:Body&gt;
+        &lt;SOAP-ENV:Fault&gt;
+            &lt;faultcode xmlns:HELLO="http://localhost:8080/HelloService/v1"&gt;HELLO:ERROR-1001&lt;/faultcode&gt;
+            &lt;faultstring xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en"&gt;Internal server error&lt;/faultstring&gt;
+            &lt;faultactor&gt;SERVER&lt;/faultactor&gt;
+        &lt;/SOAP-ENV:Fault&gt;
+    &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As a result we get a SOAP fault message with fault code <strong>ERROR-1001</strong> and message <strong>"Internal server error"</strong> as defined in the fallback endpoint adapter.
+You will also see the failed scenario activity with proper error message in the user interface then.</p>
+</div>
+<div class="sect3">
+<h4 id="wsdl-system-properties"><a class="anchor" href="#wsdl-system-properties"></a>5.5.1. WSDL system properties</h4>
+<div class="paragraph">
+<p>The simulator WSDL auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean <code>WsdlScenarioGenerator</code> in your
+simulator configuration you could just set the following properties on the simulator application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties"># Enable SOAP web service support
+citrus.simulator.ws.wsdl.enabled=true
+citrus.simulator.ws.wsdl.location=classpath:xsd/Hello.wsdl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Of course you can also use environment variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">CITRUS_SIMULATOR_WS_WSDL_ENABLED=true
+CITRUS_SIMULATOR_WS_WSDL_LOCATION=classpath:xsd/Hello.wsdl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We just add the WSDL location and everything else is auto configuration done in the simulator application.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="data-dictionaries-2"><a class="anchor" href="#data-dictionaries-2"></a>5.5.2. Data dictionaries</h4>
+<div class="paragraph">
+<p>The auto generated WSDL scenarios make us of so called data dictionaries in order to create dynamic values both in request and response messages. The data dictionaries
+are a well known Citrus functionality that enable us to centralize data manipulation via XPath expressions for example. Each XML message construction will consult the data dictionary
+for some translation of elements and attributes.</p>
+</div>
+<div class="paragraph">
+<p>The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot <code>application.properties</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.inbound.xml.dictionary.enabled=true
+citrus.simulator.outbound.xml.dictionary.enabled=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These property settings automatically activate the data dictionaries and you will get random numbers and strings in all generated WSDL messages. For incoming requests the dictionary makes sure
+that elements and attributes are ignored in validation by default. This is a good idea as we can not know all data that is sent to the simulator.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately you have the possibility to define mapping files that map XPath expression evaluation with pre defined values in the dictionary:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">citrus.simulator.inbound.xml.dictionary.enabled=true
+citrus.simulator.inboundXmlDictionary=classpath:dictionary/inbound_mappings.xml
+citrus.simulator.outbound.xml.dictionary.enabled=true
+citrus.simulator.outboundXmlDictionary=classpath:dictionary/outbound_mappings.xml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="doctype">&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;</span>
+<span class="tag">&lt;properties&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:Hello</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Say Hello!<span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:GoodBye</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Say GoodBye!<span class="tag">&lt;/entry&gt;</span>
+<span class="tag">&lt;/properties&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The inbound mapping file defines two XPath expressions that should set predefined values before incoming request are validated. So in this case we set <code>Say Hello!</code> as string element value
+to the element <code>&lt;Hello&gt;</code> in the request. When dealing with XML and XPath we need to take care on proper namespace handling. In the XPath expression above we make use of the namespace prefix <code>sim:</code>. This prefix resoves to a
+proper namespace in the WSDL schema for <code>Hello</code> messages and is defined in a global namespace context within the Spring application.</p>
+</div>
+<div class="paragraph">
+<p>You can add that namespace context as Spring bean for instance.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Bean</span>
+<span class="directive">public</span> NamespaceContextBuilder namespaceContextBuilder() {
+    NamespaceContextBuilder namespaceContextBuilder = <span class="keyword">new</span> NamespaceContextBuilder();
+    namespaceContextBuilder.getNamespaceMappings().put(<span class="string"><span class="delimiter">&quot;</span><span class="content">sim</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://citrusframework.org/schemas/hello</span><span class="delimiter">&quot;</span></span>);
+
+    <span class="keyword">return</span> namespaceContextBuilder;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After that we are able to use the global <code>sim</code> namespace prefix in all XPath expressions. The XPath expression evaluation will take care on proper namespace handling then.</p>
+</div>
+<div class="paragraph">
+<p>Of course we can also add outbound bindings for creating special response element values.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="doctype">&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;</span>
+<span class="tag">&lt;properties&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Hello!<span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>GoodBye!<span class="tag">&lt;/entry&gt;</span>
+<span class="tag">&lt;/properties&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now the auto generated response for <code>HelloResponse</code> messages will always use <code>Hello!</code> as value. in combination with Citrus functions we are able to define more complex response element values in auto generated messages.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="doctype">&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;</span>
+<span class="tag">&lt;properties&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:HelloResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>citrus:randomString(10)<span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">//sim:GoodByeResponse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>citrus:randomEnumValue('GoodBye!', 'SeeYaLater!', 'ByeBye!')<span class="tag">&lt;/entry&gt;</span>
+<span class="tag">&lt;/properties&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2366,19 +2982,18 @@ message details for you. So we can decide wheather to provide a success response
 <div class="sectionbody">
 <div class="paragraph">
 <p>The simulator is able to receive messages from message brokers using the <strong>Java Message Service</strong> API (JMS). As a consumer the simulator constantly polls JMS destinations (queue or topic)
-for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages. The simulator defines a special
-JMS enabling annotation that we can use on the application class:</p>
+for incoming request messages. When the queue is of synchronous nature the simulator is able to send synchronous response messages.</p>
+</div>
+<div class="paragraph">
+<p>The generic jms support is activated by setting the property <strong>citrus.simulator.jms.enabled=true</strong>. You can do so in the basic <code>application.properties</code>
+file or via system property or environment variable setting.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -2387,7 +3002,7 @@ JMS enabling annotation that we can use on the application class:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableJmsSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>citrus.simulator.jms.enabled</strong> property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application.</p>
 </div>
 <div class="paragraph">
@@ -2499,15 +3114,11 @@ and listen for incoming requests on that queue <strong>JMS.Queue.simulator.inbou
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorJmsAdapter</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.jms.SimulatorJmsAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorJmsAdapter {
 
     <span class="annotation">@Override</span>
@@ -2539,14 +3150,10 @@ destination if any is specified.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -2645,15 +3252,11 @@ provided to the waiting producer on the reply destination.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableJmsSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorJmsAdapter</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.jms.SimulatorJmsAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableJmsSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorJmsAdapter {
 
     <span class="annotation">@Override</span>
@@ -2692,18 +3295,15 @@ Now the simulator is also able to handle other message transports such as mail c
 simulator is able to deal with any kind of endpoint component that is supported in Citrus framework.</p>
 </div>
 <div class="paragraph">
-<p>The generic endpoint support is added with <strong>@EnableEndpointSimulation</strong> annotation.</p>
+<p>The generic endpoint support is activated by setting the property <strong>citrus.simulator.endpoint.enabled=true</strong>. You can do so in the basic <code>application.properties</code>
+file or via system property or environment variable setting.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
-<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableEndpointSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -2712,7 +3312,7 @@ simulator is able to deal with any kind of endpoint component that is supported 
 </div>
 </div>
 <div class="paragraph">
-<p>The <strong>@EnableEndpointSimulation</strong> annotation performs some auto configuration steps and loads required beans for the Spring application context
+<p>The <strong>citrus.simulator.endpoint.enabled</strong> property performs some auto configuration steps and loads required beans for the Spring application context
 in the Spring boot application. Once we use that feature we can have any Citrus endpoint component as inbound source for simulator scenarios. This means
 we can have a mail server or a RMI server that is simulated with proper response messages.</p>
 </div>
@@ -2750,15 +3350,11 @@ add automatic SOAP envelope support.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.EnableEndpointSimulation</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorEndpointComponentAdapter</span>;
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.annotation.SimulatorApplication</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.endpoint.SimulatorEndpointComponentAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@SimulatorApplication</span>
-<span class="annotation">@EnableEndpointSimulation</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorEndpointComponentAdapter {
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
@@ -3205,7 +3801,7 @@ sample projects with complete code available on <a href="https://github.com/chri
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0-SNAPSHOT<br>
+Version 1.0.0<br>
 Last updated 2017-09-12 09:44:23 MESZ
 </div>
 </div>
