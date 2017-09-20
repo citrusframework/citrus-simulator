@@ -8,7 +8,7 @@
     <groupId>com.consol.citrus.archetypes</groupId>
     <artifactId>citrus-simulator-archetypes</artifactId>
     <version>1.0.0</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>citrus-simulator-archetype-swagger</artifactId>
