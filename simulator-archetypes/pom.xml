@@ -18,10 +18,11 @@
 
   <modules>
     <module>archetype-rest</module>
+    <module>archetype-swagger</module>
     <module>archetype-ws</module>
+    <module>archetype-wsdl</module>
     <module>archetype-jms</module>
     <module>archetype-mail</module>
-    <module>archetype-swagger</module>
   </modules>
 
 </project>

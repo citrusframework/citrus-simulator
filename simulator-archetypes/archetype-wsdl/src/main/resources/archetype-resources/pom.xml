@@ -7,7 +7,7 @@
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
-  <name>Citrus SOAP Simulator</name>
+  <name>Citrus WSDL auto generated SOAP simulator</name>
   <packaging>war</packaging>
 
   <properties>
