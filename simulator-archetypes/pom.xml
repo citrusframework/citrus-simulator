@@ -11,8 +11,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <groupId>com.consol.citrus.archetypes</groupId>
   <artifactId>citrus-simulator-archetypes</artifactId>
   <name>${project.artifactId}</name>
+  <description>Simulator Maven Archetypes</description>
 
   <packaging>pom</packaging>
 
