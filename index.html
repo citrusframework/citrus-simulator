@@ -847,11 +847,12 @@ as a web archive representing the the latest simulator distribution.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>You can now build and run the simulator with Maven from a command line. Use following command:</p>
+<p>You can now build and run the simulator with Maven from a command line. Use following commands:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="bash">mvn clean install
+
 mvn spring-boot:run</code></pre>
 </div>
 </div>
@@ -870,7 +871,12 @@ you can open your browser and point to <a href="http://localhost:8080">http://lo
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn archetype:generate -DarchetypeGroupId=com.consol.citrus.archetypes -DarchetypeArtifactId=citrus-simulator-archetypes-rest</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">mvn archetype:generate -B -DarchetypeGroupId=com.consol.citrus.archetypes \
+                            -DarchetypeArtifactId=citrus-simulator-archetype-rest \
+                            -DarchetypeVersion=${citrus.simulator.version} \
+                            -DgroupId=com.consol.citrus.simulator \
+                            -DartifactId=citrus-simulator-rest \
+                            -Dversion=1.0.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -885,7 +891,7 @@ you get a new Maven project that is ready to use. The project is created in a ne
 <table>
 <tr>
 <td class="hdlist1">
-citrus-simulator-archetypes-rest
+citrus-simulator-archetype-rest
 </td>
 <td class="hdlist2">
 <p>Http REST simulator sample</p>
@@ -893,7 +899,7 @@ citrus-simulator-archetypes-rest
 </tr>
 <tr>
 <td class="hdlist1">
-citrus-simulator-archetypes-ws
+citrus-simulator-archetype-ws
 </td>
 <td class="hdlist2">
 <p>SOAP web service simulator sample</p>
@@ -901,10 +907,34 @@ citrus-simulator-archetypes-ws
 </tr>
 <tr>
 <td class="hdlist1">
-citrus-simulator-archetypes-jms
+citrus-simulator-archetype-jms
 </td>
 <td class="hdlist2">
-<p>JMS simulator sample (TODO)</p>
+<p>JMS simulator sample</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetype-mail
+</td>
+<td class="hdlist2">
+<p>Mail simulator sample</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetype-swagger
+</td>
+<td class="hdlist2">
+<p>Auto generate simulator from Swagger Open API specification (<em>experimental</em>)</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+citrus-simulator-archetype-wsdl
+</td>
+<td class="hdlist2">
+<p>Auto generate simulator from SOAP WSDL specification (<em>experimental</em>)</p>
 </td>
 </tr>
 </table>
