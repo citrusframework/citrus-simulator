@@ -1,0 +1,16 @@
+{
+  "id": "@isNumber()@",
+  "name": "@notEmpty()@",
+  "photoUrls": "@ignore@",
+  "category": {
+    "id": "@isNumber()@",
+    "name": "@notEmpty()@"
+  },
+  "tags": [
+    {
+      "id": "@isNumber()@",
+      "name": "@notEmpty()@"
+    }
+  ],
+  "status": "@matches(available|pending|sold)@"
+}

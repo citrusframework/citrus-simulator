@@ -4,15 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.consol.citrus</groupId>
-    <artifactId>citrus-simulator-samples</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+  <name>Archetype for Citrus Swagger auto generated REST simulator</name>
+  <packaging>war</packaging>
 
-  <artifactId>citrus-simulator-sample-swagger</artifactId>
-  <name>${project.artifactId}</name>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <citrus.simulator.version>1.0.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>1.5.6.RELEASE</spring.boot.version>
+    <testng.version>6.11</testng.version>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -40,15 +44,18 @@
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-starter</artifactId>
+      <version>${citrus.simulator.version}</version>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-simulator-ui</artifactId>
+      <version>${citrus.simulator.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -56,8 +63,19 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.20</version>
         <executions>
           <execution>
             <id>integration-tests</id>
@@ -68,10 +86,11 @@
           </execution>
         </executions>
       </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
@@ -80,10 +99,9 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
         <configuration>
           <fork>true</fork>
-          <wait>1000</wait>
-          <maxAttempts>180</maxAttempts>
         </configuration>
         <executions>
           <execution>

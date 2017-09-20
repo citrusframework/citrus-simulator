@@ -1,0 +1,19 @@
+{
+  "id": citrus:randomNumber(10),
+  "name": "${name}",
+  "photoUrls": [
+    "http://petstore.io/photos/${name}/1",
+    "http://petstore.io/photos/${name}/2"
+  ],
+  "category": {
+    "id": citrus:randomNumber(10),
+    "name": "${category}"
+  },
+  "tags": [
+    {
+      "id": citrus:randomNumber(10),
+      "name": "${tags}"
+    }
+  ],
+  "status": "${status}"
+}

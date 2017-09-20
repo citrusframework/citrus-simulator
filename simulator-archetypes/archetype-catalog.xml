@@ -29,5 +29,12 @@
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus mail simulator</description>
     </archetype>
+    <archetype>
+      <groupId>com.consol.citrus.archetypes</groupId>
+      <artifactId>citrus-simulator-archetype-swagger</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <repository>http://labs.consol.de/maven/repository/</repository>
+      <description>Archetype for Citrus Swagger auto generated REST simulator</description>
+    </archetype>
   </archetypes>
 </archetype-catalog>

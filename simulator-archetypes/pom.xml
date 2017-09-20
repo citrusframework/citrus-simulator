@@ -21,6 +21,7 @@
     <module>archetype-ws</module>
     <module>archetype-jms</module>
     <module>archetype-mail</module>
+    <module>archetype-swagger</module>
   </modules>
 
 </project>
