@@ -805,12 +805,11 @@ We are ready to build and run the simulator now.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
 
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
@@ -976,12 +975,11 @@ we are ready to build and run the simulator.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
 
-<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAdapter</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
 <span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
 
 <span class="annotation">@SpringBootApplication</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> {
 
     <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
         SpringApplication.run(Simulator.class, args);
