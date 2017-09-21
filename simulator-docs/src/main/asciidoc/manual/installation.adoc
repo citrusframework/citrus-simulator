@@ -4,8 +4,118 @@
 The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
 or as container/pod in Docker, Kubernetes or Openshift.
 
+You can use any build system you like when building the simulator application. Here we show how to setup everything using link:http://gradle.org/[Gradle] and link:https://maven.apache.org/[Maven].
+
+[[gradle]]
+== Build with Gradle
+
+Gradle uses groovy build scripts that we have to add first when starting a new simulator project.
+
+[source,groovy]
+----
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    group = "com.consol.citrus.simulator"
+    baseName = 'citrus-simulator-sample'
+    version =  '1.0.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("com.consol.citrus:citrus-simulator-starter:1.0.0")
+    testCompile("junit:junit")
+}
+----
+
+The above build script will setup the Spring Boot dependencies for you. In addition to that we add the basic `citrus-simulator-starter` dependency. That's it for the Gradle build.
+We are ready to build and run the simulator now.
+
+Before we do that let's add a basic Spring Boot main class to our project.
+
+.src/main/java/com/consol/citrus/simulator/Simulator.java
+[source,java]
+----
+package com.consol.citrus.simulator;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Simulator {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+----
+
+Also we add an default scenario that is executed for incoming requests.
+
+.DefaultScenario.java
+[source,java]
+----
+package com.consol.citrus.simulator;
+
+import com.consol.citrus.http.message.HttpMessage;
+import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
+
+@Scenario("DEFAULT_SCENARIO")
+public class DefaultScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner designer) {
+        designer.echo("Default scenario executed!");
+
+        designer.send()
+                .message(new HttpMessage("Welcome to the Citrus simulator")
+                .status(HttpStatus.OK));
+    }
+}
+----
+
+The default scenario responds with `Http 200 OK`.
+
+You can now build and run the simulator application with:
+
+.Gradle build
+[source,bash]
+----
+./gradlew build bootRun
+----
+
+You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+you can open your browser and point to link:http://localhost:8080[http://localhost:8080]. You will see the very basic simulator user interface. For a more detailed user interface please
+follow link:#user-interface[chapter user-interface].
+
+The REST default scenario that we have added is accessible using link:http://localhost:8080/services/rest/[http://localhost:8080/services/rest/]. You will see the default output `Welcome to the Citrus simulator`
+coming from default scenario execution.
+
+That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
+
 [[maven]]
-== Maven
+== Build with Maven
 
 You can use the simulator in your Maven project. Maven will automatically download all required dependencies and project artifacts for you. The simulator is then executable
 as a web archive representing the the latest simulator distribution.
@@ -30,7 +140,6 @@ See the following sample Maven project POM file that defines the project sources
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <citrus.simulator.version>1.0.0</citrus.simulator.version>
     <spring.boot.version>1.5.6.RELEASE</spring.boot.version>
-    <testng.version>6.11</testng.version>
   </properties>
 
   <dependencyManagement>
@@ -99,22 +208,74 @@ See the following sample Maven project POM file that defines the project sources
 </project>
 ----
 
+The above Maven pom file will setup the Spring Boot dependencies for you. In addition to that we add the basic `citrus-simulator-starter` dependency. We are now finished with the build setup and
+we are ready to build and run the simulator.
+
+Before we do that let's add a basic Spring Boot main class to our project.
+
+.src/main/java/com/consol/citrus/simulator/Simulator.java
+[source,java]
+----
+package com.consol.citrus.simulator;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Simulator {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}
+----
+
+Also we add an default scenario that is executed for incoming requests.
+
+.DefaultScenario.java
+[source,java]
+----
+package com.consol.citrus.simulator;
+
+import com.consol.citrus.http.message.HttpMessage;
+import com.consol.citrus.simulator.scenario.*;
+import org.springframework.http.HttpStatus;
+
+@Scenario("DEFAULT_SCENARIO")
+public class DefaultScenario extends AbstractSimulatorScenario {
+
+    @Override
+    public void run(ScenarioDesigner designer) {
+        designer.echo("Default scenario executed!");
+
+        designer.send()
+                .message(new HttpMessage("Welcome to the Citrus simulator")
+                .status(HttpStatus.OK));
+    }
+}
+----
+
+The default scenario responds with `Http 200 OK`.
+
 You can now build and run the simulator with Maven from a command line. Use following commands:
 
+.Maven build
 [source,bash]
 ----
-mvn clean install
-
-mvn spring-boot:run
+mvn clean install spring-boot:run
 ----
 
 You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
-you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
+you can open your browser and point to link:http://localhost:8080[http://localhost:8080]. You will see the very basic simulator user interface. For a more detailed user interface please
+follow link:#user-interface[chapter user-interface].
+
+The REST default scenario that we have added is accessible using link:http://localhost:8080/services/rest/[http://localhost:8080/services/rest/]. You will see the default output `Welcome to the Citrus simulator`
+coming from default scenario execution.
 
 That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
 
 [[maven-archetype]]
-== Maven archetype
+== Maven archetypes
 
 The easiest way to get started with a new simulator project is to use a Maven archetype that creates a new project for you.
 
@@ -143,23 +304,12 @@ citrus-simulator-archetype-swagger:: Auto generate simulator from Swagger Open A
 citrus-simulator-archetype-wsdl:: Auto generate simulator from SOAP WSDL specification (_experimental_)
 
 [[development]]
-=== Development
+== Development
 
-You can directly build the new simulator project with
+Once the project build and sources are setup you can start to code some simulator scenarios. The project is a normal Java project that you can work with in your
+favorite Java IDE. Build tools like Maven and Gradle compile and package the simulator to an executable artifact. Usually this is a Spring boot web archive.
 
-[source,bash]
-----
-mvn install
-----
-
-This compiles, tests and packages the new simulator project on your local machine. Now we can run the simulator:
-
-[source,bash]
-----
-mvn spring-boot:run
-----
-
-You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+The simulator web application should start within seconds. Once the application is up and running on your local machine
 you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
 
 Now everything is set up and you can start to create some simulator scenarios. 
