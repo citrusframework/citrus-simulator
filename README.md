@@ -233,6 +233,28 @@ coming from default scenario execution.
 
 That's it you are ready to use the Citrus simulator now.
 
+User interface
+---------
+
+The simulator application is started as a Spring boot web application. If you open your browser and point to the running simulator instance at `http://localhost:8080`
+you will see a user interface that displays information about the simulator.
+
+![default-ui.png](simulator-docs/src/main/asciidoc/images/dashboard.png)
+
+The simulator dashboard gives you a quick overview of the numbers and facts on your simulator project. Users can then access an administrative web user interface in order to 
+review the simulator status and list all executed scenarios and their outcome. The simulator Angular2 user interface comes as dependency that is added to the simulator project. 
+In Maven we simply add the following dependency:
+
+```xml
+<dependency>
+  <groupId>com.consol.citrus</groupId>
+  <artifactId>citrus-simulator-ui</artifactId>
+  <version>${citrus.simulator.version}</version>
+</dependency>
+```
+
+To understand the full capabilities of the UI please read the [chapter user-interface](https://christophd.github.io/citrus-simulator#user-interface) in reference manual.
+
 Features
 ---------
 
