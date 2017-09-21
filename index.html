@@ -529,7 +529,7 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author2" class="author">Martin Maher</span><br>
 <span id="author3" class="author">Georgi Todorov</span><br>
 <span id="revnumber">version 1.0.0,</span>
-<span id="revdate">2017-09-20</span>
+<span id="revdate">2017-09-21</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">citrus-simulator</div>
@@ -547,12 +547,10 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#installation">2. Installation</a>
 <ul class="sectlevel2">
-<li><a href="#maven">2.1. Maven</a></li>
-<li><a href="#maven-archetype">2.2. Maven archetype</a>
-<ul class="sectlevel3">
-<li><a href="#development">2.2.1. Development</a></li>
-</ul>
-</li>
+<li><a href="#gradle">2.1. Build with Gradle</a></li>
+<li><a href="#maven">2.2. Build with Maven</a></li>
+<li><a href="#maven-archetype">2.3. Maven archetypes</a></li>
+<li><a href="#development">2.4. Development</a></li>
 </ul>
 </li>
 <li><a href="#concepts">3. Concepts</a>
@@ -750,8 +748,129 @@ on these two browsers. Of course other browsers might work without any limitatio
 <p>The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
 or as container/pod in Docker, Kubernetes or Openshift.</p>
 </div>
+<div class="paragraph">
+<p>You can use any build system you like when building the simulator application. Here we show how to setup everything using <a href="http://gradle.org/">Gradle</a> and <a href="https://maven.apache.org/">Maven</a>.</p>
+</div>
 <div class="sect2">
-<h3 id="maven"><a class="anchor" href="#maven"></a>2.1. Maven</h3>
+<h3 id="gradle"><a class="anchor" href="#gradle"></a>2.1. Build with Gradle</h3>
+<div class="paragraph">
+<p>Gradle uses groovy build scripts that we have to add first when starting a new simulator project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(<span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE</span><span class="delimiter">&quot;</span></span>)
+    }
+}
+
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">java</span><span class="delimiter">'</span></span>
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">eclipse</span><span class="delimiter">'</span></span>
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">idea</span><span class="delimiter">'</span></span>
+apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot</span><span class="delimiter">'</span></span>
+
+jar {
+    group = <span class="string"><span class="delimiter">&quot;</span><span class="content">com.consol.citrus.simulator</span><span class="delimiter">&quot;</span></span>
+    baseName = <span class="string"><span class="delimiter">'</span><span class="content">citrus-simulator-sample</span><span class="delimiter">'</span></span>
+    version =  <span class="string"><span class="delimiter">'</span><span class="content">1.0.0</span><span class="delimiter">'</span></span>
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = <span class="float">1.8</span>
+targetCompatibility = <span class="float">1.8</span>
+
+dependencies {
+    compile(<span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-starter</span><span class="delimiter">&quot;</span></span>)
+    compile(<span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-starter-web</span><span class="delimiter">&quot;</span></span>)
+    compile(<span class="string"><span class="delimiter">&quot;</span><span class="content">com.consol.citrus:citrus-simulator-starter:1.0.0</span><span class="delimiter">&quot;</span></span>)
+    testCompile(<span class="string"><span class="delimiter">&quot;</span><span class="content">junit:junit</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above build script will setup the Spring Boot dependencies for you. In addition to that we add the basic <code>citrus-simulator-starter</code> dependency. That&#8217;s it for the Gradle build.
+We are ready to build and run the simulator now.</p>
+</div>
+<div class="paragraph">
+<p>Before we do that let&#8217;s add a basic Spring Boot main class to our project.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/com/consol/citrus/simulator/Simulator.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
+
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAdapter</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+
+<span class="annotation">@SpringBootApplication</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also we add an default scenario that is executed for incoming requests.</p>
+</div>
+<div class="listingblock">
+<div class="title">DefaultScenario.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
+
+<span class="keyword">import</span> <span class="include">com.consol.citrus.http.message.HttpMessage</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.scenario</span>.*;
+<span class="keyword">import</span> <span class="include">org.springframework.http.HttpStatus</span>;
+
+<span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">DEFAULT_SCENARIO</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">DefaultScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner designer) {
+        designer.echo(<span class="string"><span class="delimiter">&quot;</span><span class="content">Default scenario executed!</span><span class="delimiter">&quot;</span></span>);
+
+        designer.send()
+                .message(<span class="keyword">new</span> HttpMessage(<span class="string"><span class="delimiter">&quot;</span><span class="content">Welcome to the Citrus simulator</span><span class="delimiter">&quot;</span></span>)
+                .status(HttpStatus.OK));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The default scenario responds with <code>Http 200 OK</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can now build and run the simulator application with:</p>
+</div>
+<div class="listingblock">
+<div class="title">Gradle build</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew build bootRun</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+you can open your browser and point to <a href="http://localhost:8080">http://localhost:8080</a>. You will see the very basic simulator user interface. For a more detailed user interface please
+follow <a href="#user-interface">chapter user-interface</a>.</p>
+</div>
+<div class="paragraph">
+<p>The REST default scenario that we have added is accessible using <a href="http://localhost:8080/services/rest/">http://localhost:8080/services/rest/</a>. You will see the default output <code>Welcome to the Citrus simulator</code>
+coming from default scenario execution.</p>
+</div>
+<div class="paragraph">
+<p>That&#8217;s it you are ready to use the Citrus simulator now. Next thing would be to understand the <a href="#concepts">concepts</a> and create some <a href="#scenarios">simulator scenarios</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="maven"><a class="anchor" href="#maven"></a>2.2. Build with Maven</h3>
 <div class="paragraph">
 <p>You can use the simulator in your Maven project. Maven will automatically download all required dependencies and project artifacts for you. The simulator is then executable
 as a web archive representing the the latest simulator distribution.</p>
@@ -777,7 +896,6 @@ as a web archive representing the the latest simulator distribution.</p>
     <span class="tag">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.reporting.outputEncoding&gt;</span>
     <span class="tag">&lt;citrus.simulator.version&gt;</span>1.0.0<span class="tag">&lt;/citrus.simulator.version&gt;</span>
     <span class="tag">&lt;spring.boot.version&gt;</span>1.5.6.RELEASE<span class="tag">&lt;/spring.boot.version&gt;</span>
-    <span class="tag">&lt;testng.version&gt;</span>6.11<span class="tag">&lt;/testng.version&gt;</span>
   <span class="tag">&lt;/properties&gt;</span>
 
   <span class="tag">&lt;dependencyManagement&gt;</span>
@@ -847,25 +965,83 @@ as a web archive representing the the latest simulator distribution.</p>
 </div>
 </div>
 <div class="paragraph">
+<p>The above Maven pom file will setup the Spring Boot dependencies for you. In addition to that we add the basic <code>citrus-simulator-starter</code> dependency. We are now finished with the build setup and
+we are ready to build and run the simulator.</p>
+</div>
+<div class="paragraph">
+<p>Before we do that let&#8217;s add a basic Spring Boot main class to our project.</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/java/com/consol/citrus/simulator/Simulator.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
+
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.http.SimulatorRestAdapter</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.SpringApplication</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.autoconfigure.SpringBootApplication</span>;
+
+<span class="annotation">@SpringBootApplication</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Simulator</span> <span class="directive">extends</span> SimulatorRestAdapter {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+        SpringApplication.run(Simulator.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also we add an default scenario that is executed for incoming requests.</p>
+</div>
+<div class="listingblock">
+<div class="title">DefaultScenario.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.consol.citrus.simulator</span>;
+
+<span class="keyword">import</span> <span class="include">com.consol.citrus.http.message.HttpMessage</span>;
+<span class="keyword">import</span> <span class="include">com.consol.citrus.simulator.scenario</span>.*;
+<span class="keyword">import</span> <span class="include">org.springframework.http.HttpStatus</span>;
+
+<span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">DEFAULT_SCENARIO</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">DefaultScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> run(ScenarioDesigner designer) {
+        designer.echo(<span class="string"><span class="delimiter">&quot;</span><span class="content">Default scenario executed!</span><span class="delimiter">&quot;</span></span>);
+
+        designer.send()
+                .message(<span class="keyword">new</span> HttpMessage(<span class="string"><span class="delimiter">&quot;</span><span class="content">Welcome to the Citrus simulator</span><span class="delimiter">&quot;</span></span>)
+                .status(HttpStatus.OK));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The default scenario responds with <code>Http 200 OK</code>.</p>
+</div>
+<div class="paragraph">
 <p>You can now build and run the simulator with Maven from a command line. Use following commands:</p>
 </div>
 <div class="listingblock">
+<div class="title">Maven build</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn clean install
-
-mvn spring-boot:run</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">mvn clean install spring-boot:run</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
-you can open your browser and point to <a href="http://localhost:8080">http://localhost:8080</a>.</p>
+you can open your browser and point to <a href="http://localhost:8080">http://localhost:8080</a>. You will see the very basic simulator user interface. For a more detailed user interface please
+follow <a href="#user-interface">chapter user-interface</a>.</p>
+</div>
+<div class="paragraph">
+<p>The REST default scenario that we have added is accessible using <a href="http://localhost:8080/services/rest/">http://localhost:8080/services/rest/</a>. You will see the default output <code>Welcome to the Citrus simulator</code>
+coming from default scenario execution.</p>
 </div>
 <div class="paragraph">
 <p>That&#8217;s it you are ready to use the Citrus simulator now. Next thing would be to understand the <a href="#concepts">concepts</a> and create some <a href="#scenarios">simulator scenarios</a>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="maven-archetype"><a class="anchor" href="#maven-archetype"></a>2.2. Maven archetype</h3>
+<h3 id="maven-archetype"><a class="anchor" href="#maven-archetype"></a>2.3. Maven archetypes</h3>
 <div class="paragraph">
 <p>The easiest way to get started with a new simulator project is to use a Maven archetype that creates a new project for you.</p>
 </div>
@@ -939,26 +1115,15 @@ citrus-simulator-archetype-wsdl
 </tr>
 </table>
 </div>
-<div class="sect3">
-<h4 id="development"><a class="anchor" href="#development"></a>2.2.1. Development</h4>
+</div>
+<div class="sect2">
+<h3 id="development"><a class="anchor" href="#development"></a>2.4. Development</h3>
 <div class="paragraph">
-<p>You can directly build the new simulator project with</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn install</code></pre>
-</div>
+<p>Once the project build and sources are setup you can start to code some simulator scenarios. The project is a normal Java project that you can work with in your
+favorite Java IDE. Build tools like Maven and Gradle compile and package the simulator to an executable artifact. Usually this is a Spring boot web archive.</p>
 </div>
 <div class="paragraph">
-<p>This compiles, tests and packages the new simulator project on your local machine. Now we can run the simulator:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn spring-boot:run</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
+<p>The simulator web application should start within seconds. Once the application is up and running on your local machine
 you can open your browser and point to <a href="http://localhost:8080">http://localhost:8080</a>.</p>
 </div>
 <div class="paragraph">
@@ -966,7 +1131,6 @@ you can open your browser and point to <a href="http://localhost:8080">http://lo
 </div>
 <div class="paragraph">
 <p>That&#8217;s it you are ready to use the Citrus simulator.</p>
-</div>
 </div>
 </div>
 </div>
