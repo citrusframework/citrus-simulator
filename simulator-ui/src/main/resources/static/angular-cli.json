@@ -1,6 +1,6 @@
 {
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.1-SNAPSHOT",
     "name": "citrus-simulator-ui"
   },
   "apps": [
