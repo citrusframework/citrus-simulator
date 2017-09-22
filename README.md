@@ -319,7 +319,7 @@ mvn -pl simulator-samples/sample-rest spring-boot:run
 For active development and a short round trip you can use the angular-cli dev-server in order to automatically compile typescript sources on the fly when they change.
 
 ```
-mvn -pl citrus-admin-client package -Pdevelopment
+mvn -pl simulator-ui package -Pdevelopment
 ```
 
 If you change a source file (e.e *.js, *.ts, *.css) the sources will automatically be compiled and copied to the Maven target folder. The running
