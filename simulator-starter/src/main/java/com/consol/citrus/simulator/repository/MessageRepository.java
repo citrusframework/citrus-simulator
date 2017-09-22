@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,5 +30,7 @@ import java.util.List;
  */
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Long> {
-    List<Message> findByDateBetweenOrderByDateDesc(Date fromDate, Date toDate, Pageable pageable);
+    List<Message> findByDateBetweenAndDirectionIn(Date fromDate, Date toDate, Collection<Message.Direction> directions, Pageable pageable);
+
+    List<Message> findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(Date fromDate, Date toDate, Collection<Message.Direction> directions, String containingText, Pageable pageable);
 }

@@ -6,7 +6,8 @@
 </h1>
 
 <div class="input-group">
-    <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Content">
+    <input [(ngModel)]="messageFilter.containingText" (keyup.enter)="getMessages();" type="text" class="form-control"
+           placeholder="Filter By Content">
     <div class="input-group-btn">
         <button type="button" class="btn btn-primary btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
         <button type="button" class="btn btn-primary btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
@@ -15,18 +16,18 @@
 
 <div class="navigation space-top-30">
     <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" style="min-width: 4em;">{{pageSize}}</button>
+        <button type="button" class="btn btn-default" style="min-width: 4em;">{{messageFilter.pageSize}}</button>
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
         <ul class="dropdown-menu">
             <li><a name="page_size">Page size</a></li>
             <li role="separator" class="divider"></li>
-            <li><a name="page_size_10" (click)="pageSize = 10" class="clickable">10</a></li>
-            <li><a name="page_size_25" (click)="pageSize = 25" class="clickable">25</a></li>
-            <li><a name="page_size_50" (click)="pageSize = 50" class="clickable">50</a></li>
-            <li><a name="page_size_100" (click)="pageSize = 100" class="clickable">100</a></li>
-            <li><a name="page_size_250" (click)="pageSize = 250" class="clickable">250</a></li>
-            <li><a name="page_size_500" (click)="pageSize = 500" class="clickable">500</a></li>
-            <li><a name="page_size_1000" (click)="pageSize = 1000" class="clickable">1000</a></li>
+            <li><a name="page_size_10" (click)="changePageSize(10)" class="clickable">10</a></li>
+            <li><a name="page_size_25" (click)="changePageSize(25)" class="clickable">25</a></li>
+            <li><a name="page_size_50" (click)="changePageSize(50)" class="clickable">50</a></li>
+            <li><a name="page_size_100" (click)="changePageSize(100)" class="clickable">100</a></li>
+            <li><a name="page_size_250" (click)="changePageSize(250)" class="clickable">250</a></li>
+            <li><a name="page_size_500" (click)="changePageSize(500)" class="clickable">500</a></li>
+            <li><a name="page_size_1000" (click)="changePageSize(1000)" class="clickable">1000</a></li>
         </ul>
     </div>
 
@@ -37,7 +38,7 @@
                     <span aria-hidden="true"><i class="fa fa-caret-left"></i></span>
                 </a>
             </li>
-            <li><span><b>{{(page + 1)}}</b></span></li>
+            <li><span><b>{{(messageFilter.pageNumber + 1)}}</b></span></li>
             <li>
                 <a name="next-step" aria-label="Next" (click)="next()" class="clickable">
                     <span aria-hidden="true"><i class="fa fa-caret-right"></i> </span>
@@ -48,5 +49,5 @@
 </div>
 
 <div class="table-responsive">
-    <message-list [messages]="messages | messageFilter : inputValue : includeInbound : includeOutbound"></message-list>
+    <message-list [messages]="messages"></message-list>
 </div>

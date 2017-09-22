@@ -22,7 +22,6 @@ import {ExecutionStatusPipe} from "./pipes/execution-status-pipe";
 import {TruncatePipe} from "./pipes/truncate-pipe";
 import {ScenarioNamePipe} from "./pipes/scenario-name-pipe";
 import {ActivityFilterPipe} from "./pipes/activity-filter-pipe";
-import {MessageFilterPipe} from "./pipes/message-filter-pipe";
 
 @NgModule({
     imports: [
@@ -46,7 +45,6 @@ import {MessageFilterPipe} from "./pipes/message-filter-pipe";
         TruncatePipe,
         ScenarioNamePipe,
         ActivityFilterPipe,
-        MessageFilterPipe,
         routedComponents
     ],
     providers: [
