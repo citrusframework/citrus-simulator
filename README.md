@@ -300,6 +300,37 @@ sample projects with complete code available in [simulator-samples](simulator-sa
 
 * Http REST and JMS combined: [simulator-samples/sample-combined](simulator-samples/sample-combined)
 
+
+Development
+---------
+
+After forking/cloning the source code repository from [https://github.com/christophd/citrus-simulator](https://github.com/christophd/citrus-simulator) you can build the application locally with Maven:
+
+```
+mvn clean install
+```
+
+You can start any of the sample simulator projects using maven: 
+
+```
+mvn -pl simulator-samples/sample-rest spring-boot:run 
+```
+
+For active development and a short round trip you can use the angular-cli dev-server in order to automatically compile typescript sources on the fly when they change.
+
+```
+mvn -pl citrus-admin-client package -Pdevelopment
+```
+
+If you change a source file (e.e *.js, *.ts, *.css) the sources will automatically be compiled and copied to the Maven target folder. The running
+spring-boot application is able to automatically grab the newly compiled sources. Just go to the browser and hit refresh to see the changes.
+If you change server Java sources spring-boot automatically restarts the web application so you may just hit refresh in your browser, too.
+
+The development server is running on its own port 4200 ([http://localhost:4200](http://localhost:4200)). To avoid cors issues an api proxy to the backend is provided out of the box. 
+You can configure the proxy settings in [proxy.conf.json](citrus-admin-client/src/main/resources/static/proxy.conf.json). 
+
+Make sure to start one of the sample projects so that you have a server running that the UI can connect to.
+
 Information
 ---------
 
