@@ -16,6 +16,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <citrus.version>2.7.2</citrus.version>
     <spring.version>4.3.9.RELEASE</spring.version>
     <spring.ws.version>2.4.0.RELEASE</spring.ws.version>
@@ -23,6 +24,8 @@
     <slf4j.version>1.7.25</slf4j.version>
     <logback.classic.version>1.1.11</logback.classic.version>
     <testng.version>6.11</testng.version>
+    <lombok.version>1.16.18</lombok.version>
+
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
     <node.version>v7.7.4</node.version>
@@ -208,6 +211,13 @@
         <version>1.0.32</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -256,6 +266,10 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -268,6 +282,13 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>1.8</source>
             <target>1.8</target>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>

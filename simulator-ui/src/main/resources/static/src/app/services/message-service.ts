@@ -1,8 +1,9 @@
 import {Injectable} from "@angular/core";
-import {Http, Response} from "@angular/http";
+import {Headers, Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/Rx';
 import {Message} from "../model/scenario";
+import {MessageFilter} from "../model/filter";
 
 @Injectable()
 export class MessageService {
@@ -12,8 +13,9 @@ export class MessageService {
 
     private serviceUrl = 'api/message';
 
-    getMessages(page: number, pageSize: number): Observable<Message[]> {
-        return this.http.get(this.serviceUrl + "?page=" + page + "&size=" + pageSize)
+    getMessages(filter: MessageFilter): Observable<Message[]> {
+        let headers = new Headers({'Content-Type': 'application/json'});
+        return this.http.post(this.serviceUrl, JSON.stringify(filter), {headers: headers})
             .map(this.extractMessageData)
             .catch(this.handleError);
     }
@@ -30,7 +32,7 @@ export class MessageService {
     }
 
     private extractMessageData(res: Response) {
-        var messages = <Message[]> res.json();
+        let messages = <Message[]> res.json();
         if (messages) {
             return messages;
         }

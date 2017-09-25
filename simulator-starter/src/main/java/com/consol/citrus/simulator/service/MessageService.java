@@ -17,18 +17,20 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.MessageFilter;
 import com.consol.citrus.simulator.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service for persisting and retrieving {@link Message} data.
@@ -38,11 +40,15 @@ import java.util.List;
 public class MessageService {
 
     @Autowired
-    MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+
+    public MessageService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     public Message saveMessage(Message.Direction direction, String payload) {
         Message message = new Message();
-        message.setDate(getTimeNow());
+        message.setDate(now());
         message.setDirection(direction);
         message.setPayload(payload);
         return messageRepository.save(message);
@@ -52,36 +58,55 @@ public class MessageService {
         return messageRepository.findOne(id);
     }
 
-    public List<Message> getMessagesByDateBetween(Date fromDate, Date toDate, Integer page, Integer size) {
-        Date calcFromDate = fromDate;
-        if (calcFromDate == null) {
-            calcFromDate = Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
-        }
-        Date calcToDate = toDate;
-        if (calcToDate == null) {
-            calcToDate = Date.from(LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
+    public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
+        Date calcFromDate = Optional.ofNullable(filter.getFromDate()).orElse(startOfDay());
+        Date calcToDate = Optional.ofNullable(filter.getFromDate()).orElse(endOfDay());
+        Integer calcPage = Optional.ofNullable(filter.getPageNumber()).orElse(0);
+        Integer calcSize = Optional.ofNullable(filter.getPageSize()).orElse(25);
+        boolean includeInbound = Optional.ofNullable(filter.getDirectionInbound()).orElse(true);
+        boolean includeOutbound = Optional.ofNullable(filter.getDirectionOutbound()).orElse(true);
+
+        Collection<Message.Direction> includeDirections = new TreeSet<>();
+
+        if (includeInbound) {
+            includeDirections.add(Message.Direction.INBOUND);
         }
 
-        Integer calcPage = page;
-        if (calcPage == null) {
-            calcPage = 0;
+        if (includeOutbound) {
+            includeDirections.add(Message.Direction.OUTBOUND);
         }
 
-        Integer calcSize = size;
-        if (calcSize == null) {
-            calcSize = 25;
-        }
+        Pageable pageable = new PageRequest(calcPage, calcSize, Sort.Direction.DESC, "date");
 
-        Pageable pageable = new PageRequest(calcPage, calcSize);
-        return messageRepository.findByDateBetweenOrderByDateDesc(calcFromDate, calcToDate, pageable);
+        if (StringUtils.hasLength(filter.getContainingText())) {
+            return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,
+                    calcToDate,
+                    includeDirections,
+                    filter.getContainingText(),
+                    pageable);
+        } else {
+            return messageRepository.findByDateBetweenAndDirectionIn(calcFromDate,
+                    calcToDate,
+                    includeDirections,
+                    pageable);
+        }
     }
 
     public void clearMessages() {
         messageRepository.deleteAll();
     }
 
-    private Date getTimeNow() {
+    private Date now() {
         return Date.from(LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant());
     }
+
+    private Date startOfDay() {
+        return Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+
+    private Date endOfDay() {
+        return Date.from(LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+
 
 }

@@ -17,12 +17,12 @@
 package com.consol.citrus.simulator.controller;
 
 import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.MessageFilter;
 import com.consol.citrus.simulator.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Date;
 
 @RestController
 @RequestMapping("api/message")
@@ -31,14 +31,9 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Collection<Message> getMessages(
-            @RequestParam(value = "fromDate", required = false) Date fromDate,
-            @RequestParam(value = "toDate", required = false) Date toDate,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size
-    ) {
-        return messageService.getMessagesByDateBetween(fromDate, toDate, page, size);
+    @RequestMapping(method = RequestMethod.POST)
+    public Collection<Message> getMessages(@RequestBody MessageFilter filter) {
+        return messageService.getMessagesMatchingFilter(filter);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
