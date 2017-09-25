@@ -35,20 +35,24 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     private static Logger log = LoggerFactory.getLogger(SimulatorWebServiceClientConfigurationProperties.class);
 
     /**
+     * System property constants and environment variable names. Post construct callback reads these values and overwrites
+     * settings in this property class in order to add support for environment variables.
+     */
+    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY = "citrus.simulator.ws.client.request.url";
+    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_ENV = "SIMULATOR_WS_CLIENT_REQUEST_URL";
+
+    /**
      * Global option to enable/disable SOAP web service client support, default is false.
      */
     private boolean enabled;
 
     /**
-     * This is where the SOAP client sends the requests to.
+     * SOAP server endpoint URL. This is where the SOAP client sends its requests to.
      */
-    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_PROPERTY = "citrus.simulator.ws.client.request.url";
-    private static final String SIMULATOR_WSCLIENT_REQUEST_URL_ENV = "SIMULATOR_WS_CLIENT_REQUEST_URL";
-
     private String requestUrl = "http://localhost:8080/services/ws/simulator";
 
     /**
-     * The Spring application context environment
+     * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
 

@@ -34,55 +34,80 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private static Logger log = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
 
     /**
+     * System property constants and environment variable names. Post construct callback reads these values and overwrites
+     * settings in this property class in order to add support for environment variables.
+     */
+    private static final String SIMULATOR_TEMPLATE_PATH_PROPERTY = "citrus.simulator.template.path";
+    private static final String SIMULATOR_TEMPLATE_PATH_ENV = "CITRUS_SIMULATOR_TEMPLATE_PATH";
+    private static final String SIMULATOR_SCENARIO_PROPERTY = "citrus.simulator.default.scenario";
+    private static final String SIMULATOR_SCENARIO_ENV = "CITRUS_SIMULATOR_DEFAULT_SCENARIO";
+    private static final String SIMULATOR_TIMEOUT_PROPERTY = "citrus.simulator.default.timeout";
+    private static final String SIMULATOR_TIMEOUT_ENV = "CITRUS_SIMULATOR_DEFAULT_TIMEOUT";
+    private static final String SIMULATOR_TEMPLATE_VALIDATION_PROPERTY = "citrus.simulator.template.validation";
+    private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
+    private static final String SIMULATOR_EXCEPTION_DELAY_PROPERTY = "citrus.simulator.exception.delay";
+    private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary";
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY";
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary";
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY";
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.inbound.json.dictionary";
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY";
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary";
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY";
+
+    /**
      * Global option to enable/disable simulator support, default is true.
      */
     private boolean enabled = true;
 
-    /** Template path */
-    private static final String SIMULATOR_TEMPLATE_PATH_PROPERTY = "citrus.simulator.template.path";
-    private static final String SIMULATOR_TEMPLATE_PATH_ENV = "CITRUS_SIMULATOR_TEMPLATE_PATH";
+    /**
+     * Template path relative to the project root. Used in scenario starters in order to load file content when configuring starter parameters
+     */
     private String templatePath = "com/consol/citrus/simulator/templates";
 
-    /** Default test scenario chosen in case of unknown scenario */
-    private static final String SIMULATOR_SCENARIO_PROPERTY = "citrus.simulator.default.scenario";
-    private static final String SIMULATOR_SCENARIO_ENV = "CITRUS_SIMULATOR_DEFAULT_SCENARIO";
+    /**
+     * Default test scenario name that applies in case no other scenario could be mapped within scenario mapper.
+     */
     private String defaultScenario = "DEFAULT_SCENARIO";
 
-    /** Default timeout when waiting for incoming messages */
-    private static final String SIMULATOR_TIMEOUT_PROPERTY = "citrus.simulator.default.timeout";
-    private static final String SIMULATOR_TIMEOUT_ENV = "CITRUS_SIMULATOR_DEFAULT_TIMEOUT";
+    /**
+     * Messaging timeout used as default wait time in all receiving actions within simulator.
+     */
     private Long defaultTimeout = 5000L;
 
-    /** Property that en-/disables template validation, default value is true */
-    private static final String SIMULATOR_TEMPLATE_VALIDATION_PROPERTY = "citrus.simulator.template.validation";
-    private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
+    /**
+     * Property that en-/disables template validation, default value is true. When enabled incoming requests are automatically verified according to syntax rules (e.g. XML XSD, WSDL)
+     */
     private boolean templateValidation = true;
 
-    /** Default delay in milliseconds to wait after uncategorized exceptions */
-    private static final String SIMULATOR_EXCEPTION_DELAY_PROPERTY = "citrus.simulator.exception.delay";
-    private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
+    /**
+     * Default delay in milliseconds to wait after uncategorized exceptions were thrown during inbound request polling. Used in {@link com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller}.
+     */
     private Long exceptionDelay = 5000L;
 
-    /** Optional inbound/outbound data dictionary mapping file for generated test data */
-    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary";
-    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY";
+    /**
+     * Optional inbound XML data dictionary mapping file which gets automatically loaded when default inbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
+     */
     private String inboundXmlDictionary = "inbound-xml-dictionary.xml";
 
-    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary";
-    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY";
+    /**
+     * Optional outbound XML data dictionary mapping file which gets automatically loaded when default outbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
+     */
     private String outboundXmlDictionary = "outbound-xml-dictionary.xml";
 
-    /** Optional inbound/outbound data dictionary mapping file for generated test data */
-    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.inbound.json.dictionary";
-    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY";
+    /**
+     * Optional inbound JSON data dictionary mapping file which gets automatically loaded when default inbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
+     */
     private String inboundJsonDictionary = "inbound-json-dictionary.properties";
 
-    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary";
-    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY";
+    /**
+     * Optional outbound JSON data dictionary mapping file which gets automatically loaded when default outbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
+     */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
     /**
-     * The Spring application context environment
+     * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
 

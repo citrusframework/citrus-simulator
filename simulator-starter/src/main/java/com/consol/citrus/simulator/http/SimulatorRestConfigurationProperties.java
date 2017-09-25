@@ -18,6 +18,13 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
     private static Logger log = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
 
     /**
+     * System property constants and environment variable names. Post construct callback reads these values and overwrites
+     * settings in this property class in order to add support for environment variables.
+     */
+    private static final String SIMULATOR_URL_MAPPING_PROPERTY = "citrus.simulator.rest.url.mapping";
+    private static final String SIMULATOR_URL_MAPPING_ENV = "CITRUS_SIMULATOR_REST_URL_MAPPING";
+
+    /**
      * Global option to enable/disable REST support, default is true.
      */
     private boolean enabled = true;
@@ -26,12 +33,10 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
      * The web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
      */
-    private static final String SIMULATOR_URL_MAPPING_PROPERTY = "citrus.simulator.rest.url.mapping";
-    private static final String SIMULATOR_URL_MAPPING_ENV = "CITRUS_SIMULATOR_REST_URL_MAPPING";
     private String urlMapping = "/services/rest/**";
 
     /**
-     * The Spring application context environment
+     * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
 

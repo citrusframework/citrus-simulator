@@ -18,6 +18,13 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
     private static Logger log = LoggerFactory.getLogger(SimulatorWebServiceConfigurationProperties.class);
 
     /**
+     * System property constants and environment variable names. Post construct callback reads these values and overwrites
+     * settings in this property class in order to add support for environment variables.
+     */
+    private static final String SIMULATOR_SERVLET_MAPPING_PROPERTY = "citrus.simulator.ws.servlet.mapping";
+    private static final String SIMULATOR_SERVLET_MAPPING_ENV = "CITRUS_SIMULATOR_WS_SERVLET_MAPPING";
+
+    /**
      * Global option to enable/disable SOAP web service support, default is false.
      */
     private boolean enabled;
@@ -26,12 +33,10 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
      * The web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
      */
-    private static final String SIMULATOR_SERVLET_MAPPING_PROPERTY = "citrus.simulator.ws.servlet.mapping";
-    private static final String SIMULATOR_SERVLET_MAPPING_ENV = "CITRUS_SIMULATOR_WS_SERVLET_MAPPING";
     private String servletMapping = "/services/ws/*";
 
     /**
-     * The Spring application context environment
+     * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
 

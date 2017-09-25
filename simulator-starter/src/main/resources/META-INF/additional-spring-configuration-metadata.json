@@ -1,0 +1,70 @@
+{
+  "properties": [
+    {
+      "name": "citrus.simulator.endpoint.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables generic Citrus endpoint support on simulator. When enabled you can add any Citrus endpoint as inbound request source.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.configuration.class",
+      "type": "java.lang.String",
+      "description": "Full qualified class name of additional Spring Java configuration to automatically load beans from.",
+      "defaultValue": "com.consol.citrus.simulator.SimulatorConfig"
+    },
+    {
+      "name": "citrus.simulator.rest.swagger.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables auto generated scenarios from Swagger Open API specification.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.rest.swagger.api",
+      "type": "java.lang.String",
+      "description": "Swagger Open API specification file to auto generate scenarios from.",
+      "defaultValue": ""
+    },
+    {
+      "name": "citrus.simulator.rest.swagger.contextPath",
+      "type": "java.lang.String",
+      "description": "Context path automatically added to request path mappings when using auto generate scenarios from Swagger Open API specification.",
+      "defaultValue": ""
+    },
+    {
+      "name": "citrus.simulator.ws.wsdl.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables auto generated scenarios from WSDL specification.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.ws.wsdl.location",
+      "type": "java.lang.String",
+      "description": "WSDL file to auto generate scenarios from.",
+      "defaultValue": ""
+    },
+    {
+      "name": "citrus.simulator.inbound.xml.dictionary.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables default inbound XML data dictionaries.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.outbound.xml.dictionary.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables default outbound XML data dictionaries.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.inbound.json.dictionary.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables default inbound JSON data dictionaries.",
+      "defaultValue": false
+    },
+    {
+      "name": "citrus.simulator.outbound.json.dictionary.enabled",
+      "type": "java.lang.Boolean",
+      "description": "En/Disables default outbound JSON data dictionaries.",
+      "defaultValue": false
+    }
+  ]
+}

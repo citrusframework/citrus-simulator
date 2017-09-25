@@ -18,40 +18,45 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private static Logger log = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
 
     /**
+     * System property constants and environment variable names. Post construct callback reads these values and overwrites
+     * settings in this property class in order to add support for environment variables.
+     */
+    private static final String SIMULATOR_INBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.inbound.destination";
+    private static final String SIMULATOR_INBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION";
+    private static final String SIMULATOR_REPLY_DESTINATION_PROPERTY = "citrus.simulator.jms.reply.destination";
+    private static final String SIMULATOR_REPLY_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_REPLY_DESTINATION";
+    private static final String SIMULATOR_SYNC_PROPERTY = "citrus.simulator.jms.synchronous";
+    private static final String SIMULATOR_SYNC_ENV = "CITRUS_SIMULATOR_JMS_SYNCHRONOUS";
+    private static final String SIMULATOR_SOAP_ENVELOPE_PROPERTY = "citrus.simulator.jms.soap";
+    private static final String SIMULATOR_SOAP_ENVELOPE_ENV = "CITRUS_SIMULATOR_JMS_SOAP";
+
+    /**
      * Global option to enable/disable JMS support, default is false.
      */
     private boolean enabled;
 
     /**
-     * The JMS inbound destination name. The simulator receives asynchronous messages from this destination.
+     * The JMS inbound destination name. The simulator receives asynchronous messages using this destination.
      */
-    private static final String SIMULATOR_INBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.inbound.destination";
-    private static final String SIMULATOR_INBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION";
     private String inboundDestination = "Citrus.Simulator.Inbound";
 
     /**
      * The JMS reply destination name. The simulator sends asynchronous messages to this destination.
      */
-    private static final String SIMULATOR_REPLY_DESTINATION_PROPERTY = "citrus.simulator.jms.reply.destination";
-    private static final String SIMULATOR_REPLY_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_REPLY_DESTINATION";
     private String replyDestination = "";
 
     /**
-     * En-/Disable JMS synchronous communication.
+     * En-/Disable JMS synchronous communication. By default this option is disabled.
      */
-    private static final String SIMULATOR_SYNC_PROPERTY = "citrus.simulator.jms.synchronous";
-    private static final String SIMULATOR_SYNC_ENV = "CITRUS_SIMULATOR_JMS_SYNCHRONOUS";
     private boolean synchronous = false;
 
     /**
-     * En-/Disable JMS synchronous communication.
+     * En-/Disable JMS synchronous communication. By default this option is disabled.
      */
-    private static final String SIMULATOR_SOAP_ENVELOPE_PROPERTY = "citrus.simulator.jms.soap";
-    private static final String SIMULATOR_SOAP_ENVELOPE_ENV = "CITRUS_SIMULATOR_JMS_SOAP";
     private boolean useSoap = false;
 
     /**
-     * The Spring application context environment
+     * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
 
