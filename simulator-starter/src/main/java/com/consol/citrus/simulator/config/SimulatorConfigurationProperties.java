@@ -62,7 +62,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private boolean enabled = true;
 
     /**
-     * Template path relative to the project root. Used in scenario starters in order to load file content when configuring starter parameters
+     * Template path relative to the project root. Used in scenario starters in order to load file content when configuring starter parameters.
      */
     private String templatePath = "com/consol/citrus/simulator/templates";
 
@@ -77,12 +77,12 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private Long defaultTimeout = 5000L;
 
     /**
-     * Property that en-/disables template validation, default value is true. When enabled incoming requests are automatically verified according to syntax rules (e.g. XML XSD, WSDL)
+     * Property that en-/disables template validation, default value is true. When enabled incoming requests are automatically verified according to syntax rules (e.g. XML XSD, WSDL).
      */
     private boolean templateValidation = true;
 
     /**
-     * Default delay in milliseconds to wait after uncategorized exceptions were thrown during inbound request polling. Used in {@link com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller}.
+     * Default delay in milliseconds to wait after uncategorized exceptions were thrown in simulator endpoint poller while constantly polling for incoming requests on a message destination.
      */
     private Long exceptionDelay = 5000L;
 
