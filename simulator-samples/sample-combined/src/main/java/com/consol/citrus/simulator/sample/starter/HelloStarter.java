@@ -54,7 +54,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .label("Payload")
                 .required()
                 .textarea()
-                .value(getMessageTemplate("Hello"))
+                .value(getXmlMessageTemplate("Hello"))
                 .build());
 
         return scenarioParameters;

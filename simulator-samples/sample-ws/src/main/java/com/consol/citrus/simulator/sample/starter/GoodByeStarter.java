@@ -53,7 +53,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
                 .label("Payload")
                 .required()
                 .textarea()
-                .value(getMessageTemplate("Goodbye"))
+                .value(getXmlMessageTemplate("Goodbye"))
                 .build());
 
         return scenarioParameter;

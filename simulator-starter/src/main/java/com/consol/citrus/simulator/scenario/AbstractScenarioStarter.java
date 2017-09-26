@@ -22,6 +22,7 @@ import com.consol.citrus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
@@ -37,23 +38,54 @@ public abstract class AbstractScenarioStarter extends AbstractSimulatorScenario 
      * Gets a classpath file resource from base template package.
      *
      * @param fileName
+     * @param fileExtension
      * @return
      */
-    protected Resource getFileResource(String fileName) {
-        return new ClassPathResource(simulatorConfigurationProperties.getTemplatePath() + "/" + fileName + ".xml");
+    protected Resource getFileResource(String fileName, String fileExtension) {
+        return new ClassPathResource(getTemplateBasePath() + fileName + ((StringUtils.hasText(fileExtension) && !fileExtension.startsWith(".")) ? "." + fileExtension : fileExtension));
     }
 
     /**
-     * Locates a message template using the supplied {@code filename} returning the contents as a string
+     * Locates a message template using the supplied {@code filename} returning the contents as a string. Uses file extension ".xml".
      *
-     * @param filename the message template name
+     * @param filename the message template name.
      * @return the contents as a string
      */
-    protected String getMessageTemplate(String filename) {
+    protected String getXmlMessageTemplate(String filename) {
+        return getMessageTemplate(filename, filename.endsWith(".xml") ? "": "xml");
+    }
+
+    /**
+     * Locates a message template using the supplied {@code filename} returning the contents as a string. Uses file extension ".json".
+     *
+     * @param filename the message template name.
+     * @return the contents as a string
+     */
+    protected String getJsonMessageTemplate(String filename) {
+        return getMessageTemplate(filename, filename.endsWith(".json") ? "": "json");
+    }
+
+    /**
+     * Locates a message template using the supplied {@code filename} returning the contents as a string. Uses given file extension.
+     *
+     * @param filename the message template name.
+     * @param fileExtension template file extension.
+     * @return the contents as a string
+     */
+    protected String getMessageTemplate(String filename, String fileExtension) {
         try {
-            return FileUtils.readToString(this.getFileResource(filename));
+            return FileUtils.readToString(this.getFileResource(filename, fileExtension));
         } catch (IOException e) {
             throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
         }
+    }
+
+    /**
+     * Gets the default template base folder path.
+     * @return
+     */
+    protected String getTemplateBasePath() {
+        return (StringUtils.hasText(simulatorConfigurationProperties.getTemplatePath()) && simulatorConfigurationProperties.getTemplatePath().endsWith("/")) ?
+                simulatorConfigurationProperties.getTemplatePath() : simulatorConfigurationProperties.getTemplatePath() + "/";
     }
 }
