@@ -42,8 +42,12 @@ import java.util.*;
 @Transactional
 public class ActivityService {
 
+    private final ScenarioExecutionRepository scenarioExecutionRepository;
+
     @Autowired
-    ScenarioExecutionRepository scenarioExecutionRepository;
+    public ActivityService(ScenarioExecutionRepository scenarioExecutionRepository) {
+        this.scenarioExecutionRepository = scenarioExecutionRepository;
+    }
 
     /**
      * Creates a new {@link ScenarioExecution}, persisting it within the database.

@@ -28,6 +28,7 @@ import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -65,6 +66,7 @@ public class ScenarioService {
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
 
+    @Autowired
     public ScenarioService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
         this.activityService = activityService;
         this.applicationContext = applicationContext;

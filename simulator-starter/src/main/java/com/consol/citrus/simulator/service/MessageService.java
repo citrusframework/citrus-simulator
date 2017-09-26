@@ -39,9 +39,9 @@ import java.util.*;
 @Transactional
 public class MessageService {
 
-    @Autowired
     private final MessageRepository messageRepository;
 
+    @Autowired
     public MessageService(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
     }
