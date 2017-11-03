@@ -125,6 +125,7 @@
         <artifactId>activemq-maven-plugin</artifactId>
         <version>${activemq.version}</version>
         <configuration>
+          <configUri>broker:(tcp://localhost:61616)?useJmx=true&amp;persistent=false</configUri>
           <fork>false</fork>
           <systemProperties>
             <property>
