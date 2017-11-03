@@ -37,8 +37,8 @@
   <citrus:before-test id="purgeBeforeTest">
     <citrus:actions>
       <jms:purge-jms-queues>
-        <jms:queue name="Citrus.Simulator.Inbound"/>
-        <jms:queue name="Citrus.Simulator.Outbound"/>
+        <jms:queue name="Fax.Inbound"/>
+        <jms:queue name="Fax.Status"/>
       </jms:purge-jms-queues>
     </citrus:actions>
   </citrus:before-test>
