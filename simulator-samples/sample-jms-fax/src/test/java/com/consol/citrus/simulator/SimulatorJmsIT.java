@@ -42,8 +42,6 @@ import java.util.Arrays;
 public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
     private PayloadHelper payloadHelper = new PayloadHelper();
 
-    // TODO CD bug: when running all tests a second time all fail (looks like messages from the first execution are somehow still cached?)
-
     @Autowired
     @Qualifier("simulatorInboundEndpoint")
     private JmsEndpoint simulatorInboundEndpoint;
