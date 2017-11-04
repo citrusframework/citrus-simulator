@@ -6,7 +6,8 @@
             <h4 class="pull-right">Name:</h4>
         </div>
         <div class="col-sm-10">
-            <h4><a [routerLink]="['scenarios','detail',scenarioExecution.scenarioName]">{{scenarioExecution.scenarioName}}</a></h4>
+            <h4><a [routerLink]="['/scenario','detail',scenarioExecution.scenarioName]">{{scenarioExecution.scenarioName}}</a>
+            </h4>
         </div>
     </div>
     <div class="row">
@@ -59,3 +60,5 @@
 
 <scenario-parameter-list *ngIf="scenarioExecution" [scenarioParameters]="scenarioExecution.scenarioParameters"></scenario-parameter-list>
 <scenario-action-list *ngIf="scenarioExecution" [scenarioActions]="scenarioExecution.scenarioActions"></scenario-action-list>
+<h3>Scenario Messages</h3>
+<message-list *ngIf="scenarioExecution" [messages]="scenarioExecution.scenarioMessages"></message-list>

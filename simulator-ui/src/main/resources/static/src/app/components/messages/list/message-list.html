@@ -3,6 +3,7 @@
     <tr>
         <th>Direction</th>
         <th>Date</th>
+        <th>Scenario</th>
         <th>Content</th>
     </tr>
     </thead>
@@ -10,6 +11,7 @@
     <tr class="message" *ngFor="let message of messages" (click)="onSelect(message)">
         <td><span [class]="message.direction == 'INBOUND' ? 'label label-success' : 'label label-primary'">{{message.direction}}</span></td>
         <td>{{message.date | date:format}}</td>
+        <td>{{message.scenarioName}}</td>
         <td>{{message.payload | truncate: 80}}</td>
     </tr>
     <tr class="no-messages">

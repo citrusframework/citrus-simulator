@@ -14,7 +14,8 @@ export class ScenarioExecution {
         public status: string,
         public errorMessage: string,
         public scenarioParameters: Array<ScenarioParameter>,
-        public scenarioActions: Array<ScenarioAction>) {
+        public scenarioActions: Array<ScenarioAction>,
+        public scenarioMessages: Array<Message>) {
     }
 }
 
@@ -64,6 +65,8 @@ export class Message {
         public messageId: number,
         public direction: string,
         public date: number,
+        public scenarioExecutionId: number,
+        public scenarioName: string,
         public payload: string) {
     }
 }
