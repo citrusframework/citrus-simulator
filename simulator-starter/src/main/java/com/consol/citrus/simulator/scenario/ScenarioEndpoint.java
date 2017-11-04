@@ -21,21 +21,28 @@ import com.consol.citrus.endpoint.AbstractEndpoint;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.messaging.Consumer;
 import com.consol.citrus.messaging.Producer;
+import com.consol.citrus.simulator.endpoint.EndpointMessageHandler;
 import com.consol.citrus.simulator.exception.SimulatorException;
 
 import java.util.Stack;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Christoph Deppisch
  */
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
-    /** Internal im memory message channel */
-    private LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
+    /**
+     * Internal im memory message channel
+     */
+    private final LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
 
-    /** Stack of response futures to complete */
-    private Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
+    /**
+     * Stack of response futures to complete
+     */
+    private final Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
 
     /**
      * Default constructor using endpoint configuration.
@@ -48,6 +55,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     /**
      * Adds new message for direct message consumption.
+     *
      * @param request
      */
     public void add(Message request, CompletableFuture<Message> future) {
@@ -77,7 +85,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
             if (message == null) {
                 throw new SimulatorException("Failed to receive scenario inbound message");
             }
-
+            messageReceived(message, context);
             return message;
         } catch (InterruptedException e) {
             throw new SimulatorException(e);
@@ -86,10 +94,23 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     @Override
     public void send(Message message, TestContext context) {
+        messageSent(message, context);
         if (responseFutures.isEmpty()) {
             throw new SimulatorException("Failed to process scenario response message - missing response consumer");
         } else {
             responseFutures.pop().complete(message);
         }
+    }
+
+    private void messageSent(Message message, TestContext context) {
+        getEndpointMessageHandler(context).handleSentMessage(message, context);
+    }
+
+    private void messageReceived(Message message, TestContext context) {
+        getEndpointMessageHandler(context).handleReceivedMessage(message, context);
+    }
+
+    private EndpointMessageHandler getEndpointMessageHandler(TestContext context) {
+        return context.getApplicationContext().getBean(EndpointMessageHandler.class);
     }
 }

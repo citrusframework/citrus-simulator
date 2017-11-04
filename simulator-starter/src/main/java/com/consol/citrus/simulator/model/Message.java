@@ -16,6 +16,8 @@
 
 package com.consol.citrus.simulator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -35,6 +37,10 @@ public class Message implements Serializable {
     @Column(name = "MESSAGE_ID")
     private Long messageId;
 
+    @JsonIgnore
+    @ManyToOne
+    private ScenarioExecution scenarioExecution;
+
     @Column(nullable = false)
     private Direction direction;
 
@@ -46,12 +52,37 @@ public class Message implements Serializable {
     @Lob
     private String payload;
 
+    @Column(unique = true)
+    private String citrusMessageId;
+
     public Long getMessageId() {
         return messageId;
     }
 
     public void setMessageId(Long messageId) {
         this.messageId = messageId;
+    }
+
+    public ScenarioExecution getScenarioExecution() {
+        return scenarioExecution;
+    }
+
+    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
+        this.scenarioExecution = scenarioExecution;
+    }
+
+    public Long getScenarioExecutionId() {
+        if (scenarioExecution != null) {
+            return scenarioExecution.getExecutionId();
+        }
+        return null;
+    }
+
+    public String getScenarioName() {
+        if (scenarioExecution != null) {
+            return scenarioExecution.getScenarioName();
+        }
+        return null;
     }
 
     public Date getDate() {
@@ -78,6 +109,14 @@ public class Message implements Serializable {
         this.payload = payload;
     }
 
+    public String getCitrusMessageId() {
+        return citrusMessageId;
+    }
+
+    public void setCitrusMessageId(String citrusMessageId) {
+        this.citrusMessageId = citrusMessageId;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -85,6 +124,9 @@ public class Message implements Serializable {
                 ", messageId=" + messageId +
                 ", direction=" + direction +
                 ", payload='" + payload + '\'' +
+                ", citrusMessageId=" + citrusMessageId +
+                ", scenarioExecutionId=" + getScenarioExecutionId() +
+                ", scenarioName=" + getScenarioName() +
                 '}';
     }
 }

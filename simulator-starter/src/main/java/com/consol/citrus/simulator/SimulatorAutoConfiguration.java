@@ -51,6 +51,7 @@ import java.util.Properties;
         "com.consol.citrus.simulator.controller",
         "com.consol.citrus.simulator.listener",
         "com.consol.citrus.simulator.service",
+        "com.consol.citrus.simulator.endpoint",
 }, nameGenerator = ScenarioBeanNameGenerator.class)
 @Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class, RepositoryConfig.class})
 @ImportResource(

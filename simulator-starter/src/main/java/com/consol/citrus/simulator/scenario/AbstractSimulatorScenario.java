@@ -18,13 +18,22 @@ package com.consol.citrus.simulator.scenario;
 
 import com.consol.citrus.simulator.correlation.CorrelationHandler;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author Christoph Deppisch
  */
 public abstract class AbstractSimulatorScenario implements SimulatorScenario, CorrelationHandler {
 
-    /** Scenario endpoint */
-    private ScenarioEndpoint scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
+    /**
+     * Scenario endpoint
+     */
+    private ScenarioEndpoint scenarioEndpoint;
+
+    @PostConstruct
+    public void init() throws Exception {
+        scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
+    }
 
     @Override
     public ScenarioEndpoint getScenarioEndpoint() {

@@ -21,21 +21,20 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.report.MessageListener;
 import com.consol.citrus.report.MessageListeners;
-import com.consol.citrus.simulator.service.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 /**
- * This listener is called when the simulator sends or receives messages and is responsible for ensuring
- * the messages are persisted within the simulator database.
+ * This listener is called when the simulator sends or receives messages
  */
 @Component
 public class SimulatorMessageListener implements MessageListener {
 
-    @Autowired
-    MessageService messageService;
+    private static final Logger LOG = LoggerFactory.getLogger(SimulatorMessageListener.class);
 
     @Autowired
     private MessageListeners messageListeners;
@@ -48,12 +47,12 @@ public class SimulatorMessageListener implements MessageListener {
     @Override
     public void onInboundMessage(Message message, TestContext context) {
         String payload = message.getPayload(String.class);
-        messageService.saveMessage(com.consol.citrus.simulator.model.Message.Direction.INBOUND, payload);
+        LOG.debug("received: {}", payload);
     }
 
     @Override
     public void onOutboundMessage(Message message, TestContext context) {
         String payload = message.getPayload(String.class);
-        messageService.saveMessage(com.consol.citrus.simulator.model.Message.Direction.OUTBOUND, payload);
+        LOG.debug("sent: {}", payload);
     }
 }

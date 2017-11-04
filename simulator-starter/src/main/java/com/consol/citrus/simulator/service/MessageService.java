@@ -46,16 +46,21 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message saveMessage(Message.Direction direction, String payload) {
+    public Message saveMessage(Message.Direction direction, String payload, String citrusMessageId) {
         Message message = new Message();
         message.setDate(now());
         message.setDirection(direction);
         message.setPayload(payload);
+        message.setCitrusMessageId(citrusMessageId);
         return messageRepository.save(message);
     }
 
     public Message getMessageById(Long id) {
         return messageRepository.findOne(id);
+    }
+
+    public Message getMessageByCitrusMessageId(String citrusMessageId) {
+        return messageRepository.findByCitrusMessageId(citrusMessageId);
     }
 
     public List<Message> getMessagesMatchingFilter(MessageFilter filter) {

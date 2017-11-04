@@ -30,6 +30,8 @@ import java.util.List;
  */
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Long> {
+    Message findByCitrusMessageId(String citrusMessageId);
+
     List<Message> findByDateBetweenAndDirectionIn(Date fromDate, Date toDate, Collection<Message.Direction> directions, Pageable pageable);
 
     List<Message> findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(Date fromDate, Date toDate, Collection<Message.Direction> directions, String containingText, Pageable pageable);

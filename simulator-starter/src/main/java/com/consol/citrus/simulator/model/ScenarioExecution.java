@@ -70,6 +70,10 @@ public class ScenarioExecution implements Serializable {
     @OrderBy("actionId ASC")
     private List<ScenarioAction> scenarioActions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("messageId ASC")
+    private List<Message> scenarioMessages = new ArrayList<>();
+
     public Long getExecutionId() {
         return executionId;
     }
@@ -155,6 +159,20 @@ public class ScenarioExecution implements Serializable {
         scenarioAction.setScenarioExecution(null);
     }
 
+    public Collection<Message> getScenarioMessages() {
+        return scenarioMessages;
+    }
+
+    public void addScenarioMessage(Message scenarioMessage) {
+        scenarioMessages.add(scenarioMessage);
+        scenarioMessage.setScenarioExecution(this);
+    }
+
+    public void removeScenarioMessage(Message scenarioMessage) {
+        scenarioMessages.remove(scenarioMessage);
+        scenarioMessage.setScenarioExecution(null);
+    }
+
     @Override
     public String toString() {
         return "ScenarioExecution{" +
@@ -166,6 +184,7 @@ public class ScenarioExecution implements Serializable {
                 ", errorMessage='" + errorMessage + '\'' +
                 ", scenarioParameters=" + scenarioParameters +
                 ", scenarioActions=" + scenarioActions +
+                ", scenarioMessages=" + scenarioMessages +
                 '}';
     }
 }

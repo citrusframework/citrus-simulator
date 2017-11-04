@@ -19,7 +19,10 @@ package com.consol.citrus.simulator.service;
 import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCase;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.simulator.model.*;
+import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.ScenarioAction;
+import com.consol.citrus.simulator.model.ScenarioExecution;
+import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.repository.ScenarioExecutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -43,10 +46,12 @@ import java.util.*;
 public class ActivityService {
 
     private final ScenarioExecutionRepository scenarioExecutionRepository;
+    private final MessageService messageService;
 
     @Autowired
-    public ActivityService(ScenarioExecutionRepository scenarioExecutionRepository) {
+    public ActivityService(ScenarioExecutionRepository scenarioExecutionRepository, MessageService messageService) {
         this.scenarioExecutionRepository = scenarioExecutionRepository;
+        this.messageService = messageService;
     }
 
     /**
@@ -90,6 +95,34 @@ public class ActivityService {
 
     public ScenarioExecution getScenarioExecutionById(Long id) {
         return scenarioExecutionRepository.findOne(id);
+    }
+
+    /**
+     * Persists the message along with the scenario execution details. With the help of the {@code citrusMessageId}
+     * a check is made to determine whether the message has already been persisted. If it has then there's nothing
+     * to be done and the the persisted message is simply returned.
+     *
+     * @param executionId     the scenario execution id
+     * @param direction       the direction of the message
+     * @param payload         the message content
+     * @param citrusMessageId the internal citrus message id
+     * @return the already or newly persisted message
+     */
+    public Message saveScenarioMessage(Long executionId, Message.Direction direction, String payload, String citrusMessageId) {
+        final ScenarioExecution se = getScenarioExecutionById(executionId);
+        Collection<Message> messages = se.getScenarioMessages();
+        if (messages != null) {
+            Optional<Message> message = messages.stream()
+                    .filter(scenarioMessage -> scenarioMessage.getCitrusMessageId().equalsIgnoreCase(citrusMessageId))
+                    .findFirst();
+            if (message.isPresent()) {
+                // message is already persisted and attached to execution scenario
+                return message.get();
+            }
+        }
+        final Message message = messageService.saveMessage(direction, payload, citrusMessageId);
+        se.addScenarioMessage(message);
+        return message;
     }
 
     public void clearScenarioExecutions() {
