@@ -79,7 +79,7 @@
       <version>4.4</version>
     </dependency>
 
-    <!-- XML support -->
+    <!-- XML / JSON support -->
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
