@@ -187,7 +187,7 @@ This looks like follows:
 [source,java]
 ----
 @Scenario("Hello")
-@RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
+@RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST, params = {"user"})
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
@@ -207,8 +207,9 @@ public class HelloScenario extends AbstractSimulatorScenario {
 }
 ----
 
-As you can see the example above uses *@RequestMapping* annotation in addition to the *@Scenario* annotation. All requests on the request path
-*/services/rest/simulator/hello* of method *POST* will be mapped to the scenario. With this strategy the simulator is able to map requests based
+As you can see the example above uses *@RequestMapping* annotation in addition to the *@Scenario* annotation.
+All requests on the request path */services/rest/simulator/hello* of method *POST* that include the query
+parameter *user* will be mapped to the scenario. With this strategy the simulator is able to map requests based
 on methods, request paths and query parameters.
 
 The mapping strategy requires a special scenario mapper implementation that is used by default. This scenario mapper automatically scans for scenarios with *@RequestMapping* annotations.
