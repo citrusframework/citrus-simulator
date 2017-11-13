@@ -32,66 +32,17 @@ public class HttpRequestAnnotationScenarioMapperTest {
 
     @Test
     public void testGetMappingKey() {
-        scenarioMapper.getScenarios().add(new FooListScenario());
         scenarioMapper.getScenarios().add(new FooScenario());
-        scenarioMapper.getScenarios().add(new FooDetailScenario());
-        scenarioMapper.getScenarios().add(new BarListScenario());
-        scenarioMapper.getScenarios().add(new BarScenario());
-        scenarioMapper.getScenarios().add(new BarDetailScenario());
 
         HttpMessage request = new HttpMessage();
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
+        request.path("/issues/foo");
+        Assert.assertEquals(scenarioMapper.getMappingKey(request), "FooScenario");
 
-        request.path("/issues");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
-
-        request.path("/issues/foos");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooListScenario");
-
-        request.path("/issues/bars");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barListScenario");
-
-        request.path("/issues/foo/1");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooScenario");
-
-        request.path("/issues/bar/1");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barScenario");
-
-        request.path("/issues/foo/detail");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooDetailScenario");
-
-        request.path("/issues/bar/detail");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barDetailScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(null), "default");
     }
 
-    @Scenario("fooListScenario")
-    @RequestMapping("/issues/foos")
-    private class FooListScenario extends AbstractSimulatorScenario {
-    }
-
-    @Scenario("fooScenario")
-    @RequestMapping("/issues/foo/{id}")
+    @Scenario("FooScenario")
+    @RequestMapping("/issues/foo")
     private class FooScenario extends AbstractSimulatorScenario {
     }
-
-    @Scenario("fooDetailScenario")
-    @RequestMapping("/issues/foo/detail")
-    private class FooDetailScenario extends AbstractSimulatorScenario {
-    }
-
-    @Scenario("barListScenario")
-    @RequestMapping("/issues/bars")
-    private class BarListScenario extends AbstractSimulatorScenario {
-    }
-
-    @Scenario("barScenario")
-    @RequestMapping("/issues/bar/{id}")
-    private class BarScenario extends AbstractSimulatorScenario {
-    }
-
-    @Scenario("barDetailScenario")
-    @RequestMapping("/issues/bar/detail")
-    private class BarDetailScenario extends AbstractSimulatorScenario {
-    }
-
 }
