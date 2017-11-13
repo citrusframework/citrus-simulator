@@ -28,8 +28,8 @@
 
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
-    <node.version>v7.7.4</node.version>
-    <npm.version>4.4.3</npm.version>
+    <node.version>v8.9.1</node.version>
+    <npm.version>5.5.1</npm.version>
     
     <skip.gpg>false</skip.gpg>
   </properties>
@@ -292,7 +292,6 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
         </plugin>
@@ -306,13 +305,14 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-scm-plugin</artifactId>
           <version>1.9.5</version>
         </plugin>
@@ -337,7 +337,6 @@
         </plugin>
         
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.10.4</version>
           <configuration>
@@ -354,7 +353,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.20.1</version>
           <configuration>
@@ -364,7 +362,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.20.1</version>
           <configuration>
@@ -373,7 +370,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>1.6</version>
           <executions>
@@ -412,11 +408,9 @@
     <!-- Default plugins for all modules -->
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>

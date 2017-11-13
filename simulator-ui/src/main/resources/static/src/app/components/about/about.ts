@@ -1,27 +1,26 @@
 import {Component, OnInit} from "@angular/core";
 import {AppInfoService} from "../../services/appinfo-service";
-import {Simulator} from "../../model/simulator";
+import {SimulatorInfo} from "../../model/manage";
 
 @Component({
     moduleId: module.id,
     templateUrl: 'about.html'
 })
 export class AboutComponent implements OnInit {
-    
-    simulator: Simulator;
+
+    simulatorInfo: SimulatorInfo;
 
     constructor(private appInfoService: AppInfoService) {
-        this.appInfoService.getSimulatorInfo().subscribe(
-            simulator => this.simulator = simulator,
+        this.appInfoService.getAppInfo().subscribe(
+            appInfo => this.simulatorInfo = appInfo.simulator,
             error => console.log(error),
             () => console.log("Info has been retrieved: simulator name = '%s', domain = '%s', version = '%s'",
-                this.simulator.name,
-                this.simulator.domain,
-                this.simulator.version));
+                this.simulatorInfo.name,
+                this.simulatorInfo.version));
     }
 
     ngOnInit(): void {
-        this.appInfoService.getSimulatorInfo();
+        this.appInfoService.getAppInfo();
     }
 
     // TODO CD include the environment properties in the about page (/api/manage/env)

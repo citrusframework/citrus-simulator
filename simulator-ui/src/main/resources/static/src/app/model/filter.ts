@@ -8,3 +8,8 @@ export class MessageFilter {
                 public containingText: string) {
     }
 }
+
+export class ScenarioFilter {
+    constructor(public name: string) {
+    }
+}

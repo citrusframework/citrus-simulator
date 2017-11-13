@@ -44,8 +44,9 @@ export class ScenarioDetailComponent implements OnInit {
         this.scenarioService.getScenario(name)
             .subscribe(
                 scenario => {
-                    this.scenario = scenario;
-                    if(scenario.type == 'STARTER') {
+                    // TODO MM fix - should not have multiple scenario matching same name
+                    this.scenario = scenario[0];
+                    if(this.scenario.type == 'STARTER') {
                         this.getScenarioParameters(name);
                     }
                 },

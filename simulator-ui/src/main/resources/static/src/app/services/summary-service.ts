@@ -1,13 +1,12 @@
 import {Injectable} from "@angular/core";
-import {Http, Response} from "@angular/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/Rx';
 import {Summary} from "../model/scenario";
 
 @Injectable()
 export class SummaryService {
 
-    constructor(private http:Http) {
+    constructor(private http: HttpClient) {
     }
 
     private serviceUrl = 'api/summary';
@@ -25,47 +24,14 @@ export class SummaryService {
     }
 
     private retrieveSummaryResults(): Observable<Summary> {
-        return this.http.get(this.serviceUrl + "/results")
-            .map(
-                this.extractSummaryResults
-            )
-            .catch(
-                this.handleError
-            );
+        return this.http.get<Summary>(this.serviceUrl + "/results");
     }
 
     private resetSummaryResults(): Observable<Summary> {
-        return this.http.delete(this.serviceUrl + "/results")
-            .map(
-                this.extractSummaryResults
-            )
-            .catch(
-                this.handleError
-            );
+        return this.http.delete<Summary>(this.serviceUrl + "/results");
     }
 
     private retrieveSummaryActive(): Observable<number> {
-        return this.http.get(this.serviceUrl + "/active")
-            .map(
-                this.extractSummaryActive
-            )
-            .catch(
-                this.handleError
-            );
-    }
-
-    private extractSummaryResults(res: Response) {
-        return <Summary> res.json();
-    }
-
-    private extractSummaryActive(res: Response) {
-        return <number> res.json();
-    }
-
-    private handleError(error: any) {
-        // TODO return Error Object
-        let errMsg = (error.message) ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-        console.error(errMsg);
-        return Observable.throw(errMsg);
+        return this.http.get<number>(this.serviceUrl + "/active");
     }
 }

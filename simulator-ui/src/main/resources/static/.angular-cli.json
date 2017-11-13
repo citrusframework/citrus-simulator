@@ -1,11 +1,12 @@
 {
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
     "version": "1.0.1-SNAPSHOT",
     "name": "citrus-simulator-ui"
   },
   "apps": [
     {
-      "root": "src/",
+      "root": "src",
       "outDir": "dist",
       "assets": [
         "assets"
@@ -25,8 +26,8 @@
         "../node_modules/bootstrap/js/dropdown.js",
         "../node_modules/bootstrap/js/tab.js"
       ],
+      "environmentSource": "environments/environment.ts",
       "environments": {
-        "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts"
       }
@@ -40,11 +41,13 @@
   "lint": [
     {
       "files": "src/**/*.ts",
-      "project": "src/tsconfig.json"
+      "project": "src/tsconfig.json",
+      "exclude": "**/node_modules/**"
     },
     {
       "files": "e2e/**/*.ts",
-      "project": "e2e/tsconfig.json"
+      "project": "e2e/tsconfig.json",
+      "exclude": "**/node_modules/**"
     }
   ],
   "test": {

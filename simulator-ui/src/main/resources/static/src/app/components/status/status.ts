@@ -3,7 +3,7 @@ import {Router} from "@angular/router";
 import {SummaryService} from '../../services/summary-service';
 import {Summary} from '../../model/scenario';
 import {AppInfoService} from "../../services/appinfo-service";
-import {Simulator} from "../../model/simulator";
+import {SimulatorInfo} from "../../model/manage";
 
 @Component({
     moduleId: module.id,
@@ -12,8 +12,7 @@ import {Simulator} from "../../model/simulator";
 })
 export class StatusComponent implements OnInit, OnDestroy {
 
-    simulator: Simulator;
-
+    simulatorInfo: SimulatorInfo;
     summary: Summary;
     active: number;
     errorMessage: string;
@@ -39,9 +38,9 @@ export class StatusComponent implements OnInit, OnDestroy {
     }
 
     getSimulatorInfo() {
-        this.appInfoService.getSimulatorInfo()
+        this.appInfoService.getAppInfo()
             .subscribe(
-                simulator => this.simulator = simulator,
+                appInfo => this.simulatorInfo = appInfo.simulator,
                 error => this.errorMessage = <any>error
             );
     }
@@ -57,7 +56,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     getActive() {
         this.summaryService.getCountActiveScenarios()
             .subscribe(
-                active => this.active = active,
+                active => this.active = active || 0,
                 error => this.errorMessage = <any>error
             );
     }

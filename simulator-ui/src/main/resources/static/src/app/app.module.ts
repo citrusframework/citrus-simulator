@@ -1,7 +1,7 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
+import {HttpClientModule } from "@angular/common/http";
 import {AppComponent} from "./components/app.component";
 import {HeaderComponent} from "./components/header/header";
 import {AppRoutingModule, routedComponents} from "./app-routing.module";
@@ -26,7 +26,7 @@ import {ActivityFilterPipe} from "./pipes/activity-filter-pipe";
 @NgModule({
     imports: [
         BrowserModule,
-        HttpModule,
+        HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
         AppRoutingModule

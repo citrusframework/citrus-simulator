@@ -57,7 +57,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
         <configuration>
           <filesets>
             <fileset>
@@ -94,6 +93,26 @@
             </goals>
             <configuration>
               <arguments>run serve</arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>ui-node-modules-skip-clean</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>src/main/resources</directory>
+                  <includes>
+                    <include>static/dist/**</include>
+                  </includes>
+                </fileset>
+              </filesets>
             </configuration>
           </plugin>
         </plugins>

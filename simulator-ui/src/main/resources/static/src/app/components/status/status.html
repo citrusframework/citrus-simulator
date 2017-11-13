@@ -1,4 +1,4 @@
-<h1 class="page-header"><i class="fa fa-cube"></i> Simulator: {{simulator?.name}}</h1>
+<h1 class="page-header"><i class="fa fa-cube"></i> Simulator: {{simulatorInfo?.name}}</h1>
 
 <div class="container-fluid">
     <div class="row">
@@ -6,7 +6,7 @@
             <h4 class="pull-right">Name:</h4>
         </div>
         <div class="col-sm-11">
-            <h4>{{simulator?.name}}</h4>
+            <h4>{{simulatorInfo?.name}}</h4>
         </div>
     </div>
     <div class="row">
@@ -14,7 +14,7 @@
             <h4 class="pull-right">Version:</h4>
         </div>
         <div class="col-sm-11">
-            <h4>{{simulator?.version}}</h4>
+            <h4>{{simulatorInfo?.version}}</h4>
         </div>
     </div>
 </div>
@@ -43,8 +43,8 @@
             </a>
         </div>
         <div class="col-xs-6 col-sm-3 simulator-result">
-            <a (click)="onSelect('ACTIVE')" title="View all failed" class="clickable">
-                <span class="badge badge-warning border-warning" alt="FAILED">{{active}}</span>
+            <a (click)="onSelect('ACTIVE')" title="View all active" class="clickable">
+                <span class="badge badge-warning border-warning" alt="ACTIVE">{{active}}</span>
                 <h4>ACTIVE</h4>
                 <span class="text-muted">{{active}}</span>
             </a>

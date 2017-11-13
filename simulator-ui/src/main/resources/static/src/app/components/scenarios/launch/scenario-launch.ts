@@ -31,7 +31,7 @@ export class ScenarioLaunchComponent implements OnInit {
     getScenario(name: string) {
         this.scenarioService.getScenario(name)
             .subscribe(
-                scenario => this.scenario = scenario,
+                scenario => this.scenario = scenario[0],
                 error => this.errorMessage = <any>error
             );
     }

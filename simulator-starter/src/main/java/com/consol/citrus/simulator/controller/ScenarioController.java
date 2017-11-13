@@ -18,21 +18,29 @@ package com.consol.citrus.simulator.controller;
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.service.ScenarioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/scenario")
 public class ScenarioController {
 
-    @Autowired
-    private ScenarioService scenarioService;
+    private final ScenarioService scenarioService;
+    private final List<Scenario> scenarios;
 
+    public ScenarioController(ScenarioService scenarioService) {
+        this.scenarioService = scenarioService;
+        this.scenarios = getScenarioList(scenarioService);
+    }
+
+    @Data
     public static class Scenario {
         public enum ScenarioType {
             STARTER,
@@ -41,34 +49,38 @@ public class ScenarioController {
 
         private final String name;
         private final ScenarioType type;
+    }
 
-        public Scenario(String name, ScenarioType type) {
-            this.name = name;
-            this.type = type;
-        }
+    private List<Scenario> getScenarioList(ScenarioService scenarioService) {
+        final List<Scenario> scenarios = new ArrayList<>();
+        scenarioService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
+        scenarioService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
+        return scenarios;
+    }
 
-        public String getName() {
-            return name;
-        }
-
-        public ScenarioType getType() {
-            return type;
-        }
+    @Data
+    public static class ScenarioFilter {
+        private final String name;
     }
 
     /**
-     * Get a list of scenario names
+     * Get a list of scenarios
      *
      * @param filter
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET)
-    public Collection<Scenario> getScenarioNames(@RequestParam(value = "filter", required = false) String filter) {
-        List<Scenario> scenarios = new ArrayList<>();
-        scenarioService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
-        scenarioService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
-        scenarios.sort(Comparator.comparing(Scenario::getName));
-        return scenarios;
+    @RequestMapping(method = RequestMethod.POST)
+    public Collection<Scenario> getScenarioNames(@RequestBody(required = false) ScenarioFilter filter) {
+        return scenarios.stream()
+                .filter(scenario -> {
+                    if (filter != null) {
+                        if (StringUtils.hasText(filter.getName())) {
+                            return scenario.getName().contains(filter.getName());
+                        }
+                    }
+                    return true;
+                })
+                .sorted(Comparator.comparing(Scenario::getName)).collect(Collectors.toList());
     }
 
     /**
