@@ -22,10 +22,7 @@ import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import org.springframework.context.ApplicationContext;
 
-/**
- * @author Christoph Deppisch
- */
-public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
+public class HttpServerScenarioRunnerActionBuilder extends HttpActionBuilder {
 
     /**
      * Scenario endpoint
@@ -33,7 +30,7 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
     private final Endpoint endpoint;
 
     /**
-     * Scenario runner
+     * Scenario endpoint
      */
     private final ScenarioRunner runner;
 
@@ -42,56 +39,38 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
      */
     private ApplicationContext applicationContext;
 
-    public HttpScenarioRunnerActionBuilder(ScenarioRunner runner, Endpoint endpoint) {
+    public HttpServerScenarioRunnerActionBuilder(ScenarioRunner runner, Endpoint endpoint) {
         this.runner = runner;
         this.endpoint = endpoint;
     }
 
     /**
-     * Default scenario server receive operation.
+     * server receive operation.
      *
      * @return
-     * @deprecated use {@link #server()}.receive() instead
      */
-    @Deprecated
     public TestAction receive(HttpBuilderSupport<HttpServerActionBuilder.HttpServerReceiveActionBuilder> configurer) {
-        return server().receive(configurer);
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(endpoint)
+                .withApplicationContext(applicationContext);
+        configurer.configure(builder.server().receive());
+        return runner.run(builder.build()).getDelegate();
     }
 
     /**
-     * Default scenario server send response operation.
+     * server send response operation.
      *
      * @return
-     * @deprecated use {@link #server()}.send() instead
      */
-    @Deprecated
     public TestAction send(HttpBuilderSupport<HttpServerActionBuilder.HttpServerSendActionBuilder> configurer) {
-        return server().send(configurer);
-    }
-
-    /**
-     * http server builder for receiving http requests from http clients
-     *
-     * @return the HTTP Server action builder
-     */
-    public HttpServerScenarioRunnerActionBuilder server() {
-        return new HttpServerScenarioRunnerActionBuilder(runner, endpoint)
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(endpoint)
                 .withApplicationContext(applicationContext);
-    }
-
-    /**
-     * http client builder for sending request to http server
-     *
-     * @return the HTTP Client action builder
-     */
-    public HttpClientScenarioRunnerActionBuilder client() {
-        return new HttpClientScenarioRunnerActionBuilder(runner, endpoint)
-                .withApplicationContext(applicationContext);
+        configurer.configure(builder.server().send());
+        return runner.run(builder.build()).getDelegate();
     }
 
     @Override
-    public HttpScenarioRunnerActionBuilder withApplicationContext(ApplicationContext applicationContext) {
+    public HttpServerScenarioRunnerActionBuilder withApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        return (HttpScenarioRunnerActionBuilder) super.withApplicationContext(applicationContext);
+        return (HttpServerScenarioRunnerActionBuilder) super.withApplicationContext(applicationContext);
     }
 }
