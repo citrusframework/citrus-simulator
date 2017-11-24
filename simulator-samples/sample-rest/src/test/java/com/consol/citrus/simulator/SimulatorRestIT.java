@@ -115,6 +115,10 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                             "Good Night!" +
                         "</GoodNightResponse>");
 
+        //
+        // Should be handled by default scenario
+        //
+
         http().client(simulatorClient)
                 .send()
                 .post()
@@ -124,6 +128,10 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .receive()
                 .response(HttpStatus.OK)
                 .payload(defaultResponse);
+
+        //
+        // Should be handled by good-night scenario
+        //
 
         http().client(simulatorClient)
                 .send()
@@ -136,9 +144,13 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .response(HttpStatus.OK)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
+        //
+        // Should be handled by default scenario -> the goodnight scenario should have completed by now
+        //
+
         http().client(simulatorClient)
                 .send()
-                .put("goodnight")
+                .post()
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 

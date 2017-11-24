@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,42 +33,47 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
                 .http()
                 .server()
-                .receive()
-                .post()
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                        "</GoodNight>")
-                .extractFromHeader(CORRELATION_ID, "correlationId");
+                .receive(builder -> builder
+                        .post()
+                        .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Go to sleep!" +
+                                "</GoodNight>")
+                        .extractFromHeader(CORRELATION_ID, "correlationId")
+                );
 
-        scenario.correlation().start()
-                .onHeader(CORRELATION_ID, "${correlationId}");
-
-        scenario
-                .http()
-                .server()
-                .send()
-                .response(HttpStatus.OK)
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
-                        "</GoodNightResponse>");
+        scenario.correlation(builder -> builder
+                .start()
+                .onHeader(CORRELATION_ID, "${correlationId}")
+        );
 
         scenario
                 .http()
                 .server()
-                .receive()
-                .post()
-                .selector("x-correlationid = '${correlationId}'")
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .send(builder -> builder
+                        .response(HttpStatus.OK)
+                        .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Good Night!" +
+                                "</GoodNightResponse>"));
 
         scenario
                 .http()
                 .server()
-                .send()
-                .response(HttpStatus.OK)
-                .payload("<InterveningResponse>In between!</InterveningResponse>");
+                .receive(builder -> builder
+                        .post()
+                        .selector("x-correlationid = '1${correlationId}'")
+                        .payload("<InterveningRequest>In between!</InterveningRequest>")
+                );
+
+        scenario
+                .http()
+                .server()
+                .send(builder -> builder
+                        .response(HttpStatus.OK)
+                        .payload("<InterveningResponse>In between!</InterveningResponse>")
+                );
     }
 }

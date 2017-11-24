@@ -18,7 +18,7 @@ package com.consol.citrus.simulator.sample.scenario;
 
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
-import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,28 +31,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.echo("Simulator: ${simulator.name}");
 
         scenario
                 .http()
                 .server()
-                .receive()
-                .post()
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                        "</Hello>")
-                .extractFromPayload("//hello:Hello", "greeting");
+                .receive(builder -> builder
+                        .post()
+                        .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Say Hello!" +
+                                "</Hello>")
+                        .extractFromPayload("//hello:Hello", "greeting")
+                );
 
         scenario.echo("Received greeting: ${greeting}");
 
         scenario
                 .http()
                 .server()
-                .send()
-                .response(HttpStatus.OK)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                        "</HelloResponse>");
+                .send((builder -> builder
+                        .response(HttpStatus.OK)
+                        .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Hi there!" +
+                                "</HelloResponse>"))
+                );
     }
 }
