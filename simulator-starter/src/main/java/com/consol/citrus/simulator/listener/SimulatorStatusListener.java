@@ -72,7 +72,6 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-        // TODO CD bug: this is being called multiple times per scenario execution (to reproduce execute 'UpdateFaxStatus')
         TestResult result = TestResult.success(test.getName(), test.getParameters());
         testResults.addResult(result);
         LOG.info(result.toString());
