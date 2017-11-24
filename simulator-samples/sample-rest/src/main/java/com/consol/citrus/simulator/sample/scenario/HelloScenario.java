@@ -16,7 +16,9 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,22 +35,24 @@ public class HelloScenario extends AbstractSimulatorScenario {
         scenario.echo("Simulator: ${simulator.name}");
 
         scenario
-            .http()
-            .receive()
-            .post()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
-                    "</Hello>")
-            .extractFromPayload("//hello:Hello", "greeting");
+                .http()
+                .server()
+                .receive()
+                .post()
+                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                        "</Hello>")
+                .extractFromPayload("//hello:Hello", "greeting");
 
         scenario.echo("Received greeting: ${greeting}");
 
         scenario
-            .http()
-            .send()
-            .response(HttpStatus.OK)
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there!" +
-                    "</HelloResponse>");
+                .http()
+                .server()
+                .send()
+                .response(HttpStatus.OK)
+                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                        "</HelloResponse>");
     }
 }

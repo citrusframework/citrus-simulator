@@ -16,7 +16,9 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -28,12 +30,15 @@ public class DefaultScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-            .receive();
+                .http()
+                .server()
+                .receive();
 
         scenario
-            .http()
-            .send()
-            .response(HttpStatus.OK)
-            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
+                .http()
+                .server()
+                .send()
+                .response(HttpStatus.OK)
+                .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

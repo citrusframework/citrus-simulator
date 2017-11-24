@@ -19,7 +19,9 @@ package com.consol.citrus.simulator.sample.scenario;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 /**
  * @author Christoph Deppisch
@@ -30,36 +32,39 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.correlation().start()
-            .withHandler(this);
+                .withHandler(this);
 
         scenario
-            .soap()
-            .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .soap()
+                .server()
+                .receive()
+                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
-                     "</GoodNight>")
-            .soapAction("GoodNight");
+                        "</GoodNight>")
+                .soapAction("GoodNight");
 
         scenario
-            .soap()
-            .sendFault()
-            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
-            .faultString("No sleep for me!");
+                .soap()
+                .sendFault()
+                .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
+                .faultString("No sleep for me!");
 
         scenario
-            .soap()
-            .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .soap()
+                .server()
+                .receive()
+                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
-                     "</GoodNight>")
-            .soapAction("GoodNight");
+                        "</GoodNight>")
+                .soapAction("GoodNight");
 
         scenario
-            .soap()
-            .send()
-            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .soap()
+                .server()
+                .send()
+                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
-                     "</GoodNightResponse>");
+                        "</GoodNightResponse>");
     }
 
     @Override
