@@ -106,9 +106,10 @@ public class ActivityService {
      * @param direction       the direction of the message
      * @param payload         the message content
      * @param citrusMessageId the internal citrus message id
+     * @param headers         the message headers
      * @return the already or newly persisted message
      */
-    public Message saveScenarioMessage(Long executionId, Message.Direction direction, String payload, String citrusMessageId) {
+    public Message saveScenarioMessage(Long executionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers) {
         final ScenarioExecution se = getScenarioExecutionById(executionId);
         Collection<Message> messages = se.getScenarioMessages();
         if (messages != null) {
@@ -120,7 +121,7 @@ public class ActivityService {
                 return message.get();
             }
         }
-        final Message message = messageService.saveMessage(direction, payload, citrusMessageId);
+        final Message message = messageService.saveMessage(direction, payload, citrusMessageId, headers);
         se.addScenarioMessage(message);
         return message;
     }
@@ -215,14 +216,6 @@ public class ActivityService {
 
     private Date getTimeNow() {
         return Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    private Date getDateAtStartOfDay() {
-        return Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
-    }
-
-    private Date getDateAtEndOfDay() {
-        return Date.from(LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 
 }

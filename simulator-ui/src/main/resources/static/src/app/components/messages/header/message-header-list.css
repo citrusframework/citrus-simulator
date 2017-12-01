@@ -1,0 +1,7 @@
+tr.no-message-headers {
+    display: table-row;
+}
+
+tr.message-header + tr.no-message-headers {
+    display: none;
+}

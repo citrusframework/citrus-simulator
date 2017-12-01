@@ -17,6 +17,7 @@ import {ScenarioParameterList} from "./components/scenarios/parameter/scenario-p
 import {ScenarioParameterFormComponent} from "./components/scenarios/parameter/scenario-parameter-form";
 import {ScenarioParameterFormItemComponent} from "./components/scenarios/parameter/scenario-parameter-form-item";
 import {MessageListComponent} from "./components/messages/list/message-list";
+import {MessageHeaderList} from "./components/messages/header/message-header-list";
 import {AboutComponent} from "./components/about/about";
 import {ExecutionStatusPipe} from "./pipes/execution-status-pipe";
 import {TruncatePipe} from "./pipes/truncate-pipe";
@@ -40,6 +41,7 @@ import {ActivityFilterPipe} from "./pipes/activity-filter-pipe";
         ScenarioParameterFormComponent,
         ScenarioParameterFormItemComponent,
         MessageListComponent,
+        MessageHeaderList,
         AboutComponent,
         ExecutionStatusPipe,
         TruncatePipe,

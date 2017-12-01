@@ -41,6 +41,14 @@
             <pre>{{message.payload}}</pre>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 class="pull-right">Headers:</h4>
+        </div>
+        <div class="col-sm-10">
+            <message-header-list  *ngIf="message" [messageHeaders]="message.headers"></message-header-list>
+        </div>
+    </div>
 </div>
 
 <div class="btn-group">

@@ -18,13 +18,14 @@ package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.simulator.model.Message;
 import com.consol.citrus.simulator.model.MessageFilter;
+import com.consol.citrus.simulator.model.MessageHeader;
 import com.consol.citrus.simulator.repository.MessageRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -46,21 +47,23 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message saveMessage(Message.Direction direction, String payload, String citrusMessageId) {
+    public Message saveMessage(Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers) {
         Message message = new Message();
         message.setDate(now());
         message.setDirection(direction);
         message.setPayload(payload);
         message.setCitrusMessageId(citrusMessageId);
+        if (headers != null) {
+            headers.entrySet().stream()
+                    .forEach(headerEntry -> message.addHeader(
+                            new MessageHeader(headerEntry.getKey(),
+                                    StringUtils.abbreviate(headerEntry.getValue().toString(), 255))));
+        }
         return messageRepository.save(message);
     }
 
     public Message getMessageById(Long id) {
         return messageRepository.findOne(id);
-    }
-
-    public Message getMessageByCitrusMessageId(String citrusMessageId) {
-        return messageRepository.findByCitrusMessageId(citrusMessageId);
     }
 
     public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
@@ -83,7 +86,7 @@ public class MessageService {
 
         Pageable pageable = new PageRequest(calcPage, calcSize, Sort.Direction.DESC, "date");
 
-        if (StringUtils.hasLength(filter.getContainingText())) {
+        if (StringUtils.isNotEmpty(filter.getContainingText())) {
             return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,
                     calcToDate,
                     includeDirections,

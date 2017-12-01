@@ -1,0 +1,19 @@
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th width="30%">Name</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+        <tbody>
+            <tr *ngFor="let messageHeader of messageHeaders" class="message-header">
+                <td>{{messageHeader.name}}</td>
+                <td>{{messageHeader.value}}</td>
+            </tr>
+            <tr class="no-message-headers">
+                <td colspan="3">No message headers set</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
