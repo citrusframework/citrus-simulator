@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -27,6 +29,8 @@ import java.util.Date;
  */
 @Entity
 public class Message implements Serializable {
+    private static final long serialVersionUID = -4858126051234255084L;
+
     public enum Direction {
         INBOUND,
         OUTBOUND
@@ -54,6 +58,10 @@ public class Message implements Serializable {
 
     @Column(unique = true)
     private String citrusMessageId;
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("name ASC")
+    private Collection<MessageHeader> headers = new ArrayList<>();
 
     public Long getMessageId() {
         return messageId;
@@ -117,6 +125,21 @@ public class Message implements Serializable {
         this.citrusMessageId = citrusMessageId;
     }
 
+    public void addHeader(MessageHeader messageHeader) {
+        headers.add(messageHeader);
+        messageHeader.setMessage(this);
+    }
+
+    public void removeHeader(MessageHeader messageHeader) {
+        headers.remove(messageHeader);
+        messageHeader.setMessage(null);
+    }
+
+    public Collection<MessageHeader> getHeaders() {
+        return headers;
+    }
+
+
     @Override
     public String toString() {
         return "Message{" +
@@ -127,6 +150,8 @@ public class Message implements Serializable {
                 ", citrusMessageId=" + citrusMessageId +
                 ", scenarioExecutionId=" + getScenarioExecutionId() +
                 ", scenarioName=" + getScenarioName() +
+                ", headers=" + headers +
                 '}';
     }
+
 }

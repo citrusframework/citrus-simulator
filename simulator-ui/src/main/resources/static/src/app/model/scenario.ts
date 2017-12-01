@@ -67,6 +67,14 @@ export class Message {
         public date: number,
         public scenarioExecutionId: number,
         public scenarioName: string,
-        public payload: string) {
+        public payload: string,
+        public headers: Array<MessageHeader>) {
+    }
+}
+
+export class MessageHeader {
+    constructor(
+        public name: string,
+        public value: string) {
     }
 }

@@ -55,7 +55,8 @@ public class EndpointMessageHandler {
         Optional<Long> executionId = extractExecutionId(context);
         Optional<String> citrusMessageId = extractCitrusMessageId(message);
         if (executionId.isPresent() && citrusMessageId.isPresent()) {
-            activityService.saveScenarioMessage(executionId.get(), direction, message.getPayload(String.class), citrusMessageId.get());
+            activityService.saveScenarioMessage(executionId.get(), direction,
+                    message.getPayload(String.class), citrusMessageId.get(), message.getHeaders());
         }
     }
 
