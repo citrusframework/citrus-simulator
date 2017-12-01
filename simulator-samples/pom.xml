@@ -17,6 +17,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>sample-bank-service</module>
     <module>sample-jms</module>
     <module>sample-jms-fax</module>
     <module>sample-combined</module>
