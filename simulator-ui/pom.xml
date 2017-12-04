@@ -99,6 +99,11 @@
       </build>
     </profile>
     <profile>
+      <!--
+      This profile can be activated to speed up the maven build when re-building the citrus-simulator-ui module.
+      It skips removal of the npm direcory, avoiding having to re-download all the javascript dependencies again.
+      As long as the javascript dependencies haven't changed you can activate this profile.
+      -->
       <id>ui-node-modules-skip-clean</id>
       <build>
         <plugins>

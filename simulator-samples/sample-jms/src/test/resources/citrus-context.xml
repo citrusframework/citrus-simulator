@@ -15,6 +15,7 @@
 
   <!-- Test JMS client -->
   <citrus-jms:sync-endpoint id="simulatorEndpoint"
+                            timeout="10000"
                             destination-name="Citrus.Simulator.Inbound"/>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
