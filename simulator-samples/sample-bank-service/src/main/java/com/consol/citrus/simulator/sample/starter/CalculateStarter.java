@@ -90,7 +90,7 @@ public class CalculateStarter extends AbstractScenarioStarter {
                 .label("Sort Code")
                 .required()
                 .textbox()
-                .value("12030000")
+                .value("12345670")
                 .build());
 
         return scenarioParameters;

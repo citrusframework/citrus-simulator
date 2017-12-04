@@ -76,8 +76,8 @@ public class ValidateStarter extends AbstractScenarioStarter {
                 .label("IBAN")
                 .required()
                 .dropdown()
-                .addOption("DE39120300000006219653", "DE39120300000006219653") // Valid IBAN
-                .addOption("DE00120300000006219653", "DE00120300000006219653") // Invalid IBAN
+                .addOption("DE92123456700006219653", "DE92123456700006219653") // Valid IBAN
+                .addOption("DE00123456700006219653", "DE00123456700006219653") // Invalid IBAN
                 .build());
 
         return scenarioParameters;

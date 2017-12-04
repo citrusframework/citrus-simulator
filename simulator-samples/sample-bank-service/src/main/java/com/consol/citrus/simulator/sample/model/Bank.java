@@ -21,7 +21,8 @@ import java.util.Optional;
 
 public enum Bank {
     UNKNOWN("Unknown", "Unknown", "Unknown"),
-    DKB("12030000", "BYLADEM1001", "Deutsche Kreditbank Berlin");
+    ABC("12345670", "ABCDEFG5670", "The Wealthy ABC bank"),
+    DEF("12345671", "ABCDEFG5671", "The Poor DEF bank");
 
     private String sortCode;
     private String bic;
