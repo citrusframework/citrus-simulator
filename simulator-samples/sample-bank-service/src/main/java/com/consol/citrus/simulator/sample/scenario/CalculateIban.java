@@ -52,26 +52,19 @@ public class CalculateIban extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario
-                .http()
-                .server()
-                .receive(builder -> {
-                            builder
-                                    .get()
-                                    .extractFromHeader(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name());
-                        }
-                )
-        ;
+            .http()
+            .receive(builder -> builder
+                        .get()
+                        .extractFromHeader(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name()));
 
         scenario.run(calculateIban());
 
         scenario
-                .http()
-                .server()
-                .send(builder -> builder
-                        .response(HttpStatus.OK)
-                        .payload(JSON_RESPONSE.placeholder())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8.toString()))
-        ;
+            .http()
+            .send(builder -> builder
+                    .response(HttpStatus.OK)
+                    .payload(JSON_RESPONSE.placeholder())
+                    .contentType(MediaType.APPLICATION_JSON_UTF8.toString()));
     }
 
     private TestAction calculateIban() {

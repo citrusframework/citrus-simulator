@@ -29,20 +29,18 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario
-                .soap()
-                .server()
-                .receive()
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say GoodBye!" +
-                        "</GoodBye>")
-                .soapAction("GoodBye");
+            .soap()
+            .receive()
+            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say GoodBye!" +
+                    "</GoodBye>")
+            .soapAction("GoodBye");
 
         scenario
-                .soap()
-                .server()
-                .send()
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Bye bye!" +
-                        "</GoodByeResponse>");
+            .soap()
+            .send()
+            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Bye bye!" +
+                    "</GoodByeResponse>");
     }
 }

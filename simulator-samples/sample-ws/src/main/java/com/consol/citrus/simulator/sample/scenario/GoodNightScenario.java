@@ -35,36 +35,33 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
                 .withHandler(this);
 
         scenario
-                .soap()
-                .server()
-                .receive()
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                        "</GoodNight>")
-                .soapAction("GoodNight");
+            .soap()
+            .receive()
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Go to sleep!" +
+                    "</GoodNight>")
+            .soapAction("GoodNight");
 
         scenario
-                .soap()
-                .sendFault()
-                .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
-                .faultString("No sleep for me!");
+            .soap()
+            .sendFault()
+            .faultCode("{http://citrusframework.org}CITRUS:SIM-1001")
+            .faultString("No sleep for me!");
 
         scenario
-                .soap()
-                .server()
-                .receive()
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                        "</GoodNight>")
-                .soapAction("GoodNight");
+            .soap()
+            .receive()
+            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Go to sleep!" +
+                    "</GoodNight>")
+            .soapAction("GoodNight");
 
         scenario
-                .soap()
-                .server()
-                .send()
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
-                        "</GoodNightResponse>");
+            .soap()
+            .send()
+            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Good Night!" +
+                    "</GoodNightResponse>");
     }
 
     @Override

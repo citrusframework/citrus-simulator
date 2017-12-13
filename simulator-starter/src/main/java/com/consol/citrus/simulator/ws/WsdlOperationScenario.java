@@ -13,19 +13,13 @@ import javax.wsdl.BindingOperation;
  */
 public class WsdlOperationScenario extends AbstractSimulatorScenario {
 
-    /**
-     * Operation in wsdl
-     */
+    /** Operation in wsdl */
     private final BindingOperation operation;
 
-    /**
-     * Optional soap action
-     */
+    /** Optional soap action */
     private String soapAction;
 
-    /**
-     * Input and output messages
-     */
+    /** Input and output messages */
     private String input;
     private String output;
 
@@ -34,7 +28,6 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Default constructor.
-     *
      * @param operation
      */
     public WsdlOperationScenario(BindingOperation operation) {
@@ -46,26 +39,23 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
         scenario.echo("Generated scenario from WSDL operation: " + operation.getName());
 
         scenario
-                .soap()
-                .server()
-                .receive()
-                .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-                .dictionary(inboundDataDictionary)
-                .payload(input)
-                .soapAction(soapAction);
+            .soap()
+            .receive()
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .dictionary(inboundDataDictionary)
+            .payload(input)
+            .soapAction(soapAction);
 
         scenario
-                .soap()
-                .server()
-                .send()
-                .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-                .dictionary(outboundDataDictionary)
-                .payload(output);
+            .soap()
+            .send()
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .dictionary(outboundDataDictionary)
+            .payload(output);
     }
 
     /**
      * Sets the soap action for this operation.
-     *
      * @param soapAction
      * @return
      */
@@ -76,7 +66,6 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Sets the operation input body.
-     *
      * @param input
      * @return
      */
@@ -87,7 +76,6 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Sets the operation output body.
-     *
      * @param output
      * @return
      */

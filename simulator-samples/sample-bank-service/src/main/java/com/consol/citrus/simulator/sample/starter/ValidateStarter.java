@@ -51,17 +51,17 @@ public class ValidateStarter extends AbstractScenarioStarter {
     public void run(ScenarioRunner scenario) {
         scenario.echo("Sending request to Validate-IBAN REST Service...");
 
-        scenario.http(client).client()
-                .send(builder -> builder.get("/services/rest/bank")
-                        .queryParam(QueryParameter.IBAN, Variable.IBAN.placeholder())
-                );
+        scenario.http(builder -> builder.client(client)
+                .send()
+                .get("/services/rest/bank")
+                .queryParam(QueryParameter.IBAN, Variable.IBAN.placeholder()));
 
         scenario.echo("Receiving response from Validate-IBAN REST Service...");
 
-        scenario.http(client).client()
-                .receive(builder -> builder.response(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8.toString())
-                );
+        scenario.http(builder -> builder.client(client)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON_UTF8.toString()));
 
         scenario.echo("Response received from Validate-IBAN REST Service");
     }

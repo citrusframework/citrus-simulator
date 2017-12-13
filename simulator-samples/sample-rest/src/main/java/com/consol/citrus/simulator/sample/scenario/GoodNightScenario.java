@@ -35,15 +35,14 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario
-                .http()
-                .server()
-                .receive(builder -> builder
-                        .post()
-                        .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Go to sleep!" +
-                                "</GoodNight>")
-                        .extractFromHeader(CORRELATION_ID, "correlationId")
-                );
+            .http()
+            .receive(builder -> builder
+                    .post()
+                    .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                            "</GoodNight>")
+                    .extractFromHeader(CORRELATION_ID, "correlationId")
+            );
 
         scenario.correlation(builder -> builder
                 .start()
@@ -51,29 +50,26 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
         );
 
         scenario
-                .http()
-                .server()
-                .send(builder -> builder
-                        .response(HttpStatus.OK)
-                        .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Good Night!" +
-                                "</GoodNightResponse>"));
+            .http()
+            .send(builder -> builder
+                    .response(HttpStatus.OK)
+                    .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Good Night!" +
+                            "</GoodNightResponse>"));
 
         scenario
-                .http()
-                .server()
-                .receive(builder -> builder
-                        .post()
-                        .selector("x-correlationid = '1${correlationId}'")
-                        .payload("<InterveningRequest>In between!</InterveningRequest>")
-                );
+            .http()
+            .receive(builder -> builder
+                    .post()
+                    .selector("x-correlationid = '1${correlationId}'")
+                    .payload("<InterveningRequest>In between!</InterveningRequest>")
+            );
 
         scenario
-                .http()
-                .server()
-                .send(builder -> builder
-                        .response(HttpStatus.OK)
-                        .payload("<InterveningResponse>In between!</InterveningResponse>")
-                );
+            .http()
+            .send(builder -> builder
+                    .response(HttpStatus.OK)
+                    .payload("<InterveningResponse>In between!</InterveningResponse>")
+            );
     }
 }

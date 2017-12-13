@@ -1,18 +1,3 @@
-/*
- * Copyright 2006-2017 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.consol.citrus.simulator.http;
 
 import com.consol.citrus.dsl.builder.HttpServerRequestActionBuilder;
@@ -30,9 +15,7 @@ import io.swagger.models.properties.*;
 import org.hamcrest.CustomMatcher;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,34 +25,22 @@ import java.util.stream.Collectors;
  */
 public class HttpOperationScenario extends AbstractSimulatorScenario {
 
-    /**
-     * Operation in wsdl
-     */
+    /** Operation in wsdl */
     private final Operation operation;
 
-    /**
-     * Schema model definitions
-     */
+    /** Schema model definitions */
     private final Map<String, Model> definitions;
 
-    /**
-     * Request path
-     */
+    /** Request path */
     private final String path;
 
-    /**
-     * Request method
-     */
+    /** Request method */
     private final HttpMethod method;
 
-    /**
-     * Response
-     */
+    /** Response */
     private Response response;
 
-    /**
-     * Response status code
-     */
+    /** Response status code */
     private HttpStatus statusCode = HttpStatus.OK;
 
     private JsonPathMappingDataDictionary inboundDataDictionary;
@@ -77,7 +48,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Default constructor.
-     *
      * @param path
      * @param method
      * @param operation
@@ -103,54 +73,49 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
         switch (method) {
             case GET:
                 requestBuilder = scenario
-                        .http()
-                        .server()
-                        .receive()
-                        .get();
+                    .http()
+                    .receive()
+                    .get();
                 break;
             case POST:
                 requestBuilder = scenario
-                        .http()
-                        .server()
-                        .receive()
-                        .post();
+                    .http()
+                    .receive()
+                    .post();
                 break;
             case PUT:
                 requestBuilder = scenario
-                        .http()
-                        .server()
-                        .receive()
-                        .put();
+                    .http()
+                    .receive()
+                    .put();
                 break;
             case HEAD:
                 requestBuilder = scenario
-                        .http()
-                        .server()
-                        .receive()
-                        .head();
+                    .http()
+                    .receive()
+                    .head();
                 break;
             case DELETE:
                 requestBuilder = scenario
-                        .http()
-                        .server()
-                        .receive()
-                        .delete();
+                    .http()
+                    .receive()
+                    .delete();
                 break;
             default:
                 throw new SimulatorException("Unsupported request method: " + method.name());
         }
 
         requestBuilder
-                .messageType(MessageType.JSON)
-                .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
+            .messageType(MessageType.JSON)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
 
         requestBuilder.
-                header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
-                    @Override
-                    public boolean matches(Object item) {
-                        return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
-                    }
-                });
+            header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
+                @Override
+                public boolean matches(Object item) {
+                    return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
+                }
+            });
 
         if (operation.getParameters() != null) {
             operation.getParameters().stream()
@@ -178,13 +143,13 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             }
         }
 
-        HttpServerResponseActionBuilder responseBuilder = scenario.http()
-                .server()
-                .send()
-                .response(statusCode)
-                .messageType(MessageType.JSON)
-                .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-                .contentType("application/json");
+        HttpServerResponseActionBuilder responseBuilder = scenario
+            .http()
+            .send()
+            .response(statusCode)
+            .messageType(MessageType.JSON)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .contentType("application/json");
 
         if (response != null) {
             if (response.getHeaders() != null) {
@@ -206,7 +171,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Create payload from schema with random values.
-     *
      * @param property
      * @param quotes
      * @return
@@ -269,7 +233,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Creates control payload for validation.
-     *
      * @param parameter
      * @return
      */
@@ -308,7 +271,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Create validation expression using functions according to parameter type and format.
-     *
      * @param property
      * @return
      */
@@ -358,7 +320,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     /**
      * Create validation expression using functions according to parameter type and format.
-     *
      * @param parameter
      * @return
      */

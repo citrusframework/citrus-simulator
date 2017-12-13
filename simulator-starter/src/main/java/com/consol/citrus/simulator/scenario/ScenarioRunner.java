@@ -21,7 +21,6 @@ import com.consol.citrus.dsl.actions.DelegatingTestAction;
 import com.consol.citrus.dsl.builder.BuilderSupport;
 import com.consol.citrus.dsl.builder.SoapServerFaultResponseActionBuilder;
 import com.consol.citrus.dsl.runner.DefaultTestRunner;
-import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.correlation.CorrelationBuilderSupport;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.correlation.StartCorrelationHandlerAction;
@@ -70,16 +69,7 @@ public class ScenarioRunner extends DefaultTestRunner {
      * @return
      */
     public HttpScenarioRunnerActionBuilder http() {
-        return http(scenarioEndpoint);
-    }
-
-    /**
-     * Special scenario endpoint http operation.
-     *
-     * @return
-     */
-    public HttpScenarioRunnerActionBuilder http(Endpoint endpoint) {
-        return new HttpScenarioRunnerActionBuilder(this, endpoint)
+        return new HttpScenarioRunnerActionBuilder(this, scenarioEndpoint)
                 .withApplicationContext(getApplicationContext());
     }
 
@@ -89,16 +79,7 @@ public class ScenarioRunner extends DefaultTestRunner {
      * @return
      */
     public SoapScenarioRunnerActionBuilder soap() {
-        return soap(scenarioEndpoint);
-    }
-
-    /**
-     * Special scenario endpoint http operation.
-     *
-     * @return
-     */
-    public SoapScenarioRunnerActionBuilder soap(Endpoint endpoint) {
-        return new SoapScenarioRunnerActionBuilder(this, endpoint)
+        return new SoapScenarioRunnerActionBuilder(this, scenarioEndpoint)
                 .withApplicationContext(getApplicationContext());
     }
 

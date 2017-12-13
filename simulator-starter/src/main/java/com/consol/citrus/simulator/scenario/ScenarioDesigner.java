@@ -20,7 +20,6 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
 import com.consol.citrus.dsl.builder.SendMessageBuilder;
 import com.consol.citrus.dsl.design.DefaultTestDesigner;
-import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.correlation.CorrelationManager;
 import com.consol.citrus.simulator.http.HttpScenarioActionBuilder;
@@ -85,23 +84,16 @@ public class ScenarioDesigner extends DefaultTestDesigner {
 
     @Override
     public HttpScenarioActionBuilder http() {
-        return http(scenarioEndpoint);
-    }
-
-    public HttpScenarioActionBuilder http(Endpoint endpoint) {
-        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(endpoint)
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint)
                 .withApplicationContext(getApplicationContext());
+
         action(builder);
         return builder;
     }
 
     @Override
     public SoapScenarioActionBuilder soap() {
-        return soap(scenarioEndpoint);
-    }
-
-    public SoapScenarioActionBuilder soap(Endpoint endpoint) {
-        SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(endpoint)
+        SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint)
                 .withApplicationContext(getApplicationContext());
 
         action(builder);

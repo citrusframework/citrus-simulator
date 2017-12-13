@@ -35,26 +35,24 @@ public class HelloScenario extends AbstractSimulatorScenario {
         scenario.echo("Simulator: ${simulator.name}");
 
         scenario
-                .http()
-                .server()
-                .receive(builder -> builder
-                        .post()
-                        .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Say Hello!" +
-                                "</Hello>")
-                        .extractFromPayload("//hello:Hello", "greeting")
-                );
+            .http()
+            .receive(builder -> builder
+                    .post()
+                    .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Say Hello!" +
+                            "</Hello>")
+                    .extractFromPayload("//hello:Hello", "greeting")
+            );
 
         scenario.echo("Received greeting: ${greeting}");
 
         scenario
-                .http()
-                .server()
-                .send((builder -> builder
-                        .response(HttpStatus.OK)
-                        .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Hi there!" +
-                                "</HelloResponse>"))
-                );
+            .http()
+            .send((builder -> builder
+                    .response(HttpStatus.OK)
+                    .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Hi there!" +
+                            "</HelloResponse>"))
+            );
     }
 }

@@ -27,19 +27,13 @@ public class DefaultScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario
-                .http()
-                .server()
-                .receive(builder -> {
-                })
-        ;
+            .http()
+            .receive(builder -> {});
 
         scenario
-                .http()
-                .server()
-                .send(builder -> builder
-                        .response(HttpStatus.BAD_REQUEST)
-                        .payload("{\"reason\":\"no mapping for this request\"}")
-                )
-        ;
+            .http()
+            .send(builder -> builder
+                    .response(HttpStatus.BAD_REQUEST)
+                    .payload("{\"reason\":\"no mapping for this request\"}"));
     }
 }

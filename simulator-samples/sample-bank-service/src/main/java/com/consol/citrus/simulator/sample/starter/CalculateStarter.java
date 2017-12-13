@@ -53,20 +53,18 @@ public class CalculateStarter extends AbstractScenarioStarter {
     public void run(ScenarioRunner scenario) {
         scenario.echo("Sending request to Calculate-IBAN REST Service...");
 
-        scenario.http(client)
-                .client()
-                .send(builder -> builder.get("/services/rest/bank")
-                        .queryParam(QueryParameter.SORT_CODE, Variable.SORT_CODE.placeholder())
-                        .queryParam(QueryParameter.ACCOUNT_NUMBER, Variable.ACCOUNT.placeholder())
-                );
+        scenario.http(builder -> builder.client(client)
+                    .send()
+                    .get("/services/rest/bank")
+                    .queryParam(QueryParameter.SORT_CODE, Variable.SORT_CODE.placeholder())
+                    .queryParam(QueryParameter.ACCOUNT_NUMBER, Variable.ACCOUNT.placeholder()));
 
         scenario.echo("Receiving response from Calculate-IBAN REST Service...");
 
-        scenario.http(client)
-                .client()
-                .receive(builder -> builder.response(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8.toString())
-                );
+        scenario.http(builder -> builder.client(client)
+                    .receive()
+                    .response(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8.toString()));
 
         scenario.echo("Response received from Calculate-IBAN REST Service");
     }
