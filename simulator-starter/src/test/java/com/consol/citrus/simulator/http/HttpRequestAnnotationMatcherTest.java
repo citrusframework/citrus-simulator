@@ -33,125 +33,183 @@ public class HttpRequestAnnotationMatcherTest {
                 new Object[]{
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("/path/name", HttpMethod.GET, ""),
+                        true,
+                        true
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_NAME,
+                        setupHttpMessage("/path/name", HttpMethod.GET, ""),
+                        false,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("/path/wrong-path", HttpMethod.GET, ""),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("", HttpMethod.GET, ""),
+                        true,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("/path/value", HttpMethod.GET, ""),
+                        true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("/path/wrong-path", HttpMethod.GET, ""),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("", HttpMethod.GET, ""),
+                        true,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/place-holder/123", HttpMethod.GET, ""),
+                        false,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
+                        setupHttpMessage("/path/place-holder/123", HttpMethod.GET, ""),
+                        true,
+                        false
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/wrong-path", HttpMethod.GET, ""),
+                        true,
+                        false
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_PLACEHOLDER,
+                        setupHttpMessage("/path/wrong-path", HttpMethod.GET, ""),
+                        false,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/pattern/match-me", HttpMethod.GET, ""),
+                        true,
+                        false
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_PATTERN,
+                        setupHttpMessage("/path/pattern/match-me", HttpMethod.GET, ""),
+                        false,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/wrong-pattern", HttpMethod.GET, ""),
+                        true,
+                        false
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_PATTERN,
+                        setupHttpMessage("/path/wrong-pattern", HttpMethod.GET, ""),
+                        false,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("", HttpMethod.GET, ""),
+                        true,
+                        false
+                },
+                new Object[]{
+                        REQ_MAP_WITH_PATH_PATTERN,
+                        setupHttpMessage("", HttpMethod.GET, ""),
+                        false,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_PUT_METHOD,
                         setupHttpMessage("/any-path", HttpMethod.PUT, ""),
+                        true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_PUT_METHOD,
                         setupHttpMessage("", HttpMethod.GET, ""),
+                        true,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", HttpMethod.GET, "a=1"),
+                        true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", HttpMethod.GET, "a="),
+                        true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", HttpMethod.GET, "a=1,b=2"),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", HttpMethod.GET, "c=3"),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", HttpMethod.GET, ""),
+                        true,
                         false
                 },
 
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", HttpMethod.GET, "a=1"),
+                        true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/wrong-path", HttpMethod.GET, "a=1"),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", HttpMethod.PUT, "a=1"),
+                        true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", HttpMethod.GET, ""),
+                        true,
                         false
                 },
         };
     }
 
     @Test(dataProvider = "dpScenarios")
-    public void testCheckRequestSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean expectedResult) throws Exception {
-        boolean actual = cut.checkRequestPathSupported(httpMessage, requestMapping)
+    public void testCheckRequestSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean exactMatch, boolean expectedResult) throws Exception {
+        boolean actual = cut.checkRequestPathSupported(httpMessage, requestMapping, exactMatch)
                 && cut.checkRequestMethodSupported(httpMessage, requestMapping)
                 && cut.checkRequestQueryParamsSupported(httpMessage, requestMapping);
         Assert.assertEquals(actual, expectedResult);

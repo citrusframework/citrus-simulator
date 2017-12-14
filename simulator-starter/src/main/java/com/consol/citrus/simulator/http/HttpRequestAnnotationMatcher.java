@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.http;
 import com.consol.citrus.http.message.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
@@ -35,20 +36,23 @@ import java.util.stream.Collectors;
  */
 public class HttpRequestAnnotationMatcher {
 
-    /**
-     * Logger
-     */
+    /** Logger */
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestAnnotationMatcher.class);
 
-    /**
-     * Request path matcher
-     */
+    /** Request path matcher */
     private PathMatcher pathMatcher = new AntPathMatcher();
 
+    /**
+     * Prevent instantiation other that using factory method
+     */
     private HttpRequestAnnotationMatcher() {
-        // constructed using factory method
+        super();
     }
 
+    /**
+     * Factory method creating new instance.
+     * @return
+     */
     public static HttpRequestAnnotationMatcher instance() {
         return new HttpRequestAnnotationMatcher();
     }
@@ -59,14 +63,15 @@ public class HttpRequestAnnotationMatcher {
      *
      * @param request        the http request
      * @param requestMapping the request mapping containing the supported methods
+     * @param exactMatch     flag to indicate exact request path match, if true only exact matches are allowed, if false also wildcards and path variables are allowed
      * @return
      */
-    public boolean checkRequestPathSupported(HttpMessage request, RequestMapping requestMapping) {
+    public boolean checkRequestPathSupported(HttpMessage request, RequestMapping requestMapping, boolean exactMatch) {
         final String requestPath = Optional.ofNullable(request.getPath()).orElse("");
         final String[] supportedRequestPaths = requestMapping.value();
         if (supportedRequestPaths.length > 0) {
             for (String supportedRequestPath : supportedRequestPaths) {
-                if (pathMatcher.match(supportedRequestPath, requestPath) || supportedRequestPath.equals(requestPath)) {
+                if (exactMatch ? supportedRequestPath.equals(requestPath) : pathMatcher.match(supportedRequestPath, requestPath)) {
                     LOG.debug("Request path {} supported. Path found in the list of supported request paths: {}",
                             requestPath, supportedRequestPaths);
                     return true;
@@ -91,7 +96,7 @@ public class HttpRequestAnnotationMatcher {
      */
     public boolean checkRequestMethodSupported(HttpMessage request, RequestMapping requestMapping) {
         final RequestMethod[] requestMethods = requestMapping.method();
-        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : "";
+        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : HttpMethod.POST.name();
         if (requestMethods.length > 0) {
             for (RequestMethod method : requestMethods) {
                 if (method.name().equals(actualRequestMethod)) {

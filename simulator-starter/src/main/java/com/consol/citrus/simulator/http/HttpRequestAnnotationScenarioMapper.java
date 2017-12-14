@@ -27,12 +27,9 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Scenario mapper performs mapping logic on request mapping annotations on given scenarios. Scenarios match on request method as well as
@@ -49,11 +46,6 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
     private SimulatorConfigurationProperties configuration;
 
     private HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
-
-    /**
-     * Request path matcher
-     */
-    private PathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected String getMappingKey(Message request) {
@@ -79,36 +71,35 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
     }
 
     protected String getMappingKeyForHttpMessage(HttpMessage httpMessage) {
-        return scenarios.stream()
+        Optional<String> mapping = scenarios.stream()
                 .map(scenario -> EnrichedScenarioWithRequestMapping.builder()
                         .scenario(scenario)
                         .requestMapping(AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class))
                         .build()
                 )
                 .filter(EnrichedScenarioWithRequestMapping::hasRequestMapping)
-                .filter(swrm -> httpRequestAnnotationMatcher.checkRequestPathSupported(httpMessage, swrm.getRequestMapping()))
+                .filter(swrm -> httpRequestAnnotationMatcher.checkRequestPathSupported(httpMessage, swrm.getRequestMapping(), true))
                 .filter(swrm -> httpRequestAnnotationMatcher.checkRequestMethodSupported(httpMessage, swrm.getRequestMapping()))
                 .filter(swrm -> httpRequestAnnotationMatcher.checkRequestQueryParamsSupported(httpMessage, swrm.getRequestMapping()))
                 .map(EnrichedScenarioWithRequestMapping::name)
-                .findFirst().orElse(configuration.getDefaultScenario());
-    }
+                .findFirst();
 
-    /**
-     * Gets the pathMatcher.
-     *
-     * @return
-     */
-    public PathMatcher getPathMatcher() {
-        return pathMatcher;
-    }
+        if (!mapping.isPresent()) {
+            mapping = scenarios.stream()
+                    .map(scenario -> EnrichedScenarioWithRequestMapping.builder()
+                            .scenario(scenario)
+                            .requestMapping(AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class))
+                            .build()
+                    )
+                    .filter(EnrichedScenarioWithRequestMapping::hasRequestMapping)
+                    .filter(swrm -> httpRequestAnnotationMatcher.checkRequestPathSupported(httpMessage, swrm.getRequestMapping(), false))
+                    .filter(swrm -> httpRequestAnnotationMatcher.checkRequestMethodSupported(httpMessage, swrm.getRequestMapping()))
+                    .filter(swrm -> httpRequestAnnotationMatcher.checkRequestQueryParamsSupported(httpMessage, swrm.getRequestMapping()))
+                    .map(EnrichedScenarioWithRequestMapping::name)
+                    .findFirst();
+        }
 
-    /**
-     * Sets the pathMatcher.
-     *
-     * @param pathMatcher
-     */
-    public void setPathMatcher(PathMatcher pathMatcher) {
-        this.pathMatcher = pathMatcher;
+        return mapping.orElse(configuration.getDefaultScenario());
     }
 
     /**

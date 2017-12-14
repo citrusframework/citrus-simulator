@@ -20,6 +20,8 @@ import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,9 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
 
     @Autowired(required = false)
     private List<HttpOperationScenario> httpScenarios = new ArrayList<>();
+
+    /** Request path matcher */
+    private PathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected String getMappingKey(Message request) {
@@ -50,7 +55,7 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
                 }
 
                 for (HttpOperationScenario scenario : httpScenarios) {
-                    if (getPathMatcher().match(scenario.getPath(), requestPath)) {
+                    if (pathMatcher.match(scenario.getPath(), requestPath)) {
                         if (scenario.getMethod().name().equals(((HttpMessage) request).getRequestMethod().name())) {
                             return scenario.getOperation().getOperationId();
                         }
