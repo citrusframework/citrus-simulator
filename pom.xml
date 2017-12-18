@@ -7,7 +7,7 @@
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-simulator</artifactId>
   <name>${project.artifactId}</name>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Citrus Simulator</description>
   <url>http://www.citrusframework.org</url>
