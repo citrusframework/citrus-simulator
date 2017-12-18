@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.util;
 
+import com.consol.citrus.simulator.exception.SimulatorException;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 
 public final class JsonMarshaller {
@@ -28,7 +29,7 @@ public final class JsonMarshaller {
         try {
             return mapper.toJson(object);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SimulatorException(e);
         }
     }
 
@@ -37,7 +38,7 @@ public final class JsonMarshaller {
         try {
             return mapper.fromJson(json, clazz);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SimulatorException(e);
         }
     }
 }

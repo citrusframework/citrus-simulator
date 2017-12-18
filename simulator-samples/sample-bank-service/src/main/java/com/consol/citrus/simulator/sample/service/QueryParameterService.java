@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.service;
 
+import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.sample.model.QueryParameter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,15 +32,15 @@ import static com.consol.citrus.simulator.sample.model.QueryParameter.*;
 public class QueryParameterService {
 
     public String getIban(String queryParameters) {
-        return extractQueryParameterValue(queryParameters, IBAN).orElseThrow(() -> new RuntimeException("missing query parameter: " + IBAN));
+        return extractQueryParameterValue(queryParameters, IBAN).orElseThrow(() -> new SimulatorException("missing query parameter: " + IBAN));
     }
 
     public String getSortCode(String queryParameters) {
-        return extractQueryParameterValue(queryParameters, SORT_CODE).orElseThrow(() -> new RuntimeException("missing query parameter: " + SORT_CODE));
+        return extractQueryParameterValue(queryParameters, SORT_CODE).orElseThrow(() -> new SimulatorException("missing query parameter: " + SORT_CODE));
     }
 
     public String getBankAccountNumber(String queryParameters) {
-        return extractQueryParameterValue(queryParameters, ACCOUNT_NUMBER).orElseThrow(() -> new RuntimeException("missing query parameter: " + ACCOUNT_NUMBER));
+        return extractQueryParameterValue(queryParameters, ACCOUNT_NUMBER).orElseThrow(() -> new SimulatorException("missing query parameter: " + ACCOUNT_NUMBER));
     }
 
     private Optional<String> extractQueryParameterValue(String queryParameters, String name) {

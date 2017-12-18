@@ -16,6 +16,7 @@
 
 package com.consol.citrus.simulator.sample.service;
 
+import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.sample.model.Bank;
 import com.consol.citrus.simulator.sample.model.BankAccount;
 import com.consol.citrus.simulator.sample.model.CalculateIbanResponse;
@@ -80,7 +81,7 @@ public class BankService {
             String checkSum = new IBANCheckDigit().calculate(ibanWithoutCheckCode);
             return createIban(checkSum, bankCode, accountNumber);
         } catch (CheckDigitException e) {
-            throw new RuntimeException(String.format("Error calculating IBAN [code:%s,account:%s]", bankCode, accountNumber));
+            throw new SimulatorException(String.format("Error calculating IBAN [code:%s,account:%s]", bankCode, accountNumber));
         }
     }
 
