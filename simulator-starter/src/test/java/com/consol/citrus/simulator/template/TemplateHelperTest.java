@@ -5,9 +5,6 @@ import org.springframework.core.io.Resource;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TemplateHelperTest {
@@ -28,7 +25,6 @@ public class TemplateHelperTest {
 
     @Test(dataProvider = "fileResourceDP")
     public void testGetFileResource(String basePath, String fileName, String fileExtension, boolean shouldExist) throws Exception {
-        System.err.println("DEFAULT:" + Charset.defaultCharset());
         final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
         final Resource fileResource = testling.getFileResource(fileName, fileExtension);
         Assert.assertEquals(shouldExist, fileResource.exists());
