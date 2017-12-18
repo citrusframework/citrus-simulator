@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus.archetypes</groupId>
     <artifactId>citrus-simulator-archetypes</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
