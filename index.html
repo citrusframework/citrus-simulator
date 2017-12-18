@@ -528,8 +528,8 @@ table.CodeRay td.code>pre{padding:0}
 <span id="author" class="author">Christoph Deppisch</span><br>
 <span id="author2" class="author">Martin Maher</span><br>
 <span id="author3" class="author">Georgi Todorov</span><br>
-<span id="revnumber">version 1.0.0,</span>
-<span id="revdate">2017-09-21</span>
+<span id="revnumber">version 1.0.1,</span>
+<span id="revdate">2017-12-18</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">citrus-simulator</div>
@@ -644,7 +644,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Copyright © 2017 ConSol Software GmbH</strong><br>
-<strong>Version: 1.0.0</strong></p>
+<strong>Version: 1.0.1</strong></p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/citrus-logo-small.png" alt="citrus-logo"></span></p>
@@ -2189,7 +2189,7 @@ the simulator we can also use <strong>@RequestMapping</strong> annotations on sc
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Scenario</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello</span><span class="delimiter">&quot;</span></span>)
-<span class="annotation">@RequestMapping</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/rest/simulator/hello</span><span class="delimiter">&quot;</span></span>, method = RequestMethod.POST)
+<span class="annotation">@RequestMapping</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">/services/rest/simulator/hello</span><span class="delimiter">&quot;</span></span>, method = RequestMethod.POST, params = {<span class="string"><span class="delimiter">&quot;</span><span class="content">user</span><span class="delimiter">&quot;</span></span>})
 <span class="directive">public</span> <span class="type">class</span> <span class="class">HelloScenario</span> <span class="directive">extends</span> AbstractSimulatorScenario {
 
     <span class="annotation">@Override</span>
@@ -2210,8 +2210,9 @@ the simulator we can also use <strong>@RequestMapping</strong> annotations on sc
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see the example above uses <strong>@RequestMapping</strong> annotation in addition to the <strong>@Scenario</strong> annotation. All requests on the request path
-<strong>/services/rest/simulator/hello</strong> of method <strong>POST</strong> will be mapped to the scenario. With this strategy the simulator is able to map requests based
+<p>As you can see the example above uses <strong>@RequestMapping</strong> annotation in addition to the <strong>@Scenario</strong> annotation.
+All requests on the request path <strong>/services/rest/simulator/hello</strong> of method <strong>POST</strong> that include the query
+parameter <strong>user</strong> will be mapped to the scenario. With this strategy the simulator is able to map requests based
 on methods, request paths and query parameters.</p>
 </div>
 <div class="paragraph">
@@ -3961,7 +3962,7 @@ sample projects with complete code available on <a href="https://github.com/chri
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
+Version 1.0.1<br>
 Last updated 2017-09-12 09:44:23 MESZ
 </div>
 </div>
