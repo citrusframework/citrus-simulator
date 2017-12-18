@@ -16,15 +16,14 @@
 
 package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.template.TemplateHelper;
 import com.consol.citrus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
+import javax.annotation.PostConstruct;
 
 /**
  * @author Christoph Deppisch
@@ -34,6 +33,13 @@ public abstract class AbstractScenarioStarter extends AbstractSimulatorScenario 
     @Autowired
     private SimulatorConfigurationProperties simulatorConfigurationProperties;
 
+    private TemplateHelper templateHelper;
+
+    @PostConstruct
+    private void initialiseTemplateHelper() {
+        templateHelper = TemplateHelper.instance(this.getTemplateBasePath(), FileUtils.getDefaultCharset());
+    }
+
     /**
      * Gets a classpath file resource from base template package.
      *
@@ -42,7 +48,7 @@ public abstract class AbstractScenarioStarter extends AbstractSimulatorScenario 
      * @return
      */
     protected Resource getFileResource(String fileName, String fileExtension) {
-        return new ClassPathResource(getTemplateBasePath() + fileName + ((StringUtils.hasText(fileExtension) && !fileExtension.startsWith(".")) ? "." + fileExtension : fileExtension));
+        return templateHelper.getFileResource(fileName, fileExtension);
     }
 
     /**
@@ -52,7 +58,7 @@ public abstract class AbstractScenarioStarter extends AbstractSimulatorScenario 
      * @return the contents as a string
      */
     protected String getXmlMessageTemplate(String filename) {
-        return getMessageTemplate(filename, filename.endsWith(".xml") ? "": "xml");
+        return templateHelper.getXmlMessageTemplate(filename);
     }
 
     /**
@@ -62,26 +68,23 @@ public abstract class AbstractScenarioStarter extends AbstractSimulatorScenario 
      * @return the contents as a string
      */
     protected String getJsonMessageTemplate(String filename) {
-        return getMessageTemplate(filename, filename.endsWith(".json") ? "": "json");
+        return templateHelper.getJsonMessageTemplate(filename);
     }
 
     /**
      * Locates a message template using the supplied {@code filename} returning the contents as a string. Uses given file extension.
      *
-     * @param filename the message template name.
+     * @param filename      the message template name.
      * @param fileExtension template file extension.
      * @return the contents as a string
      */
     protected String getMessageTemplate(String filename, String fileExtension) {
-        try {
-            return FileUtils.readToString(this.getFileResource(filename, fileExtension));
-        } catch (IOException e) {
-            throw new CitrusRuntimeException(String.format("Error reading template: %s", filename), e);
-        }
+        return templateHelper.getMessageTemplate(filename, fileExtension);
     }
 
     /**
      * Gets the default template base folder path.
+     *
      * @return
      */
     protected String getTemplateBasePath() {
