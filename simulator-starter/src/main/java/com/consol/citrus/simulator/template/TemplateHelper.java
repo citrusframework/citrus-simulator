@@ -93,7 +93,7 @@ public class TemplateHelper {
      */
     public Resource getFileResource(String resourcePath, String resourceExtension) {
         String adaptedFileExtension = resourceExtension;
-        if (!StringUtils.startsWithIgnoreCase(resourceExtension, ".")) {
+        if (StringUtils.hasLength(resourceExtension) && !StringUtils.startsWithIgnoreCase(resourceExtension, ".")) {
             adaptedFileExtension = "." + resourceExtension;
         }
         return new ClassPathResource(basePath + resourcePath + adaptedFileExtension);

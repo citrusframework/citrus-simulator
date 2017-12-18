@@ -35,7 +35,9 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -243,7 +245,7 @@ public class ScenarioService {
         Map<String, SimulatorScenario> scenarios = context.getBeansOfType(SimulatorScenario.class).entrySet().stream()
                 .filter(map -> !map.getValue().getClass().isAnnotationPresent(Starter.class))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.info(String.format("Scenarios discovered: \n%s", Arrays.toString(scenarios.keySet().toArray())));
+        log.info(String.format("Scenarios discovered: %n%s", Arrays.toString(scenarios.keySet().toArray())));
         return scenarios;
 
     }
@@ -252,7 +254,7 @@ public class ScenarioService {
         Map<String, ScenarioStarter> starters = context.getBeansOfType(ScenarioStarter.class).entrySet().stream()
                 .filter(map -> map.getValue().getClass().isAnnotationPresent(Starter.class))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.info(String.format("Starters discovered: \n%s", Arrays.toString(starters.keySet().toArray())));
+        log.info(String.format("Starters discovered: %n%s", Arrays.toString(starters.keySet().toArray())));
         return starters;
     }
 }
