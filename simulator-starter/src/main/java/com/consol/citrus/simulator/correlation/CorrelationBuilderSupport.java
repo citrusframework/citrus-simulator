@@ -5,5 +5,5 @@ package com.consol.citrus.simulator.correlation;
  */
 public interface CorrelationBuilderSupport {
 
-    void configure(CorrelationManager builder);
+    void configure(CorrelationManager correlationManager);
 }

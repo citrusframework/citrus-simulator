@@ -44,8 +44,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
                     .extractFromHeader(CORRELATION_ID, "correlationId")
             );
 
-        scenario.correlation(builder -> builder
-                .start()
+        scenario.correlation(correlationManager -> correlationManager.start()
                 .onHeader(CORRELATION_ID, "${correlationId}")
         );
 
