@@ -21,12 +21,14 @@ import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtracto
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christoph Deppisch
  */
 public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
-
+    private static final Logger LOG = LoggerFactory.getLogger(XPathPayloadCorrelationHandler.class);
     private XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
     private final String value;
 
@@ -47,6 +49,14 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
 
     @Override
     public boolean isHandlerFor(Message message, TestContext context) {
-        return xPathPayloadMappingKeyExtractor.extractMappingKey(message).equals(context.replaceDynamicContentInString(value));
+        boolean isIntermediateMessage;
+        try {
+            isIntermediateMessage = xPathPayloadMappingKeyExtractor.extractMappingKey(message).equals(context.replaceDynamicContentInString(value));
+        } catch (RuntimeException e) {
+            LOG.debug("Error checking whether message({}) is an intermediate message: {}", message.getId(), e.getMessage());
+            isIntermediateMessage = false;
+        }
+        LOG.debug("Intermediate message({}): {}", message.getId(), isIntermediateMessage);
+        return isIntermediateMessage;
     }
 }
