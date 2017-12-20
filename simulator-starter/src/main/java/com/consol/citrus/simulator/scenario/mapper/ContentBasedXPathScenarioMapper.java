@@ -36,8 +36,10 @@ import java.util.Optional;
  */
 public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
     private static final Logger LOG = LoggerFactory.getLogger(ContentBasedXPathScenarioMapper.class);
+
     private final List<XPathPayloadMappingKeyExtractor> keyExtractors = new ArrayList<>();
     private final NamespaceContextBuilder namespaceContextBuilder;
+    private ScenarioNameValidator scenarioNameValidator = StringUtils::hasLength;
 
     /**
      * Default constructor.
@@ -79,6 +81,18 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
     }
 
     /**
+     * Fluent API builder method adds scenarioNameValidator.
+     *
+     * @param scenarioNameValidator validator for verifying the scenario name
+     * @return
+     */
+    public ContentBasedXPathScenarioMapper addScenarioNameValidator(ScenarioNameValidator scenarioNameValidator) {
+        this.scenarioNameValidator = scenarioNameValidator;
+        return this;
+    }
+
+
+    /**
      * Create proper xpath mapping key extractor from given expression.
      *
      * @param xpathExpression
@@ -109,17 +123,17 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
      * @return
      */
     private Optional<String> lookupScenarioName(Message request, XPathPayloadMappingKeyExtractor keyExtractor) {
-        final String noMatch = "<no-match>";
         try {
             final String mappingKey = keyExtractor.getMappingKey(request);
-            final String scenarioLookupResult = StringUtils.hasLength(mappingKey) ? mappingKey : noMatch;
-            LOG.debug("Scenario-name lookup returned: {}", scenarioLookupResult);
-            return Optional.ofNullable(mappingKey);
+            if (scenarioNameValidator.isValidScenarioName(mappingKey)) {
+                LOG.debug("Scenario-name lookup returned: {}", mappingKey);
+                return Optional.of(mappingKey);
+            }
         } catch (RuntimeException e) {
-            LOG.debug("Scenario-name lookup returned: {} ({})", noMatch, e.getMessage());
-            return Optional.empty();
+            LOG.trace("Scenario-name lookup failed", e);
         }
+
+        LOG.debug("Scenario-name lookup returned: <no-match>");
+        return Optional.empty();
     }
 }
-
-

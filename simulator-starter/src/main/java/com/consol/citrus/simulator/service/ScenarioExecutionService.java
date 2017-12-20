@@ -25,7 +25,9 @@ import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.simulator.scenario.ScenarioRunner;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,52 +35,30 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
- * Service interface capable of executing test executables. The service takes care on setting up the executable before execution. Service
+ * Service capable of executing test executables. The service takes care on setting up the executable before execution. Service
  * gets a list of normalized parameters which has to be translated to setters on the test executable instance before execution.
  *
  * @author Christoph Deppisch
  */
 @Service
-public class ScenarioService {
-
-    /**
-     * Logger
-     */
-    private static final Logger log = LoggerFactory.getLogger(ScenarioService.class);
-
-    /**
-     * List of available scenario starters
-     */
-    private Map<String, ScenarioStarter> scenarioStarters;
-
-    /**
-     * List of available scenarios
-     */
-    private Map<String, SimulatorScenario> scenarios;
+public class ScenarioExecutionService {
+    private static final Logger LOG = LoggerFactory.getLogger(ScenarioExecutionService.class);
 
     private final ActivityService activityService;
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
 
     @Autowired
-    public ScenarioService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
+    public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
         this.activityService = activityService;
         this.applicationContext = applicationContext;
         this.citrus = citrus;
-    }
-
-    @PostConstruct
-    private void init() {
-        scenarios = findSimulatorScenarios(applicationContext);
-        scenarioStarters = findScenarioStarters(applicationContext);
     }
 
     /**
@@ -99,7 +79,7 @@ public class ScenarioService {
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
     public final Long run(SimulatorScenario scenario, String name, List<ScenarioParameter> scenarioParameters) {
-        log.info(String.format("Starting scenario : %s", name));
+        LOG.info(String.format("Starting scenario : %s", name));
 
         ScenarioExecution es = activityService.createExecutionScenario(name, scenarioParameters);
 
@@ -173,9 +153,9 @@ public class ScenarioService {
                         }
                     });
                 }
-                log.debug(String.format("Scenario completed: '%s'", name));
+                LOG.debug(String.format("Scenario completed: '%s'", name));
             } catch (Exception e) {
-                log.error(String.format("Scenario completed with error: '%s'", name), e);
+                LOG.error(String.format("Scenario completed with error: '%s'", name), e);
             }
             executorService.shutdownNow();
         });
@@ -204,57 +184,5 @@ public class ScenarioService {
      * @param scenario
      */
     protected void prepare(SimulatorScenario scenario) {
-    }
-
-    /**
-     * Returns a list containing the names of all scenarios.
-     *
-     * @return all scenario names
-     */
-    public Collection<String> getScenarioNames() {
-        return scenarios.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list containing the names of all starters
-     *
-     * @return all starter names
-     */
-    public Collection<String> getStarterNames() {
-        return scenarioStarters.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the list of parameters that the scenario can be passed when started
-     *
-     * @param scenarioName
-     * @return
-     */
-    public Collection<ScenarioParameter> lookupScenarioParameters(String scenarioName) {
-        if (scenarioStarters.containsKey(scenarioName)) {
-            return scenarioStarters.get(scenarioName).getScenarioParameters();
-        }
-        return Collections.emptyList();
-    }
-
-    private static Map<String, SimulatorScenario> findSimulatorScenarios(ApplicationContext context) {
-        Map<String, SimulatorScenario> scenarios = context.getBeansOfType(SimulatorScenario.class).entrySet().stream()
-                .filter(map -> !map.getValue().getClass().isAnnotationPresent(Starter.class))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.info(String.format("Scenarios discovered: %n%s", Arrays.toString(scenarios.keySet().toArray())));
-        return scenarios;
-
-    }
-
-    private static Map<String, ScenarioStarter> findScenarioStarters(ApplicationContext context) {
-        Map<String, ScenarioStarter> starters = context.getBeansOfType(ScenarioStarter.class).entrySet().stream()
-                .filter(map -> map.getValue().getClass().isAnnotationPresent(Starter.class))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.info(String.format("Starters discovered: %n%s", Arrays.toString(starters.keySet().toArray())));
-        return starters;
     }
 }

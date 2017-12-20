@@ -23,7 +23,7 @@ import com.consol.citrus.simulator.correlation.CorrelationHandler;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerRegistry;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
-import com.consol.citrus.simulator.service.ScenarioService;
+import com.consol.citrus.simulator.service.ScenarioExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
     private SimulatorConfigurationProperties configuration;
 
     @Autowired
-    private ScenarioService scenarioService;
+    private ScenarioExecutionService scenarioExecutionService;
 
     /** Spring application context */
     private ApplicationContext applicationContext;
@@ -97,7 +97,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
         scenario.getScenarioEndpoint().setName(scenarioName);
         scenario.getScenarioEndpoint().add(request, responseFuture);
-        scenarioService.run(scenario, scenarioName, Collections.EMPTY_LIST);
+        scenarioExecutionService.run(scenario, scenarioName, Collections.EMPTY_LIST);
 
         try {
             if (handleResponse) {
