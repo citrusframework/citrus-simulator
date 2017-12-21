@@ -78,10 +78,8 @@ public class ScenarioController {
     public Collection<Scenario> getScenarioNames(@RequestBody(required = false) ScenarioFilter filter) {
         return scenarios.stream()
                 .filter(scenario -> {
-                    if (filter != null) {
-                        if (StringUtils.hasText(filter.getName())) {
-                            return scenario.getName().contains(filter.getName());
-                        }
+                    if (filter != null && StringUtils.hasText(filter.getName())) {
+                        return scenario.getName().contains(filter.getName());
                     }
                     return true;
                 })
