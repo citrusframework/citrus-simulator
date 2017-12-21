@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Mapper that can be used for examining incoming messages and based on the content of the message returns the name
@@ -36,7 +37,7 @@ import java.util.Optional;
 public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
     private static final Logger LOG = LoggerFactory.getLogger(ContentBasedJsonPathScenarioMapper.class);
     private final List<JsonPayloadMappingKeyExtractor> keyExtractors = new ArrayList<>();
-    private ScenarioNameValidator scenarioNameValidator = StringUtils::hasLength;
+    private Predicate<String> mappingKeyFilter = StringUtils::hasLength;
 
     /**
      * Fluent API builder method adds new json path expression.
@@ -50,13 +51,14 @@ public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
     }
 
     /**
-     * Fluent API builder method adds scenarioNameValidator.
+     * Fluent API builder method adds scenarioNameFilter. By adding a filter you can limit the mapped keys to a
+     * particular set of scenario names or to a particular pattern.
      *
-     * @param scenarioNameValidator validator for verifying the scenario name
+     * @param mappingKeyFilter for filtering out or skipping mapped keys
      * @return
      */
-    public ContentBasedJsonPathScenarioMapper addScenarioNameValidator(ScenarioNameValidator scenarioNameValidator) {
-        this.scenarioNameValidator = scenarioNameValidator;
+    public ContentBasedJsonPathScenarioMapper addMappingKeyFilter(Predicate<String> mappingKeyFilter) {
+        this.mappingKeyFilter = mappingKeyFilter;
         return this;
     }
 
@@ -78,6 +80,7 @@ public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
                 .map(keyExtractor -> lookupScenarioName(request, keyExtractor))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .filter(mappingKeyFilter)
                 .findFirst();
         return v.orElse(null);
     }
@@ -92,10 +95,8 @@ public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
     private Optional<String> lookupScenarioName(Message request, JsonPayloadMappingKeyExtractor keyExtractor) {
         try {
             final String mappingKey = keyExtractor.getMappingKey(request);
-            if (scenarioNameValidator.isValidScenarioName(mappingKey)) {
-                LOG.debug("Scenario-name lookup returned: {}", mappingKey);
-                return Optional.of(mappingKey);
-            }
+            LOG.debug("Scenario-name lookup returned: {}", mappingKey);
+            return Optional.of(mappingKey);
         } catch (RuntimeException e) {
             LOG.trace("Scenario-name lookup failed", e);
         }
