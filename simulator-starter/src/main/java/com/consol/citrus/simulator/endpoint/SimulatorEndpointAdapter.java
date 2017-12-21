@@ -32,14 +32,19 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Christoph Deppisch
  */
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter implements ApplicationContextAware {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
     @Autowired
@@ -51,10 +56,14 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
     @Autowired
     private ScenarioExecutionService scenarioExecutionService;
 
-    /** Spring application context */
+    /**
+     * Spring application context
+     */
     private ApplicationContext applicationContext;
 
-    /** When adapter is asynchronous response handling is skipped */
+    /**
+     * When adapter is asynchronous response handling is skipped
+     */
     private boolean handleResponse = true;
 
     @Override
@@ -73,7 +82,10 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             } catch (TimeoutException e) {
                 LOG.warn(String.format("No response for scenario '%s'", handler.getScenarioEndpoint().getName()));
                 return null;
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new SimulatorException(e);
+            } catch (ExecutionException e) {
                 throw new SimulatorException(e);
             }
         } else {
@@ -108,7 +120,10 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         } catch (TimeoutException e) {
             LOG.warn(String.format("No response for scenario '%s'", scenarioName));
             return null;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new SimulatorException(e);
+        } catch (ExecutionException e) {
             throw new SimulatorException(e);
         }
     }

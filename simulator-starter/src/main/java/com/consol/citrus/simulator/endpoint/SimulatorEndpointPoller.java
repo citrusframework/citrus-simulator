@@ -86,6 +86,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         LOG.error("Failed to delay after uncategorized exception", e);
                     } finally {
                         delay = 0;
