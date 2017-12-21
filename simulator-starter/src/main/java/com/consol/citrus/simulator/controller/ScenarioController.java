@@ -20,6 +20,7 @@ import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.service.ScenarioExecutionService;
 import com.consol.citrus.simulator.service.ScenarioLookupService;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,8 +63,9 @@ public class ScenarioController {
     }
 
     @Data
+    @NoArgsConstructor
     public static class ScenarioFilter {
-        private final String name;
+        private String name;
     }
 
     /**
