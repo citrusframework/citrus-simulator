@@ -42,10 +42,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter implements ApplicationContextAware {
 
-    /**
-     * Logger
-     */
-    private static Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
     @Autowired
     private CorrelationHandlerRegistry handlerRegistry;
@@ -102,14 +99,14 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         } else {
             scenarioName = configuration.getDefaultScenario();
-            LOG.info(String.format("Unable to find scenario for mapping '%s' - " +
-                    "using default scenario '%s'", mappingName, scenarioName));
+            LOG.info("Unable to find scenario for mapping '{}' - " +
+                    "using default scenario '{}'", mappingName, scenarioName);
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         }
 
         scenario.getScenarioEndpoint().setName(scenarioName);
         scenario.getScenarioEndpoint().add(request, responseFuture);
-        scenarioExecutionService.run(scenario, scenarioName, Collections.EMPTY_LIST);
+        scenarioExecutionService.run(scenario, scenarioName, Collections.emptyList());
 
         try {
             if (handleResponse) {
