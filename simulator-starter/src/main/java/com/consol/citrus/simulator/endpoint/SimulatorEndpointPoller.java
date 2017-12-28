@@ -83,13 +83,12 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
         long delay = 0L;
         while (running) {
             try {
-
                 if (delay > 0) {
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
                         LOG.error("Failed to delay after uncategorized exception", e);
+                        Thread.currentThread().interrupt();
                     } finally {
                         delay = 0;
                     }
@@ -125,6 +124,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
             }
         }
     }
+
 
     /**
      * Process response message before sending back to client. This gives subclasses
