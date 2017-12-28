@@ -111,6 +111,11 @@ public class ScenarioExecutionService {
                 } else {
                     TestContext context = citrus.createTestContext();
                     ReflectionUtils.doWithLocalMethods(scenario.getClass(), m -> {
+                        if (m.getDeclaringClass().equals(SimulatorScenario.class)) {
+                            // no need to execute the default run implementations
+                            return;
+                        }
+
                         if (!m.getName().equals("run")) {
                             return;
                         }
