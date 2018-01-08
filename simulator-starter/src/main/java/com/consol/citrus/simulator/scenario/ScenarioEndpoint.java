@@ -88,6 +88,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
             messageReceived(message, context);
             return message;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new SimulatorException(e);
         }
     }

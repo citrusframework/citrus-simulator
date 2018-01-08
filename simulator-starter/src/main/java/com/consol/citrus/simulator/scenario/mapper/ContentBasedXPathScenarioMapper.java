@@ -19,8 +19,14 @@ package com.consol.citrus.simulator.scenario.mapper;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Mapper that can be used for examining incoming messages and based on the content of the message returns the name
@@ -30,9 +36,11 @@ import java.util.*;
  * message.
  */
 public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
+    private static final Logger LOG = LoggerFactory.getLogger(ContentBasedXPathScenarioMapper.class);
 
     private final List<XPathPayloadMappingKeyExtractor> keyExtractors = new ArrayList<>();
     private final NamespaceContextBuilder namespaceContextBuilder;
+    private Predicate<String> mappingKeyFilter = StringUtils::hasLength;
 
     /**
      * Default constructor.
@@ -43,6 +51,7 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
 
     /**
      * Default constructor using namespace context builder.
+     *
      * @param namespaceContextBuilder
      */
     public ContentBasedXPathScenarioMapper(NamespaceContextBuilder namespaceContextBuilder) {
@@ -51,6 +60,7 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
 
     /**
      * Fluent API builder method adds new namespace mapping.
+     *
      * @param alias
      * @param namespaceIdentifier
      * @return
@@ -62,6 +72,7 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
 
     /**
      * Fluent API builder method adds new xpath expression.
+     *
      * @param xpathExpression
      * @return
      */
@@ -71,7 +82,20 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
     }
 
     /**
+     * Fluent API builder method adds scenarioNameFilter. By adding a filter you can limit the mapped keys to a
+     * particular set of scenario names or to a particular pattern.
+     *
+     * @param mappingKeyFilter for filtering out or skipping mapped keys
+     * @return
+     */
+    public ContentBasedXPathScenarioMapper addMappingKeyFilter(Predicate<String> mappingKeyFilter) {
+        this.mappingKeyFilter = mappingKeyFilter;
+        return this;
+    }
+
+    /**
      * Create proper xpath mapping key extractor from given expression.
+     *
      * @param xpathExpression
      * @return
      */
@@ -84,23 +108,32 @@ public class ContentBasedXPathScenarioMapper implements ScenarioMapper {
 
     @Override
     public String extractMappingKey(Message request) {
-        Optional<String> v = keyExtractors.parallelStream()
+        Optional<String> v = keyExtractors.stream()
                 .map(keyExtractor -> lookupScenarioName(request, keyExtractor))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findAny();
+                .filter(mappingKeyFilter)
+                .findFirst();
         return v.orElse(null);
     }
 
     /**
-     * Lookup scenario name from given request.
+     * Look up scenario name for given request.
+     *
      * @param request
      * @param keyExtractor
      * @return
      */
     private Optional<String> lookupScenarioName(Message request, XPathPayloadMappingKeyExtractor keyExtractor) {
-        return Optional.ofNullable(keyExtractor.getMappingKey(request));
+        try {
+            final String mappingKey = keyExtractor.getMappingKey(request);
+            LOG.debug("Scenario-name lookup returned: {}", mappingKey);
+            return Optional.of(mappingKey);
+        } catch (RuntimeException e) {
+            LOG.trace("Scenario-name lookup failed", e);
+        }
+
+        LOG.debug("Scenario-name lookup returned: <no-match>");
+        return Optional.empty();
     }
 }
-
-

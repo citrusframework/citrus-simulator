@@ -38,7 +38,9 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
  */
 public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
 
     @Autowired
@@ -76,17 +78,17 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
 
     @Override
     public void run() {
-        LOG.info(String.format("Simulator endpoint waiting for requests on endpoint '%s'", inboundEndpoint.getName()));
+        LOG.info("Simulator endpoint waiting for requests on endpoint '{}'", inboundEndpoint.getName());
 
         long delay = 0L;
         while (running) {
             try {
-
                 if (delay > 0) {
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
                         LOG.error("Failed to delay after uncategorized exception", e);
+                        Thread.currentThread().interrupt();
                     } finally {
                         delay = 0;
                     }
@@ -95,13 +97,13 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 TestContext context = testContextFactory.getObject();
                 Message message = inboundEndpoint.createConsumer().receive(context, inboundEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    LOG.debug(String.format("Processing inbound message '%s'", message.getId()));
+                    LOG.debug("Processing inbound message '{}'", message.getId());
                     Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
                     if (response != null) {
                         Producer producer = inboundEndpoint.createProducer();
                         if (producer instanceof ReplyProducer) {
-                            LOG.debug(String.format("Sending response message for inbound message '%s'", message.getId()));
+                            LOG.debug("Sending response message for inbound message '{}'", message.getId());
                             producer.send(processResponseMessage(response), context);
                         }
                     }
@@ -109,19 +111,20 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
             } catch (ActionTimeoutException e) {
                 // ignore timeout and continue listening for request messages.
             } catch (SimulatorException | CitrusRuntimeException e) {
-                LOG.error("Failed to process message", e.getMessage());
+                LOG.error("Failed to process message: {}", e.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(e.getMessage(), e);
                 }
             } catch (Exception e) {
                 delay = exceptionDelay;
-                LOG.error("Unexpected error while processing", e.getMessage());
+                LOG.error("Unexpected error while processing: {}", e.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(e.getMessage(), e);
                 }
             }
         }
     }
+
 
     /**
      * Process response message before sending back to client. This gives subclasses

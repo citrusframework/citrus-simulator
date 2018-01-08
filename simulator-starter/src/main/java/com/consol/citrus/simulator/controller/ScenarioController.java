@@ -17,8 +17,10 @@
 package com.consol.citrus.simulator.controller;
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.service.ScenarioService;
+import com.consol.citrus.simulator.service.ScenarioExecutionService;
+import com.consol.citrus.simulator.service.ScenarioLookupService;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +34,14 @@ import java.util.stream.Collectors;
 @RequestMapping("api/scenario")
 public class ScenarioController {
 
-    private final ScenarioService scenarioService;
+    private final ScenarioExecutionService scenarioExecutionService;
+    private final ScenarioLookupService scenarioLookupService;
     private final List<Scenario> scenarios;
 
-    public ScenarioController(ScenarioService scenarioService) {
-        this.scenarioService = scenarioService;
-        this.scenarios = getScenarioList(scenarioService);
+    public ScenarioController(ScenarioExecutionService scenarioExecutionService, ScenarioLookupService scenarioLookupService) {
+        this.scenarioExecutionService = scenarioExecutionService;
+        this.scenarioLookupService = scenarioLookupService;
+        this.scenarios = getScenarioList(scenarioLookupService);
     }
 
     @Data
@@ -51,16 +55,17 @@ public class ScenarioController {
         private final ScenarioType type;
     }
 
-    private List<Scenario> getScenarioList(ScenarioService scenarioService) {
+    private static List<Scenario> getScenarioList(ScenarioLookupService scenarioLookupService) {
         final List<Scenario> scenarios = new ArrayList<>();
-        scenarioService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
-        scenarioService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
+        scenarioLookupService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
+        scenarioLookupService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
         return scenarios;
     }
 
     @Data
+    @NoArgsConstructor
     public static class ScenarioFilter {
-        private final String name;
+        private String name;
     }
 
     /**
@@ -73,10 +78,8 @@ public class ScenarioController {
     public Collection<Scenario> getScenarioNames(@RequestBody(required = false) ScenarioFilter filter) {
         return scenarios.stream()
                 .filter(scenario -> {
-                    if (filter != null) {
-                        if (StringUtils.hasText(filter.getName())) {
-                            return scenario.getName().contains(filter.getName());
-                        }
+                    if (filter != null && StringUtils.hasText(filter.getName())) {
+                        return scenario.getName().contains(filter.getName());
                     }
                     return true;
                 })
@@ -91,7 +94,7 @@ public class ScenarioController {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/parameters/{name}")
     public Collection<ScenarioParameter> getScenarioParameters(@PathVariable("name") String scenarioName) {
-        return scenarioService.lookupScenarioParameters(scenarioName);
+        return scenarioLookupService.lookupScenarioParameters(scenarioName);
     }
 
     /**
@@ -104,7 +107,7 @@ public class ScenarioController {
     public Long launchScenario(
             @PathVariable("name") String name,
             @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
-        return scenarioService.run(name, scenarioParameters);
+        return scenarioExecutionService.run(name, scenarioParameters);
     }
 
 }

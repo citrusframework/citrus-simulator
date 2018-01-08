@@ -18,6 +18,7 @@ package com.consol.citrus.simulator.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -119,16 +120,18 @@ public class ScenarioExecution implements Serializable {
     }
 
     public void setErrorMessage(String errorMessage) {
-        try {
-            int size = getClass().getDeclaredField("errorMessage").getAnnotation(Column.class).length();
-            int inLength = errorMessage.length();
-            if (inLength > size) {
-                errorMessage = errorMessage.substring(0, size);
-            }
-        } catch (SecurityException | NoSuchFieldException ex) {
-            LOG.error(String.format("Error truncating error message", errorMessage), ex);
-        }
         this.errorMessage = errorMessage;
+        if(StringUtils.hasLength(this.errorMessage)) {
+            try {
+                int size = getClass().getDeclaredField("errorMessage").getAnnotation(Column.class).length();
+                int inLength = this.errorMessage.length();
+                if (inLength > size) {
+                    this.errorMessage = this.errorMessage.substring(0, size);
+                }
+            } catch (SecurityException | NoSuchFieldException ex) {
+                LOG.error(String.format("Error truncating error message", errorMessage), ex);
+            }
+        }
     }
 
     public Collection<ScenarioParameter> getScenarioParameters() {
