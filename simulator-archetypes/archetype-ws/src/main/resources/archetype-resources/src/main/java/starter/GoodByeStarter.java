@@ -19,6 +19,8 @@ package ${package};
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.service.TemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -28,6 +30,9 @@ import java.util.*;
 @Starter("GoodByeStarter")
 public class GoodByeStarter extends AbstractScenarioStarter {
 
+    @Autowired
+    private TemplateService templateService;
+
     @Override
     public void run(ScenarioRunner scenario) {
         scenario.echo("GoodBye starter was executed!");
@@ -35,7 +40,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
     }
 
     @Override
-    public Collection<ScenarioParameter> getScenarioParameters() {
+    public List<ScenarioParameter> getScenarioParameters() {
         List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // name (text box)
@@ -53,10 +58,9 @@ public class GoodByeStarter extends AbstractScenarioStarter {
                 .label("Payload")
                 .required()
                 .textarea()
-                .value(getMessageTemplate("Goodbye"))
+                .value(templateService.getXmlMessageTemplate("Goodbye"))
                 .build());
 
         return scenarioParameter;
     }
-
 }

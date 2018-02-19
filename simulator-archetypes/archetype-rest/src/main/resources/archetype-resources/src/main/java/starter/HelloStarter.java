@@ -19,15 +19,19 @@ package ${package};
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
 import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.service.TemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
  */
 @Starter("HelloStarter")
 public class HelloStarter extends AbstractScenarioStarter {
+
+    @Autowired
+    private TemplateService templateService;
 
     @Override
     public void run(ScenarioRunner scenario) {
@@ -54,7 +58,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .label("Payload")
                 .required()
                 .textarea()
-                .value(getMessageTemplate("Hello"))
+                .value(templateService.getXmlMessageTemplate("Hello"))
                 .build());
 
         return scenarioParameter;

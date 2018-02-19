@@ -38,6 +38,6 @@ public interface ScenarioStarter extends SimulatorScenario {
      * @return
      */
     default Collection<ScenarioParameter> getScenarioParameters() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

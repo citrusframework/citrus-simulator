@@ -38,6 +38,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
         scenario.echo("GoodBye starter was executed!");
         scenario.echo("${payload}");
     }
+
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {
         List<ScenarioParameter> scenarioParameter = new ArrayList<>();
