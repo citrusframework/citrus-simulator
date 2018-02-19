@@ -97,7 +97,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <citrus.simulator.version>1.0.0</citrus.simulator.version>
-    <spring.boot.version>1.5.6.RELEASE</spring.boot.version>
+    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
   </properties>
 
   <dependencyManagement>

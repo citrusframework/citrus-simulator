@@ -17,10 +17,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <citrus.version>2.7.2</citrus.version>
-    <spring.version>4.3.11.RELEASE</spring.version>
-    <spring.ws.version>2.4.0.RELEASE</spring.ws.version>
-    <spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+    <citrus.version>2.7.3</citrus.version>
+    <spring.version>4.3.14.RELEASE</spring.version>
+    <spring.ws.version>2.4.2.RELEASE</spring.ws.version>
+    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
     <testng.version>6.11</testng.version>

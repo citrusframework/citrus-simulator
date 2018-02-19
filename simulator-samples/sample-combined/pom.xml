@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.0</activemq.version>
+    <activemq.version>5.15.2</activemq.version>
   </properties>
 
   <dependencyManagement>
