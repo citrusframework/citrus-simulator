@@ -46,7 +46,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
     }
 }
 
@@ -58,7 +58,7 @@ apply plugin: 'org.springframework.boot'
 jar {
     group = "com.consol.citrus.simulator"
     baseName = 'citrus-simulator-sample'
-    version =  '1.0.0'
+    version =  '1.0.2'
 }
 
 repositories {
@@ -71,7 +71,7 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("com.consol.citrus:citrus-simulator-starter:1.0.0")
+    compile("com.consol.citrus:citrus-simulator-starter:1.0.2")
     testCompile("junit:junit")
 }
 ```
@@ -96,7 +96,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.0</citrus.simulator.version>
+    <citrus.simulator.version>1.0.2</citrus.simulator.version>
     <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
   </properties>
 
@@ -135,7 +135,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.7.0</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>1.8</source>
@@ -146,7 +146,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
