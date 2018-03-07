@@ -27,6 +27,7 @@
     <module>sample-rest</module>
     <module>sample-swagger</module>
     <module>sample-mail</module>
+    <module>sample-file</module>
   </modules>
 
   <build>

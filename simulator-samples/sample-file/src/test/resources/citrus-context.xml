@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:citrus="http://www.citrusframework.org/schema/config"
+        xmlns:file="http://www.springframework.org/schema/integration/file"
+        xmlns:si="http://www.springframework.org/schema/integration"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd
+       http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:property-placeholder location="classpath:application.properties"/>
+
+  <citrus:schema-repository id="schemaRepository">
+    <citrus:locations>
+      <citrus:location path="classpath:xsd/HelloService.xsd"/>
+    </citrus:locations>
+  </citrus:schema-repository>
+
+  <bean id="doneFilter" class="com.consol.citrus.simulator.sample.file.filter.DoneFilter"/>
+
+  <!--Citrus Inbound endpont -->
+  <file:inbound-channel-adapter id="fileCitrusInboundAdapter"
+          channel="fileCitrusInboundChannel"
+          directory="file:${citrus.simulator.file.output.directory}"
+          prevent-duplicates="false"
+          filter="doneFilter">
+    <si:poller fixed-rate="${citrus.simulator.file.poll.interval}" max-messages-per-poll="1">
+    </si:poller>
+  </file:inbound-channel-adapter>
+
+  <si:channel id="fileCitrusInboundChannel">
+    <si:queue capacity="1"/>
+    <si:interceptors>
+      <bean class="org.springframework.integration.transformer.MessageTransformingChannelInterceptor">
+        <constructor-arg>
+          <bean class="org.springframework.integration.file.transformer.FileToStringTransformer"/>
+        </constructor-arg>
+      </bean>
+    </si:interceptors>
+  </si:channel>
+
+  <citrus:channel-endpoint id="simulatorFileCitrusInboundEndpoint"
+          channel="fileCitrusInboundChannel"
+          timeout="${citrus.simulator.file.poll.interval}"/>
+
+  <!--Citrus Outbound endpont -->
+  <citrus:channel-endpoint id="simulatorFileCitrusOutboundEndpoint"
+          channel="fileCitrusOutboundChannel"/>
+
+  <file:outbound-channel-adapter id="fileCitrusOutboundAdapter"
+          channel="fileCitrusOutboundChannel"
+          directory="file:${citrus.simulator.file.input.directory}"
+          delete-source-files="true"/>
+
+  <si:channel id="fileCitrusOutboundChannel"/>
+
+</beans>

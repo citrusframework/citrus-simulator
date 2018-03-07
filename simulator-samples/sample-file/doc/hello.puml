@@ -1,0 +1,25 @@
+@startuml
+
+title __Asynchronous File Based Communication__
+
+participant "Application" as Application <<Service Consumer>>
+participant "Input Directory" as InputDir
+participant "Output Directory" as OutputDir
+participant "Simulator" as Simulator <<Service Provider>>
+
+
+note over Application, Simulator
+end note
+Application -> InputDir : write input xml file
+note right: Hello.xml
+Application -> InputDir : write "done" file
+note right: Hello.done
+Simulator -> InputDir : poll directory, read input file
+Simulator -> Simulator : run scenario
+Simulator -> OutputDir : write output xml file
+note left: Hello.xml
+Simulator -> OutputDir : write "done" file
+note left: Hello.done
+Application -> OutputDir : poll directory, read output file
+
+@enduml
