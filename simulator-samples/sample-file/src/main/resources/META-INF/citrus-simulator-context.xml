@@ -25,6 +25,7 @@
     </citrus:namespace-context>
 
     <bean id="doneFilter" class="com.consol.citrus.simulator.sample.file.filter.DoneFilter"/>
+    <bean id="fileToStringTransformer" class="org.springframework.integration.file.transformer.FileToStringTransformer"/>
 
     <!--Inbound channel -->
     <file:inbound-channel-adapter  id="fileInboundAdapter"
@@ -38,15 +39,12 @@
     <si:channel id="fileInboundChannel">
         <si:queue capacity="1"/>
         <si:interceptors>
-            <bean class="org.springframework.integration.transformer.MessageTransformingChannelInterceptor">
-                <constructor-arg>
-                    <bean class="org.springframework.integration.file.transformer.FileToStringTransformer"/>
-                </constructor-arg>
+            <bean class="com.consol.citrus.simulator.sample.file.interceptor.FileInterceptor">
             </bean>
         </si:interceptors>
     </si:channel>
 
-    <!--Outbound channel -->
+<!--Outbound channel -->
 
     <citrus:channel-endpoint id="simulatorFileOutboundEndpoint" channel="fileOutboundChannel"/>
 
