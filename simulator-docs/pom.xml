@@ -126,8 +126,9 @@
             <artifactId>maven-scm-plugin</artifactId>
             <version>1.9.5</version>
             <configuration>
-              <connectionUrl>scm:git:git@github.com:christophd/citrus-simulator.git</connectionUrl>
-              <developerConnectionUrl>scm:git:git@github.com:christophd/citrus-simulator.git</developerConnectionUrl>
+                <connectionUrl>scm:git:git@github.com:citrusframework/citrus-simulator.git</connectionUrl>
+                <developerConnectionUrl>scm:git:git@github.com:citrusframework/citrus-simulator.git
+                </developerConnectionUrl>
               <scmVersion>gh-pages</scmVersion>
               <scmVersionType>branch</scmVersionType>
             </configuration>
