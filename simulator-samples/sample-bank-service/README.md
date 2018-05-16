@@ -28,7 +28,7 @@ responds with predefined response messages according to its scenarios.
 The simulator response logic is very powerful and enables us to simulate
 any kind of server interface.
 
-Read the simulator [user manual](https://christophd.github.io/citrus-simulator/)
+Read the simulator [user manual](https://citrusframework.org/citrus-simulator/)
 for more information.
 
 Quick start
@@ -64,9 +64,9 @@ user interface should track those interactions accordingly.
 Further Information
 --------------------
 
-Read the [user manual](https://christophd.github.io/citrus-simulator/) for detailed instructions and features.
-For more information on Citrus see [www.citrusframework.org][2], including a complete [reference manual][3].
+Read the [user manual](https://citrusframework.org/citrus-simulator/) for detailed instructions and features.
+For more information on Citrus see [citrusframework.org][2], including a complete [reference manual][3].
 
- [1]: http://www.citrusframework.org/img/brand-logo.png "Citrus"
- [2]: http://www.citrusframework.org
- [3]: http://www.citrusframework.org/reference/html/
+ [1]: https://citrusframework.org/img/brand-logo.png "Citrus"
+ [2]: https://citrusframework.org
+ [3]: https://citrusframework.org/reference/html/

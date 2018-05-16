@@ -10,7 +10,7 @@
   <version>1.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Citrus Simulator</description>
-  <url>http://www.citrusframework.org</url>
+  <url>https://citrusframework.org</url>
   <inceptionYear>2017</inceptionYear>
 
   <properties>
@@ -98,9 +98,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:christophd/citrus-simulator.git</connection>
-    <developerConnection>scm:git:git@github.com/christophd/citrus-simulator.git</developerConnection>
-    <url>http://github.com/christophd/citrus-simulator.git</url>
+    <connection>scm:git:git@github.com:citrusframework/citrus-simulator.git</connection>
+    <developerConnection>scm:git:git@github.com/citrusframework/citrus-simulator.git</developerConnection>
+    <url>http://github.com/citrusframework/citrus-simulator.git</url>
   </scm>
 
   <organization>
