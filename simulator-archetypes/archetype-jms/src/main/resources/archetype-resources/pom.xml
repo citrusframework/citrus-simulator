@@ -13,11 +13,11 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.version>2.7.3</citrus.version>
+    <citrus.version>2.7.8-SNAPSHOT</citrus.version>
     <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
-    <activemq.version>5.15.2</activemq.version>
-    <testng.version>6.11</testng.version>
+    <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
+    <activemq.version>5.15.4</activemq.version>
+    <testng.version>6.14.3</testng.version>
   </properties>
 
   <dependencyManagement>
@@ -72,11 +72,6 @@
       <artifactId>activemq-spring</artifactId>
       <version>${activemq.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-spring</artifactId>
-      <version>4.4</version>
-    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -101,7 +96,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20</version>
+        <version>2.22.0</version>
         <configuration>
           <failIfNoTests>false</failIfNoTests>
         </configuration>
@@ -131,26 +126,13 @@
         <version>${activemq.version}</version>
         <configuration>
           <fork>false</fork>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>log4j.properties</value>
+            </property>
+          </systemProperties>
         </configuration>
-        <executions>
-          <execution>
-            <id>start-activemq</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-activemq</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
@@ -162,28 +144,88 @@
         </configuration>
         <executions>
           <execution>
-            <id>pre-integration-test</id>
             <goals>
-              <goal>start</goal>
+              <goal>repackage</goal>
             </goals>
             <configuration>
-              <fork>true</fork>
-              <wait>1000</wait>
-              <maxAttempts>180</maxAttempts>
-            </configuration>
-          </execution>
-          <execution>
-            <id>post-integration-test</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <fork>true</fork>
+              <classifier>executable</classifier>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>activemq-embedded</id>
+      <activation>
+        <property>
+          <name>embedded</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.activemq.tooling</groupId>
+            <artifactId>activemq-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>start-activemq</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <fork>true</fork>
+                </configuration>
+              </execution>
+              <execution>
+                <id>stop-activemq</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>simulator-embedded</id>
+      <activation>
+        <property>
+          <name>embedded</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <fork>true</fork>
+            </configuration>
+            <executions>
+              <execution>
+                <id>pre-integration-test</id>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>post-integration-test</id>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

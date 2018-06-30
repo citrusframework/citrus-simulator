@@ -62,7 +62,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestStart(TestCase test) {
-        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getParameters()));
+        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), test.getParameters()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-        TestResult result = TestResult.success(test.getName(), test.getParameters());
+        TestResult result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), test.getParameters());
         testResults.addResult(result);
         LOG.info(result.toString());
         executionService.completeScenarioExecutionSuccess(test);
@@ -80,11 +80,11 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-        TestResult result = TestResult.failed(test.getName(), cause, test.getParameters());
+        TestResult result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, test.getParameters());
         testResults.addResult(result);
 
         LOG.info(result.toString());
-        LOG.info(result.getFailureCause());
+        LOG.info(result.getFailureType());
         executionService.completeScenarioExecutionFailure(test, cause);
     }
 

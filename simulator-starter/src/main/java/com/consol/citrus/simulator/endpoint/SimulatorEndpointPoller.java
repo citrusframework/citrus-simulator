@@ -153,7 +153,6 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     public void start() {
         running = true;
-        taskExecutor.setDaemon(true);
         taskExecutor.execute(this);
     }
 

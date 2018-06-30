@@ -21,6 +21,7 @@ import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.testng.annotations.Test;
 
 /**
@@ -43,6 +44,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post("hello")
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
                          "</Hello>");
@@ -63,6 +65,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post("goodbye")
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
                          "</GoodBye>");
@@ -83,6 +86,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post()
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<Default>" +
                             "Should trigger default scenario" +
                         "</Default>");
@@ -103,6 +107,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post("goodnight")
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
@@ -122,6 +127,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post()
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         http().client(simulatorClient)
@@ -136,6 +142,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post()
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 
@@ -151,6 +158,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .post()
+                .contentType(MediaType.APPLICATION_XML_VALUE)
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 
