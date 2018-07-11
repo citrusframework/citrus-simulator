@@ -31,12 +31,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
+
+import java.util.concurrent.*;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean {
+public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean, ApplicationListener<ContextClosedEvent> {
 
     /**
      * Logger
@@ -54,7 +57,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Thread running the server
      */
-    private SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Message handler for incoming simulator request messages
@@ -64,7 +67,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Running flag
      */
-    private boolean running = false;
+    private CompletableFuture<Boolean> running = new CompletableFuture<>();
 
     /**
      * Should automatically start on system load
@@ -81,14 +84,15 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
         LOG.info("Simulator endpoint waiting for requests on endpoint '{}'", inboundEndpoint.getName());
 
         long delay = 0L;
-        while (running) {
+        while (running.getNow(true)) {
             try {
                 if (delay > 0) {
                     try {
-                        Thread.sleep(delay);
-                    } catch (InterruptedException e) {
-                        LOG.error("Failed to delay after uncategorized exception", e);
-                        Thread.currentThread().interrupt();
+                        if (!running.get(delay, TimeUnit.MILLISECONDS)) {
+                            continue;
+                        }
+                    } catch (TimeoutException e) {
+                        LOG.info("Continue simulator endpoint polling after uncategorized exception");
                     } finally {
                         delay = 0;
                     }
@@ -152,7 +156,6 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      * Start up runnable in separate thread.
      */
     public void start() {
-        running = true;
         taskExecutor.execute(this);
     }
 
@@ -160,7 +163,18 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      * Stop runnable execution.
      */
     public void stop() {
-        running = false;
+        LOG.info("Simulator endpoint poller terminating ...");
+
+        running.complete(false);
+
+        try {
+            taskExecutor.awaitTermination(exceptionDelay, TimeUnit.MILLISECONDS);
+            LOG.info("Simulator endpoint poller termination complete");
+        } catch (InterruptedException e) {
+            LOG.error("Error while waiting termination of endpoint poller", e);
+        } finally {
+            taskExecutor.shutdownNow();
+        }
     }
 
     @Override
@@ -218,5 +232,10 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     public long getExceptionDelay() {
         return exceptionDelay;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextClosedEvent event) {
+        stop();
     }
 }
