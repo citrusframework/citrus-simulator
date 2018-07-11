@@ -46,7 +46,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 
         scenario
             .receive()
-            .selector("correlationId = '${correlationId}'")
+            .selector(CORRELATION_ID + " = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario
