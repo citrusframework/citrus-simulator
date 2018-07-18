@@ -30,6 +30,7 @@ import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -47,12 +48,14 @@ import java.util.concurrent.Future;
  * @author Christoph Deppisch
  */
 @Service
-public class ScenarioExecutionService {
+public class ScenarioExecutionService implements DisposableBean {
     private static final Logger LOG = LoggerFactory.getLogger(ScenarioExecutionService.class);
 
     private final ActivityService activityService;
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Autowired
     public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
@@ -91,13 +94,6 @@ public class ScenarioExecutionService {
     }
 
     private Future<?> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        final ExecutorService executorService = Executors.newSingleThreadExecutor(
-                r -> {
-                    Thread t = new Thread(r, "Scenario:" + name);
-                    t.setDaemon(true);
-                    return t;
-                });
-
         return executorService.submit(() -> {
             try {
                 if (scenario instanceof Executable) {
@@ -162,7 +158,6 @@ public class ScenarioExecutionService {
             } catch (Exception e) {
                 LOG.error(String.format("Scenario completed with error: '%s'", name), e);
             }
-            executorService.shutdownNow();
         });
     }
 
@@ -189,5 +184,10 @@ public class ScenarioExecutionService {
      * @param scenario
      */
     protected void prepare(SimulatorScenario scenario) {
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        executorService.shutdownNow();
     }
 }
