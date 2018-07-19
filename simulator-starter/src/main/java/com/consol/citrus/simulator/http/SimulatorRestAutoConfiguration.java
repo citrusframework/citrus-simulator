@@ -37,14 +37,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.*;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +55,7 @@ import java.util.*;
 @EnableConfigurationProperties(SimulatorRestConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnWebApplication
-public class SimulatorRestAutoConfiguration extends WebMvcConfigurationSupport {
+public class SimulatorRestAutoConfiguration {
 
     @Autowired(required = false)
     private SimulatorRestConfigurer configurer;
@@ -68,6 +65,10 @@ public class SimulatorRestAutoConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
     private SimulatorMessageListener simulatorMessageListener;
+
+    @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     @Autowired
     private SimulatorRestConfigurationProperties simulatorRestConfiguration;
@@ -89,15 +90,23 @@ public class SimulatorRestAutoConfiguration extends WebMvcConfigurationSupport {
         return filterRegistrationBean;
     }
 
-    @Override
-    public RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
-        RequestMappingHandlerAdapter requestMappingHandlerAdapter = super.createRequestMappingHandlerAdapter();
-        requestMappingHandlerAdapter.setCacheSeconds(0);
-        return requestMappingHandlerAdapter;
+    @Bean(name = "simulatorRestHandlerMapping")
+    public HandlerMapping handlerMapping(ApplicationContext applicationContext) {
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        handlerMapping.setAlwaysUseFullPath(true);
+
+        Map<String, Object> mappings = new HashMap<>();
+        mappings.put(getUrlMapping(), createRestController(applicationContext));
+
+        handlerMapping.setUrlMap(mappings);
+        handlerMapping.setInterceptors(interceptors());
+
+        return handlerMapping;
     }
 
     @Bean(name = "simulatorRestHandlerAdapter")
-    public HandlerAdapter handlerAdapter(ApplicationContext applicationContext) {
+    public HandlerAdapter handlerAdapter(final ApplicationContext applicationContext) {
         final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
             @Override
             protected void initHandlerMethods() {
@@ -114,6 +123,9 @@ public class SimulatorRestAutoConfiguration extends WebMvcConfigurationSupport {
         handlerMapping.setApplicationContext(applicationContext);
         handlerMapping.afterPropertiesSet();
 
+        requestMappingHandlerAdapter.getMessageConverters().add(0, new DelegatingHttpEntityMessageConverter());
+        requestMappingHandlerAdapter.setCacheSeconds(0);
+
         return new SimpleControllerHandlerAdapter() {
             @Override
             public boolean supports(Object handler) {
@@ -122,45 +134,9 @@ public class SimulatorRestAutoConfiguration extends WebMvcConfigurationSupport {
 
             @Override
             public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                return requestMappingHandlerAdapter().handle(request, response, handlerMapping.getHandler(request).getHandler());
+                return requestMappingHandlerAdapter.handle(request, response, handlerMapping.getHandler(request).getHandler());
             }
         };
-    }
-
-    @Bean(name = "simulatorRestHandlerMapping")
-    public HandlerMapping simulatorRestHandlerMapping(ApplicationContext applicationContext) {
-        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
-        handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        handlerMapping.setAlwaysUseFullPath(true);
-
-        Map<String, Object> mappings = new HashMap<>();
-        mappings.put(getUrlMapping(), createRestController(applicationContext));
-
-        handlerMapping.setUrlMap(mappings);
-        handlerMapping.setInterceptors((Object[]) interceptors());
-
-        return handlerMapping;
-    }
-
-    @Override
-    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new DelegatingHttpEntityMessageConverter());
-        addDefaultHttpMessageConverters(converters);
-    }
-
-    @Override
-    protected Map<String, MediaType> getDefaultMediaTypes() {
-        Map<String, MediaType> mediaTypes = super.getDefaultMediaTypes();
-        
-        mediaTypes.put("xml", MediaType.APPLICATION_XML);
-        mediaTypes.put("json", MediaType.APPLICATION_JSON);
-
-        return mediaTypes;
-    }
-
-    @Override
-    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        new RequestPartMethodArgumentResolver(getMessageConverters());
     }
 
     @Bean(name = "simulatorRestEndpointAdapter")

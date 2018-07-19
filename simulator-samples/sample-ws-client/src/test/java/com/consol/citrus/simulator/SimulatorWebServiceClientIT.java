@@ -25,6 +25,7 @@ import com.consol.citrus.ws.server.WebServiceServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.testng.annotations.Test;
 
@@ -57,7 +58,7 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
             .client(restEndpoint)
             .send()
             .post("/api/scenario/launch/HelloStarter")
-            .contentType("application/json")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .payload(asJson(name.asScenarioParameter()));
 
         http()

@@ -128,7 +128,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .send()
                 .post()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .payload("<InterveningRequest>No match correlation!</InterveningRequest>");
 
         http().client(simulatorClient)
                 .receive()
@@ -151,6 +151,8 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .response(HttpStatus.OK)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
+        sleep(2000L);
+
         //
         // Should be handled by default scenario -> the goodnight scenario should have completed by now
         //
@@ -159,7 +161,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .send()
                 .post()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
+                .payload("<InterveningRequest>After correlation!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
 
         http().client(simulatorClient)
