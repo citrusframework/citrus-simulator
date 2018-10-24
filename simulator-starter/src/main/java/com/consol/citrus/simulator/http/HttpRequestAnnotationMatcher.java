@@ -202,7 +202,9 @@ public class HttpRequestAnnotationMatcher {
 
     private List<String> getQueryParamKeys(List<String> queryParams) {
         return queryParams.stream()
-                .map(queryParam -> getQueryParamKeyValue(queryParam)[0])
+                .map(this::getQueryParamKeyValue)
+                .filter(strings -> strings.length > 0)
+                .map(strings -> strings[0])
                 .collect(Collectors.toList());
     }
 
