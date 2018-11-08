@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -48,7 +50,7 @@ import java.util.concurrent.Future;
  * @author Christoph Deppisch
  */
 @Service
-public class ScenarioExecutionService implements DisposableBean {
+public class ScenarioExecutionService implements DisposableBean, ApplicationListener<ContextClosedEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(ScenarioExecutionService.class);
 
     private final ActivityService activityService;
@@ -188,6 +190,11 @@ public class ScenarioExecutionService implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
+        executorService.shutdownNow();
+    }
+
+    @Override
+    public void onApplicationEvent(ContextClosedEvent event) {
         executorService.shutdownNow();
     }
 }

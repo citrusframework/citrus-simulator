@@ -15,7 +15,10 @@ import io.swagger.models.properties.*;
 import org.hamcrest.CustomMatcher;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.*;
+import org.springframework.http.MediaType;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -149,7 +152,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             .response(statusCode)
             .messageType(MessageType.JSON)
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-            .contentType("application/json");
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
 
         if (response != null) {
             if (response.getHeaders() != null) {

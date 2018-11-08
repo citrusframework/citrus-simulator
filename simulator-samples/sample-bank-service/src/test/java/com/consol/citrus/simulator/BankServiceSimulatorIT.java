@@ -25,6 +25,7 @@ import com.consol.citrus.simulator.sample.model.ValidateIbanResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.testng.annotations.Test;
 
 @Test
@@ -52,7 +53,7 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .payload(CalculateIbanResponse.builder()
                         .bankAccount(BankAccount.builder()
                                 .iban("DE92123456700006219653")
@@ -81,7 +82,7 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .payload(ValidateIbanResponse.builder()
                         .bankAccount(BankAccount.builder()
                                 .iban("DE92123456700006219653")
