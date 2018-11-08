@@ -18,15 +18,15 @@
 
   <modules>
     <module>sample-bank-service</module>
-    <module>sample-jms</module>
-    <module>sample-jms-fax</module>
-    <module>sample-combined</module>
-    <module>sample-ws</module>
-    <module>sample-wsdl</module>
-    <module>sample-ws-client</module>
     <module>sample-rest</module>
     <module>sample-swagger</module>
+    <module>sample-ws</module>
+    <module>sample-ws-client</module>
+    <module>sample-wsdl</module>
     <module>sample-mail</module>
+    <module>sample-combined</module>
+    <module>sample-jms</module>
+    <module>sample-jms-fax</module>
   </modules>
 
   <build>
@@ -35,7 +35,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>

@@ -46,7 +46,6 @@
       <artifactId>citrus-simulator-ui</artifactId>
     </dependency>
 
-    <!-- -->
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
@@ -92,12 +91,15 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <fork>true</fork>
-          <wait>1000</wait>
-          <maxAttempts>180</maxAttempts>
-        </configuration>
         <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <classifier>executable</classifier>
+            </configuration>
+          </execution>
           <execution>
             <id>pre-integration-test</id>
             <goals>
@@ -105,8 +107,6 @@
             </goals>
             <configuration>
               <fork>true</fork>
-              <wait>1000</wait>
-              <maxAttempts>180</maxAttempts>
             </configuration>
           </execution>
           <execution>
@@ -120,7 +120,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 
