@@ -112,6 +112,8 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
         receive(jmsSyncEndpoint)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
+        sleep(1000L);
+
         send(jmsSyncEndpoint)
                 .payload("<InterveningRequest>In between!</InterveningRequest>")
                 .header("x-correlationid", "${correlationId}");
