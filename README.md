@@ -2,7 +2,7 @@ Citrus Simulator ![Logo][1]
 ================
 
 This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
-JMS, RMI, mail messaging and more.
+JMS, RMI, SMTP and more.
 
 The simulator provides server APIs for clients and responds with predefined messages according to
 defined scenarios. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
