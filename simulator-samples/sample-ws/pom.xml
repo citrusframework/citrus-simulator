@@ -109,9 +109,6 @@
             <goals>
               <goal>stop</goal>
             </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
           </execution>
         </executions>
       </plugin>

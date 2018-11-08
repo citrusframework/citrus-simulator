@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.2</activemq.version>
+    <activemq.version>5.15.4</activemq.version>
   </properties>
 
   <dependencyManagement>
@@ -164,13 +164,9 @@
             <goals>
               <goal>stop</goal>
             </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 

@@ -23,8 +23,8 @@
     <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
-    <testng.version>6.11</testng.version>
-    <lombok.version>1.16.18</lombok.version>
+    <testng.version>6.14.3</testng.version>
+    <lombok.version>1.18.0</lombok.version>
 
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
@@ -32,6 +32,7 @@
     <npm.version>5.5.1</npm.version>
     
     <skip.gpg>false</skip.gpg>
+    <reuseForks>true</reuseForks>
   </properties>
 
   <licenses>
@@ -365,16 +366,17 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>2.22.0</version>
           <configuration>
-            <forkMode>once</forkMode>
+            <forkCount>1</forkCount>
+            <reuseForks>${reuseForks}</reuseForks>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
         </plugin>
 
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>

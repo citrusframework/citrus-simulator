@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.2</activemq.version>
+    <activemq.version>5.15.4</activemq.version>
   </properties>
 
   <dependencyManagement>
@@ -156,6 +156,30 @@
       </plugin>
 
       <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.13.1</version>
+        <executions>
+          <execution>
+            <id>xjc-xsd-1</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+              <schemaIncludes>
+                <include>*.xsd</include>
+              </schemaIncludes>
+              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
+              <bindingIncludes>
+                <include>*.xjb</include>
+              </bindingIncludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
@@ -181,33 +205,6 @@
             <goals>
               <goal>stop</goal>
             </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.13.1</version>
-        <executions>
-          <execution>
-            <id>xjc-xsd-1</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
-              <schemaIncludes>
-                <include>*.xsd</include>
-              </schemaIncludes>
-              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
-              <bindingIncludes>
-                <include>*.xjb</include>
-              </bindingIncludes>
-            </configuration>
           </execution>
         </executions>
       </plugin>
