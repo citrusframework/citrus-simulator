@@ -1,0 +1,20 @@
+language: java
+jdk:
+- oraclejdk8
+
+dist: trusty
+sudo: required
+
+script:
+- mvn --batch-mode -q clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar
+
+cache:
+  directories:
+  - '$HOME/.m2/repository'
+  - '$HOME/.sonar/cache'
+
+addons:
+  sonarcloud:
+    organization: "citrusframework"
+    token:
+      secure: "TJGwqMwihT6FU/jiExqGrL4YCJVJKKBu30bx0dHaromZ7Au4/gfKk3MgH67h3gU39lcEkDSEpZXIhimnbnpHbTqh8I4M6umQRilpkDRfsweMBiBXW+MFy+hoy4njbsD3n6NGleNRlAy2zaL7+/E/uHl5TExtplG5dAy1yIeNxv7F+n/QfDj/lewIBFFSDNTX+LEUslxs5cqSRTaAxRJMayf4mxLRN0EpjeILlGS/vaIB7ME6fCodj4L1GettBtXcjEDkKaevhl/XyFU3UFXkSTpH53lRdqMMFfB4NYG8lWquPCicv6ein+wxbDpPUVIWdHX7Xp94sUZ3QRUTgO19bRQkZFiZSrffDA19OexLvdjRkUagMGPz7iE+U0X0/tk8+qvxm6/lFt7rfZUcDCHHa8cV+PLFCR2zh3J1lCYqpABUhpRQTA8CDgQJopGk9gakKcslmwvvGtRjpCsrgGnofgzc3DJ+qLIcJKVGwDWeVSvdtiJgpFnGwbmQ2O0W1mH3S431L4vxtgKmcIhkK4CyjIzLgEt0YOo0Loqe0szVY2VhB7kfgRAsWq5l02SihpgFMoSBrdx0kdbusgXjgzJxKbv5IY2Y2xBTRATClc0Bl1yJzJsSm5wF0LdQTKkCsTPxJBCLL4AmfYlWd2wk6t7OJQ0YiqmA93cbdaYjVmrUYMY="
