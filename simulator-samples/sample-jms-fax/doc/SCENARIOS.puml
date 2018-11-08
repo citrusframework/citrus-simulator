@@ -5,9 +5,7 @@ title __JMS Async Simulator__
 participant "Application" as Application
 participant "Simulator" as Simulator  <<XML>> <<JMS>>
 
-note over Application, Simulator
-Scenario: FaxQueued (default)
-end note
+== Scenario: FaxQueued (default) ==
 
 Application ->> Simulator : sendFax
 
@@ -18,9 +16,7 @@ note right: QUEUED
 
 |||
 
-note over Application, Simulator
-Scenario: FaxSent
-end note
+== Scenario: FaxSent ==
 
 Application ->> Simulator : sendFax
 
@@ -36,9 +32,7 @@ note right: SUCCESS
 
 |||
 
-note over Application, Simulator
-Scenario: FaxCancelled
-end note
+== Scenario: FaxCancelled ==
 
 Application ->> Simulator : sendFax
 
@@ -58,9 +52,7 @@ note right: CANCELLED
 
 |||
 
-note over Application, Simulator
-Scenario: FaxBusy
-end note
+== Scenario: FaxBusy ==
 
 Application ->> Simulator : sendFax
 
@@ -76,9 +68,7 @@ note right: ERROR (busy)
 
 |||
 
-note over Application, Simulator
-Scenario: FaxNoAnswer
-end note
+== Scenario: FaxNoAnswer ==
 
 Application ->> Simulator : sendFax
 
@@ -94,9 +84,7 @@ note right: ERROR (no answer)
 
 |||
 
-note over Application, Simulator
-Scenario: FaxSendStatus (Starter)
-end note
+== Scenario: FaxSendStatus (Starter) ==
 
 Simulator ->> Application : statusUpdate
 note right: <status>
