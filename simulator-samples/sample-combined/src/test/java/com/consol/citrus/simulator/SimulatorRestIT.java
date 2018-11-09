@@ -136,7 +136,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .response(HttpStatus.OK)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
-        sleep(1000L);
+        sleep(2000L);
 
         http().client(simulatorClient)
                 .send()
