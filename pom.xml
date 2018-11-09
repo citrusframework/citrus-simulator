@@ -32,8 +32,6 @@
     <npm.version>5.5.1</npm.version>
     
     <skip.gpg>false</skip.gpg>
-    <skip.integration.tests>false</skip.integration.tests>
-    <skip.unit.tests>false</skip.unit.tests>
     <reuseForks>true</reuseForks>
   </properties>
 
@@ -373,7 +371,6 @@
             <forkCount>1</forkCount>
             <reuseForks>${reuseForks}</reuseForks>
             <failIfNoTests>false</failIfNoTests>
-            <skipTests>${skip.unit.tests}</skipTests>
           </configuration>
         </plugin>
 
@@ -382,7 +379,6 @@
           <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
-            <skipTests>${skip.integration.tests}</skipTests>
           </configuration>
         </plugin>
 

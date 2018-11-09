@@ -25,7 +25,9 @@ import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.simulator.model.ScenarioExecution;
 import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
+import com.consol.citrus.simulator.scenario.ScenarioRunner;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -37,7 +39,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Service capable of executing test executables. The service takes care on setting up the executable before execution. Service

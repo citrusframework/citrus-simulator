@@ -14,8 +14,11 @@ import io.swagger.models.parameters.*;
 import io.swagger.models.properties.*;
 import org.hamcrest.CustomMatcher;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.*;
-import org.springframework.util.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;

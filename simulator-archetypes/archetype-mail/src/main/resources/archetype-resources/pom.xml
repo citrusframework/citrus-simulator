@@ -111,54 +111,33 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
-        <executions>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>repackage</goal>
+                  </goals>
+                  <configuration>
+                      <classifier>executable</classifier>
+                  </configuration>
+              </execution>
           <execution>
+            <id>pre-integration-test</id>
             <goals>
-              <goal>repackage</goal>
+              <goal>start</goal>
             </goals>
             <configuration>
-              <classifier>executable</classifier>
+              <fork>true</fork>
             </configuration>
+          </execution>
+          <execution>
+            <id>post-integration-test</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>simulator-embedded</id>
-      <activation>
-        <property>
-          <name>embedded</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
-            <executions>
-              <execution>
-                <id>pre-integration-test</id>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>post-integration-test</id>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
