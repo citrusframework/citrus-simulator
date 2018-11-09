@@ -13,7 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.3-SNAPSHOT</citrus.simulator.version>
+      <citrus.simulator.version>1.0.3</citrus.simulator.version>
     <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
       <testng.version>6.14.3</testng.version>
   </properties>
