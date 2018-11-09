@@ -8,7 +8,7 @@ sudo: required
 install: true
 
 script:
-- mvn --batch-mode -q clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar
+- mvn --batch-mode -q clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded
 
 cache:
   directories:
