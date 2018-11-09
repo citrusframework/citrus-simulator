@@ -73,11 +73,6 @@
       <artifactId>activemq-spring</artifactId>
       <version>${activemq.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-spring</artifactId>
-      <version>4.4</version>
-    </dependency>
 
     <!-- XML / JSON support -->
 
@@ -113,21 +108,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.activemq.tooling</groupId>
-        <artifactId>activemq-maven-plugin</artifactId>
-        <version>${activemq.version}</version>
-        <configuration>
-          <fork>false</fork>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>log4j.properties</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb2-plugin</artifactId>
         <version>0.13.1</version>
@@ -152,9 +132,18 @@
       </plugin>
 
       <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring.boot.version}</version>
+        <groupId>org.apache.activemq.tooling</groupId>
+        <artifactId>activemq-maven-plugin</artifactId>
+        <version>${activemq.version}</version>
+        <configuration>
+          <fork>false</fork>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>log4j.properties</value>
+            </property>
+          </systemProperties>
+        </configuration>
         <executions>
           <execution>
             <id>start-activemq</id>
@@ -172,30 +161,6 @@
             <goals>
               <goal>stop</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.13.1</version>
-        <executions>
-          <execution>
-            <id>xjc-xsd-1</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
-              <schemaIncludes>
-                <include>*.xsd</include>
-              </schemaIncludes>
-              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
-              <bindingIncludes>
-                <include>*.xjb</include>
-              </bindingIncludes>
-            </configuration>
           </execution>
         </executions>
       </plugin>
