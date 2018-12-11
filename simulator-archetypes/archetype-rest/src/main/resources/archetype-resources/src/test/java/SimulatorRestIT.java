@@ -23,9 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.testng.annotations.Test;
 
-/**
- * @author Christoph Deppisch
- */
 @Test
 public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 

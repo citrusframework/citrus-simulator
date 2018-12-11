@@ -25,9 +25,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.testng.annotations.Test;
 
-/**
- * @author Christoph Deppisch
- */
 @Test
 public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 

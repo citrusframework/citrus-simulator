@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ${package};
+package ${package}.starter;
 
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
@@ -25,9 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Christoph Deppisch
- */
 @Starter("HelloStarter")
 public class HelloStarter extends AbstractScenarioStarter {
 
