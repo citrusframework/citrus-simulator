@@ -16,6 +16,11 @@
 
   <packaging>pom</packaging>
 
+  <properties>
+    <spring.boot.start.wait>1000</spring.boot.start.wait>
+    <spring.boot.start.maxAttempts>60</spring.boot.start.maxAttempts>
+  </properties>
+
   <modules>
     <module>sample-bank-service</module>
     <module>sample-rest</module>
