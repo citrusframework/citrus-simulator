@@ -8,7 +8,7 @@ sudo: required
 install: true
 
 script:
-- mvn --batch-mode -q clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
 
 cache:
   directories:
