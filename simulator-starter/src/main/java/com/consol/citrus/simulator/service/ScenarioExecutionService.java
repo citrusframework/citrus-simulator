@@ -57,7 +57,11 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private ExecutorService executorService = Executors.newFixedThreadPool(10, r -> {
+        Thread t = Executors.defaultThreadFactory().newThread(r);
+        t.setDaemon(true);
+        return t;
+    });
 
     @Autowired
     public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
