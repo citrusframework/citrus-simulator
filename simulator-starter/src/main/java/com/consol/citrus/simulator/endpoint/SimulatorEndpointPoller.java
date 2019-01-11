@@ -57,7 +57,11 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Thread running the server
      */
-    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
+    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = Executors.defaultThreadFactory().newThread(r);
+        t.setDaemon(true);
+        return t;
+    });
 
     /**
      * Message handler for incoming simulator request messages
@@ -172,6 +176,8 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
             LOG.info("Simulator endpoint poller termination complete");
         } catch (InterruptedException e) {
             LOG.error("Error while waiting termination of endpoint poller", e);
+            Thread.currentThread().interrupt();
+            throw new SimulatorException(e);
         } finally {
             taskExecutor.shutdownNow();
         }
