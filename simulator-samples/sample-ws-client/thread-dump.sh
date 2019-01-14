@@ -1,5 +1,9 @@
 #!/bin/sh
 
+which lsof
+which jstack
+
+lsof -PiTCP -sTCP:LISTEN
 
 PID=`lsof -t -i:9001`
 if [[ "" !=  "$PID" ]]; then

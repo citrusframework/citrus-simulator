@@ -101,11 +101,6 @@
                 </exec>
 
                 <exec executable="sh" osfamily="unix">
-                  <arg value="-c"/>
-                  <arg value="which lsof"/>
-                </exec>
-
-                <exec executable="sh" osfamily="unix">
                   <arg value="thread-dump.sh"/>
                 </exec>
               </target>
