@@ -25,13 +25,13 @@
     <module>sample-bank-service</module>
     <module>sample-rest</module>
     <!--module>sample-swagger</module-->
+    <module>sample-ws</module>
+    <module>sample-ws-client</module>
+    <module>sample-wsdl</module>
     <module>sample-mail</module>
     <module>sample-combined</module>
     <module>sample-jms</module>
     <module>sample-jms-fax</module>
-    <module>sample-ws-client</module>
-    <module>sample-ws</module>
-    <module>sample-wsdl</module>
   </modules>
 
   <build>
