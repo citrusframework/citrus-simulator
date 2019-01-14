@@ -89,11 +89,25 @@
         <version>1.8</version>
         <executions>
           <execution>
-            <id>sleep-to-allow-previous-sprint-boot-app-to-shutdown-fully</id>
+            <id>thread-dump-non-exiting-process</id>
             <phase>pre-integration-test</phase>
             <configuration>
               <target>
-                <sleep seconds="20"/>
+                <echo message="Checking for naughty springboot processes"/>
+
+                <exec executable="sh" osfamily="unix">
+                  <arg value="-c"/>
+                  <arg value="pwd"/>
+                </exec>
+
+                <exec executable="sh" osfamily="unix">
+                  <arg value="-c"/>
+                  <arg value="which lsof"/>
+                </exec>
+
+                <exec executable="sh" osfamily="unix">
+                  <arg value="thread-dump.sh"/>
+                </exec>
               </target>
             </configuration>
             <goals>
