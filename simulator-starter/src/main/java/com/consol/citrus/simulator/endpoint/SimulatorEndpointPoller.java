@@ -26,6 +26,7 @@ import com.consol.citrus.message.Message;
 import com.consol.citrus.messaging.Producer;
 import com.consol.citrus.messaging.ReplyProducer;
 import com.consol.citrus.simulator.exception.SimulatorException;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -54,14 +55,15 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      */
     private Endpoint inboundEndpoint;
 
+    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
+            .setDaemon(true)
+            .setNameFormat("endpoint-poller-thread-%d")
+            .build();
+
     /**
      * Thread running the server
      */
-    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor(r -> {
-        Thread t = Executors.defaultThreadFactory().newThread(r);
-        t.setDaemon(true);
-        return t;
-    });
+    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor(threadFactory);
 
     /**
      * Message handler for incoming simulator request messages
