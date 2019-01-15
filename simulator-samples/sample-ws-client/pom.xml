@@ -89,19 +89,13 @@
         <version>1.8</version>
         <executions>
           <execution>
-            <id>thread-dump-non-exiting-process</id>
+            <id>clean-up-misbehaving-process</id>
             <phase>pre-integration-test</phase>
             <configuration>
               <target>
-                <echo message="Checking for naughty springboot processes"/>
-
+                <echo message="cleaning up misbehaving process"/>
                 <exec executable="sh" osfamily="unix">
-                  <arg value="-c"/>
-                  <arg value="pwd"/>
-                </exec>
-
-                <exec executable="sh" osfamily="unix">
-                  <arg value="thread-dump.sh"/>
+                  <arg value="../thread-dump-and-kill-process.sh"/>
                 </exec>
               </target>
             </configuration>
