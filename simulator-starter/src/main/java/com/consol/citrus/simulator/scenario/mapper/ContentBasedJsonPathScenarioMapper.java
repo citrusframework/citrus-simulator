@@ -16,16 +16,16 @@
 
 package com.consol.citrus.simulator.scenario.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
 import com.consol.citrus.endpoint.adapter.mapping.JsonPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * Mapper that can be used for examining incoming messages and based on the content of the message returns the name
@@ -76,6 +76,10 @@ public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
 
     @Override
     public String extractMappingKey(Message request) {
+        if (!StringUtils.hasText(request.getPayload(String.class))) {
+            return null;
+        }
+
         Optional<String> v = keyExtractors.stream()
                 .map(keyExtractor -> lookupScenarioName(request, keyExtractor))
                 .filter(Optional::isPresent)
