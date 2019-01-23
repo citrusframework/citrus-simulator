@@ -120,6 +120,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>
@@ -129,29 +130,9 @@
             <goals>
               <goal>stop</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <id>clean-up-misbehaving-process</id>
-            <phase>pre-integration-test</phase>
             <configuration>
-              <target>
-                <echo message="cleaning up misbehaving process"/>
-                <exec executable="sh" osfamily="unix">
-                  <arg value="../thread-dump-and-kill-process.sh"/>
-                </exec>
-              </target>
+              <skip>${skip.it}</skip>
             </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
@@ -174,6 +155,7 @@
               <goal>start</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
               <wait>${spring.boot.start.wait}</wait>
               <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
@@ -185,6 +167,7 @@
               <goal>stop</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>
