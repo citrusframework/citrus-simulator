@@ -43,6 +43,7 @@ jobs:
 cache:
   directories:
   - '$HOME/.sonar/cache'
+  - '$HOME/.m2'
 
 addons:
   sonarcloud:
