@@ -28,6 +28,7 @@ import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Service capable of executing test executables. The service takes care on setting up the executable before execution. Service
@@ -57,7 +59,12 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
+            .setDaemon(true)
+            .setNameFormat("execution-svc-thread-%d")
+            .build();
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(10, threadFactory);
 
     @Autowired
     public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {

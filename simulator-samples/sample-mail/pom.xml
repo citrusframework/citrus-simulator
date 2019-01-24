@@ -102,7 +102,10 @@
               <goal>start</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
+              <wait>${spring.boot.start.wait}</wait>
+              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
             </configuration>
           </execution>
           <execution>
@@ -111,6 +114,7 @@
               <goal>stop</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>

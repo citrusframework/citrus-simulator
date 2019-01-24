@@ -16,6 +16,12 @@
 
   <packaging>pom</packaging>
 
+  <properties>
+    <spring.boot.start.wait>1000</spring.boot.start.wait>
+    <spring.boot.start.maxAttempts>60</spring.boot.start.maxAttempts>
+    <skip.it>false</skip.it>
+  </properties>
+
   <modules>
     <module>sample-bank-service</module>
     <module>sample-rest</module>
@@ -38,6 +44,7 @@
           <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
+            <skip>${skip.it}</skip>
           </configuration>
         </plugin>
 
@@ -56,4 +63,15 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <!-- activating this profile will skip all integration tests -->
+      <id>skip-it</id>
+      <properties>
+        <skip.it>true</skip.it>
+      </properties>
+    </profile>
+
+  </profiles>
 </project>

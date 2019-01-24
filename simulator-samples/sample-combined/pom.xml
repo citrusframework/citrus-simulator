@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-      <activemq.version>5.15.4</activemq.version>
+    <activemq.version>5.15.4</activemq.version>
   </properties>
 
   <dependencyManagement>
@@ -50,7 +50,7 @@
       <artifactId>citrus-simulator-ui</artifactId>
     </dependency>
 
-      <!-- Citrus -->
+    <!-- Citrus -->
     <dependency>
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-jms</artifactId>
@@ -134,6 +134,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>
@@ -143,6 +144,9 @@
             <goals>
               <goal>stop</goal>
             </goals>
+            <configuration>
+              <skip>${skip.it}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -165,7 +169,10 @@
               <goal>start</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
+              <wait>${spring.boot.start.wait}</wait>
+              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
             </configuration>
           </execution>
           <execution>
@@ -174,6 +181,7 @@
               <goal>stop</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>

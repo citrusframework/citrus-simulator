@@ -7,12 +7,43 @@ sudo: required
 
 install: true
 
-script:
-- mvn --batch-mode -q clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
+jobs:
+  include:
+  - stage: build
+    script:
+    - mvn --batch-mode -q -Pskip-it clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
+  - stage: sample-bank-service
+    script:
+    - mvn -f simulator-samples/sample-bank-service/pom.xml verify
+  - stage: sample-combined
+    script:
+    - mvn -f simulator-samples/sample-combined/pom.xml verify
+  - stage: sample-jms
+    script:
+    - mvn -f simulator-samples/sample-jms/pom.xml verify
+  - stage: sample-jms-fax
+    script:
+    - mvn -f simulator-samples/sample-jms-fax/pom.xml verify
+  - stage: sample-mail
+    script:
+    - mvn -f simulator-samples/sample-mail/pom.xml verify
+  - stage: sample-rest
+    script:
+    - mvn -f simulator-samples/sample-rest/pom.xml verify
+  - stage: sample-ws
+    script:
+    - mvn -f simulator-samples/sample-ws/pom.xml verify
+  - stage: sample-ws-client
+    script:
+    - mvn -f simulator-samples/sample-ws-client/pom.xml verify
+  - stage: sample-wsdl
+    script:
+    - mvn -f simulator-samples/sample-wsdl/pom.xml verify
 
 cache:
   directories:
   - '$HOME/.sonar/cache'
+  - '$HOME/.m2'
 
 addons:
   sonarcloud:
