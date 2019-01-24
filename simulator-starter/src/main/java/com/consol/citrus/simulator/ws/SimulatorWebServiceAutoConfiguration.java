@@ -72,7 +72,7 @@ public class SimulatorWebServiceAutoConfiguration {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, getServletMapping());
+        return new ServletRegistrationBean<>(servlet, getServletMapping());
     }
 
     @Bean(name = "simulatorWsEndpointMapping")

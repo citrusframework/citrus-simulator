@@ -13,10 +13,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.3-SNAPSHOT</citrus.simulator.version>
-    <citrus.version>2.7.3</citrus.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
-    <testng.version>6.11</testng.version>
+    <citrus.version>2.7.8-SNAPSHOT</citrus.version>
+    <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
+    <testng.version>6.14.3</testng.version>
   </properties>
 
   <dependencyManagement>
@@ -83,7 +83,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20</version>
+        <version>2.22.0</version>
         <configuration>
           <failIfNoTests>false</failIfNoTests>
         </configuration>
@@ -111,10 +111,15 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
-        <configuration>
-          <fork>true</fork>
-        </configuration>
-        <executions>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>repackage</goal>
+                  </goals>
+                  <configuration>
+                      <classifier>executable</classifier>
+                  </configuration>
+              </execution>
           <execution>
             <id>pre-integration-test</id>
             <goals>
@@ -122,8 +127,6 @@
             </goals>
             <configuration>
               <fork>true</fork>
-              <wait>1000</wait>
-              <maxAttempts>180</maxAttempts>
             </configuration>
           </execution>
           <execution>
@@ -131,9 +134,6 @@
             <goals>
               <goal>stop</goal>
             </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
           </execution>
         </executions>
       </plugin>

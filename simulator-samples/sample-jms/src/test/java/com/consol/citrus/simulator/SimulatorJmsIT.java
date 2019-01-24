@@ -86,7 +86,7 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                         "</GoodNightResponse>");
 
         send(jmsSyncEndpoint)
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .payload("<InterveningRequest>Before correlation</InterveningRequest>");
 
         receive(jmsSyncEndpoint)
                 .payload(defaultResponse);
@@ -98,8 +98,10 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
         receive(jmsSyncEndpoint)
                 .payload("<InterveningResponse>In between!</InterveningResponse>");
 
+        sleep(2000L);
+
         send(jmsSyncEndpoint)
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
+                .payload("<InterveningRequest>After correlation</InterveningRequest>")
                 .header("correlationId", "${correlationId}");
 
         receive(jmsSyncEndpoint)

@@ -16,7 +16,9 @@
 
 package com.consol.citrus.simulator.sample.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
+import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 /**
  * @author Christoph Deppisch
@@ -46,7 +48,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 
         scenario
             .receive()
-            .selector("correlationId = '${correlationId}'")
+                .selector(CORRELATION_ID + " = '${correlationId}'")
             .payload("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario

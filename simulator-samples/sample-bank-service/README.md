@@ -1,13 +1,7 @@
 Citrus Bank Service Simulator ![Logo][1]
 =============================================
-TODO:
-* create a calculate iban response model
-* create a validate iban response model
-* remove all unused headers
-* document below the request and response
-
-This is a standalone simulator application that simulates a primitive bank
-service. The bank service exposes a REST interface with two services:
+This is a standalone simulator application that simulates a very primitive bank
+service. The bank service exposes a REST interface with the following services:
 * Calculate-IBAN: a service for calculating the IBAN given a bank account number and sort code
 * Validate-IBAN: a service for verifying the IBAN
 
@@ -18,18 +12,11 @@ The properties corresponding to are located in the application.properties file.
 
 In case you wish to regenerate the keystore file you can do this from the
 command line using the following command:
-
+```
 keytool -genkey -alias selfsigned_localhost_sslserver -keyalg RSA
 -keysize 2048 -validity 700 -keypass simulator -storepass simulator
 -keystore ssl-server.jks
-
-Clients are able to access the simulator endpoints and the simulator
-responds with predefined response messages according to its scenarios.
-The simulator response logic is very powerful and enables us to simulate
-any kind of server interface.
-
-Read the simulator [user manual](https://christophd.github.io/citrus-simulator/)
-for more information.
+```
 
 Quick start
 ---------
@@ -64,9 +51,9 @@ user interface should track those interactions accordingly.
 Further Information
 --------------------
 
-Read the [user manual](https://christophd.github.io/citrus-simulator/) for detailed instructions and features.
-For more information on Citrus see [www.citrusframework.org][2], including a complete [reference manual][3].
+Read the [user manual](https://citrusframework.org/citrus-simulator/) for detailed instructions and features.
+For more information on Citrus see [citrusframework.org][2], including a complete [reference manual][3].
 
- [1]: http://www.citrusframework.org/img/brand-logo.png "Citrus"
- [2]: http://www.citrusframework.org
- [3]: http://www.citrusframework.org/reference/html/
+ [1]: https://citrusframework.org/img/brand-logo.png "Citrus"
+ [2]: https://citrusframework.org
+ [3]: https://citrusframework.org/reference/html/

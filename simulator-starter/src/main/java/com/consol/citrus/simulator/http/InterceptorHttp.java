@@ -20,6 +20,7 @@ import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.message.RawMessage;
 import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.util.FileUtils;
+import com.consol.citrus.util.TypeConversionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,9 +68,9 @@ public class InterceptorHttp implements HandlerInterceptor {
     private String getResponseContent(HttpServletResponse response, Object handler) {
         if (handler instanceof HttpMessageController) {
             HttpMessageController handlerController = (HttpMessageController) handler;
-            ResponseEntity<String> responseEntity = handlerController.getResponseCache();
+            ResponseEntity<?> responseEntity = handlerController.getResponseCache();
             if (responseEntity != null) {
-                return responseEntity.getBody();
+                return TypeConversionUtils.convertIfNecessary(responseEntity.getBody(), String.class);
             }
         }
         return "Could not extract Http Response";

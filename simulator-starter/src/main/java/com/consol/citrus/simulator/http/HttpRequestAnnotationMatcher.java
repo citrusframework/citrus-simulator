@@ -19,16 +19,11 @@ import com.consol.citrus.http.message.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -187,22 +182,18 @@ public class HttpRequestAnnotationMatcher {
      * @return the list of query parameters or an empty list
      */
     private List<String> getRequestQueryParams(HttpMessage request) {
-        final List<String> queryParams = new ArrayList<>();
-        final String queryParamsStr = request.getQueryParams();
-        if (StringUtils.hasLength(queryParamsStr)) {
-            final String[] tokenizedQueryParams = StringUtils.tokenizeToStringArray(queryParamsStr,
-                    ",",
-                    false,
-                    false);
-            queryParams.addAll(Arrays.asList(tokenizedQueryParams));
-
-        }
-        return queryParams;
+        return request.getQueryParams()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .collect(Collectors.toList());
     }
 
     private List<String> getQueryParamKeys(List<String> queryParams) {
         return queryParams.stream()
-                .map(queryParam -> getQueryParamKeyValue(queryParam)[0])
+                .map(this::getQueryParamKeyValue)
+                .filter(strings -> strings.length > 0)
+                .map(strings -> strings[0])
                 .collect(Collectors.toList());
     }
 

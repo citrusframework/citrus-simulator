@@ -94,7 +94,7 @@ public class ActivityService {
     }
 
     public ScenarioExecution getScenarioExecutionById(Long id) {
-        return scenarioExecutionRepository.findOne(id);
+        return scenarioExecutionRepository.findById(id).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to find scenario execution for id %s", id)));
     }
 
     /**
@@ -207,7 +207,7 @@ public class ActivityService {
     }
 
     private ScenarioExecution lookupScenarioExecution(TestCase testCase) {
-        return scenarioExecutionRepository.findOne(lookupScenarioExecutionId(testCase));
+        return scenarioExecutionRepository.findById(lookupScenarioExecutionId(testCase)).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to look up scenario execution for test %s", testCase.getName())));
     }
 
     private long lookupScenarioExecutionId(TestCase testCase) {

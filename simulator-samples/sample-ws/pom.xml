@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator-samples</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -86,21 +86,25 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <fork>true</fork>
-          <wait>1000</wait>
-          <maxAttempts>180</maxAttempts>
-        </configuration>
         <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <classifier>executable</classifier>
+            </configuration>
+          </execution>
           <execution>
             <id>pre-integration-test</id>
             <goals>
               <goal>start</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
-              <wait>1000</wait>
-              <maxAttempts>180</maxAttempts>
+              <wait>${spring.boot.start.wait}</wait>
+              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
             </configuration>
           </execution>
           <execution>
@@ -109,6 +113,7 @@
               <goal>stop</goal>
             </goals>
             <configuration>
+              <skip>${skip.it}</skip>
               <fork>true</fork>
             </configuration>
           </execution>

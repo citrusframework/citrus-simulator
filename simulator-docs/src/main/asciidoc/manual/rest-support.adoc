@@ -64,7 +64,7 @@ REST API would be accessible on this URI:
 
 [source]
 ----
-http://localhhost:8080/services/rest/*
+http://localhost:8080/services/rest/*
 ----
 
 The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
@@ -89,7 +89,7 @@ REST adapter behavior. The custom adapter just overwrites the *urlMapping* metho
 
 [source]
 ----
-http://localhhost:8080/my-rest-service/*
+http://localhost:8080/my-rest-service/*
 ----
 
 This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:

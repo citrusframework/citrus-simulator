@@ -74,7 +74,7 @@ SOAP service would be accessible on this URI:
 
 [source]
 ----
-http://localhhost:8080/services/ws/*
+http://localhost:8080/services/ws/*
 ----
 
 The clients can send SOAP calls to that endpoint URI then. The simulator will respond with respective SOAP responses based on the called
@@ -99,7 +99,7 @@ SOAP adapter behavior. The custom adapter just overwrites the *servletMapping* m
 
 [source]
 ----
-http://localhhost:8080/my-soap-service/*
+http://localhost:8080/my-soap-service/*
 ----
 
 This is the simplest way to customize the simulator SOAP support. We can also use the adapter extension directly on the Spring boot main application class:

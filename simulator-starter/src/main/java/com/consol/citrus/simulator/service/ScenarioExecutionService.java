@@ -28,17 +28,22 @@ import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Service capable of executing test executables. The service takes care on setting up the executable before execution. Service
@@ -47,12 +52,19 @@ import java.util.concurrent.Future;
  * @author Christoph Deppisch
  */
 @Service
-public class ScenarioExecutionService {
+public class ScenarioExecutionService implements DisposableBean, ApplicationListener<ContextClosedEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(ScenarioExecutionService.class);
 
     private final ActivityService activityService;
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
+
+    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
+            .setDaemon(true)
+            .setNameFormat("execution-svc-thread-%d")
+            .build();
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(10, threadFactory);
 
     @Autowired
     public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
@@ -91,13 +103,6 @@ public class ScenarioExecutionService {
     }
 
     private Future<?> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        final ExecutorService executorService = Executors.newSingleThreadExecutor(
-                r -> {
-                    Thread t = new Thread(r, "Scenario:" + name);
-                    t.setDaemon(true);
-                    return t;
-                });
-
         return executorService.submit(() -> {
             try {
                 if (scenario instanceof Executable) {
@@ -162,7 +167,6 @@ public class ScenarioExecutionService {
             } catch (Exception e) {
                 LOG.error(String.format("Scenario completed with error: '%s'", name), e);
             }
-            executorService.shutdownNow();
         });
     }
 
@@ -189,5 +193,15 @@ public class ScenarioExecutionService {
      * @param scenario
      */
     protected void prepare(SimulatorScenario scenario) {
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        executorService.shutdownNow();
+    }
+
+    @Override
+    public void onApplicationEvent(ContextClosedEvent event) {
+        executorService.shutdownNow();
     }
 }

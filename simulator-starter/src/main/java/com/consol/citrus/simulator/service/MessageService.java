@@ -16,21 +16,16 @@
 
 package com.consol.citrus.simulator.service;
 
-import com.consol.citrus.simulator.model.Message;
-import com.consol.citrus.simulator.model.MessageFilter;
-import com.consol.citrus.simulator.model.MessageHeader;
+import com.consol.citrus.exceptions.CitrusRuntimeException;
+import com.consol.citrus.simulator.model.*;
 import com.consol.citrus.simulator.repository.MessageRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 
 /**
@@ -63,7 +58,7 @@ public class MessageService {
     }
 
     public Message getMessageById(Long id) {
-        return messageRepository.findOne(id);
+        return messageRepository.findById(id).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to find message for id %s", id)));
     }
 
     public List<Message> getMessagesMatchingFilter(MessageFilter filter) {

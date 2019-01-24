@@ -2,7 +2,7 @@ Citrus Simulator ![Logo][1]
 ================
 
 This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
-JMS, RMI, mail messaging and more.
+JMS, RMI, SMTP and more.
 
 The simulator provides server APIs for clients and responds with predefined messages according to
 defined scenarios. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
@@ -10,7 +10,7 @@ defined scenarios. The simulator response logic is very powerful and enables us 
 The simulator uses [Spring Boot](https://projects.spring.io/spring-boot/) in combination with the test framework [Citrus](https://www.citrusframework.org). You can
 code simulator scenarios in Java or XML. Each scenario execution on the simulator is stored to an internal database and can be reviewed via web UI in the browser.
 
-Read the simulator [user manual](https://christophd.github.io/citrus-simulator/) for more information.
+Read the simulator [user manual](https://citrusframework.org/citrus-simulator/) for more information.
 
 Concepts
 ---------
@@ -58,7 +58,7 @@ apply plugin: 'org.springframework.boot'
 jar {
     group = "com.consol.citrus.simulator"
     baseName = 'citrus-simulator-sample'
-    version =  '1.0.3-SNAPSHOT'
+    version =  '1.1.0-SNAPSHOT'
 }
 
 repositories {
@@ -71,7 +71,7 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("com.consol.citrus:citrus-simulator-starter:1.0.3-SNAPSHOT")
+    compile("com.consol.citrus:citrus-simulator-starter:1.1.0-SNAPSHOT")
     testCompile("junit:junit")
 }
 ```
@@ -96,7 +96,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.3-SNAPSHOT</citrus.simulator.version>
+    <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
     <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
   </properties>
 
@@ -226,7 +226,7 @@ mvn install spring-boot:run
 
 You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
 you can open your browser and point to [http://localhost:8080](http://localhost:8080). You will see the very basic simulator user interface. For a more detailed user interface please
-follow the [chapter user-interface](https://christophd.github.io/citrus-simulator#user-interface).
+follow the [chapter user-interface](https://citrusframework.org/citrus-simulator#user-interface).
 
 The REST default scenario that we have added is accessible using [http://localhost:8080/services/rest/](http://localhost:8080/services/rest/). You will see the default output `Welcome to the Citrus simulator`
 coming from default scenario execution.
@@ -253,7 +253,7 @@ In Maven we simply add the following dependency:
 </dependency>
 ```
 
-To understand the full capabilities of the UI please read the [chapter user-interface](https://christophd.github.io/citrus-simulator#user-interface) in reference manual.
+To understand the full capabilities of the UI please read the [chapter user-interface](https://citrusframework.org/citrus-simulator#user-interface) in reference manual.
 
 Features
 ---------
@@ -304,7 +304,7 @@ sample projects with complete code available in [simulator-samples](simulator-sa
 Development
 ---------
 
-After forking/cloning the source code repository from [https://github.com/christophd/citrus-simulator](https://github.com/christophd/citrus-simulator) you can build the application locally with Maven:
+After forking/cloning the source code repository from [https://github.com/citrusframework/citrus-simulator](https://github.com/citrusframework/citrus-simulator) you can build the application locally with Maven:
 
 ```
 mvn clean install
@@ -334,9 +334,9 @@ Make sure to start one of the sample projects so that you have a server running 
 Information
 ---------
 
-Read the simulator [user manual](https://christophd.github.io/citrus-simulator/) for detailed instructions and features.
-For more information on Citrus see [www.citrusframework.org][2], including a complete [reference manual][3].
+Read the simulator [user manual](https://citrusframework.org/citrus-simulator/) for detailed instructions and features.
+For more information on Citrus see [citrusframework.org][2], including a complete [reference manual][3].
 
- [1]: http://www.citrusframework.org/img/brand-logo.png "Citrus"
- [2]: http://www.citrusframework.org
- [3]: http://www.citrusframework.org/reference/html/
+ [1]: https://citrusframework.org/img/brand-logo.png "Citrus"
+ [2]: https://citrusframework.org
+ [3]: https://citrusframework.org/reference/html/

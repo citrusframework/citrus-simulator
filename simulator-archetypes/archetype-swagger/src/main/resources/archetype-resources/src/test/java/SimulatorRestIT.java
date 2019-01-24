@@ -45,8 +45,8 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .post("/pet")
-                .accept("application/json")
-                .contentType("application/json")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(new ClassPathResource("templates/pet.json"));
 
         http().client(petstoreClient)
@@ -74,12 +74,12 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .get("/pet/${id}")
-                .accept("application/json");
+                .accept(MediaType.APPLICATION_JSON_VALUE);
 
         http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(new ClassPathResource("templates/pet-control.json"));
     }
 
@@ -93,8 +93,8 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .put("/pet")
-                .accept("application/json")
-                .contentType("application/json")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(new ClassPathResource("templates/pet.json"));
 
         http().client(petstoreClient)
@@ -107,13 +107,13 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .get("/pet/findByStatus")
-                .accept("application/json")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .queryParam("status", "pending");
 
         http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload("[ citrus:readFile(templates/pet-control.json) ]");
     }
 
@@ -122,7 +122,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .get("/pet/findByStatus")
-                .accept("application/json");
+                .accept(MediaType.APPLICATION_JSON_VALUE);
 
         http().client(petstoreClient)
                 .receive()
@@ -134,13 +134,13 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .get("/pet/findByTags")
-                .accept("application/json")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .queryParam("tags", "huge,cute");
 
         http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload("[ citrus:readFile(templates/pet-control.json) ]");
     }
 
@@ -149,8 +149,8 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(petstoreClient)
                 .send()
                 .post("/store/order")
-                .accept("application/json")
-                .contentType("application/json")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(new ClassPathResource("templates/order.json"));
 
         http().client(petstoreClient)

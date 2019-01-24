@@ -20,6 +20,7 @@ import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.http.controller.HttpMessageController;
 import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
+import com.consol.citrus.http.message.DelegatingHttpEntityMessageConverter;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
 import com.consol.citrus.report.MessageListeners;
 import com.consol.citrus.simulator.SimulatorAutoConfiguration;
@@ -28,7 +29,9 @@ import com.consol.citrus.simulator.listener.SimulatorMessageListener;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +39,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.HandlerAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -78,8 +84,8 @@ public class SimulatorRestAutoConfiguration {
     private HttpMessageController restController;
 
     @Bean
-    public FilterRegistrationBean requestCachingFilter() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new RequestCachingServletFilter());
+    public FilterRegistrationBean<RequestCachingServletFilter> requestCachingFilter() {
+        FilterRegistrationBean<RequestCachingServletFilter> filterRegistrationBean = new FilterRegistrationBean<>(new RequestCachingServletFilter());
 
         String urlMapping = getUrlMapping();
         if (urlMapping.endsWith("**")) {
@@ -96,7 +102,7 @@ public class SimulatorRestAutoConfiguration {
         handlerMapping.setAlwaysUseFullPath(true);
 
         Map<String, Object> mappings = new HashMap<>();
-        mappings.put(getUrlMapping(), getRestController(applicationContext));
+        mappings.put(getUrlMapping(), createRestController(applicationContext));
 
         handlerMapping.setUrlMap(mappings);
         handlerMapping.setInterceptors(interceptors());
@@ -109,7 +115,7 @@ public class SimulatorRestAutoConfiguration {
         final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
             @Override
             protected void initHandlerMethods() {
-                detectHandlerMethods(getRestController(applicationContext));
+                detectHandlerMethods(createRestController(applicationContext));
                 super.initHandlerMethods();
             }
 
@@ -122,6 +128,7 @@ public class SimulatorRestAutoConfiguration {
         handlerMapping.setApplicationContext(applicationContext);
         handlerMapping.afterPropertiesSet();
 
+        requestMappingHandlerAdapter.getMessageConverters().add(new DelegatingHttpEntityMessageConverter());
         requestMappingHandlerAdapter.setCacheSeconds(0);
 
         return new SimpleControllerHandlerAdapter() {
@@ -157,7 +164,7 @@ public class SimulatorRestAutoConfiguration {
      * @param applicationContext
      * @return
      */
-    protected HttpMessageController getRestController(ApplicationContext applicationContext) {
+    protected HttpMessageController createRestController(ApplicationContext applicationContext) {
         if (restController == null) {
             restController = new HttpMessageController();
 

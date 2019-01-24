@@ -4,6 +4,6 @@
 .Reading material
 [horizontal]
 link:https://www.citrusframework.org/reference/html/[Citrus manual]:: gives you a detailed description of all Citrus features
-link:https://github.com/christophd/citrus-simulator/blob/master/simulator-samples[Sample projects]:: demonstrate typical simulator scenarios with different message transports
+link:https://github.com/citrusframework/citrus-simulator/blob/master/simulator-samples[Sample projects]:: demonstrate typical simulator scenarios with different message transports
 link:https://www.citrusframework.org/docs/history[ChangeLog]:: shows the release history
-link:https://github.com/christophd/citrus-simulator/blob/master/simulator-docs/contributing.md[Contributing]:: explains how you can contribute to this project
+link:https://github.com/citrusframework/citrus-simulator/blob/master/simulator-docs/contributing.md[Contributing]:: explains how you can contribute to this project
