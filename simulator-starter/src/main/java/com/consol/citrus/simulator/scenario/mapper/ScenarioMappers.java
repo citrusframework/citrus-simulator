@@ -16,11 +16,6 @@
 
 package com.consol.citrus.simulator.scenario.mapper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfigurationPropertiesAware;
 import com.consol.citrus.simulator.http.HttpOperationScenario;
@@ -33,6 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Scenario mapper chain goes through a list of mappers to find best match of extracted mapping keys. When no suitable
  * mapping key is found in the list of mappers a default mapping is used based on provided base class evaluation.
@@ -44,14 +44,14 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
     @Autowired(required = false)
     private List<SimulatorScenario> scenarioList = new ArrayList<>();
 
-    private final List<ScenarioMapper> scenarioMappers;
+    private final List<ScenarioMapper> scenarioMapperList;
 
     /**
      * Constructor using list of scenario mappers to chain when extracting mapping keys.
-     * @param scenarioMappers
+     * @param scenarioMapperList
      */
-    private ScenarioMappers(ScenarioMapper ... scenarioMappers) {
-        this.scenarioMappers = Arrays.asList(scenarioMappers);
+    private ScenarioMappers(ScenarioMapper... scenarioMapperList) {
+        this.scenarioMapperList = Arrays.asList(scenarioMapperList);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
 
     @Override
     public String getMappingKey(Message message) {
-        return scenarioMappers.stream()
+        return scenarioMapperList.stream()
                 .map(mapper -> {
                     if (mapper instanceof AbstractScenarioMapper) {
                         ((AbstractScenarioMapper) mapper).setUseDefaultMapping(false);
@@ -100,12 +100,12 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        scenarioMappers.stream()
+        scenarioMapperList.stream()
                 .filter(mapper -> mapper instanceof ScenarioListAware)
                 .map(mapper -> (ScenarioListAware) mapper)
                 .forEach(mapper -> mapper.setScenarioList(scenarioList));
 
-        scenarioMappers.stream()
+        scenarioMapperList.stream()
                 .filter(mapper -> mapper instanceof SimulatorConfigurationPropertiesAware)
                 .map(mapper -> (SimulatorConfigurationPropertiesAware) mapper)
                 .forEach(mapper -> mapper.setSimulatorConfigurationProperties(getSimulatorConfigurationProperties()));
