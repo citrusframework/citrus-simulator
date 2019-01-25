@@ -26,9 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * @author Christoph Deppisch
  */
-@Scenario("Hello")
-@RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
-public class HelloScenario extends AbstractSimulatorScenario {
+public abstract class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
@@ -51,8 +49,10 @@ public class HelloScenario extends AbstractSimulatorScenario {
             .send((builder -> builder
                     .response(HttpStatus.OK)
                     .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Hi there!" +
+                            "Hi "+getMessage()+"!"+
                             "</HelloResponse>"))
             );
     }
+
+    abstract String getMessage();
 }
