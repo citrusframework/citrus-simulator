@@ -81,6 +81,7 @@ public class SimulatorJmsAutoConfiguration {
             JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
             endpointConfiguration.setDestinationName(getInboundDestination());
             endpointConfiguration.setConnectionFactory(connectionFactory);
+            endpointConfiguration.setPubSubDomain(getPubSubDomain());
 
             return jmsEndpoint;
         }
@@ -186,6 +187,18 @@ public class SimulatorJmsAutoConfiguration {
         }
 
         return simulatorJmsConfiguration.isUseSoap();
+    }
+
+    /**
+     * Should the endpoint use pub sub domain.
+     * @return
+     */
+    protected boolean getPubSubDomain() {
+        if (configurer != null) {
+            return configurer.pubSubDomain(simulatorJmsConfiguration);
+        }
+
+        return simulatorJmsConfiguration.isPubSubDomain();
     }
 
     /**
