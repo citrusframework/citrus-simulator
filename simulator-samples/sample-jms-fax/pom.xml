@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.4</activemq.version>
+    <activemq.version>5.15.9</activemq.version>
   </properties>
 
   <dependencyManagement>
@@ -34,10 +34,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
     <!-- Citrus Simulator -->
@@ -110,7 +106,7 @@
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.13.1</version>
+        <version>0.14.0</version>
         <executions>
           <execution>
             <id>xjc-xsd-1</id>
