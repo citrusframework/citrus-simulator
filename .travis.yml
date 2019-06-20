@@ -1,12 +1,11 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk11
 
 dist: trusty
 sudo: required
 
 install: true
-
 
 jobs:
   include:
