@@ -8,6 +8,8 @@ sudo: required
 
 install: true
 
+before_script: "./.travis/set-jdk8-settings-if-possible.sh"
+
 jobs:
   include:
   - stage: build
