@@ -1,14 +1,11 @@
 language: java
 jdk:
   - oraclejdk8
-  - oraclejdk11
 
 dist: trusty
 sudo: required
 
 install: true
-
-before_script: "./.travis/set-jdk8-settings-if-possible.sh"
 
 jobs:
   include:
@@ -42,6 +39,11 @@ jobs:
   - stage: sample-wsdl
     script:
     - mvn -f simulator-samples/sample-wsdl/pom.xml verify
+  - stage: openjdk11-build
+    script:
+      - export JAVA_HOME=$HOME/openjdk11
+      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
+      - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=11
 
 cache:
   directories:
