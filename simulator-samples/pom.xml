@@ -41,7 +41,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
             <skip>${skip.it}</skip>
@@ -53,13 +52,6 @@
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring.boot.version}</version>
         </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-
       </plugins>
     </pluginManagement>
   </build>
@@ -72,6 +64,5 @@
         <skip.it>true</skip.it>
       </properties>
     </profile>
-
   </profiles>
 </project>
