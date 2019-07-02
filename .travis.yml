@@ -9,41 +9,46 @@ install: true
 
 jobs:
   include:
-  - stage: build
+  - stage: support-build-oraclejdk8
     script:
     - mvn --batch-mode -q -Pskip-it clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
-  - stage: sample-bank-service
+  - stage: test-sample-bank-service-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-bank-service/pom.xml verify
-  - stage: sample-combined
+  - stage: test-sample-combined-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-combined/pom.xml verify
-  - stage: sample-jms
+  - stage: test-sample-jms-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-jms/pom.xml verify
-  - stage: sample-jms-fax
+  - stage: test-sample-jms-fax-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-jms-fax/pom.xml verify
-  - stage: sample-mail
+  - stage: test-sample-mail-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-mail/pom.xml verify
-  - stage: sample-rest
+  - stage: test-sample-rest-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-rest/pom.xml verify
-  - stage: sample-ws
+  - stage: test-sample-ws-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-ws/pom.xml verify
-  - stage: sample-ws-client
+  - stage: test-sample-ws-client-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-ws-client/pom.xml verify
-  - stage: sample-wsdl
+  - stage: test-sample-wsdl-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-wsdl/pom.xml verify
-  - stage: openjdk11-build
+  - stage: lts-build-openjdk11
     script:
       - export JAVA_HOME=$HOME/openjdk11
       - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
       - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=11
+  - stage: latest-build-openjdk12
+    script:
+      - export JAVA_HOME=$HOME/openjdk12
+      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk12 --target $JAVA_HOME
+      - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=12
 
 cache:
   directories:
