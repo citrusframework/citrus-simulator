@@ -58,8 +58,8 @@ public class Simulator extends SimulatorJmsAdapter {
                 .addXPathExpression("//fax:clientId");
     }
 
-    @Bean(name = "simulatorJmsStatusEndpoint")
-    public JmsEndpoint statusEndpoint() {
+    @Bean
+    public JmsEndpoint simulatorJmsStatusEndpoint() {
         return CitrusEndpoints.jms()
                 .asynchronous()
                 .destination(statusDestinationName)

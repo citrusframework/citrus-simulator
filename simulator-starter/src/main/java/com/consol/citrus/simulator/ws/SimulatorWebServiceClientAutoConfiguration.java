@@ -50,8 +50,8 @@ public class SimulatorWebServiceClientAutoConfiguration {
     @Autowired
     private SimulatorWebServiceClientConfigurationProperties simulatorConfiguration;
 
-    @Bean(name = "simulatorWsClientEndpoint")
-    public WebServiceClient webServiceClientEndpoint() {
+    @Bean
+    public WebServiceClient simulatorWsClientEndpoint() {
         WebServiceClient endpoint = new WebServiceClient();
         endpoint.getEndpointConfiguration().setDefaultUri(getRequestUrl());
         endpoint.getEndpointConfiguration().setMessageFactory(getMessageFactory());
