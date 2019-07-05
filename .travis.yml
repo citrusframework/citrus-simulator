@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 
-dist: xenial
+dist: trusty
 sudo: required
 
 install: true
@@ -41,12 +41,12 @@ jobs:
   - stage: lts-build-openjdk11
     script:
       - export JAVA_HOME=$HOME/openjdk11
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
+      - ~/bin/install-jdk.sh --install openjdk11 --target $JAVA_HOME
       - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=11
   - stage: latest-build-openjdk12
     script:
       - export JAVA_HOME=$HOME/openjdk12
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk12 --target $JAVA_HOME
+      - $~/bin/install-jdk.sh --install openjdk12 --target $JAVA_HOME
       - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=12
 
 cache:
