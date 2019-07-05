@@ -46,7 +46,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
     }
 }
 
@@ -97,7 +97,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+    <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
   </properties>
 
   <dependencyManagement>
