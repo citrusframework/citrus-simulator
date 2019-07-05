@@ -1,53 +1,26 @@
 language: java
-jdk:
-  - oraclejdk8
 
 dist: trusty
 sudo: required
 
 install: true
 
-jobs:
+matrix:
   include:
-  - stage: support-build-oraclejdk8
-    script: bash scripts/build.sh
-  - stage: sample-bank-service
-    script:
-    - mvn -f simulator-samples/sample-bank-service/pom.xml verify
-  - stage: test-sample-combined-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-combined/pom.xml verify
-  - stage: test-sample-jms-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-jms/pom.xml verify
-  - stage: test-sample-jms-fax-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-jms-fax/pom.xml verify
-  - stage: test-sample-mail-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-mail/pom.xml verify
-  - stage: test-sample-rest-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-rest/pom.xml verify
-  - stage: test-sample-ws-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-ws/pom.xml verify
-  - stage: test-sample-ws-client-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-ws-client/pom.xml verify
-  - stage: test-sample-wsdl-oraclejdk8
-    script:
-    - mvn -f simulator-samples/sample-wsdl/pom.xml verify
-  - stage: lts-build-openjdk11
-    script:
-      - export JAVA_HOME=$HOME/openjdk11
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
-      - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=11
-  - stage: latest-build-openjdk12
-    script:
-      - export JAVA_HOME=$HOME/openjdk12
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk12 --target $JAVA_HOME
-      - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=12
+    # OracleJDK - Java 8 (main build with Sonar)
+    - env: SONAR='true'
+      jdk: oraclejdk8
+    # OpenJDK - Java 11 (lts)
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=11'
+      jdk: openjdk11
+    # OpenJDK - Java 12 (latest)
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=12'
+      jdk: openjdk12
+
+script:
+  - if [[ "${SONAR_SCANNER_HOME}" != "" && "${SONAR}" == "true" ]]; then export MVN_INSTALL="org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator" ; else ; export MVN_INSTALL="install" ; fi
+  - mvn --batch-mode -q -Pskip-it clean ${MVN_INSTALL} ${BUILD_OPTS}
+  - mvn --batch-mode -f simulator-samples/pom.xml verify ${BUILD_OPTS}
 
 cache:
   directories:
