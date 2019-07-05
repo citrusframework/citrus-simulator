@@ -11,7 +11,7 @@ jobs:
   include:
   - stage: support-build-oraclejdk8
     script: bash scripts/build.sh
-  - stage: sample-bank-service
+  - stage: test-sample-bank-service-oraclejdk8
     script:
     - mvn -f simulator-samples/sample-bank-service/pom.xml verify
   - stage: test-sample-combined-oraclejdk8
@@ -39,15 +39,27 @@ jobs:
     script:
     - mvn -f simulator-samples/sample-wsdl/pom.xml verify
   - stage: lts-build-openjdk11
+    jdk: opendjk11
     script:
-      - export JAVA_HOME=$HOME/openjdk11
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
       - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=11
   - stage: latest-build-openjdk12
+    jdk: opendjk12
     script:
-      - export JAVA_HOME=$HOME/openjdk12
-      - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk12 --target $JAVA_HOME
       - mvn --batch-mode -q -Pskip-it clean install -Dembedded -Djava.version=12
+
+stages:
+  - support-build-oraclejdk8
+  - test-sample-bank-service-oraclejdk8
+  - test-sample-combined-oraclejdk8
+  - test-sample-jms-oraclejdk8
+  - test-sample-jms-fax-oraclejdk8
+  - test-sample-mail-oraclejdk8
+  - test-sample-rest-oraclejdk8
+  - test-sample-ws-oraclejdk8
+  - test-sample-ws-client-oraclejdk8
+  - test-sample-wsdl-oraclejdk8
+  - lts-build-openjdk11
+  - latest-build-openjdk12
 
 cache:
   directories:
