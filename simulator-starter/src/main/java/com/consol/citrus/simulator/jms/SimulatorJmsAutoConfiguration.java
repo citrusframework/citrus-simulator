@@ -62,8 +62,8 @@ public class SimulatorJmsAutoConfiguration {
         return new SingleConnectionFactory();
     }
 
-    @Bean(name = "simulatorJmsInboundEndpoint")
-    protected JmsEndpoint jmsInboundEndpoint(ConnectionFactory connectionFactory) {
+    @Bean
+    protected JmsEndpoint simulatorJmsInboundEndpoint(ConnectionFactory connectionFactory) {
         if (isSynchronous()) {
             JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
             JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
@@ -86,13 +86,13 @@ public class SimulatorJmsAutoConfiguration {
         }
     }
 
-    @Bean(name = "simulatorJmsEndpointAdapter")
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+    @Bean
+    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorJmsScenarioMapper")
-    public ScenarioMapper simulatorScenarioMapper() {
+    @Bean
+    public ScenarioMapper simulatorJmsScenarioMapper() {
         if (configurer != null) {
             return configurer.scenarioMapper();
         }
@@ -100,8 +100,8 @@ public class SimulatorJmsAutoConfiguration {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
-    @Bean(name = "simulatorJmsEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
+    @Bean
+    public SimulatorEndpointPoller simulatorJmsEndpointPoller(ApplicationContext applicationContext,
                                                   ConnectionFactory connectionFactory) {
         SimulatorEndpointPoller endpointPoller;
 
@@ -111,12 +111,12 @@ public class SimulatorJmsAutoConfiguration {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setInboundEndpoint(jmsInboundEndpoint(connectionFactory));
+        endpointPoller.setInboundEndpoint(simulatorJmsInboundEndpoint(connectionFactory));
 
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+        SimulatorEndpointAdapter endpointAdapter = simulatorJmsEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+        endpointAdapter.setMappingKeyExtractor(simulatorJmsScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorJmsFallbackEndpointAdapter());
 
         if (!isSynchronous()) {
             endpointAdapter.setHandleResponse(false);
@@ -129,8 +129,8 @@ public class SimulatorJmsAutoConfiguration {
         return endpointPoller;
     }
 
-    @Bean(name = "simulatorJmsFallbackEndpointAdapter")
-    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+    @Bean
+    public EndpointAdapter simulatorJmsFallbackEndpointAdapter() {
         if (configurer != null) {
             return configurer.fallbackEndpointAdapter();
         }

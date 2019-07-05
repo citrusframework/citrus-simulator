@@ -68,44 +68,44 @@ public class SimulatorWebServiceAutoConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
+    public ServletRegistrationBean<MessageDispatcherServlet> simulatorServletRegistrationBean(ApplicationContext applicationContext) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
         return new ServletRegistrationBean<>(servlet, getServletMapping());
     }
 
-    @Bean(name = "simulatorWsEndpointMapping")
-    public EndpointMapping endpointMapping(ApplicationContext applicationContext) {
+    @Bean
+    public EndpointMapping simulatorWsEndpointMapping(ApplicationContext applicationContext) {
         UriEndpointMapping endpointMapping = new UriEndpointMapping();
         endpointMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
-        endpointMapping.setDefaultEndpoint(webServiceEndpoint(applicationContext));
+        endpointMapping.setDefaultEndpoint(simulatorWsEndpoint(applicationContext));
         endpointMapping.setInterceptors(interceptors());
 
         return endpointMapping;
     }
 
-    @Bean(name = "simulatorWsEndpoint")
-    public MessageEndpoint webServiceEndpoint(ApplicationContext applicationContext) {
+    @Bean
+    public MessageEndpoint simulatorWsEndpoint(ApplicationContext applicationContext) {
         WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+        SimulatorEndpointAdapter endpointAdapter = simulatorWsEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+        endpointAdapter.setMappingKeyExtractor(simulatorWsScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorWsFallbackEndpointAdapter());
 
         webServiceEndpoint.setEndpointAdapter(endpointAdapter);
 
         return webServiceEndpoint;
     }
 
-    @Bean(name = "simulatorWsEndpointAdapter")
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+    @Bean
+    public SimulatorEndpointAdapter simulatorWsEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorWsScenarioMapper")
-    public ScenarioMapper simulatorScenarioMapper() {
+    @Bean
+    public ScenarioMapper simulatorWsScenarioMapper() {
         if (configurer != null) {
             return configurer.scenarioMapper();
         }
@@ -113,8 +113,8 @@ public class SimulatorWebServiceAutoConfiguration {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
-    @Bean(name = "simulatorWsFallbackEndpointAdapter")
-    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+    @Bean
+    public EndpointAdapter simulatorWsFallbackEndpointAdapter() {
         if (configurer != null) {
             return configurer.fallbackEndpointAdapter();
         }
@@ -122,10 +122,10 @@ public class SimulatorWebServiceAutoConfiguration {
         return new EmptyResponseEndpointAdapter();
     }
 
-    @Bean(name = "simulatorWsdlScenarioGenerator")
+    @Bean
     @ConditionalOnMissingBean(WsdlScenarioGenerator.class)
     @ConditionalOnProperty(prefix = "citrus.simulator.ws.wsdl", value = "enabled", havingValue = "true")
-    public static WsdlScenarioGenerator scenarioGenerator(Environment environment) {
+    public static WsdlScenarioGenerator simulatorWsdlScenarioGenerator(Environment environment) {
         return new WsdlScenarioGenerator(environment);
     }
 
