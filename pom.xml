@@ -14,19 +14,20 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
+    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <citrus.version>2.8.0</citrus.version>
-    <spring.version>5.0.7.RELEASE</spring.version>
-    <spring.ws.version>3.0.1.RELEASE</spring.ws.version>
-    <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
-    <slf4j.version>1.7.25</slf4j.version>
+    <spring.version>5.1.8.RELEASE</spring.version>
+    <spring.ws.version>3.0.7.RELEASE</spring.ws.version>
+    <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
+    <slf4j.version>1.7.26</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
     <testng.version>6.14.3</testng.version>
-    <lombok.version>1.18.0</lombok.version>
+    <lombok.version>1.18.8</lombok.version>
 
-    <javadoc.options>-Xdoclint:none</javadoc.options>
+    <javadoc.doclint>none</javadoc.doclint>
 
     <node.version>v8.9.1</node.version>
     <npm.version>5.5.1</npm.version>
@@ -185,26 +186,26 @@
       </dependency>
 
       <dependency>
-        <groupId>javax.transaction</groupId>
-        <artifactId>javax.transaction-api</artifactId>
-        <version>1.2</version>
+        <groupId>jakarta.interceptor</groupId>
+        <artifactId>jakarta.interceptor-api</artifactId>
+        <version>1.2.4</version>
       </dependency>
       <dependency>
-        <groupId>javax.interceptor</groupId>
-        <artifactId>javax.interceptor-api</artifactId>
-        <version>1.2</version>
+        <groupId>jakarta.transaction</groupId>
+        <artifactId>jakarta.transaction-api</artifactId>
+        <version>1.3.2</version>
       </dependency>
 
       <!-- Webjars -->
       <dependency>
         <groupId>org.webjars</groupId>
         <artifactId>jquery</artifactId>
-        <version>2.1.4</version>
+        <version>3.4.1</version>
       </dependency>
       <dependency>
         <groupId>org.webjars</groupId>
         <artifactId>bootstrap</artifactId>
-        <version>3.3.5</version>
+        <version>4.3.1</version>
       </dependency>
 
       <dependency>
@@ -215,13 +216,13 @@
       <dependency>
         <groupId>org.apache.xmlbeans</groupId>
         <artifactId>xmlbeans</artifactId>
-        <version>2.4.0</version>
+        <version>3.1.0</version>
       </dependency>
 
       <dependency>
-        <groupId>io.swagger</groupId>
+        <groupId>io.swagger.parser.v3</groupId>
         <artifactId>swagger-parser</artifactId>
-        <version>1.0.32</version>
+        <version>2.0.12</version>
       </dependency>
 
       <dependency>
@@ -258,7 +259,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>2.8.47</version>
+        <version>2.28.2</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -289,11 +290,11 @@
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.1</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
             <annotationProcessorPaths>
               <path>
                 <groupId>org.projectlombok</groupId>
@@ -305,11 +306,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.1.0</version>
           <configuration>
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
@@ -322,22 +323,22 @@
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-scm-plugin</artifactId>
-          <version>1.9.5</version>
+          <version>1.11.2</version>
         </plugin>
 
         <plugin>
           <groupId>com.github.eirslett</groupId>
           <artifactId>frontend-maven-plugin</artifactId>
-          <version>1.6</version>
+          <version>1.7.6</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.1.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -350,9 +351,9 @@
         
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.4</version>
+          <version>3.1.0</version>
           <configuration>
-            <additionalparam>${javadoc.options}</additionalparam>
+            <doclint>${javadoc.doclint}</doclint>
           </configuration>
           <executions>
             <execution>
@@ -366,7 +367,7 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M3</version>
           <configuration>
             <forkCount>1</forkCount>
             <reuseForks>${reuseForks}</reuseForks>
@@ -376,7 +377,7 @@
 
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M3</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
@@ -407,13 +408,19 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.12</version>
+          <version>0.13</version>
           <configuration>
             <includes>
               <include>**/*.java</include>
             </includes>
             <excludeSubProjects>false</excludeSubProjects>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.7</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -436,7 +443,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh-external</artifactId>
-        <version>2.7</version>
+        <version>3.3.3</version>
       </extension>
     </extensions>
   </build>

@@ -95,8 +95,8 @@ public class SimulatorRestAutoConfiguration {
         return filterRegistrationBean;
     }
 
-    @Bean(name = "simulatorRestHandlerMapping")
-    public HandlerMapping handlerMapping(ApplicationContext applicationContext) {
+    @Bean
+    public HandlerMapping simulatorRestHandlerMapping(ApplicationContext applicationContext) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         handlerMapping.setAlwaysUseFullPath(true);
@@ -110,8 +110,8 @@ public class SimulatorRestAutoConfiguration {
         return handlerMapping;
     }
 
-    @Bean(name = "simulatorRestHandlerAdapter")
-    public HandlerAdapter handlerAdapter(final ApplicationContext applicationContext) {
+    @Bean
+    public HandlerAdapter simulatorRestHandlerAdapter(final ApplicationContext applicationContext) {
         final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
             @Override
             protected void initHandlerMethods() {
@@ -144,13 +144,13 @@ public class SimulatorRestAutoConfiguration {
         };
     }
 
-    @Bean(name = "simulatorRestEndpointAdapter")
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+    @Bean
+    public SimulatorEndpointAdapter simulatorRestEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorRestFallbackEndpointAdapter")
-    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+    @Bean
+    public EndpointAdapter simulatorRestFallbackEndpointAdapter() {
         if (configurer != null) {
             return configurer.fallbackEndpointAdapter();
         }
@@ -168,10 +168,10 @@ public class SimulatorRestAutoConfiguration {
         if (restController == null) {
             restController = new HttpMessageController();
 
-            SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+            SimulatorEndpointAdapter endpointAdapter = simulatorRestEndpointAdapter();
             endpointAdapter.setApplicationContext(applicationContext);
-            endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
-            endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+            endpointAdapter.setMappingKeyExtractor(simulatorRestScenarioMapper());
+            endpointAdapter.setFallbackEndpointAdapter(simulatorRestFallbackEndpointAdapter());
 
             restController.setEndpointAdapter(endpointAdapter);
         }
@@ -179,8 +179,8 @@ public class SimulatorRestAutoConfiguration {
         return restController;
     }
 
-    @Bean(name = "simulatorRestScenarioMapper")
-    public ScenarioMapper simulatorScenarioMapper() {
+    @Bean
+    public ScenarioMapper simulatorRestScenarioMapper() {
         if (configurer != null) {
             return configurer.scenarioMapper();
         }
@@ -194,10 +194,10 @@ public class SimulatorRestAutoConfiguration {
         return new InterceptorHttp(messageListeners);
     }
 
-    @Bean(name = "simulatorRestScenarioGenerator")
+    @Bean
     @ConditionalOnMissingBean(HttpScenarioGenerator.class)
     @ConditionalOnProperty(prefix = "citrus.simulator.rest.swagger", value = "enabled", havingValue = "true")
-    public static HttpScenarioGenerator scenarioGenerator(Environment environment) {
+    public static HttpScenarioGenerator simulatorRestScenarioGenerator(Environment environment) {
         return new HttpScenarioGenerator(environment);
     }
 

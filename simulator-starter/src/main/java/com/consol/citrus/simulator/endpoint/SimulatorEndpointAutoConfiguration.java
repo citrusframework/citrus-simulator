@@ -46,7 +46,7 @@ public class SimulatorEndpointAutoConfiguration {
     @Autowired
     private SimulatorConfigurationProperties simulatorConfiguration;
 
-    @Bean(name = "simulatorEndpoint")
+    @Bean
     protected Endpoint simulatorEndpoint(ApplicationContext applicationContext) {
         if (configurer != null) {
             return configurer.endpoint(applicationContext);
@@ -59,12 +59,12 @@ public class SimulatorEndpointAutoConfiguration {
         }
     }
 
-    @Bean(name = "simulatorEndpointAdapter")
+    @Bean
     public SimulatorEndpointAdapter simulatorEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorScenarioMapper")
+    @Bean
     public ScenarioMapper simulatorScenarioMapper() {
         if (configurer != null) {
             return configurer.scenarioMapper();
@@ -73,8 +73,8 @@ public class SimulatorEndpointAutoConfiguration {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
-    @Bean(name = "simulatorEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext) {
+    @Bean
+    public SimulatorEndpointPoller simulatorEndpointPoller(ApplicationContext applicationContext) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
@@ -96,7 +96,7 @@ public class SimulatorEndpointAutoConfiguration {
         return endpointPoller;
     }
 
-    @Bean(name = "simulatorFallbackEndpointAdapter")
+    @Bean
     public EndpointAdapter simulatorFallbackEndpointAdapter() {
         if (configurer != null) {
             return configurer.fallbackEndpointAdapter();
