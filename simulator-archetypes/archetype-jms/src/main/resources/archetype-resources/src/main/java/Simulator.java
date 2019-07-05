@@ -24,9 +24,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.jms.ConnectionFactory;
 
-/**
- * @author Christoph Deppisch
- */
 @SpringBootApplication
 public class Simulator extends SimulatorJmsAdapter {
 

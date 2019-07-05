@@ -29,9 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
-/**
- * @author Christoph Deppisch
- */
 @SpringBootApplication
 public class Simulator extends SimulatorRestAdapter {
 

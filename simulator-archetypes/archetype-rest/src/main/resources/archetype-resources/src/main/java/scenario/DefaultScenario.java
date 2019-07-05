@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package ${package};
+package ${package}.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
-/**
- * @author Christoph Deppisch
- */
 @Scenario("Default")
 public class DefaultScenario extends AbstractSimulatorScenario {
 
