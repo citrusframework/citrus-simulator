@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package ${package}.scenario;
+package com.consol.citrus.simulator.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import java.util.List;
 
-@Scenario("Default")
-public class DefaultScenario extends AbstractSimulatorScenario {
+/**
+ * Marks a class to be aware of all scenarios available.
+ *
+ * @author Christoph Deppisch
+ */
+public interface ScenarioListAware {
 
-    @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive();
-
-        scenario
-            .send()
-            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
-    }
+    void setScenarioList(List<SimulatorScenario> scenarioList);
 }

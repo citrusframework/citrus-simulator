@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package ${package};
+package ${package}.scenario;
 
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.scenario.*;
 
-/**
- * @author Christoph Deppisch
- */
 @Scenario("GoodNight")
 public class GoodNightScenario extends AbstractSimulatorScenario {
 

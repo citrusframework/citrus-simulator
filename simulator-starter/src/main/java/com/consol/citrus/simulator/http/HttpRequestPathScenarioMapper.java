@@ -16,26 +16,29 @@
 
 package com.consol.citrus.simulator.http;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
+import com.consol.citrus.simulator.scenario.ScenarioListAware;
+import com.consol.citrus.simulator.scenario.SimulatorScenario;
+import com.consol.citrus.simulator.scenario.mapper.AbstractScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Special request annotation based scenario mapper supports path pattern matching on request path.
- * As fallback uses default request mapping annotation based mapping.
+ * Scenario mapper supports path pattern matching on request path.
  *
  * @author Christoph Deppisch
  */
-public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenarioMapper implements ScenarioMapper {
+public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implements ScenarioListAware {
 
     @Autowired(required = false)
-    private List<HttpOperationScenario> httpScenarios = new ArrayList<>();
+    private List<HttpOperationScenario> scenarioList = new ArrayList<>();
 
     /** Request path matcher */
     private PathMatcher pathMatcher = new AntPathMatcher();
@@ -46,7 +49,7 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
             String requestPath = ((HttpMessage) request).getPath();
 
             if (requestPath != null) {
-                for (HttpOperationScenario scenario : httpScenarios) {
+                for (HttpOperationScenario scenario : scenarioList) {
                     if (scenario.getPath().equals(requestPath)) {
                         if (scenario.getMethod().name().equals(((HttpMessage) request).getRequestMethod().name())) {
                             return scenario.getOperation().getOperationId();
@@ -54,7 +57,7 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
                     }
                 }
 
-                for (HttpOperationScenario scenario : httpScenarios) {
+                for (HttpOperationScenario scenario : scenarioList) {
                     if (pathMatcher.match(scenario.getPath(), requestPath)) {
                         if (scenario.getMethod().name().equals(((HttpMessage) request).getRequestMethod().name())) {
                             return scenario.getOperation().getOperationId();
@@ -73,7 +76,7 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
      * @return
      */
     public List<HttpOperationScenario> getHttpScenarios() {
-        return httpScenarios;
+        return scenarioList;
     }
 
     /**
@@ -82,6 +85,23 @@ public class HttpRequestPathScenarioMapper extends HttpRequestAnnotationScenario
      * @param httpScenarios
      */
     public void setHttpScenarios(List<HttpOperationScenario> httpScenarios) {
-        this.httpScenarios = httpScenarios;
+        this.scenarioList = httpScenarios;
+    }
+
+    @Override
+    public void setScenarioList(List<SimulatorScenario> scenarioList) {
+        this.scenarioList = scenarioList.stream()
+                                        .filter(scenario -> scenario instanceof HttpOperationScenario)
+                                        .map(scenario -> (HttpOperationScenario) scenario)
+                                        .collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the configuration.
+     *
+     * @param configuration
+     */
+    public void setConfiguration(SimulatorConfigurationProperties configuration) {
+        this.setSimulatorConfigurationProperties(configuration);
     }
 }

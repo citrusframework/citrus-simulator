@@ -1,15 +1,19 @@
 package com.consol.citrus.simulator.http;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import io.swagger.models.Operation;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 
@@ -34,45 +38,40 @@ public class HttpRequestPathScenarioMapperTest {
     public void testGetMappingKey() {
         Operation operation = Mockito.mock(Operation.class);
 
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/foos", HttpMethod.GET, operation, Collections.emptyMap()));
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/foo/{id}", HttpMethod.GET, operation, Collections.emptyMap()));
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/foo/detail", HttpMethod.GET, operation, Collections.emptyMap()));
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/bars", HttpMethod.GET, operation, Collections.emptyMap()));
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/bar/{id}", HttpMethod.GET, operation, Collections.emptyMap()));
-        scenarioMapper.getHttpScenarios().add(new HttpOperationScenario("/issues/bar/detail", HttpMethod.GET, operation, Collections.emptyMap()));
+        scenarioMapper.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos", HttpMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foos", HttpMethod.POST, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foo/{id}", HttpMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foo/detail", HttpMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bars", HttpMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bar/{id}", HttpMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bar/detail", HttpMethod.GET, operation, Collections.emptyMap())));
 
         when(operation.getOperationId())
                 .thenReturn("fooListScenario")
+                .thenReturn("fooListPostScenario")
                 .thenReturn("barListScenario")
                 .thenReturn("fooScenario")
                 .thenReturn("barScenario")
                 .thenReturn("fooDetailScenario")
                 .thenReturn("barDetailScenario");
 
-        HttpMessage request = new HttpMessage();
-        request.method(HttpMethod.GET);
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET)), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.POST)), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues")), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/foos")), "fooListScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.POST).path("/issues/foos")), "fooListPostScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.PUT).path("/issues/foos")), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/bars")), "barListScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.DELETE).path("/issues/bars")), "default");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/foo/1")), "fooScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/bar/1")), "barScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/foo/detail")), "fooDetailScenario");
+        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues/bar/detail")), "barDetailScenario");
 
-        request.path("/issues");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "default");
+        scenarioMapper.setUseDefaultMapping(false);
 
-        request.path("/issues/foos");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooListScenario");
-
-        request.path("/issues/bars");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barListScenario");
-
-        request.path("/issues/foo/1");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooScenario");
-
-        request.path("/issues/bar/1");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barScenario");
-
-        request.path("/issues/foo/detail");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "fooDetailScenario");
-
-        request.path("/issues/bar/detail");
-        Assert.assertEquals(scenarioMapper.getMappingKey(request), "barDetailScenario");
+        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET)));
+        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues")));
     }
 
 }

@@ -1,5 +1,8 @@
 package com.consol.citrus.simulator.http;
 
+import java.util.Arrays;
+
+import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
@@ -35,11 +38,11 @@ public class HttpRequestAnnotationScenarioMapperTest {
 
     @Test
     public void testGetMappingKey() {
-        scenarioMapper.getScenarios().add(new IssueScenario());
-        scenarioMapper.getScenarios().add(new FooScenario());
-        scenarioMapper.getScenarios().add(new GetFooScenario());
-        scenarioMapper.getScenarios().add(new PutFooScenario());
-        scenarioMapper.getScenarios().add(new OtherScenario());
+        scenarioMapper.setScenarioList(Arrays.asList(new IssueScenario(),
+                                                    new FooScenario(),
+                                                    new GetFooScenario(),
+                                                    new PutFooScenario(),
+                                                    new OtherScenario()));
 
         Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/foo")), "FooScenario");
         Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.GET)), "GetFooScenario");
@@ -50,6 +53,12 @@ public class HttpRequestAnnotationScenarioMapperTest {
         Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)), "default");
         Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar")), "default");
         Assert.assertEquals(scenarioMapper.getMappingKey(null), "default");
+
+        scenarioMapper.setUseDefaultMapping(false);
+
+        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)));
+        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar")));
+        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(null));
     }
 
     @Scenario("FooScenario")
