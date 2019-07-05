@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 
-dist: trusty
+dist: xenial
 sudo: required
 
 install: true
@@ -10,9 +10,7 @@ install: true
 jobs:
   include:
   - stage: support-build-oraclejdk8
-    script:
-    - jdk_switcher use oraclejdk8
-    - bash scripts/build.sh
+    script: bash scripts/build.sh
   - stage: sample-bank-service
     script:
     - mvn -f simulator-samples/sample-bank-service/pom.xml verify
