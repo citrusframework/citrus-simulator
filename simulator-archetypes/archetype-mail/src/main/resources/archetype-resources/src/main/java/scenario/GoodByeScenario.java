@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package ${package};
+package ${package}.scenario;
 
 import com.consol.citrus.simulator.scenario.*;
 
-/**
- * @author Christoph Deppisch
- */
 @Scenario("GoodBye")
 public class GoodByeScenario extends AbstractSimulatorScenario {
 
