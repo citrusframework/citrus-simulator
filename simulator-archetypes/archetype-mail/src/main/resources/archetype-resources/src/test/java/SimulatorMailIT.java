@@ -22,9 +22,6 @@ import com.consol.citrus.mail.client.MailClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
-/**
- * @author Christoph Deppisch
- */
 @Test
 public class SimulatorMailIT extends TestNGCitrusTestDesigner {
 
