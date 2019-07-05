@@ -16,20 +16,22 @@
 
 package com.consol.citrus.simulator.http;
 
-import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.scenario.Scenario;
+import com.consol.citrus.simulator.scenario.ScenarioListAware;
 import com.consol.citrus.simulator.scenario.SimulatorScenario;
-import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.scenario.mapper.AbstractScenarioMapper;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.*;
 
 /**
  * Scenario mapper performs mapping logic on request mapping annotations on given scenarios. Scenarios match on request method as well as
@@ -37,13 +39,10 @@ import java.util.*;
  *
  * @author Christoph Deppisch
  */
-public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtractor implements ScenarioMapper {
+public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper implements ScenarioListAware {
 
     @Autowired(required = false)
-    private List<SimulatorScenario> scenarios = new ArrayList<>();
-
-    @Autowired
-    private SimulatorConfigurationProperties configuration;
+    private List<SimulatorScenario> scenarioList = new ArrayList<>();
 
     private HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
 
@@ -52,7 +51,8 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
         if (request instanceof HttpMessage) {
             return getMappingKeyForHttpMessage((HttpMessage) request);
         }
-        return configuration.getDefaultScenario();
+
+        return super.getMappingKey(request);
     }
 
     @Data
@@ -71,7 +71,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
     }
 
     protected String getMappingKeyForHttpMessage(HttpMessage httpMessage) {
-        Optional<String> mapping = scenarios.stream()
+        Optional<String> mapping = scenarioList.stream()
                 .map(scenario -> EnrichedScenarioWithRequestMapping.builder()
                         .scenario(scenario)
                         .requestMapping(AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class))
@@ -85,7 +85,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
                 .findFirst();
 
         if (!mapping.isPresent()) {
-            mapping = scenarios.stream()
+            mapping = scenarioList.stream()
                     .map(scenario -> EnrichedScenarioWithRequestMapping.builder()
                             .scenario(scenario)
                             .requestMapping(AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class))
@@ -99,7 +99,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
                     .findFirst();
         }
 
-        return mapping.orElse(configuration.getDefaultScenario());
+        return mapping.orElseGet(() -> super.getMappingKey(httpMessage));
     }
 
     /**
@@ -108,7 +108,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
      * @return
      */
     public List<SimulatorScenario> getScenarios() {
-        return scenarios;
+        return scenarioList;
     }
 
     /**
@@ -117,7 +117,12 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
      * @param scenarios
      */
     public void setScenarios(List<SimulatorScenario> scenarios) {
-        this.scenarios = scenarios;
+        this.scenarioList = scenarios;
+    }
+
+    @Override
+    public void setScenarioList(List<SimulatorScenario> scenarioList) {
+        this.scenarioList = scenarioList;
     }
 
     /**
@@ -126,7 +131,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
      * @return
      */
     public SimulatorConfigurationProperties getConfiguration() {
-        return configuration;
+        return super.getSimulatorConfigurationProperties();
     }
 
     /**
@@ -135,6 +140,6 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractMappingKeyExtra
      * @param configuration
      */
     public void setConfiguration(SimulatorConfigurationProperties configuration) {
-        this.configuration = configuration;
+        this.setSimulatorConfigurationProperties(configuration);
     }
 }
