@@ -10,7 +10,9 @@ install: true
 jobs:
   include:
   - stage: support-build-oraclejdk8
-    script: bash scripts/build.sh
+    script:
+    - jdk_switcher use oraclejdk8
+    - bash scripts/build.sh
   - stage: sample-bank-service
     script:
     - mvn -f simulator-samples/sample-bank-service/pom.xml verify
