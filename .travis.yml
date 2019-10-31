@@ -30,6 +30,9 @@ jobs:
   - stage: sample-rest
     script:
     - mvn -f simulator-samples/sample-rest/pom.xml verify
+  - stage: sample-swagger
+    script:
+    - mvn -f simulator-samples/sample-swagger/pom.xml verify
   - stage: sample-ws
     script:
     - mvn -f simulator-samples/sample-ws/pom.xml verify

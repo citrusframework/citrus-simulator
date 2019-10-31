@@ -16,6 +16,14 @@
 
 package com.consol.citrus.simulator.http;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
 import com.consol.citrus.http.controller.HttpMessageController;
@@ -47,10 +55,6 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
 
 /**
  * @author Christoph Deppisch
@@ -128,6 +132,7 @@ public class SimulatorRestAutoConfiguration {
         handlerMapping.setApplicationContext(applicationContext);
         handlerMapping.afterPropertiesSet();
 
+        requestMappingHandlerAdapter.getMessageConverters().add(0, new SimulatorHttpMessageConverter());
         requestMappingHandlerAdapter.getMessageConverters().add(new DelegatingHttpEntityMessageConverter());
         requestMappingHandlerAdapter.setCacheSeconds(0);
 
