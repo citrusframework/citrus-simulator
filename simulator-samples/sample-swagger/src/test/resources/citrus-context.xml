@@ -9,8 +9,14 @@
 
   <!-- Test Http REST client -->
   <citrus-http:client
-      id="simulatorClient"
+      id="petstoreClient"
       request-url="http://localhost:8080/petstore/v2"
+      timeout="5000"
+  />
+
+  <citrus-http:client
+      id="simulatorUiClient"
+      request-url="http://localhost:8080/"
       timeout="5000"
   />
 
