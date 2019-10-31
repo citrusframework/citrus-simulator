@@ -25,7 +25,7 @@
   <modules>
     <module>sample-bank-service</module>
     <module>sample-rest</module>
-    <!--module>sample-swagger</module-->
+    <module>sample-swagger</module>
     <module>sample-ws</module>
     <module>sample-ws-client</module>
     <module>sample-wsdl</module>
