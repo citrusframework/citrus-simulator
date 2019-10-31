@@ -21,6 +21,7 @@ import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +35,56 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 
     /** Test Http REST client */
     @Autowired
+    @Qualifier("petstoreClient")
     private HttpClient petstoreClient;
+
+    /** Client to access simulator user interface */
+    @Autowired
+    @Qualifier("simulatorUiClient")
+    private HttpClient simulatorUiClient;
+
+    @CitrusTest
+    public void testUiInfo() {
+        http().client(simulatorUiClient)
+                .send()
+                .get("/api/manage/info")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        http().client(simulatorUiClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .payload("{" +
+                        "\"simulator\":" +
+                            "{" +
+                                "\"name\":\"REST Petstore Simulator\"," +
+                                "\"version\":\"@ignore@\"" +
+                            "}" +
+                        "}");
+    }
+
+    @CitrusTest
+    public void testUiSummaryResults() {
+        http().client(simulatorUiClient)
+                .send()
+                .get("/api/summary/results")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        http().client(simulatorUiClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .payload("{" +
+                            "\"size\":\"@isNumber()@\"," +
+                            "\"failed\":\"@isNumber()@\"," +
+                            "\"success\":\"@isNumber()@\"," +
+                            "\"skipped\":0," +
+                            "\"skippedPercentage\":\"0.0\"," +
+                            "\"failedPercentage\":\"@ignore@\"," +
+                            "\"successPercentage\":\"@ignore@\"}");
+    }
 
     @CitrusTest
     public void testAddPet() {
@@ -158,7 +208,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .receive()
                 .response(HttpStatus.OK);
     }
-    
+
     @CitrusTest
     public void testLoginUser() {
         http().client(petstoreClient)

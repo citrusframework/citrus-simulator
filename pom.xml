@@ -19,10 +19,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <citrus.version>2.8.0</citrus.version>
-    <spring.version>5.1.8.RELEASE</spring.version>
+    <spring.version>5.0.15.RELEASE</spring.version>
     <spring.ws.version>3.0.7.RELEASE</spring.ws.version>
-    <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
-    <slf4j.version>1.7.26</slf4j.version>
+    <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
+    <slf4j.version>1.7.28</slf4j.version>
+
     <logback.classic.version>1.2.3</logback.classic.version>
     <testng.version>6.14.3</testng.version>
     <lombok.version>1.18.8</lombok.version>
@@ -31,7 +32,7 @@
 
     <node.version>v8.9.1</node.version>
     <npm.version>5.5.1</npm.version>
-    
+
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
   </properties>
@@ -348,7 +349,7 @@
             </execution>
           </executions>
         </plugin>
-        
+
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.1.0</version>
