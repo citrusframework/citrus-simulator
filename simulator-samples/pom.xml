@@ -20,6 +20,7 @@
     <spring.boot.start.wait>1000</spring.boot.start.wait>
     <spring.boot.start.maxAttempts>60</spring.boot.start.maxAttempts>
     <skip.it>false</skip.it>
+    <simulator.mode>embedded</simulator.mode>
   </properties>
 
   <modules>

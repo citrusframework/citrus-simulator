@@ -1,9 +1,26 @@
 package com.consol.citrus.simulator.ws;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.factory.WSDLFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.simulator.exception.SimulatorException;
 import com.consol.citrus.xml.schema.locator.JarWSDLLocator;
-import org.apache.xmlbeans.*;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlError;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +35,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.xml.sax.InputSource;
-
-import javax.wsdl.*;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.factory.WSDLFactory;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -225,8 +233,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      */
     private XmlObject compileWsdl(Resource wsdlResource) {
         try {
-            File wsdlFile = wsdlResource.getFile();
-            return XmlObject.Factory.parse(wsdlFile, (new XmlOptions()).setLoadLineNumbers().setLoadMessageDigest().setCompileDownloadUrls());
+            return XmlObject.Factory.parse(wsdlResource.getInputStream(), (new XmlOptions()).setLoadLineNumbers().setLoadMessageDigest().setCompileDownloadUrls());
         } catch (XmlException e) {
             for (Object error : e.getErrors()) {
                 log.error(((XmlError)error).getLine() + "" + error.toString());

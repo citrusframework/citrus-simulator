@@ -20,12 +20,14 @@ import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+@ContextConfiguration(classes = EndpointConfig.class)
 public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
 
     private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
