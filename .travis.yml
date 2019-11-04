@@ -11,10 +11,10 @@ matrix:
     - env: SONAR='true'
       jdk: oraclejdk8
     # OpenJDK - Java 11 (lts)
-    - env: SONAR='false' BUILD_OPTS='-Djava.version=11'
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=11 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
       jdk: openjdk11
     # OpenJDK - Java 12 (latest)
-    - env: SONAR='false' BUILD_OPTS='-Djava.version=12'
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=12 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
       jdk: openjdk12
 
 script:
