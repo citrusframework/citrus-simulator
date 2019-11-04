@@ -151,6 +151,7 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                     .synchronous()
                     .connectionFactory(connectionFactory())
                     .destination("Citrus.Simulator.Inbound")
+                    .timeout(10000L)
                     .build();
         }
 
