@@ -16,20 +16,31 @@
 
 package com.consol.citrus.simulator;
 
+import java.util.Arrays;
+
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.sample.Simulator;
 import com.consol.citrus.simulator.sample.variables.Name;
 import com.consol.citrus.ws.server.WebServiceServer;
+import com.consol.citrus.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 /**
  * Verifies that the webservice client is working properly.
@@ -37,6 +48,7 @@ import java.util.Arrays;
  * @author Martin Maher
  */
 @Test
+@ContextConfiguration(classes = SimulatorWebServiceClientIT.EndpointConfig.class)
 public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
 
     @Autowired
@@ -88,4 +100,47 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
         }
     }
 
+    @Configuration
+    public static class EndpointConfig {
+
+        @Bean
+        public XsdSchemaRepository schemaRepository() {
+            XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
+            schemaRepository.getLocations().add("classpath:xsd/HelloService.xsd");
+            return schemaRepository;
+        }
+
+        @Bean
+        public WebServiceServer testSoapServer() {
+            return CitrusEndpoints.soap().server()
+                    .autoStart(true)
+                    .port(8090)
+                    .timeout(5000L)
+                    .build();
+        }
+
+        @Bean
+        public HttpClient simulatorRestEndpoint() {
+            return CitrusEndpoints.http().client()
+                    .requestUrl(String.format("http://localhost:%s", 8080))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+        }
+
+        @Bean
+        public SaajSoapMessageFactory messageFactory() {
+            return new SaajSoapMessageFactory();
+        }
+
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(Simulator.class);
+                }
+            };
+        }
+    }
 }

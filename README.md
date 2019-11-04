@@ -46,7 +46,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.9.RELEASE")
     }
 }
 
@@ -69,10 +69,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("com.consol.citrus:citrus-simulator-starter:1.1.0-SNAPSHOT")
-    testCompile("junit:junit")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.consol.citrus:citrus-simulator-starter:1.1.0-SNAPSHOT")
+    testImplementation("junit:junit")
 }
 ```
 
@@ -94,10 +93,11 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
   <version>1.0.0</version>
 
   <properties>
+    <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+    <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -117,10 +117,6 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
 
     <!-- Citrus Simulator -->
 
@@ -138,8 +134,8 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
         <version>3.7.0</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
 
@@ -299,37 +295,6 @@ sample projects with complete code available in [simulator-samples](simulator-sa
 *Combined sample*
 
 * Http REST and JMS combined: [simulator-samples/sample-combined](simulator-samples/sample-combined)
-
-
-Development
----------
-
-After forking/cloning the source code repository from [https://github.com/citrusframework/citrus-simulator](https://github.com/citrusframework/citrus-simulator) you can build the application locally with Maven:
-
-```
-mvn clean install
-```
-
-You can start any of the sample simulator projects using maven: 
-
-```
-mvn -pl simulator-samples/sample-rest spring-boot:run 
-```
-
-For active development and a short round trip you can use the angular-cli dev-server in order to automatically compile typescript sources on the fly when they change.
-
-```
-mvn -pl simulator-ui package -Pdevelopment
-```
-
-If you change a source file (e.e *.js, *.ts, *.css) the sources will automatically be compiled and copied to the Maven target folder. The running
-spring-boot application is able to automatically grab the newly compiled sources. Just go to the browser and hit refresh to see the changes.
-If you change server Java sources spring-boot automatically restarts the web application so you may just hit refresh in your browser, too.
-
-The development server is running on its own port 4200 ([http://localhost:4200](http://localhost:4200)). To avoid cors issues an api proxy to the backend is provided out of the box. 
-You can configure the proxy settings in [proxy.conf.json](citrus-admin-client/src/main/resources/static/proxy.conf.json). 
-
-Make sure to start one of the sample projects so that you have a server running that the UI can connect to.
 
 Information
 ---------

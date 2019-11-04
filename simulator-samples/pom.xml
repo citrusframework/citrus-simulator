@@ -20,12 +20,13 @@
     <spring.boot.start.wait>1000</spring.boot.start.wait>
     <spring.boot.start.maxAttempts>60</spring.boot.start.maxAttempts>
     <skip.it>false</skip.it>
+    <simulator.mode>embedded</simulator.mode>
   </properties>
 
   <modules>
     <module>sample-bank-service</module>
     <module>sample-rest</module>
-    <!--module>sample-swagger</module-->
+    <module>sample-swagger</module>
     <module>sample-ws</module>
     <module>sample-ws-client</module>
     <module>sample-wsdl</module>
@@ -41,7 +42,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.0</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
             <skip>${skip.it}</skip>
@@ -53,13 +53,6 @@
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring.boot.version}</version>
         </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-
       </plugins>
     </pluginManagement>
   </build>
@@ -72,6 +65,5 @@
         <skip.it>true</skip.it>
       </properties>
     </profile>
-
   </profiles>
 </project>

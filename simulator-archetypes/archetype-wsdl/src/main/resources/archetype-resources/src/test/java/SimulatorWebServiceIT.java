@@ -22,9 +22,6 @@ import com.consol.citrus.ws.client.WebServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
-/**
- * @author Christoph Deppisch
- */
 @Test
 public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 

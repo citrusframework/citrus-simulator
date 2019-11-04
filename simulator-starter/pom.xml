@@ -45,12 +45,12 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>javax.transaction-api</artifactId>
+      <groupId>jakarta.interceptor</groupId>
+      <artifactId>jakarta.interceptor-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.interceptor</groupId>
-      <artifactId>javax.interceptor-api</artifactId>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
     </dependency>
 
     <dependency>
@@ -69,7 +69,7 @@
     </dependency>
 
     <dependency>
-      <groupId>io.swagger</groupId>
+      <groupId>io.swagger.parser.v3</groupId>
       <artifactId>swagger-parser</artifactId>
     </dependency>
 

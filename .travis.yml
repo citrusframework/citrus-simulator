@@ -1,50 +1,31 @@
 language: java
-jdk:
-- oraclejdk8
 
 dist: trusty
 sudo: required
 
 install: true
 
-
-jobs:
+matrix:
   include:
-  - stage: build
-    script:
-    - mvn --batch-mode -q -Pskip-it clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator
-  - stage: sample-bank-service
-    script:
-    - mvn -f simulator-samples/sample-bank-service/pom.xml verify
-  - stage: sample-combined
-    script:
-    - mvn -f simulator-samples/sample-combined/pom.xml verify
-  - stage: sample-jms
-    script:
-    - mvn -f simulator-samples/sample-jms/pom.xml verify
-  - stage: sample-jms-fax
-    script:
-    - mvn -f simulator-samples/sample-jms-fax/pom.xml verify
-  - stage: sample-mail
-    script:
-    - mvn -f simulator-samples/sample-mail/pom.xml verify
-  - stage: sample-rest
-    script:
-    - mvn -f simulator-samples/sample-rest/pom.xml verify
-  - stage: sample-ws
-    script:
-    - mvn -f simulator-samples/sample-ws/pom.xml verify
-  - stage: sample-ws-client
-    script:
-    - mvn -f simulator-samples/sample-ws-client/pom.xml verify
-  - stage: sample-wsdl
-    script:
-    - mvn -f simulator-samples/sample-wsdl/pom.xml verify
+    # OracleJDK - Java 8 (main build with Sonar)
+    - env: SONAR='true'
+      jdk: oraclejdk8
+    # OpenJDK - Java 11 (lts)
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=11 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
+      jdk: openjdk11
+    # OpenJDK - Java 12 (latest)
+    - env: SONAR='false' BUILD_OPTS='-Djava.version=12 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
+      jdk: openjdk12
+
+script:
+  - if [[ "${SONAR_SCANNER_HOME}" != "" && "${SONAR}" == "true" ]]; then export MVN_INSTALL="org.jacoco:jacoco-maven-plugin:prepare-agent install -Dembedded sonar:sonar -Dsonar.projectKey=citrus-simulator" ; else export MVN_INSTALL="install" ; fi
+  - mvn --batch-mode -q -Pskip-it clean ${MVN_INSTALL} ${BUILD_OPTS}
+  - mvn --batch-mode -f simulator-samples/pom.xml verify ${BUILD_OPTS}
 
 cache:
   directories:
-  - '$HOME/.sonar/cache'
-  - '$HOME/.m2'
+    - '$HOME/.sonar/cache'
+    - '$HOME/.m2'
 
 addons:
   sonarcloud:

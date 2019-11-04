@@ -17,24 +17,84 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
+import com.consol.citrus.simulator.sample.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+@ContextConfiguration(classes = SimulatorRestIT.EndpointConfig.class)
 public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 
     /** Test Http REST client */
     @Autowired
+    @Qualifier("petstoreClient")
     private HttpClient petstoreClient;
+
+    /** Client to access simulator user interface */
+    @Autowired
+    @Qualifier("simulatorUiClient")
+    private HttpClient simulatorUiClient;
+
+    @CitrusTest
+    public void testUiInfo() {
+        http().client(simulatorUiClient)
+                .send()
+                .get("/api/manage/info")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        http().client(simulatorUiClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .payload("{" +
+                        "\"simulator\":" +
+                            "{" +
+                                "\"name\":\"REST Petstore Simulator\"," +
+                                "\"version\":\"@ignore@\"" +
+                            "}" +
+                        "}");
+    }
+
+    @CitrusTest
+    public void testUiSummaryResults() {
+        http().client(simulatorUiClient)
+                .send()
+                .get("/api/summary/results")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        http().client(simulatorUiClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .payload("{" +
+                            "\"size\":\"@isNumber()@\"," +
+                            "\"failed\":\"@isNumber()@\"," +
+                            "\"success\":\"@isNumber()@\"," +
+                            "\"skipped\":0," +
+                            "\"skippedPercentage\":\"0.0\"," +
+                            "\"failedPercentage\":\"@ignore@\"," +
+                            "\"successPercentage\":\"@ignore@\"}");
+    }
 
     @CitrusTest
     public void testAddPet() {
@@ -158,7 +218,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .receive()
                 .response(HttpStatus.OK);
     }
-    
+
     @CitrusTest
     public void testLoginUser() {
         http().client(petstoreClient)
@@ -175,5 +235,34 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
                 .payload("@notEmpty()@")
                 .header("X-Rate-Limit", "@isNumber()@")
                 .header("X-Expires-After", "@matchesDatePattern('yyyy-MM-dd'T'hh:mm:ss')@");
+    }
+
+    @Configuration
+    public static class EndpointConfig {
+
+        @Bean
+        public HttpClient petstoreClient() {
+            return CitrusEndpoints.http().client()
+                    .requestUrl(String.format("http://localhost:%s/petstore/v2", 8080))
+                    .build();
+        }
+
+        @Bean
+        public HttpClient simulatorUiClient() {
+            return CitrusEndpoints.http().client()
+                    .requestUrl(String.format("http://localhost:%s", 8080))
+                    .build();
+        }
+
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(Simulator.class);
+                }
+            };
+        }
     }
 }

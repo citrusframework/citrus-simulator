@@ -31,10 +31,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
 
     <!-- Citrus Simulator -->
     <dependency>
@@ -64,6 +60,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <simulator.mode>${simulator.mode}</simulator.mode>
+          </systemProperties>
+        </configuration>
         <executions>
           <execution>
             <id>integration-tests</id>
@@ -93,28 +94,6 @@
             </goals>
             <configuration>
               <classifier>executable</classifier>
-            </configuration>
-          </execution>
-          <execution>
-            <id>pre-integration-test</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
-              <wait>${spring.boot.start.wait}</wait>
-              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
-            </configuration>
-          </execution>
-          <execution>
-            <id>post-integration-test</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
             </configuration>
           </execution>
         </executions>
