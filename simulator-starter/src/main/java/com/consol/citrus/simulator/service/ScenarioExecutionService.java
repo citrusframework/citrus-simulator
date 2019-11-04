@@ -115,13 +115,9 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
                     ((Executable) scenario).execute();
                 } else {
                     TestContext context = citrus.createTestContext();
-                    ReflectionUtils.doWithLocalMethods(scenario.getClass(), m -> {
+                    ReflectionUtils.doWithMethods(scenario.getClass(), m -> {
                         if (m.getDeclaringClass().equals(SimulatorScenario.class)) {
                             // no need to execute the default run implementations
-                            return;
-                        }
-
-                        if (!m.getName().equals("run")) {
                             return;
                         }
 
@@ -161,7 +157,7 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
                         } else {
                             throw new SimulatorException("Invalid scenario method parameter type: " + parameterType);
                         }
-                    });
+                    }, method -> method.getName().equals("run"));
                 }
                 LOG.debug(String.format("Scenario completed: '%s'", name));
             } catch (Exception e) {
