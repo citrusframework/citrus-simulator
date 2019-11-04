@@ -69,6 +69,29 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     }
 
     /**
+     * Sends a howdy request to server expecting positive response message.
+     */
+    @CitrusTest
+    public void testHowdyRequest() {
+        http().client(simulatorClient)
+                .send()
+                .post("howdy")
+                .contentType(MediaType.APPLICATION_XML_VALUE)
+                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                        "</Hello>");
+
+        http().client(simulatorClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Howdy partner!" +
+                        "</HelloResponse>");
+    }
+
+
+
+    /**
      * Sends goodbye request to server expecting positive response message.
      */
     @CitrusTest
