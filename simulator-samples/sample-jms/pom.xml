@@ -76,6 +76,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <simulator.mode>${simulator.mode}</simulator.mode>
+          </systemProperties>
+        </configuration>
         <executions>
           <execution>
             <id>integration-tests</id>
@@ -108,29 +113,6 @@
             </property>
           </systemProperties>
         </configuration>
-        <executions>
-          <execution>
-            <id>start-activemq</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-activemq</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
@@ -143,28 +125,6 @@
             </goals>
             <configuration>
               <classifier>executable</classifier>
-            </configuration>
-          </execution>
-          <execution>
-            <id>pre-integration-test</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
-              <wait>${spring.boot.start.wait}</wait>
-              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
-            </configuration>
-          </execution>
-          <execution>
-            <id>post-integration-test</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
             </configuration>
           </execution>
         </executions>

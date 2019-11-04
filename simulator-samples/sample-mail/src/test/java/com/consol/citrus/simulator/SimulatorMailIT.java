@@ -17,15 +17,25 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.mail.client.MailClient;
+import com.consol.citrus.simulator.sample.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+@ContextConfiguration(classes = SimulatorMailIT.EndpointConfig.class)
 public class SimulatorMailIT extends TestNGCitrusTestDesigner {
 
     /** Test mail client */
@@ -145,5 +155,28 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<content>Say Intervening!</content>" +
                             "</body>" +
                         "</mail-message>");
+    }
+
+    @Configuration
+    public static class EndpointConfig {
+
+        @Bean
+        public MailClient simulatorMailClient() {
+            return CitrusEndpoints.mail().client()
+                    .host("localhost")
+                    .port(2222)
+                    .build();
+        }
+
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(Simulator.class);
+                }
+            };
+        }
     }
 }

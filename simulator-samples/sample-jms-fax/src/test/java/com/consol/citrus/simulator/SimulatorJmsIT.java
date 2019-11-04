@@ -16,30 +16,45 @@
 
 package com.consol.citrus.simulator;
 
+import java.util.Arrays;
+
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeTestSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
 import com.consol.citrus.simulator.model.ScenarioParameter;
+import com.consol.citrus.simulator.sample.jms.async.Simulator;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxStatusEnumType;
 import com.consol.citrus.simulator.sample.jms.async.model.FaxType;
 import com.consol.citrus.simulator.sample.jms.async.scenario.PayloadHelper;
 import com.consol.citrus.simulator.sample.jms.async.variables.ReferenceId;
 import com.consol.citrus.simulator.sample.jms.async.variables.Status;
 import com.consol.citrus.simulator.sample.jms.async.variables.StatusMessage;
+import com.consol.citrus.xml.XsdSchemaRepository;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.BrokerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 /**
  * @author Martin Maher
  */
 @Test
+@ContextConfiguration(classes = SimulatorJmsIT.EndpointConfig.class)
 public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
     private PayloadHelper payloadHelper = new PayloadHelper();
 
@@ -208,6 +223,80 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
             return mapper.toJson(Arrays.asList(scenarioParameters));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Configuration
+    public static class EndpointConfig {
+        @Bean
+        public XsdSchemaRepository schemaRepository() {
+            XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
+            schemaRepository.getLocations().add("classpath:xsd/FaxGatewayService.xsd");
+            return schemaRepository;
+        }
+
+        @Bean(initMethod = "start", destroyMethod = "stop")
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public BrokerService messageBroker() throws Exception {
+            BrokerService brokerService = new BrokerService();
+            brokerService.setPersistent(false);
+            brokerService.addConnector("tcp://localhost:61616");
+            return brokerService;
+        }
+
+        @Bean
+        public ActiveMQConnectionFactory connectionFactory() {
+            return new ActiveMQConnectionFactory("tcp://localhost:61616");
+        }
+
+        @Bean
+        public JmsEndpoint simulatorInboundEndpoint() {
+            return CitrusEndpoints.jms()
+                    .asynchronous()
+                    .connectionFactory(connectionFactory())
+                    .destination("Fax.Inbound")
+                    .build();
+        }
+
+        @Bean
+        public JmsEndpoint simulatorStatusEndpoint() {
+            return CitrusEndpoints.jms()
+                    .asynchronous()
+                    .connectionFactory(connectionFactory())
+                    .destination("Fax.Status")
+                    .build();
+        }
+
+        @Bean
+        public HttpClient simulatorRestEndpoint() {
+            return CitrusEndpoints.http().client()
+                    .requestUrl(String.format("http://localhost:%s", 8080))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+        }
+
+        @Bean
+        public TestRunnerBeforeTestSupport purgeJmsQueues() {
+            return new TestRunnerBeforeTestSupport() {
+                @Override
+                public void beforeTest(TestRunner runner) {
+                    runner.purgeQueues(action -> action.queueNames("Fax.Inbound",
+                                                                   "Fax.Status"));
+
+                }
+            };
+        }
+
+        @Bean
+        @DependsOn("messageBroker")
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(Simulator.class);
+                }
+            };
         }
     }
 }

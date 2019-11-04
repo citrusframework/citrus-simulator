@@ -21,12 +21,14 @@ import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+@ContextConfiguration(classes = EndpointConfig.class)
 public class SimulatorRestIT extends TestNGCitrusTestDesigner {
 
     private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";

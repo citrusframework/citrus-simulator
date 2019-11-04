@@ -1,7 +1,14 @@
 package com.consol.citrus.simulator.http;
 
+import java.io.IOException;
+import java.util.Map;
+
 import com.consol.citrus.simulator.exception.SimulatorException;
-import io.swagger.models.*;
+import com.consol.citrus.util.FileUtils;
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +22,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Christoph Deppisch
@@ -62,7 +66,7 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
             Assert.notNull(swaggerResource,
                     "Missing either swagger api system property setting or explicit swagger api resource for scenario auto generation");
 
-            Swagger swagger = new SwaggerParser().read(swaggerResource.getURI().toURL().toString());
+            Swagger swagger = new SwaggerParser().parse(FileUtils.readToString(swaggerResource));
 
             for (Map.Entry<String, Path> path : swagger.getPaths().entrySet()) {
                 for (Map.Entry<io.swagger.models.HttpMethod, Operation> operation : path.getValue().getOperationMap().entrySet()) {

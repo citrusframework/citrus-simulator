@@ -17,15 +17,28 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
+import com.consol.citrus.simulator.sample.Simulator;
 import com.consol.citrus.ws.client.WebServiceClient;
+import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
+import com.consol.citrus.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+@ContextConfiguration(classes = SimulatorWebServiceIT.EndpointConfig.class)
 public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
 
     @Autowired
@@ -107,5 +120,46 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
                         .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                                 "Say Hello!" +
                                 "</Hello>"));
+    }
+
+    @Configuration
+    public static class EndpointConfig {
+
+        @Bean
+        public XsdSchemaRepository schemaRepository() {
+            XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
+            schemaRepository.getLocations().add("classpath:xsd/Hello.wsdl");
+            return schemaRepository;
+        }
+
+        @Bean
+        public WebServiceClient simulatorClient() {
+            return CitrusEndpoints.soap().client()
+                    .defaultUri(String.format("http://localhost:%s/services/ws/HelloService/v1", 8080))
+                    .interceptor(loggingClientInterceptor())
+                    .messageFactory(messageFactory())
+                    .build();
+        }
+
+        @Bean
+        public SaajSoapMessageFactory messageFactory() {
+            return new SaajSoapMessageFactory();
+        }
+
+        @Bean
+        public LoggingClientInterceptor loggingClientInterceptor() {
+            return new LoggingClientInterceptor();
+        }
+
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded", matchIfMissing = true)
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(Simulator.class);
+                }
+            };
+        }
     }
 }

@@ -17,18 +17,29 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.dsl.runner.TestRunner;
+import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
 import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
 import com.consol.citrus.http.client.HttpClient;
+import com.consol.citrus.simulator.sample.BankServiceSimulator;
+import com.consol.citrus.simulator.sample.config.HttpClientConfig;
 import com.consol.citrus.simulator.sample.model.BankAccount;
 import com.consol.citrus.simulator.sample.model.CalculateIbanResponse;
 import com.consol.citrus.simulator.sample.model.ValidateIbanResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 @Test
+@ContextConfiguration(classes = { BankServiceSimulatorIT.EndpointConfig.class, HttpClientConfig.class })
 public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
 
     /**
@@ -96,6 +107,21 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
                         .build().asJson()
                 )
         ;
+    }
+
+    @Configuration
+    @PropertySource("classpath:application.properties")
+    public static class EndpointConfig {
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
+            return new TestRunnerBeforeSuiteSupport() {
+                @Override
+                public void beforeSuite(TestRunner runner) {
+                    SpringApplication.run(BankServiceSimulator.class);
+                }
+            };
+        }
     }
 
 }
