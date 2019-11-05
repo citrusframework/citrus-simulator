@@ -1,0 +1,300 @@
+#!/bin/bash
+
+release::description() {
+    echo "Perform a release"
+}
+
+release::usage() {
+    cat - <<EOT
+-n  --dry-run                 Dry run, which performs the whole build but does no tagging, artifact
+                              upload or pushing Docker images
+    --release-version <ver>   Version to release (e.g. "1.2.1"). One version arg is mandatory
+    --next-version <ver>      Version to use after the release. Usually the next snapshot version.
+    --local-release           Release to local repository
+    --snapshot-release        Snapshot release which can be created on a daily basis.
+                              A timestamped version will be created automatically, and no Maven artifacts
+                              are pushed to maven central.
+    --settings <file>         Path to a custom settings.xml to use for the release.
+                              This file must contain all the credentials to be used for Sonatype.
+                              By default ~/.m2/settings.xml is used.
+    --local-maven-repo <dir>  Local dir for holding the local Maven repo cache. For a clean build
+                              just give the option without specifying any directory, then a new
+                              temporary directory will be used (and removed after the release)
+                              By default ~/.m2/repository is used.
+    --no-git-push             Don't push the release tag (and symbolic major.minor tag) at the end
+    --git-remote              Name of the git remote to push to. If not given, its trying to be pushed
+                              to the git remote to which the currently checked out branch is attached to.
+                              Works only when on a branch, not when checked out directly.
+    --log <log-file>          Write full log to <log-file>, only print progress to screen
+    --skip-tests              Do not run tests
+    --no-strict-checksums     Do not insist on strict checksum policy for downloaded Maven artifacts
+-q  --quiet                   Adds quiet option to Maven options - only show errors
+EOT
+}
+
+# Get release version from arguments or exit with error
+get_release_version() {
+    if [ $(hasflag --snapshot-release) ]; then
+        echo $(calc_timestamp_version "$working_dir")
+        return
+    fi
+
+    local release_version=$(readopt --release-version)
+    if [ -z "${release_version}" ]; then
+        echo "ERROR: Please specify --release-version"
+        exit 1
+    fi
+    echo $release_version
+}
+
+# Get next snapshot version from arguments or exit with error
+get_next_snapshot_version() {
+    local next_version=$(readopt --next-version)
+    if [ -z "${next_version}" ]; then
+        echo "ERROR: Please specify --next-version"
+        exit 1
+    fi
+    echo $next_version
+}
+
+# Perform the release
+release::run() {
+    source "$(basedir)/commands/util/git_funcs"
+
+    # Main application directory
+    local working_dir=$(appdir ".")
+
+    # Validate release versions. Release versions have the format "1.3.4"
+    local release_version=$(get_release_version)
+    check_error $release_version
+
+    local next_version=$(get_next_snapshot_version)
+    check_error $next_version
+
+    # Write to logfile if requested
+    if [ $(readopt --log) ]; then
+        local logfile=$(readopt --log)
+        touch $logfile
+        tail -f $logfile > >(grep ^====) &
+        local tail_pid=$!
+        trap "kill $tail_pid" EXIT
+
+        exec >>$logfile 2>&1
+        sleep 1
+    fi
+
+    # Verify that there are no modified file in git repo
+    check_git_clean "$working_dir"
+
+    # Temporary local repository to guarantee a clean build
+    local local_maven_repo=$(readopt --local-maven-repo)
+    if [ -z "$local_maven_repo" ]; then
+        local_maven_repo=$(mktemp -d 2>/dev/null || mktemp -d -t 'maven_repo')
+        trap "echo 'Removing temp maven repo $local_maven_repo' && rm -rf $local_maven_repo" "EXIT"
+    fi
+
+    # Calculate common maven options
+    local maven_opts="$(extract_maven_opts $local_maven_repo)"
+
+    # Set pom.xml version to the given release_version
+    update_pom_versions "$working_dir" "$release_version" "$maven_opts"
+
+    # Build and stage artifacts
+    build_and_stage_artifacts "$working_dir" "$maven_opts"
+
+    # For a test run, we are done
+    if [ $(hasflag --dry-run -n) ]; then
+        drop_staging_repo "$working_dir" "$maven_opts"
+
+        echo "==== Dry run finished, nothing has been committed"
+        echo "==== Use 'git reset --hard' to cleanup"
+        exit 0
+    fi
+
+    # ========================================================================
+    # Commit, tag, release, push
+    # --------------------------
+
+    # Git commit all changed files
+    git_commit "$working_dir" pom.xml "Release $release_version"
+    git_commit "$working_dir" README.md
+    git_commit "$working_dir" archetype-catalog.xml
+
+    # Release staging repo
+    release_staging_repo "$working_dir" "$maven_opts"
+
+    # Tag the release version
+    git_tag_release "$release_version"
+
+    # Set pom.xml version to the given next_snapshot version
+    update_pom_versions "$working_dir" "$next_version" "$maven_opts"
+
+    # Git commit all changed files
+    git_commit "$working_dir" pom.xml "Use next snapshot version $next_version"
+    git_commit "$working_dir" README.md
+    git_commit "$working_dir" archetype-catalog.xml
+
+    # Push everything (if configured)
+    git_push "$working_dir" "$release_version"
+}
+
+# ===================================================================================================
+# Prep actions:
+
+calc_timestamp_version() {
+    local working_dir=$1
+    cd $working_dir
+    # ./mvnw -N help:evaluate -Dexpression="project.version"
+    local pom_version=$(./mvnw -N help:evaluate -Dexpression="project.version" | grep  '^[0-9]' | sed -e 's/\([0-9]*\.[0-9]*\).*/\1/')
+    if [ -z "${pom_version}" ]; then
+        echo "ERROR: Cannot extract version from app/pom.xml"
+        exit 1
+    fi
+    local patch_level=$(git tag | grep ^$pom_version | grep -v '-' | grep '[0-9]*\.[0-9]*\.' | sed -e s/${pom_version}.// | sort -n -r | head -1)
+    echo "${pom_version}.$((patch_level+1))-$(date '+%Y%m%d')"
+}
+
+update_pom_versions() {
+    local working_dir="$1"
+    local version="$2"
+    local maven_opts="$3"
+
+    cd $working_dir
+    echo "==== Updating pom.xml versions to $version"
+    ./mvnw ${maven_opts} versions:set -DnewVersion=$version -DprocessAllModules=true -DgenerateBackupPoms=false
+
+    # Update version in archetypes
+    cd $working_dir/simulator-archetypes
+    for dir in $(ls -d *); do
+      local archetype_resources="$dir/src/main/resources/archetype-resources"
+      if [ -d $archetype_resources ]; then
+        pushd $archetype_resources
+        sed -i.bak -e "s/\(<citrus\.simulator\.version>\).*\(<\/citrus\.simulator\.version>\)/\\1$version\\2/" pom.xml
+        rm pom.xml.bak
+        popd
+      fi
+    done
+
+    # Update archetype-catalog
+    cd $working_dir/simulator-archetypes
+    sed -i.bak -e "s/\(<version>\).*\(<\/version>\)/\\1$version\\2/" archetype-catalog.xml
+    rm archetype-catalog.xml.bak
+
+    # Update README.md
+    cd $working_dir
+    sed -i.bak -e "s/\(<citrus\.simulator\.version>\).*\(<\/citrus\.simulator\.version>\)/\\1$version\\2/" README.md
+    sed -i.bak -e "s/\(version =  '\).*\('\)/\\1$version\\2/" README.md
+    sed -i.bak -e "s/\(citrus-simulator-starter:\).*\(\"\)/\\1$version\\2/" README.md
+    rm README.md.bak
+}
+
+build_and_stage_artifacts() {
+    local working_dir="$1"
+    local maven_opts="$2"
+
+    cd $working_dir
+    if [ $(hasflag --local-release) ]; then
+        echo "==== Release to local"
+        ./mvnw ${maven_opts} clean install -fae
+    elif [ $(hasflag --snapshot-release) ]; then
+        echo "==== Release to consol.labs repository"
+        ./mvnw ${maven_opts} clean install deploy -Prelease-labs -fae
+    else
+        echo "==== Release to Maven central and stage Maven artifacts to Sonatype"
+        ./mvnw ${maven_opts} clean install deploy -Prelease-central -fae -DstagingDescription="Staging Syndesis for $(readopt --release-version)"
+    fi
+}
+
+# =======================================================================
+# Maven central OSS Sonatype connectivity
+
+release_staging_repo() {
+    local working_dir="$1"
+    local maven_opts="$2"
+
+    if [ $(hasflag --snapshot-release) ] || [ $(hasflag --local-release) ]; then
+        return
+    fi
+
+    echo "==== Releasing Sonatype staging repo"
+    cd $working_dir
+    ./mvnw ${maven_opts} -N -Prelease-central nexus-staging:release -DstagingDescription="Releasing $(readopt --release-version)"
+}
+
+drop_staging_repo() {
+    local working_dir="$1"
+    local maven_opts="$2"
+
+    if [ $(hasflag --snapshot-release) ] || [ $(hasflag --local-release) ]; then
+        return
+    fi
+
+    echo "==== Dropping Sonatype staging repo"
+    cd $working_dir
+    ./mvnw ${maven_opts} -N -Prelease-central nexus-staging:drop -DstagingDescription="Dropping repo"
+}
+
+# =======================================================================
+# Helper
+
+extract_maven_opts() {
+    local local_maven_repo="$1"
+    local maven_opts="--batch-mode -V -e"
+
+    if [ $(hasflag --quiet -q) ]; then
+        maven_opts="$maven_opts -q"
+    fi
+
+    if [ $(hasflag --local-maven-repo) ]; then
+        maven_opts="$maven_opts -Dmaven.repo.local=$local_maven_repo"
+    fi
+
+    local settings_xml=$(readopt --settings-xml --settings)
+    if [ -n "${settings_xml}" ]; then
+        maven_opts="$maven_opts -s $settings_xml"
+    fi
+
+    if [ $(hasflag --skip-tests) ]; then
+        # Do not run any tests but compile test sources
+        maven_opts="$maven_opts -Dtest -Dit.test"
+    fi
+
+    if [ ! $(hasflag --no-strict-checksums) ]; then
+        maven_opts="$maven_opts -C"
+    fi
+
+    echo $maven_opts
+}
+
+git_push() {
+    local dir=${1:-}
+    local release_version=${2:-}
+
+    cd $dir
+
+    if [ $(hasflag --no-git-push) ] || [ $(hasflag --local-release) ]; then
+        return
+    fi
+
+    echo "==== Pushing to GitHub"
+    if [ -n "$release_version" ]; then
+        echo "* Pushing $release_version"
+        if [ $(hasflag --snapshot-release) ]; then
+            local remote=$(readopt --git-remote)
+            if [ -z "${remote}" ]; then
+                # Push to the remote attached to the local checkout branch
+                remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD) | sed -e 's/\([^\/]*\)\/.*/\1/')
+                if [ -z "${remote}" ]; then
+                  echo "ERROR: Cannot find remote git repository to push to"
+                  exit 1
+                fi
+            fi
+
+            # Force push to allow multiple releases per day
+            git push -f -u $remote $release_version
+        else
+            # Push to the remote attached to the local checkout branch
+            git push
+        fi
+    fi
+}
