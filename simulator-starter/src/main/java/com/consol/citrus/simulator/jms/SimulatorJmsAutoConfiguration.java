@@ -16,12 +16,19 @@
 
 package com.consol.citrus.simulator.jms;
 
+import javax.jms.ConnectionFactory;
+
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
-import com.consol.citrus.jms.endpoint.*;
+import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import com.consol.citrus.jms.endpoint.JmsEndpointConfiguration;
+import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import com.consol.citrus.jms.endpoint.JmsSyncEndpointConfiguration;
 import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.endpoint.*;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
+import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
 import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +41,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.util.StringUtils;
-
-import javax.jms.ConnectionFactory;
 
 @Configuration
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -81,6 +86,7 @@ public class SimulatorJmsAutoConfiguration {
             JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
             endpointConfiguration.setDestinationName(getInboundDestination());
             endpointConfiguration.setConnectionFactory(connectionFactory);
+            endpointConfiguration.setPubSubDomain(isPubSubDomain());
 
             return jmsEndpoint;
         }
@@ -186,6 +192,18 @@ public class SimulatorJmsAutoConfiguration {
         }
 
         return simulatorJmsConfiguration.isUseSoap();
+    }
+
+    /**
+     * Should the endpoint use pub sub domain.
+     * @return
+     */
+    protected boolean isPubSubDomain() {
+        if (configurer != null) {
+            return configurer.pubSubDomain(simulatorJmsConfiguration);
+        }
+
+        return simulatorJmsConfiguration.isPubSubDomain();
     }
 
     /**

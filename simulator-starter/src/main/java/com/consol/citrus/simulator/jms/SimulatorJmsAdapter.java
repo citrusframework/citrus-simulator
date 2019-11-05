@@ -56,6 +56,11 @@ public abstract class SimulatorJmsAdapter implements SimulatorJmsConfigurer {
     }
 
     @Override
+    public boolean pubSubDomain(SimulatorJmsConfigurationProperties simulatorJmsConfiguration) {
+        return simulatorJmsConfiguration.isPubSubDomain();
+    }
+
+    @Override
     public ScenarioMapper scenarioMapper() {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
