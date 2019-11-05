@@ -54,6 +54,7 @@ public class EndpointConfig {
                 .synchronous()
                 .connectionFactory(connectionFactory())
                 .destination("Citrus.Simulator.Inbound")
+                .timeout(10000L)
                 .build();
     }
 
