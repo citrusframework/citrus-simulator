@@ -58,7 +58,7 @@ apply plugin: 'org.springframework.boot'
 jar {
     group = "com.consol.citrus.simulator"
     baseName = 'citrus-simulator-sample'
-    version =  '1.1.0-SNAPSHOT'
+    version =  '1.1.0'
 }
 
 repositories {
@@ -70,7 +70,7 @@ targetCompatibility = 1.8
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.consol.citrus:citrus-simulator-starter:1.1.0-SNAPSHOT")
+    implementation("com.consol.citrus:citrus-simulator-starter:1.1.0")
     testImplementation("junit:junit")
 }
 ```
@@ -96,7 +96,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.1.0-SNAPSHOT</citrus.simulator.version>
+    <citrus.simulator.version>1.1.0</citrus.simulator.version>
     <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
   </properties>
 
