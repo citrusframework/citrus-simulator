@@ -42,6 +42,15 @@
           </attributes>
         </configuration>
       </plugin>
+
+      <!-- Do not deploy this module to Maven central -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <configuration>
+          <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

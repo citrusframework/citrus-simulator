@@ -411,6 +411,16 @@
         </plugin>
 
         <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.8</version>
+          <configuration>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <serverId>sonatype-nexus-staging</serverId>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.13</version>
@@ -489,7 +499,6 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.8</version>
             <executions>
               <execution>
                 <id>default-deploy</id>
@@ -499,10 +508,6 @@
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <serverId>sonatype-nexus-staging</serverId>
-            </configuration>
           </plugin>
         </plugins>
       </build>
