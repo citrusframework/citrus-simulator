@@ -279,22 +279,25 @@ git_push() {
     echo "==== Pushing to GitHub"
     if [ -n "$release_version" ]; then
         echo "* Pushing $release_version"
-        if [ $(hasflag --snapshot-release) ]; then
-            local remote=$(readopt --git-remote)
+        local remote=$(readopt --git-remote)
+        if [ -z "${remote}" ]; then
+            # Push to the remote attached to the local checkout branch
+            remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD) | sed -e 's/\([^\/]*\)\/.*/\1/')
             if [ -z "${remote}" ]; then
-                # Push to the remote attached to the local checkout branch
-                remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD) | sed -e 's/\([^\/]*\)\/.*/\1/')
-                if [ -z "${remote}" ]; then
-                  echo "ERROR: Cannot find remote git repository to push to"
-                  exit 1
-                fi
+              echo "ERROR: Cannot find remote git repository to push to"
+              exit 1
             fi
+        fi
 
+        if [ $(hasflag --snapshot-release) ]; then
             # Force push to allow multiple releases per day
             git push -f -u $remote $release_version
         else
             # Push to the remote attached to the local checkout branch
             git push
         fi
+
+        # push tag to remote
+        git push $remote "v$release_version"
     fi
 }
