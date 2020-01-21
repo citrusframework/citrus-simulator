@@ -19,7 +19,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <citrus.version>2.8.0</citrus.version>
-    <spring.version>5.0.13.RELEASE</spring.version>
+    <spring.version>5.2.3.RELEASE</spring.version>
     <spring.ws.version>3.0.7.RELEASE</spring.ws.version>
     <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
     <slf4j.version>1.7.28</slf4j.version>
