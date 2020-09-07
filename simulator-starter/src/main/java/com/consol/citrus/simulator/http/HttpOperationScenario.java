@@ -199,6 +199,11 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             payload.append("[");
             payload.append(createRandomValue(((ArrayProperty) property).getItems(), true));
             payload.append("]");
+        } else if (property instanceof MapProperty) {
+            payload.append("{");
+            payload.append("\"citrus:randomString(10)\": ");
+            payload.append(createRandomValue(((MapProperty) property).getAdditionalProperties(), true));
+            payload.append("}");
         } else if (property instanceof StringProperty || property instanceof DateProperty || property instanceof DateTimeProperty) {
             if (quotes) {
                 payload.append("\"");
@@ -294,7 +299,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             }
 
             payload.append("}");
-        } else if (property instanceof ArrayProperty) {
+        } else if (property instanceof ArrayProperty || property instanceof MapProperty) {
             payload.append("\"@ignore@\"");
         } else if (property instanceof StringProperty) {
             if (StringUtils.hasText(((StringProperty) property).getPattern())) {
