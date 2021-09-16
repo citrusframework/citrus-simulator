@@ -94,7 +94,7 @@ public class MessageService {
             includeDirections.add(Message.Direction.OUTBOUND);
         }
 
-        Pageable pageable = new PageRequest(calcPage, calcSize, Sort.Direction.DESC, "date");
+        Pageable pageable = PageRequest.of(calcPage, calcSize, Sort.Direction.DESC, "date");
 
         if (StringUtils.isNotEmpty(filter.getContainingText())) {
             return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,

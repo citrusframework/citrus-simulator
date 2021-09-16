@@ -16,19 +16,22 @@
 
 package com.consol.citrus.simulator.correlation;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.dsl.builder.AbstractTestActionBuilder;
-import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 
+import com.consol.citrus.AbstractTestActionBuilder;
+import com.consol.citrus.TestAction;
+import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
+import com.consol.citrus.spi.ReferenceResolver;
+import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+
 /**
  * @author Christoph Deppisch
  */
-public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCorrelationHandlerAction> {
+public class CorrelationHandlerBuilder
+		extends AbstractTestActionBuilder<StartCorrelationHandlerAction, CorrelationHandlerBuilder> {
     private static Logger log = LoggerFactory.getLogger(CorrelationHandlerBuilder.class);
 
     /**
@@ -40,14 +43,21 @@ public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCo
 
     private ScenarioEndpoint scenarioEndpoint;
 
-    /**
-     * Default constructor with correlation handler.
-     */
-    public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext) {
-        super(new StartCorrelationHandlerAction());
+	private CorrelationHandler correlationHandler;
+
+	/**
+	 * Default constructor with correlation handler.
+	 */
+	public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext) {
+		super();
         this.scenarioEndpoint = scenarioEndpoint;
         this.applicationContext = applicationContext;
     }
+
+	@Override
+	public StartCorrelationHandlerAction build() {
+		return new StartCorrelationHandlerAction(this);
+	}
 
     public CorrelationHandlerBuilder onHeader(String headerName, String value) {
         return withHandler(new HeaderMappingCorrelationHandler(scenarioEndpoint, headerName, value));
@@ -62,17 +72,21 @@ public class CorrelationHandlerBuilder extends AbstractTestActionBuilder<StartCo
     }
 
     public CorrelationHandlerBuilder withHandler(CorrelationHandler handler) {
-        action.setCorrelationHandler(handler);
+		correlationHandler = handler;
         stopCorrelationAction.setCorrelationHandler(handler);
         return this;
     }
+
+	public CorrelationHandler getCorrelationHandler() {
+		return correlationHandler;
+	}
 
     public TestAction stop() {
         return stopCorrelationAction;
     }
 
     private NamespaceContextBuilder lookupNamespaceContextBuilder() {
-        String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
+    	String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
         if (beanNames.length > 0) {
             if (beanNames.length > 1) {
                 log.warn("Expected to find 1 beans of type {} but found instead {} ({})",

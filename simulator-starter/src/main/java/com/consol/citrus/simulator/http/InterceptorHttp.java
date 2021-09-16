@@ -52,7 +52,7 @@ public class InterceptorHttp implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (messageListeners != null) {
-            messageListeners.onOutboundMessage(new RawMessage(getResponseContent(response, handler)), null);
+            messageListeners.onOutboundMessage(new RawMessage(getResponseContent(request, response, handler)), null);
         }
     }
 
@@ -65,10 +65,10 @@ public class InterceptorHttp implements HandlerInterceptor {
         return FileUtils.readToString(request.getInputStream());
     }
 
-    private String getResponseContent(HttpServletResponse response, Object handler) {
+    private String getResponseContent(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (handler instanceof HttpMessageController) {
             HttpMessageController handlerController = (HttpMessageController) handler;
-            ResponseEntity<?> responseEntity = handlerController.getResponseCache();
+            ResponseEntity<?> responseEntity = handlerController.getResponseCache(request);
             if (responseEntity != null) {
                 return TypeConversionUtils.convertIfNecessary(responseEntity.getBody(), String.class);
             }

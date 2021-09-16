@@ -114,7 +114,7 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
 
                     ((Executable) scenario).execute();
                 } else {
-                    TestContext context = citrus.createTestContext();
+                    TestContext context = citrus.getCitrusContext().createTestContext();
                     ReflectionUtils.doWithMethods(scenario.getClass(), m -> {
                         if (m.getDeclaringClass().equals(SimulatorScenario.class)) {
                             // no need to execute the default run implementations
@@ -127,7 +127,7 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
 
                         Class<?> parameterType = m.getParameterTypes()[0];
                         if (parameterType.equals(ScenarioDesigner.class)) {
-                            ScenarioDesigner designer = new ScenarioDesigner(scenario.getScenarioEndpoint(), citrus.getApplicationContext(), context);
+                            ScenarioDesigner designer = new ScenarioDesigner(scenario.getScenarioEndpoint(), context.getReferenceResolver(), applicationContext, context);
                             if (scenarioParameters != null) {
                                 scenarioParameters.forEach(p -> designer.variable(p.getName(), p.getValue()));
                             }
@@ -139,7 +139,7 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
                             ReflectionUtils.invokeMethod(m, scenario, designer);
                             citrus.run(designer.getTestCase(), context);
                         } else if (parameterType.equals(ScenarioRunner.class)) {
-                            ScenarioRunner runner = new ScenarioRunner(scenario.getScenarioEndpoint(), citrus.getApplicationContext(), context);
+                            ScenarioRunner runner = new ScenarioRunner(scenario.getScenarioEndpoint(), applicationContext, context);
                             if (scenarioParameters != null) {
                                 scenarioParameters.forEach(p -> runner.variable(p.getName(), p.getValue()));
                             }
