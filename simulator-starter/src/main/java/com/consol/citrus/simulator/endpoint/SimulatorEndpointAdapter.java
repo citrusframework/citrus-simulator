@@ -132,7 +132,6 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        super.setApplicationContext(applicationContext);
         this.applicationContext = applicationContext;
     }
 

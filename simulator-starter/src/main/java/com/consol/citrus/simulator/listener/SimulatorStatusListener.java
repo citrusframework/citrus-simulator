@@ -16,10 +16,12 @@
 
 package com.consol.citrus.simulator.listener;
 
+import com.consol.citrus.DefaultTestCase;
 import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCase;
 import com.consol.citrus.TestResult;
 import com.consol.citrus.actions.SleepAction;
+import com.consol.citrus.common.Described;
 import com.consol.citrus.report.AbstractTestListener;
 import com.consol.citrus.report.TestActionListener;
 import com.consol.citrus.report.TestResults;
@@ -62,7 +64,12 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestStart(TestCase test) {
-        runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), test.getParameters()));
+
+    	if (test instanceof DefaultTestCase) {
+    		runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
+    	} else {
+    		runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName()));
+    	}
     }
 
     @Override
@@ -72,7 +79,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-        TestResult result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), test.getParameters());
+    	
+    	TestResult result = null;
+    	if (test instanceof DefaultTestCase) {
+    		result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
+    	} else {
+    		result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
+    	}
+    	
         testResults.addResult(result);
         LOG.info(result.toString());
         executionService.completeScenarioExecutionSuccess(test);
@@ -80,8 +94,15 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-        TestResult result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, test.getParameters());
-        testResults.addResult(result);
+    	
+    	TestResult result = null;
+    	if (test instanceof DefaultTestCase) {
+    		result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
+    	} else {
+    		result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
+    	}
+    	
+    	testResults.addResult(result);
 
         LOG.info(result.toString());
         LOG.info(result.getFailureType());
@@ -94,7 +115,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             LOG.debug(testCase.getName() + "(" +
                     StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
                     testAction.getName() + ": " +
-                    (StringUtils.hasText(testAction.getDescription()) ? testAction.getDescription() : ""));
+                    (testAction instanceof Described && StringUtils.hasText(((Described)testAction).getDescription()) ? ((Described)testAction).getDescription() : ""));
             executionService.createTestAction(testCase, testAction);
         }
     }
@@ -117,9 +138,12 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     private String[] getParameters(TestCase test) {
         List<String> parameterStrings = new ArrayList<String>();
-        for (Map.Entry<String, Object> param : test.getParameters().entrySet()) {
-            parameterStrings.add(param.getKey() + "=" + param.getValue());
-        }
+        
+		if (test instanceof DefaultTestCase) {
+			for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
+				parameterStrings.add(param.getKey() + "=" + param.getValue());
+			}
+		}
 
         return parameterStrings.toArray(new String[parameterStrings.size()]);
     }

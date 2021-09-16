@@ -30,7 +30,7 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
-    <node.version>v9.11.1</node.version>
+    <node.version>v8.9.1</node.version>
     <npm.version>5.5.1</npm.version>
 
     <skip.gpg>false</skip.gpg>
