@@ -135,8 +135,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     /**
      * Sends some intervening request to server expecting positive response message.
      */
-    //@CitrusTest
-    @Ignore("Fails with citrus 3.0.0")
+    @CitrusTest
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
