@@ -22,11 +22,9 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.builder.BuilderSupport;
 import com.consol.citrus.dsl.builder.SendSoapFaultActionBuilder;
 import com.consol.citrus.dsl.builder.SoapActionBuilder;
-import com.consol.citrus.dsl.builder.SoapActionBuilder.SoapServerActionBuilder;
 import com.consol.citrus.dsl.runner.DefaultTestRunner;
 import com.consol.citrus.simulator.correlation.CorrelationBuilderSupport;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
-import com.consol.citrus.simulator.correlation.StartCorrelationHandlerAction;
 import com.consol.citrus.simulator.http.HttpScenarioRunnerActionBuilder;
 import com.consol.citrus.simulator.ws.SoapScenarioRunnerActionBuilder;
 import com.consol.citrus.ws.actions.SendSoapFaultAction;
@@ -62,11 +60,11 @@ public class ScenarioRunner extends DefaultTestRunner {
      *
      * @return
      */
-    public StartCorrelationHandlerAction correlation(CorrelationBuilderSupport configurer) {
+    public CorrelationHandlerBuilder correlation(CorrelationBuilderSupport configurer) {
         CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint, applicationContext);
         configurer.configure(() -> builder);
         doFinally().actions(builder.stop());
-        return builder.build();
+        return run(builder);
     }
 
     /**
