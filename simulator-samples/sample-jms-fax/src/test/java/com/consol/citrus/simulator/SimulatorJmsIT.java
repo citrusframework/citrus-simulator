@@ -280,8 +280,11 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
             return new TestRunnerBeforeTestSupport() {
                 @Override
                 public void beforeTest(TestRunner runner) {
-                    runner.purgeQueues(action -> action.queueNames("Fax.Inbound",
-                                                                   "Fax.Status"));
+                    runner.purgeQueues(builder -> {
+                    	builder.connectionFactory(connectionFactory());
+                    	builder.queueNames("Fax.Inbound",
+                                                                   "Fax.Status");
+                    });
 
                 }
             };
