@@ -33,9 +33,7 @@
     <module>sample-mail</module>
     <module>sample-combined</module>
     <module>sample-jms</module>
-    
-    <!-- Removed because this sample is currently not functional -->
-    <!-- <module>sample-jms-fax</module> -->
+    <module>sample-jms-fax</module>
   </modules>
 
   <build>
