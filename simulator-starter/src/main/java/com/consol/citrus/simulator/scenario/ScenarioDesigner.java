@@ -42,7 +42,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
     private final ApplicationContext applicationContext;
     
     /** Bean reference resolver */
-	private final ReferenceResolver referenceResolver;
+    private final ReferenceResolver referenceResolver;
 
 
     /**

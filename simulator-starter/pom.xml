@@ -97,16 +97,16 @@
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-core</artifactId>
       <!-- Exclude in order solve org.w3c.dom is accessible from more than one module for jdk 11 -->
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+    </exclusions>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>

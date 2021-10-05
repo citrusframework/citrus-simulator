@@ -30,8 +30,6 @@ public class InboundXmlDataDictionaryTest {
 
     @Test
     public void testInboundDictionary() throws Exception {
-    	
-    	
         InboundXmlDataDictionary dictionary = new InboundXmlDataDictionary(new SimulatorConfigurationProperties());
         dictionary.initialize();
 

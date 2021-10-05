@@ -31,7 +31,7 @@ import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
  * @author Christoph Deppisch
  */
 public class CorrelationHandlerBuilder
-		extends AbstractTestActionBuilder<StartCorrelationHandlerAction, CorrelationHandlerBuilder> {
+    extends AbstractTestActionBuilder<StartCorrelationHandlerAction, CorrelationHandlerBuilder> {
     private static Logger log = LoggerFactory.getLogger(CorrelationHandlerBuilder.class);
 
     /**
@@ -43,21 +43,21 @@ public class CorrelationHandlerBuilder
 
     private ScenarioEndpoint scenarioEndpoint;
 
-	private CorrelationHandler correlationHandler;
+    private CorrelationHandler correlationHandler;
 
-	/**
-	 * Default constructor with correlation handler.
-	 */
-	public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext) {
-		super();
+    /**
+     * Default constructor with correlation handler.
+     */
+    public CorrelationHandlerBuilder(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext) {
+        super();
         this.scenarioEndpoint = scenarioEndpoint;
         this.applicationContext = applicationContext;
     }
 
-	@Override
-	public StartCorrelationHandlerAction build() {
-		return new StartCorrelationHandlerAction(this);
-	}
+    @Override
+    public StartCorrelationHandlerAction build() {
+        return new StartCorrelationHandlerAction(this);
+    }
 
     public CorrelationHandlerBuilder onHeader(String headerName, String value) {
         return withHandler(new HeaderMappingCorrelationHandler(scenarioEndpoint, headerName, value));
@@ -72,21 +72,21 @@ public class CorrelationHandlerBuilder
     }
 
     public CorrelationHandlerBuilder withHandler(CorrelationHandler handler) {
-		correlationHandler = handler;
+        correlationHandler = handler;
         stopCorrelationAction.setCorrelationHandler(handler);
         return this;
     }
 
-	public CorrelationHandler getCorrelationHandler() {
-		return correlationHandler;
-	}
+    public CorrelationHandler getCorrelationHandler() {
+        return correlationHandler;
+    }
 
     public TestAction stop() {
         return stopCorrelationAction;
     }
 
     private NamespaceContextBuilder lookupNamespaceContextBuilder() {
-    	String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
+        String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
         if (beanNames.length > 0) {
             if (beanNames.length > 1) {
                 log.warn("Expected to find 1 beans of type {} but found instead {} ({})",

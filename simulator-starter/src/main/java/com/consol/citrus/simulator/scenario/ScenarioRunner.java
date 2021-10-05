@@ -91,13 +91,13 @@ public class ScenarioRunner extends DefaultTestRunner {
      * @return
      */
     public SendSoapFaultAction sendFault(BuilderSupport<SendSoapFaultActionBuilder> configurer) {
-    	
-    	SendSoapFaultActionBuilder sendFaultActionBuilder = new SoapActionBuilder().withReferenceResolver(getTestContext().getReferenceResolver())
-    			.server(scenarioEndpoint.getName()).sendFault();
-    	
-    	configurer.configure(sendFaultActionBuilder);
-    	run(sendFaultActionBuilder);
-    	
+    
+        SendSoapFaultActionBuilder sendFaultActionBuilder = new SoapActionBuilder().withReferenceResolver(getTestContext().getReferenceResolver())
+            .server(scenarioEndpoint.getName()).sendFault();
+    
+        configurer.configure(sendFaultActionBuilder);
+        run(sendFaultActionBuilder);
+    
       return (SendSoapFaultAction) sendFaultActionBuilder.build();
     }
 
