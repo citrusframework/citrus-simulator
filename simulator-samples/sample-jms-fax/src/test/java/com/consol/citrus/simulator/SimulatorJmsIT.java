@@ -281,9 +281,8 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
                 @Override
                 public void beforeTest(TestRunner runner) {
                     runner.purgeQueues(builder -> {
-                    	builder.connectionFactory(connectionFactory());
-                    	builder.queueNames("Fax.Inbound",
-                                                                   "Fax.Status");
+                       builder.connectionFactory(connectionFactory());
+                       builder.queueNames("Fax.Inbound", "Fax.Status");
                     });
 
                 }

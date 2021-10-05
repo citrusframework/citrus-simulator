@@ -6,8 +6,6 @@ import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 import com.consol.citrus.simulator.scenario.ScenarioRunner;
 import com.consol.citrus.spi.ReferenceResolver;
 
-import org.springframework.context.ApplicationContext;
-
 /**
  * @author Christoph Deppisch
  */

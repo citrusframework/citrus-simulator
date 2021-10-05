@@ -36,7 +36,7 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
      * @return
      */
     public ReceiveSoapMessageActionBuilder receive() {
-    	return server(scenarioEndpoint.getName()).withReferenceResolver(referenceResolver).receive().endpoint(scenarioEndpoint);
+        return server(scenarioEndpoint.getName()).withReferenceResolver(referenceResolver).receive().endpoint(scenarioEndpoint);
     }
 
     /**
@@ -44,7 +44,7 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
      * @return
      */
     public SendSoapMessageActionBuilder send() {
-    	return server(scenarioEndpoint.getName()).send().endpoint(scenarioEndpoint);
+        return server(scenarioEndpoint.getName()).send().endpoint(scenarioEndpoint);
     }
 
     /**
@@ -52,7 +52,7 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
      * @return
      */
     public SendSoapFaultActionBuilder sendFault() {
-    	return server(scenarioEndpoint.getName()).sendFault().endpoint(scenarioEndpoint);
+        return server(scenarioEndpoint.getName()).sendFault().endpoint(scenarioEndpoint);
     }
 
   

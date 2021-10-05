@@ -35,8 +35,8 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * @return
      */
     public HttpServerReceiveActionBuilder receive() {
-    	HttpServerReceiveActionBuilder receiveActionBuilder = server(scenarioEndpoint).receive();
-    	return receiveActionBuilder;
+        HttpServerReceiveActionBuilder receiveActionBuilder = server(scenarioEndpoint).receive();
+        return receiveActionBuilder;
     }
 
     /**
@@ -44,23 +44,23 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * @return
      */
     public HttpServerSendActionBuilder send() {
-    	HttpServerSendActionBuilder sendActionBuilder = server(scenarioEndpoint).send();
-    	return sendActionBuilder;
+        HttpServerSendActionBuilder sendActionBuilder = server(scenarioEndpoint).send();
+        return sendActionBuilder;
     }
 
     
     public HttpServerActionBuilder server(ScenarioEndpoint scenarioEndpoint) {
-    	
-    	// TODO: change HttpActionBuilder to accept endpoint in calls to server
-    	// Endpoint cannot be used to create a server anymore although underlying builders 
-    	// would accept it. Citrus 3.0.0 needs to be adjusted to make this possible again. 
-    	// For now use an ugly reflection hack to inject the endpoint.
-    	HttpServerActionBuilder serverActionBuilder = server((String)null);
-		Field delegateField = ReflectionUtils.findField(serverActionBuilder.getClass(), "delegate");
+        
+        // TODO: change HttpActionBuilder to accept endpoint in calls to server
+        // Endpoint cannot be used to create a server anymore although underlying builders 
+        // would accept it. Citrus 3.0.0 needs to be adjusted to make this possible again. 
+        // For now use an ugly reflection hack to inject the endpoint.
+        HttpServerActionBuilder serverActionBuilder = server((String)null);
+        Field delegateField = ReflectionUtils.findField(serverActionBuilder.getClass(), "delegate");
         ReflectionUtils.makeAccessible(delegateField);
         Object builderDelegate = ReflectionUtils.getField(delegateField, serverActionBuilder);
 
-		Field httpServerField = ReflectionUtils.findField(builderDelegate.getClass(), "httpServer");
+        Field httpServerField = ReflectionUtils.findField(builderDelegate.getClass(), "httpServer");
         ReflectionUtils.makeAccessible(httpServerField);
         ReflectionUtils.setField(httpServerField, builderDelegate, scenarioEndpoint);
 

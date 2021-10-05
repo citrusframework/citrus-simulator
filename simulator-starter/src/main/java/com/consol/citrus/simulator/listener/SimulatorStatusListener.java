@@ -65,11 +65,11 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     @Override
     public void onTestStart(TestCase test) {
 
-    	if (test instanceof DefaultTestCase) {
-    		runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
-    	} else {
-    		runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName()));
-    	}
+        if (test instanceof DefaultTestCase) {
+            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
+        } else {
+            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName()));
+        }
     }
 
     @Override
@@ -79,14 +79,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-    	
-    	TestResult result = null;
-    	if (test instanceof DefaultTestCase) {
-    		result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
-    	} else {
-    		result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
-    	}
-    	
+        
+        TestResult result = null;
+        if (test instanceof DefaultTestCase) {
+            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
+        } else {
+            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
+        }
+    
         testResults.addResult(result);
         LOG.info(result.toString());
         executionService.completeScenarioExecutionSuccess(test);
@@ -94,15 +94,15 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-    	
-    	TestResult result = null;
-    	if (test instanceof DefaultTestCase) {
-    		result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
-    	} else {
-    		result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
-    	}
-    	
-    	testResults.addResult(result);
+    
+        TestResult result = null;
+        if (test instanceof DefaultTestCase) {
+            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
+        } else {
+            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
+        }
+    
+    testResults.addResult(result);
 
         LOG.info(result.toString());
         LOG.info(result.getFailureType());
@@ -139,11 +139,11 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     private String[] getParameters(TestCase test) {
         List<String> parameterStrings = new ArrayList<String>();
         
-		if (test instanceof DefaultTestCase) {
-			for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
-				parameterStrings.add(param.getKey() + "=" + param.getValue());
-			}
-		}
+        if (test instanceof DefaultTestCase) {
+            for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
+                parameterStrings.add(param.getKey() + "=" + param.getValue());
+            }
+        }
 
         return parameterStrings.toArray(new String[parameterStrings.size()]);
     }

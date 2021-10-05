@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 /**
