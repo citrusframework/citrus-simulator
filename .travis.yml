@@ -8,7 +8,7 @@ install: true
 matrix:
   include:
     # OpenJDK - Java 11 (lts)
-    - env: SONAR='false' BUILD_OPTS='-Djava.version=11 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
+    - env: SONAR='true' BUILD_OPTS='-Djava.version=11 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
       jdk: openjdk11
     # OpenJDK - Java 12 (latest)
     - env: SONAR='false' BUILD_OPTS='-Djava.version=12 -Dspring.version=5.1.10.RELEASE -Dspring.boot.version=2.1.9.RELEASE'
