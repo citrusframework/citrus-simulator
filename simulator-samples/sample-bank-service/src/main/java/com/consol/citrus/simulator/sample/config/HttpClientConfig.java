@@ -50,8 +50,8 @@ public class HttpClientConfig {
     @Value("${server.ssl.key-store}")
     private URL keyStore;
 
-    @Value("${server.ssl.key-password}")
-    private String keyPassword;
+    @Value("${server.ssl.key-store-password}")
+    private String keyStorePassword;
 
     @Bean
     public HttpClient simulatorHttpClientEndpoint() {
@@ -68,7 +68,7 @@ public class HttpClientConfig {
         try {
             //new ClassPathResource("").getURL()
             SSLContext sslcontext = SSLContexts.custom()
-                    .loadTrustMaterial(keyStore, keyPassword.toCharArray(),
+                    .loadTrustMaterial(keyStore, keyStorePassword.toCharArray(),
                             new TrustSelfSignedStrategy())
                     .build();
 
