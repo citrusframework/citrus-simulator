@@ -89,10 +89,10 @@ public class CorrelationHandlerBuilder
         String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
         if (beanNames.length > 0) {
             if (beanNames.length > 1) {
-                log.warn("Expected to find 1 beans of type {} but found instead {} ({})",
-                        beanNames.length,
-                        NamespaceContextBuilder.class.getCanonicalName(),
-                        beanNames
+                log.warn("Expected to find 1 beans of type {} but found {} instead: {}",
+                    NamespaceContextBuilder.class.getCanonicalName(),
+                    beanNames.length,
+                    beanNames
                 );
             }
             log.debug("Using NamespaceContextBuilder - {}", beanNames[0]);
