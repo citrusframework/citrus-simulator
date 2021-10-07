@@ -40,8 +40,8 @@ import org.testng.annotations.Test;
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = SimulatorRestIT.EndpointConfig.class)
-public class SimulatorRestIT extends TestNGCitrusTestDesigner {
+@ContextConfiguration(classes = SimulatorSwaggerIT.EndpointConfig.class)
+public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
 
     /** Test Http REST client */
     @Autowired
@@ -64,7 +64,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorUiClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload("{" +
                         "\"simulator\":" +
                             "{" +
@@ -85,7 +85,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
         http().client(simulatorUiClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload("{" +
                             "\"size\":\"@isNumber()@\"," +
                             "\"failed\":\"@isNumber()@\"," +
