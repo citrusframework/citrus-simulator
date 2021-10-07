@@ -112,6 +112,7 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
     @Configuration
     @PropertySource("classpath:application.properties")
     public static class EndpointConfig {
+
         @Bean
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
         public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
@@ -123,5 +124,4 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
             };
         }
     }
-
 }

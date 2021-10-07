@@ -131,7 +131,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.1</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${java.version}</source>
