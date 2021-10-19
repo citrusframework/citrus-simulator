@@ -25,7 +25,7 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
         this.runner = runner;
         this.scenarioEndpoint = scenarioEndpoint;
     }
-    
+
     /**
      * Default scenario receive operation.
      * @return

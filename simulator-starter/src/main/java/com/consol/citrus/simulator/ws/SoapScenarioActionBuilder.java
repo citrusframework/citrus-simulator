@@ -54,6 +54,4 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
     public SendSoapFaultActionBuilder sendFault() {
         return server(scenarioEndpoint.getName()).sendFault().endpoint(scenarioEndpoint);
     }
-
-  
 }

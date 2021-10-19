@@ -102,7 +102,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
     
-    testResults.addResult(result);
+        testResults.addResult(result);
 
         LOG.info(result.toString());
         LOG.info(result.getFailureType());
