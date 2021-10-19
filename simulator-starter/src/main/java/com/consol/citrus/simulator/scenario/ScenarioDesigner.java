@@ -44,7 +44,6 @@ public class ScenarioDesigner extends DefaultTestDesigner {
     /** Bean reference resolver */
     private final ReferenceResolver referenceResolver;
 
-
     /**
      * Default constructor using fields.
      *

@@ -70,7 +70,7 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
     @Override
     public void initialize() {
         super.initialize();
-    
+
         mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
         mappings.put("//@*", "@ignore@");
     }

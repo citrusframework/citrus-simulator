@@ -98,7 +98,7 @@ public class ScenarioRunner extends DefaultTestRunner {
         configurer.configure(sendFaultActionBuilder);
         run(sendFaultActionBuilder);
     
-      return (SendSoapFaultAction) sendFaultActionBuilder.build();
+        return (SendSoapFaultAction) sendFaultActionBuilder.build();
     }
 
     /**
@@ -108,6 +108,6 @@ public class ScenarioRunner extends DefaultTestRunner {
      */
     public ScenarioEndpoint scenarioEndpoint() {
         return scenarioEndpoint;
-    }   
+    }
 
 }

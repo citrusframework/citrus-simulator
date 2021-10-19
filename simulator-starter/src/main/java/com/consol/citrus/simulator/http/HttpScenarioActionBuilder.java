@@ -29,7 +29,7 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
         super.withReferenceResolver(referenceResolver);
         return this;
     }
-    
+
     /**
      * Default scenario receive operation.
      * @return
@@ -66,8 +66,4 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
 
         return serverActionBuilder;
     }
-    
-  
-
-      
 }

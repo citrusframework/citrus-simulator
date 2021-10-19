@@ -31,7 +31,7 @@ public class SoapScenarioRunnerActionBuilder extends HttpActionBuilder {
      */
     public TestAction receive(SoapBuilderSupport<ReceiveSoapMessageActionBuilder> configurer) {
         SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
-       configurer.configure(builder.receive());
+        configurer.configure(builder.receive());
         return runner.run(builder.build()).build();
     }
 
