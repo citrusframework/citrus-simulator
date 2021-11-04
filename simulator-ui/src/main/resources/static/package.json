@@ -38,7 +38,7 @@
     "sockjs-client": "^1.1.2",
     "stompjs": "2.3.3",
     "systemjs": "0.19.39",
-    "underscore": "1.8.3",
+    "underscore": "1.12.1",
     "url": "^0.11.0",
     "zone.js": "^0.8.14"
   },
