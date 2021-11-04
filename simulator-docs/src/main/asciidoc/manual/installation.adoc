@@ -135,11 +135,11 @@ See the following sample Maven project POM file that defines the project sources
   <version>1.0.0</version>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.0</citrus.simulator.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+    <citrus.simulator.version>2.0.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>2.5.4</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -173,7 +173,7 @@ See the following sample Maven project POM file that defines the project sources
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.1</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${java.version}</source>

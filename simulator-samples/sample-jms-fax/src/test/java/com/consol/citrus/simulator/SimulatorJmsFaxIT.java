@@ -54,8 +54,8 @@ import org.testng.annotations.Test;
  * @author Martin Maher
  */
 @Test
-@ContextConfiguration(classes = SimulatorJmsIT.EndpointConfig.class)
-public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
+@ContextConfiguration(classes = SimulatorJmsFaxIT.EndpointConfig.class)
+public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
     private PayloadHelper payloadHelper = new PayloadHelper();
 
     @Autowired
@@ -280,8 +280,10 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
             return new TestRunnerBeforeTestSupport() {
                 @Override
                 public void beforeTest(TestRunner runner) {
-                    runner.purgeQueues(action -> action.queueNames("Fax.Inbound",
-                                                                   "Fax.Status"));
+                    runner.purgeQueues(builder -> {
+                       builder.connectionFactory(connectionFactory());
+                       builder.queueNames("Fax.Inbound", "Fax.Status");
+                    });
 
                 }
             };

@@ -1,8 +1,11 @@
 package com.consol.citrus.simulator.ws;
 
-import com.consol.citrus.dsl.builder.*;
+import com.consol.citrus.dsl.builder.ReceiveSoapMessageActionBuilder;
+import com.consol.citrus.dsl.builder.SendSoapFaultActionBuilder;
+import com.consol.citrus.dsl.builder.SendSoapMessageActionBuilder;
+import com.consol.citrus.dsl.builder.SoapActionBuilder;
 import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
-import org.springframework.context.ApplicationContext;
+import com.consol.citrus.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -12,46 +15,43 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
     /** Scenario endpoint */
     private final ScenarioEndpoint scenarioEndpoint;
 
-    /** Spring application context */
-    private ApplicationContext applicationContext;
+    /** Bean reference resolver */
+    private ReferenceResolver referenceResolver;
 
     public SoapScenarioActionBuilder(ScenarioEndpoint scenarioEndpoint) {
         this.scenarioEndpoint = scenarioEndpoint;
     }
 
     /**
+     * Sets the bean reference resolver.
+     * @param referenceResolver
+     */
+    public SoapScenarioActionBuilder withReferenceResolver(ReferenceResolver referenceResolver) {
+        this.referenceResolver = referenceResolver;
+        return this;
+    }
+    
+    /**
      * Default scenario receive operation.
      * @return
      */
-    public SoapServerRequestActionBuilder receive() {
-        return new SoapServerActionBuilder(action, scenarioEndpoint)
-                .withApplicationContext(applicationContext)
-                .receive();
+    public ReceiveSoapMessageActionBuilder receive() {
+        return server(scenarioEndpoint.getName()).withReferenceResolver(referenceResolver).receive().endpoint(scenarioEndpoint);
     }
 
     /**
      * Default scenario send response operation.
      * @return
      */
-    public SoapServerResponseActionBuilder send() {
-        return new SoapServerActionBuilder(action, scenarioEndpoint)
-                .withApplicationContext(applicationContext)
-                .send();
+    public SendSoapMessageActionBuilder send() {
+        return server(scenarioEndpoint.getName()).send().endpoint(scenarioEndpoint);
     }
 
     /**
      * Sends SOAP fault as scenario response.
      * @return
      */
-    public SoapServerFaultResponseActionBuilder sendFault() {
-        return new SoapServerActionBuilder(action, scenarioEndpoint)
-                .withApplicationContext(applicationContext)
-                .sendFault();
-    }
-
-    @Override
-    public SoapScenarioActionBuilder withApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        return (SoapScenarioActionBuilder) super.withApplicationContext(applicationContext);
+    public SendSoapFaultActionBuilder sendFault() {
+        return server(scenarioEndpoint.getName()).sendFault().endpoint(scenarioEndpoint);
     }
 }

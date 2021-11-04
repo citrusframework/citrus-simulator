@@ -44,7 +44,7 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
             NodeList findings = (NodeList) XPathUtils.evaluateExpression(node.getOwnerDocument(), expression, namespaceContext, XPathConstants.NODESET);
 
             if (findings != null && containsNode(findings, node)) {
-                return convertIfNecessary(context.replaceDynamicContentInString(expressionEntry.getValue()), value);
+                return convertIfNecessary(expressionEntry.getValue(), value, context);
             }
         }
 
@@ -68,8 +68,8 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
+    public void initialize() {
+        super.initialize();
 
         mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
         mappings.put("//@*", "@ignore@");

@@ -29,6 +29,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -205,6 +206,7 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     }
 
     @Configuration
+    @PropertySource("classpath:application.properties")
     public static class EndpointConfig {
 
         @Bean

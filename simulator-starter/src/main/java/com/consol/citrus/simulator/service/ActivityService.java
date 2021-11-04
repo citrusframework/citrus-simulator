@@ -150,7 +150,7 @@ public class ActivityService {
             calcSize = 25;
         }
 
-        Pageable pageable = new PageRequest(calcPage, calcSize);
+        Pageable pageable = PageRequest.of(calcPage, calcSize);
 
         return scenarioExecutionRepository.findByStartDateBetweenOrderByStartDateDesc(calcFromDate, calcToDate, pageable);
     }

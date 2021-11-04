@@ -11,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -154,25 +155,25 @@ public class HttpRequestAnnotationMatcherTest {
 
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
-                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("a", "1")),
+                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
-                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("a", null)),
+                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("a", Collections.emptySet())),
                         true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
-                        setupHttpMessage("/any-path", HttpMethod.GET, Stream.of("a=1","b=2").map(item -> item.split("=")).collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> keyValuePair[1]))),
+                        setupHttpMessage("/any-path", HttpMethod.GET, Stream.of("a=1","b=2").map(item -> item.split("=")).collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> Collections.singleton(keyValuePair[1])))),
                         true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_QUERY_PARAMS,
-                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("c", "3")),
+                        setupHttpMessage("/any-path", HttpMethod.GET, Collections.singletonMap("c", Collections.singleton("3"))),
                         true,
                         false
                 },
@@ -185,19 +186,19 @@ public class HttpRequestAnnotationMatcherTest {
 
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
-                        setupHttpMessage("/path/value", HttpMethod.GET, Collections.singletonMap("a", "1")),
+                        setupHttpMessage("/path/value", HttpMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         true
                 },
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
-                        setupHttpMessage("/wrong-path", HttpMethod.GET, Collections.singletonMap("a", "1")),
+                        setupHttpMessage("/wrong-path", HttpMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         false
                 },
                 new Object[]{
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
-                        setupHttpMessage("/path/value", HttpMethod.PUT, Collections.singletonMap("a", "1")),
+                        setupHttpMessage("/path/value", HttpMethod.PUT, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         false
                 },
@@ -257,7 +258,7 @@ public class HttpRequestAnnotationMatcherTest {
         return AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class);
     }
 
-    private HttpMessage setupHttpMessage(String path, HttpMethod method, Map<String, String> queryParams) {
+    private HttpMessage setupHttpMessage(String path, HttpMethod method, Map<String, Collection<String>> queryParams) {
         final HttpMessage httpMessage = Mockito.mock(HttpMessage.class);
         when(httpMessage.getPath()).thenReturn(path);
         when(httpMessage.getRequestMethod()).thenReturn(method);

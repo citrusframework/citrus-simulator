@@ -39,7 +39,8 @@ public class StopCorrelationHandlerAction extends AbstractTestAction {
 
     @Override
     public void doExecute(TestContext context) {
-        CorrelationHandlerRegistry handlerRegistry = context.getApplicationContext().getBean(CorrelationHandlerRegistry.class);
+        CorrelationHandlerRegistry handlerRegistry = context.getReferenceResolver()
+            .resolve(CorrelationHandlerRegistry.class);
 
         if (handlerRegistry != null) {
             handlerRegistry.remove(correlationHandler);

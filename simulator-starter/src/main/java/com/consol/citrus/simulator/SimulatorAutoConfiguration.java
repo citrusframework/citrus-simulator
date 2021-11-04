@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator;
 
 import com.consol.citrus.Citrus;
+import com.consol.citrus.CitrusSpringContext;
 import com.consol.citrus.config.CitrusSpringConfig;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
 import com.consol.citrus.simulator.config.SimulatorImportSelector;
@@ -99,7 +100,7 @@ public class SimulatorAutoConfiguration {
 
     @Bean
     public Citrus citrus(ApplicationContext applicationContext) {
-        return Citrus.newInstance(applicationContext);
+        return Citrus.newInstance(CitrusSpringContext.create(applicationContext));
     }
 
     @Bean
