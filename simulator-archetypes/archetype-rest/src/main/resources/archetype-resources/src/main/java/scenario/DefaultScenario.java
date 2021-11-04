@@ -16,7 +16,8 @@
 
 package ${package}.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import org.citrusframework.simulator.scenario.*;
+
 import org.springframework.http.HttpStatus;
 
 @Scenario("Default")

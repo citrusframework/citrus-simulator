@@ -16,7 +16,7 @@
 
 package ${package}.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import org.citrusframework.simulator.scenario.*;
 
 @Scenario("GoodBye")
 public class GoodByeScenario extends AbstractSimulatorScenario {

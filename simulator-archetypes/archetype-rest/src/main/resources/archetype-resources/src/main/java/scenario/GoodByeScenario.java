@@ -16,7 +16,8 @@
 
 package ${package}.scenario;
 
-import com.consol.citrus.simulator.scenario.*;
+import org.citrusframework.simulator.scenario.*;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

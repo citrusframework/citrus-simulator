@@ -73,11 +73,11 @@ citrus.simulator.templatePath=com/company/simulator/templates
 The available simulator properties are grouped in following configuration classes:
 
 [horizontal]
-com.consol.citrus.simulator.config.SimulatorConfigurationProperties:: prefix=*citrus.simulator*
-com.consol.citrus.simulator.http.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
-com.consol.citrus.simulator.ws.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
-com.consol.citrus.simulator.ws.SimulatorWebServiceClientConfigurationProperties:: prefix=*citrus.simulator.ws.client*
-com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
+org.citrusframework.simulator.config.SimulatorConfigurationProperties:: prefix=*citrus.simulator*
+org.citrusframework.simulator.http.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
+org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
+org.citrusframework.simulator.ws.SimulatorWebServiceClientConfigurationProperties:: prefix=*citrus.simulator.ws.client*
+org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
 
 There are several properties that you can use in order to customize the simulator behavior. These
 properties are:
@@ -103,7 +103,7 @@ In addition to that default Spring boot property replacement the simulator also 
 
 .System property names
 [horizontal]
-citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
+citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is org.citrusframework.simulator.SimulatorConfig)
 citrus.simulator.template.path:: Default path to message payload template files.
 citrus.simulator.default.scenario:: Default scenario name.
 citrus.simulator.default.timeout:: Timeout when waiting for inbound messages.
@@ -127,7 +127,7 @@ infrastructure such as Docker or Kubernetes.
 
 .Environment settings
 [horizontal]
-CITRUS_SIMULATOR_CONFIGURATION_CLASS:: Java configuration class that is automatically loaded. (default is com.consol.citrus.simulator.SimulatorConfig)
+CITRUS_SIMULATOR_CONFIGURATION_CLASS:: Java configuration class that is automatically loaded. (default is org.citrusframework.simulator.SimulatorConfig)
 CITRUS_SIMULATOR_TEMPLATE_PATH:: Default path to message payload template files.
 CITRUS_SIMULATOR_DEFAULT_SCENARIO:: Default scenario name.
 CITRUS_SIMULATOR_DEFAULT_TIMEOUT:: Timeout when waiting for inbound messages.
@@ -147,7 +147,7 @@ Citrus works with the Spring framework and the simulator is a Spring boot applic
 the application context. The simulator automatically loads Spring beans defined in following locations:
 
 * *META-INF/citrus-simulator.xml* Xml Spring bean configuration file.
-* *com.consol.citrus.simulator.SimulatorConfig* Java configuration class. You can customize this class by defining the property *citrus.simulator.configuration.class*
+* *org.citrusframework.simulator.SimulatorConfig* Java configuration class. You can customize this class by defining the property *citrus.simulator.configuration.class*
 
 All beans defined in there get automatically loaded to the simulator Spring application context.
 

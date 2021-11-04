@@ -2,42 +2,42 @@
                    xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-catalog/1.0.0 http://maven.apache.org/xsd/archetype-catalog-1.0.0.xsd">
   <archetypes>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-rest</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus REST simulator</description>
     </archetype>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-ws</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus SOAP simulator</description>
     </archetype>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-jms</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus JMS simulator</description>
     </archetype>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-mail</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus mail simulator</description>
     </archetype>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-swagger</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>
       <description>Archetype for Citrus Swagger auto generated REST simulator</description>
     </archetype>
     <archetype>
-      <groupId>com.consol.citrus.archetypes</groupId>
+      <groupId>org.citrusframework.archetypes</groupId>
       <artifactId>citrus-simulator-archetype-wsdl</artifactId>
       <version>1.2-SNAPSHOT</version>
       <repository>http://labs.consol.de/maven/repository/</repository>

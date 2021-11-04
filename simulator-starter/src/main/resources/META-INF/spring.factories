@@ -1,8 +1,8 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.consol.citrus.simulator.SimulatorAutoConfiguration,\
-com.consol.citrus.simulator.http.SimulatorRestAutoConfiguration,\
-com.consol.citrus.simulator.jms.SimulatorJmsAutoConfiguration,\
-com.consol.citrus.simulator.endpoint.SimulatorEndpointAutoConfiguration,\
-com.consol.citrus.simulator.ws.SimulatorWebServiceAutoConfiguration,\
-com.consol.citrus.simulator.ws.SimulatorWebServiceClientAutoConfiguration
+org.citrusframework.simulator.SimulatorAutoConfiguration,\
+org.citrusframework.simulator.http.SimulatorRestAutoConfiguration,\
+org.citrusframework.simulator.jms.SimulatorJmsAutoConfiguration,\
+org.citrusframework.simulator.endpoint.SimulatorEndpointAutoConfiguration,\
+org.citrusframework.simulator.ws.SimulatorWebServiceAutoConfiguration,\
+org.citrusframework.simulator.ws.SimulatorWebServiceClientAutoConfiguration

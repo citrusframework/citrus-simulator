@@ -106,7 +106,7 @@ This is the simplest way to customize the simulator SOAP support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.ws.SimulatorWebServiceAdapter;
+import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -136,7 +136,7 @@ For a more advanced configuration option we can extend the *SimulatorWebServiceS
 
 [source,java]
 ----
-import com.consol.citrus.simulator.ws.SimulatorWebServiceAutoConfiguration;
+import org.citrusframework.simulator.ws.SimulatorWebServiceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

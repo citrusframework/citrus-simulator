@@ -28,7 +28,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    group = "com.consol.citrus.simulator"
+    group = "org.citrusframework.simulator"
     baseName = 'citrus-simulator-sample'
     version =  '1.0.0'
 }
@@ -42,7 +42,7 @@ targetCompatibility = 1.8
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.consol.citrus:citrus-simulator-starter:1.0.0")
+    implementation("org.citrusframework:citrus-simulator-starter:1.0.0")
     testImplementation("junit:junit")
 }
 ----
@@ -55,7 +55,7 @@ Before we do that let's add a basic Spring Boot main class to our project.
 .src/main/java/com/consol/citrus/simulator/Simulator.java
 [source,java]
 ----
-package com.consol.citrus.simulator;
+package org.citrusframework.simulator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -74,10 +74,10 @@ Also we add an default scenario that is executed for incoming requests.
 .DefaultScenario.java
 [source,java]
 ----
-package com.consol.citrus.simulator;
+package org.citrusframework.simulator;
 
 import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.simulator.scenario.*;
+import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
 @Scenario("DEFAULT_SCENARIO")
@@ -129,7 +129,7 @@ See the following sample Maven project POM file that defines the project sources
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator-sample</artifactId>
   <name>${project.artifactId}</name>
   <version>1.0.0</version>
@@ -163,7 +163,7 @@ See the following sample Maven project POM file that defines the project sources
     <!-- Citrus Simulator -->
 
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-simulator-starter</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
@@ -212,7 +212,7 @@ Before we do that let's add a basic Spring Boot main class to our project.
 .src/main/java/com/consol/citrus/simulator/Simulator.java
 [source,java]
 ----
-package com.consol.citrus.simulator;
+package org.citrusframework.simulator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -231,10 +231,10 @@ Also we add an default scenario that is executed for incoming requests.
 .DefaultScenario.java
 [source,java]
 ----
-package com.consol.citrus.simulator;
+package org.citrusframework.simulator;
 
 import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.simulator.scenario.*;
+import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
 @Scenario("DEFAULT_SCENARIO")
@@ -277,10 +277,10 @@ The easiest way to get started with a new simulator project is to use a Maven ar
 
 [source,bash]
 ----
-mvn archetype:generate -B -DarchetypeGroupId=com.consol.citrus.archetypes \
+mvn archetype:generate -B -DarchetypeGroupId=org.citrusframework.archetypes \
                             -DarchetypeArtifactId=citrus-simulator-archetype-rest \
                             -DarchetypeVersion=${citrus.simulator.version} \
-                            -DgroupId=com.consol.citrus.simulator \
+                            -DgroupId=org.citrusframework.simulator \
                             -DartifactId=citrus-simulator-rest \
                             -Dversion=1.0.0
 ----

@@ -16,10 +16,11 @@
 
 package ${package}.starter;
 
-import com.consol.citrus.simulator.model.ScenarioParameter;
-import com.consol.citrus.simulator.model.ScenarioParameterBuilder;
-import com.consol.citrus.simulator.scenario.*;
-import com.consol.citrus.simulator.service.TemplateService;
+import org.citrusframework.simulator.scenario.*;
+
+import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.ScenarioParameterBuilder;
+import org.citrusframework.simulator.service.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;

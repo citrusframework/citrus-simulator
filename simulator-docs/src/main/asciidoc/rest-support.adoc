@@ -96,7 +96,7 @@ This is the simplest way to customize the simulator REST support. We can also us
 
 [source,java]
 ----
-import com.consol.citrus.simulator.http.SimulatorRestAdapter;
+import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -128,7 +128,7 @@ For a more advanced configuration option we can extend the *SimulatorRestSupport
 
 [source,java]
 ----
-import com.consol.citrus.simulator.http.SimulatorRestAutoConfiguration;
+import org.citrusframework.simulator.http.SimulatorRestAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
