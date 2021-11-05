@@ -16,15 +16,17 @@
 
 package com.consol.citrus.simulator.scenario;
 
+import org.springframework.context.ApplicationContext;
+
 import com.consol.citrus.context.TestContext;
-import com.consol.citrus.dsl.builder.ReceiveMessageBuilder;
-import com.consol.citrus.dsl.builder.SendMessageBuilder;
+import com.consol.citrus.dsl.builder.ReceiveMessageActionBuilder;
+import com.consol.citrus.dsl.builder.SendMessageActionBuilder;
 import com.consol.citrus.dsl.design.DefaultTestDesigner;
 import com.consol.citrus.simulator.correlation.CorrelationHandlerBuilder;
 import com.consol.citrus.simulator.correlation.CorrelationManager;
 import com.consol.citrus.simulator.http.HttpScenarioActionBuilder;
 import com.consol.citrus.simulator.ws.SoapScenarioActionBuilder;
-import org.springframework.context.ApplicationContext;
+import com.consol.citrus.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -36,16 +38,24 @@ public class ScenarioDesigner extends DefaultTestDesigner {
      */
     private final ScenarioEndpoint scenarioEndpoint;
 
+    /** Spring bean application context */
+    private final ApplicationContext applicationContext;
+    
+    /** Bean reference resolver */
+    private final ReferenceResolver referenceResolver;
+
     /**
      * Default constructor using fields.
      *
      * @param scenarioEndpoint
-     * @param applicationContext
+     * @param referenceResolver
      * @param context
      */
-    public ScenarioDesigner(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext, TestContext context) {
-        super(applicationContext, context);
+    public ScenarioDesigner(ScenarioEndpoint scenarioEndpoint, ReferenceResolver referenceResolver, ApplicationContext applicationContext, TestContext context) {
+        super(context);
         this.scenarioEndpoint = scenarioEndpoint;
+        this.applicationContext = applicationContext;
+        this.referenceResolver = referenceResolver;
     }
 
     /**
@@ -55,7 +65,7 @@ public class ScenarioDesigner extends DefaultTestDesigner {
      */
     public CorrelationManager correlation() {
         return () -> {
-            CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint, getApplicationContext());
+            CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint, applicationContext);
             action(builder);
             doFinally().actions(builder.stop());
             return builder;
@@ -67,8 +77,8 @@ public class ScenarioDesigner extends DefaultTestDesigner {
      *
      * @return
      */
-    public ReceiveMessageBuilder receive() {
-        return (ReceiveMessageBuilder) receive(scenarioEndpoint)
+    public ReceiveMessageActionBuilder<?> receive() {
+        return receive(scenarioEndpoint)
                 .description("Receive scenario request");
     }
 
@@ -77,25 +87,21 @@ public class ScenarioDesigner extends DefaultTestDesigner {
      *
      * @return
      */
-    public SendMessageBuilder send() {
-        return (SendMessageBuilder) send(scenarioEndpoint)
+    public SendMessageActionBuilder<?> send() {
+        return send(scenarioEndpoint)
                 .description("Send scenario response");
     }
 
     @Override
     public HttpScenarioActionBuilder http() {
-        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint)
-                .withApplicationContext(getApplicationContext());
-
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         action(builder);
         return builder;
     }
 
     @Override
     public SoapScenarioActionBuilder soap() {
-        SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint)
-                .withApplicationContext(getApplicationContext());
-
+        SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         action(builder);
         return builder;
     }

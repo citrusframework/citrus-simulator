@@ -17,16 +17,27 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.simulator.model.*;
+import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.MessageFilter;
+import com.consol.citrus.simulator.model.MessageHeader;
 import com.consol.citrus.simulator.repository.MessageRepository;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeSet;
 import javax.transaction.Transactional;
-import java.time.*;
-import java.util.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for persisting and retrieving {@link Message} data.
@@ -49,10 +60,14 @@ public class MessageService {
         message.setPayload(payload);
         message.setCitrusMessageId(citrusMessageId);
         if (headers != null) {
-            headers.entrySet().stream()
-                    .forEach(headerEntry -> message.addHeader(
-                            new MessageHeader(headerEntry.getKey(),
-                                    StringUtils.abbreviate(headerEntry.getValue().toString(), 255))));
+            for (Entry<String, Object> headerEntry : headers.entrySet()) {
+                if (headerEntry.getValue() != null
+                    && !StringUtils.isEmpty(headerEntry.getValue().toString())) {
+                    message.addHeader(
+                        new MessageHeader(headerEntry.getKey(),
+                            StringUtils.abbreviate(headerEntry.getValue().toString(), 255)));
+                }
+            }
         }
         return messageRepository.save(message);
     }
@@ -79,7 +94,7 @@ public class MessageService {
             includeDirections.add(Message.Direction.OUTBOUND);
         }
 
-        Pageable pageable = new PageRequest(calcPage, calcSize, Sort.Direction.DESC, "date");
+        Pageable pageable = PageRequest.of(calcPage, calcSize, Sort.Direction.DESC, "date");
 
         if (StringUtils.isNotEmpty(filter.getContainingText())) {
             return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,

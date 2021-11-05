@@ -28,11 +28,9 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -52,11 +50,11 @@ public class HttpClientConfig {
     @Value("${server.ssl.key-store}")
     private URL keyStore;
 
-    @Value("${server.ssl.key-password}")
-    private String keyPassword;
+    @Value("${server.ssl.key-store-password}")
+    private String keyStorePassword;
 
-    @Bean(name = "simulatorHttpClientEndpoint")
-    public HttpClient clientEndpoint() {
+    @Bean
+    public HttpClient simulatorHttpClientEndpoint() {
         return CitrusEndpoints.http()
                 .client()
                 .timeout(defaultTimeout)
@@ -70,7 +68,7 @@ public class HttpClientConfig {
         try {
             //new ClassPathResource("").getURL()
             SSLContext sslcontext = SSLContexts.custom()
-                    .loadTrustMaterial(keyStore, keyPassword.toCharArray(),
+                    .loadTrustMaterial(keyStore, keyStorePassword.toCharArray(),
                             new TrustSelfSignedStrategy())
                     .build();
 

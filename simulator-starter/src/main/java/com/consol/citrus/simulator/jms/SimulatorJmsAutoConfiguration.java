@@ -16,12 +16,19 @@
 
 package com.consol.citrus.simulator.jms;
 
+import javax.jms.ConnectionFactory;
+
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
-import com.consol.citrus.jms.endpoint.*;
+import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import com.consol.citrus.jms.endpoint.JmsEndpointConfiguration;
+import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import com.consol.citrus.jms.endpoint.JmsSyncEndpointConfiguration;
 import com.consol.citrus.simulator.SimulatorAutoConfiguration;
 import com.consol.citrus.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.simulator.endpoint.*;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointAdapter;
+import com.consol.citrus.simulator.endpoint.SimulatorEndpointPoller;
+import com.consol.citrus.simulator.endpoint.SimulatorSoapEndpointPoller;
 import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +41,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.util.StringUtils;
-
-import javax.jms.ConnectionFactory;
 
 @Configuration
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -62,8 +67,8 @@ public class SimulatorJmsAutoConfiguration {
         return new SingleConnectionFactory();
     }
 
-    @Bean(name = "simulatorJmsInboundEndpoint")
-    protected JmsEndpoint jmsInboundEndpoint(ConnectionFactory connectionFactory) {
+    @Bean
+    protected JmsEndpoint simulatorJmsInboundEndpoint(ConnectionFactory connectionFactory) {
         if (isSynchronous()) {
             JmsSyncEndpointConfiguration endpointConfiguration = new JmsSyncEndpointConfiguration();
             JmsSyncEndpoint jmsEndpoint = new JmsSyncEndpoint(endpointConfiguration);
@@ -81,18 +86,19 @@ public class SimulatorJmsAutoConfiguration {
             JmsEndpoint jmsEndpoint = new JmsEndpoint(endpointConfiguration);
             endpointConfiguration.setDestinationName(getInboundDestination());
             endpointConfiguration.setConnectionFactory(connectionFactory);
+            endpointConfiguration.setPubSubDomain(isPubSubDomain());
 
             return jmsEndpoint;
         }
     }
 
-    @Bean(name = "simulatorJmsEndpointAdapter")
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
+    @Bean
+    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter() {
         return new SimulatorEndpointAdapter();
     }
 
-    @Bean(name = "simulatorJmsScenarioMapper")
-    public ScenarioMapper simulatorScenarioMapper() {
+    @Bean
+    public ScenarioMapper simulatorJmsScenarioMapper() {
         if (configurer != null) {
             return configurer.scenarioMapper();
         }
@@ -100,8 +106,8 @@ public class SimulatorJmsAutoConfiguration {
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
     }
 
-    @Bean(name = "simulatorJmsEndpointPoller")
-    public SimulatorEndpointPoller endpointPoller(ApplicationContext applicationContext,
+    @Bean
+    public SimulatorEndpointPoller simulatorJmsEndpointPoller(ApplicationContext applicationContext,
                                                   ConnectionFactory connectionFactory) {
         SimulatorEndpointPoller endpointPoller;
 
@@ -111,12 +117,12 @@ public class SimulatorJmsAutoConfiguration {
             endpointPoller = new SimulatorEndpointPoller();
         }
 
-        endpointPoller.setInboundEndpoint(jmsInboundEndpoint(connectionFactory));
+        endpointPoller.setInboundEndpoint(simulatorJmsInboundEndpoint(connectionFactory));
 
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
+        SimulatorEndpointAdapter endpointAdapter = simulatorJmsEndpointAdapter();
         endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+        endpointAdapter.setMappingKeyExtractor(simulatorJmsScenarioMapper());
+        endpointAdapter.setFallbackEndpointAdapter(simulatorJmsFallbackEndpointAdapter());
 
         if (!isSynchronous()) {
             endpointAdapter.setHandleResponse(false);
@@ -129,8 +135,8 @@ public class SimulatorJmsAutoConfiguration {
         return endpointPoller;
     }
 
-    @Bean(name = "simulatorJmsFallbackEndpointAdapter")
-    public EndpointAdapter simulatorFallbackEndpointAdapter() {
+    @Bean
+    public EndpointAdapter simulatorJmsFallbackEndpointAdapter() {
         if (configurer != null) {
             return configurer.fallbackEndpointAdapter();
         }
@@ -186,6 +192,18 @@ public class SimulatorJmsAutoConfiguration {
         }
 
         return simulatorJmsConfiguration.isUseSoap();
+    }
+
+    /**
+     * Should the endpoint use pub sub domain.
+     * @return
+     */
+    protected boolean isPubSubDomain() {
+        if (configurer != null) {
+            return configurer.pubSubDomain(simulatorJmsConfiguration);
+        }
+
+        return simulatorJmsConfiguration.isPubSubDomain();
     }
 
     /**

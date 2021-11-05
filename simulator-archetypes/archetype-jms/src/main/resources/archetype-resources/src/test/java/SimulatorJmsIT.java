@@ -22,9 +22,6 @@ import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
-/**
- * @author Christoph Deppisch
- */
 @Test
 public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
 

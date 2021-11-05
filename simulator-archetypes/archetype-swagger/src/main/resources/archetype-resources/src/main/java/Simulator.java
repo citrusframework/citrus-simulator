@@ -22,15 +22,13 @@ import com.consol.citrus.http.message.HttpMessage;
 import com.consol.citrus.message.Message;
 import com.consol.citrus.simulator.http.*;
 import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
+import com.consol.citrus.simulator.scenario.mapper.ScenarioMappers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
-/**
- * @author Christoph Deppisch
- */
 @SpringBootApplication
 public class Simulator extends SimulatorRestAdapter {
 
@@ -40,7 +38,8 @@ public class Simulator extends SimulatorRestAdapter {
 
     @Override
     public ScenarioMapper scenarioMapper() {
-        return new HttpRequestPathScenarioMapper();
+        return ScenarioMappers.of(new HttpRequestPathScenarioMapper(),
+                                  new HttpRequestAnnotationScenarioMapper());
     }
 
     @Override

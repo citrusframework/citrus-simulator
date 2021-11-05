@@ -41,10 +41,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("com.consol.citrus:citrus-simulator-starter:1.0.0")
-    testCompile("junit:junit")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.consol.citrus:citrus-simulator-starter:1.0.0")
+    testImplementation("junit:junit")
 }
 ----
 
@@ -136,10 +135,11 @@ See the following sample Maven project POM file that defines the project sources
   <version>1.0.0</version>
 
   <properties>
+    <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.0.0</citrus.simulator.version>
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+    <citrus.simulator.version>2.0.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>2.5.4</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -159,10 +159,6 @@ See the following sample Maven project POM file that defines the project sources
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
 
     <!-- Citrus Simulator -->
 
@@ -177,11 +173,11 @@ See the following sample Maven project POM file that defines the project sources
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.1</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
 

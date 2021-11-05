@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-simulator-samples</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -31,10 +31,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
 
     <!-- Citrus Simulator -->
     <dependency>
@@ -49,12 +45,12 @@
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.4.1</version>
+      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
-      <version>4.1</version>
+      <version>4.3</version>
     </dependency>
 
     <dependency>
@@ -69,6 +65,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <simulator.mode>${simulator.mode}</simulator.mode>
+          </systemProperties>
+        </configuration>
         <executions>
           <execution>
             <id>integration-tests</id>
@@ -98,28 +99,6 @@
             </goals>
             <configuration>
               <classifier>executable</classifier>
-            </configuration>
-          </execution>
-          <execution>
-            <id>pre-integration-test</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
-              <wait>${spring.boot.start.wait}</wait>
-              <maxAttempts>${spring.boot.start.maxAttempts}</maxAttempts>
-            </configuration>
-          </execution>
-          <execution>
-            <id>post-integration-test</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.it}</skip>
-              <fork>true</fork>
             </configuration>
           </execution>
         </executions>

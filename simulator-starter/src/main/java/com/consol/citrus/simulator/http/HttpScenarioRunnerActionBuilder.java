@@ -1,10 +1,11 @@
 package com.consol.citrus.simulator.http;
 
 import com.consol.citrus.TestAction;
-import com.consol.citrus.dsl.builder.*;
+import com.consol.citrus.dsl.builder.HttpActionBuilder;
 import com.consol.citrus.simulator.scenario.ScenarioEndpoint;
 import com.consol.citrus.simulator.scenario.ScenarioRunner;
-import org.springframework.context.ApplicationContext;
+import com.consol.citrus.simulator.ws.SoapScenarioRunnerActionBuilder;
+import com.consol.citrus.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -17,8 +18,8 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
     /** Scenario endpoint */
     private final ScenarioRunner runner;
 
-    /** Spring application context */
-    private ApplicationContext applicationContext;
+    /** Bean reference resolver */
+    private ReferenceResolver referenceResolver;
 
     public HttpScenarioRunnerActionBuilder(ScenarioRunner runner, ScenarioEndpoint scenarioEndpoint) {
         this.runner = runner;
@@ -29,27 +30,28 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
      * Default scenario receive operation.
      * @return
      */
-    public TestAction receive(HttpBuilderSupport<HttpServerActionBuilder.HttpServerReceiveActionBuilder> configurer) {
-        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint)
-                .withApplicationContext(applicationContext);
+    public TestAction receive(HttpBuilderSupport<HttpServerReceiveActionBuilder> configurer) {
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.receive());
-        return runner.run(builder.build()).getDelegate();
+        return runner.run(builder.build()).build();
     }
 
     /**
      * Default scenario send response operation.
      * @return
      */
-    public TestAction send(HttpBuilderSupport<HttpServerActionBuilder.HttpServerSendActionBuilder> configurer) {
-        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint)
-                .withApplicationContext(applicationContext);
+    public TestAction send(HttpBuilderSupport<HttpServerSendActionBuilder> configurer) {
+        HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.send());
-        return runner.run(builder.build()).getDelegate();
+        return runner.run(builder.build()).build();
     }
 
-    @Override
-    public HttpScenarioRunnerActionBuilder withApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        return (HttpScenarioRunnerActionBuilder) super.withApplicationContext(applicationContext);
+    /**
+     * Sets the bean reference resolver.
+     * @param referenceResolver
+     */
+    public HttpScenarioRunnerActionBuilder withReferenceResolver(ReferenceResolver referenceResolver) {
+        this.referenceResolver = referenceResolver;
+        return this;
     }
 }

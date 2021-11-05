@@ -29,6 +29,8 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private static final String SIMULATOR_SYNC_ENV = "CITRUS_SIMULATOR_JMS_SYNCHRONOUS";
     private static final String SIMULATOR_SOAP_ENVELOPE_PROPERTY = "citrus.simulator.jms.soap";
     private static final String SIMULATOR_SOAP_ENVELOPE_ENV = "CITRUS_SIMULATOR_JMS_SOAP";
+    private static final String SIMULATOR_PUB_SUB_DOMAIN_PROPERTY = "citrus.simulator.jms.pub.sub.domain";
+    private static final String SIMULATOR_PUB_SUB_DOMAIN_ENV = "CITRUS_SIMULATOR_JMS_PUB_SUB_DOMAIN";
 
     /**
      * Global option to enable/disable JMS support, default is false.
@@ -56,6 +58,11 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private boolean useSoap = false;
 
     /**
+     * Pub-Sum Domain . By default this option is disabled.
+     */
+    private boolean pubSubDomain = false;
+
+    /**
      * The Spring application context environment auto injected by environment aware mechanism.
      */
     private Environment env;
@@ -66,6 +73,7 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
         replyDestination = env.getProperty(SIMULATOR_REPLY_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_REPLY_DESTINATION_ENV, replyDestination));
         synchronous = Boolean.valueOf(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
         useSoap = Boolean.valueOf(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
+        pubSubDomain = Boolean.valueOf(env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_PROPERTY, env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_ENV, String.valueOf(pubSubDomain))));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }
@@ -160,6 +168,24 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
         this.useSoap = useSoap;
     }
 
+    /**
+     * Gets the pubsub.
+     *
+     * @return
+     */
+    public boolean isPubSubDomain() {
+        return pubSubDomain;
+    }
+
+    /**
+     * Sets the pubsub.
+     *
+     * @return
+     */
+    public void setPubSubDomain(boolean pubSubDomain) {
+        this.pubSubDomain = pubSubDomain;
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
@@ -168,6 +194,7 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
                 ", replyDestination='" + replyDestination + '\'' +
                 ", synchronous='" + synchronous + '\'' +
                 ", useSoap='" + useSoap + '\'' +
+                ", pubSubDomain='" + pubSubDomain + '\'' +
                 '}';
     }
 

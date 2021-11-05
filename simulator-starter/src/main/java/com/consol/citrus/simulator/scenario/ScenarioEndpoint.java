@@ -112,6 +112,6 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     private EndpointMessageHandler getEndpointMessageHandler(TestContext context) {
-        return context.getApplicationContext().getBean(EndpointMessageHandler.class);
+        return context.getReferenceResolver().resolve(EndpointMessageHandler.class);
     }
 }

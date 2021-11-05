@@ -62,4 +62,11 @@ public interface SimulatorJmsConfigurer extends SimulatorConfigurer {
      * @return
      */
     boolean synchronous(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
+
+    /**
+     * Pub-Sub Domain.
+     * @param simulatorJmsConfiguration
+     * @return
+     */
+    boolean pubSubDomain(SimulatorJmsConfigurationProperties simulatorJmsConfiguration);
 }

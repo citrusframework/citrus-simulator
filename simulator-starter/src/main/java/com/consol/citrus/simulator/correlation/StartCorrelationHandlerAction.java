@@ -33,13 +33,16 @@ public class StartCorrelationHandlerAction extends AbstractTestAction {
     /**
      * Default constructor setting action name.
      */
-    public StartCorrelationHandlerAction() {
-        setName("start-correlation");
+    public StartCorrelationHandlerAction(CorrelationHandlerBuilder builder) {
+        super("start-correlation", builder);
+
+        correlationHandler = builder.getCorrelationHandler();
     }
 
     @Override
     public void doExecute(TestContext context) {
-        CorrelationHandlerRegistry handlerRegistry = context.getApplicationContext().getBean(CorrelationHandlerRegistry.class);
+        CorrelationHandlerRegistry handlerRegistry = context.getReferenceResolver()
+            .resolve(CorrelationHandlerRegistry.class);
 
         if (handlerRegistry != null) {
             handlerRegistry.register(correlationHandler, context);
