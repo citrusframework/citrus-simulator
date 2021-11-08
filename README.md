@@ -1,6 +1,9 @@
 Citrus Simulator ![Logo][1]
 ================
 
+[![LTS Build](https://img.shields.io/github/workflow/status/citrusframework/citrus-simulator/build_jdk17)](https://github.com/citrusframework/citrus-simulator/actions/workflows/lts.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=citrus-simulator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=citrus-simulator)
+
 This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
 JMS, RMI, SMTP and more.
 
