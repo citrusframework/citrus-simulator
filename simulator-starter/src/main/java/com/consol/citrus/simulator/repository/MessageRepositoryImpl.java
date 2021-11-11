@@ -1,36 +1,22 @@
 package com.consol.citrus.simulator.repository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.MessageFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import com.consol.citrus.simulator.model.Message;
-import com.consol.citrus.simulator.model.Message.Direction;
-import com.consol.citrus.simulator.model.MessageHeader;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MessageRepositoryImpl implements MessageRepositoryCustom {
+public class MessageRepositoryImpl extends AbstractRepository implements MessageRepositoryCustom {
 
     @Autowired
     private EntityManager em;
 
     @Override
-    public List<Message> findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(
-                    Date fromDate, Date toDate, Collection<Direction> directions,
-                    String containingText, String headerParameterName,
-                    String headerParameterValue, Pageable pageable) {
+    public List<Message> find(MessageFilter queryFilter) {
 
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Message> criteriaQuery = criteriaBuilder.createQuery(Message.class);
@@ -39,66 +25,52 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        addDatePredicates(fromDate, toDate, criteriaBuilder, message, predicates);
-        addDirectionPredicate(directions, criteriaBuilder, message, predicates);
-        addPayloadPredicate(containingText, criteriaBuilder, message, predicates);
-        addHeaderPredicates(headerParameterName, headerParameterValue, criteriaBuilder, message);
+        addDatePredicates(queryFilter, criteriaBuilder, message, predicates);
+        addDirectionPredicate(queryFilter, criteriaBuilder, message, predicates);
+        addPayloadPredicate(queryFilter, criteriaBuilder, message, predicates);
+        addHeaderPredicates(queryFilter, criteriaBuilder, message);
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
         TypedQuery<Message> messageQuery = em.createQuery(criteriaQuery);
-        addPagingRestrictions(pageable, messageQuery);
+        addPagingRestrictions(queryFilter, messageQuery);
 
         return messageQuery.getResultList();
     }
 
-    private void addPagingRestrictions(Pageable pageable, TypedQuery<Message> messageQuery) {
-        if (pageable != null) {
-            messageQuery.setMaxResults(pageable.getPageSize());
-            messageQuery.setFirstResult(pageable.getPageNumber());
+    private void addPagingRestrictions(MessageFilter queryFilter, TypedQuery<Message> messageQuery) {
+        if (queryFilter != null) {
+            messageQuery.setFirstResult(queryFilter.getPageNumber());
+            messageQuery.setMaxResults(queryFilter.getPageSize());
         }
     }
 
-    private void addHeaderPredicates(String headerParameterName, String headerParameterValue,
+    private void addHeaderPredicates(MessageFilter filter,
                     CriteriaBuilder criteriaBuilder, Root<Message> message) {
-        if (StringUtils.hasText(headerParameterName)
-                        && StringUtils.hasText(headerParameterValue)) {
-            Join<Message, MessageHeader> join = message.join("headers", JoinType.INNER);
-            join.on(criteriaBuilder.equal(join.get("name"), headerParameterName),
-                            criteriaBuilder.like(join.get("value"),
-                                            headerParameterValue));
+        if (StringUtils.hasText(filter.getHeaderFilter())) {
+            joinHeader(criteriaBuilder, filter.getHeaderFilter(), message, (root)->root.join("headers", JoinType.INNER));
         }
     }
-
-    private void addPayloadPredicate(String containingText, CriteriaBuilder criteriaBuilder,
+    
+    private void addPayloadPredicate(MessageFilter filter, CriteriaBuilder criteriaBuilder,
                     Root<Message> message, List<Predicate> predicates) {
-        if (StringUtils.hasText(containingText)) {
+        if (StringUtils.hasText(filter.getContainingText())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.upper(message.get("payload")),
-                            containingText.toUpperCase()));
+                            filter.getContainingText().toUpperCase()));
         }
     }
 
-    private void addDatePredicates(Date fromDate, Date toDate, CriteriaBuilder criteriaBuilder,
+    private void addDatePredicates(MessageFilter filter, CriteriaBuilder criteriaBuilder,
                     Root<Message> message, List<Predicate> predicates) {
-        if (fromDate != null) {
+        if (filter.getFromDate() != null) {
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(message.get("date"),
-                            fromDate));
+                            filter.getFromDate()));
         }
 
-        if (toDate != null) {
+        if (filter.getToDate() != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(message.get("date"),
-                            toDate));
+                            filter.getToDate()));
         }
     }
-
-    private void addDirectionPredicate(Collection<Direction> directions,
-                    CriteriaBuilder criteriaBuilder, Root<Message> message,
-                    List<Predicate> predicates) {
-        if (!CollectionUtils.isEmpty(directions)) {
-            In<Direction> inDirections = criteriaBuilder.in(message.get("direction"));
-            directions.forEach(inDirections::value);
-            predicates.add(inDirections);
-        }
-    }
-
+ 
 }

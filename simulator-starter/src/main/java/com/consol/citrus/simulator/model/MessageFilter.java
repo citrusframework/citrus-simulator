@@ -16,9 +16,8 @@
 
 package com.consol.citrus.simulator.model;
 
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
 
 /**
  * Filter for filtering {@link Message}s
@@ -32,6 +31,16 @@ public class MessageFilter {
     private Boolean directionInbound;
     private Boolean directionOutbound;
     private String containingText;
-    private String messageHeaderName;
-    private String messageHeaderValue;
+
+    /**
+     * The headerFilter can contain several key/value pairs of
+     * headerNames/headerValues. It must be encoded as follows:<br>
+     * <br>
+     * <b>p1:v1;p2:v2;p3:v3</b><br>
+     * <br>
+     * with p_x being the parameter name and v_x being the parameter value to
+     * filter.
+     */
+    private String headerFilter;
+
 }

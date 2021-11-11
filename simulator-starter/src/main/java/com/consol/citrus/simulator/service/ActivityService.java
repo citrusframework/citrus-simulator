@@ -22,6 +22,7 @@ import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.simulator.model.Message;
 import com.consol.citrus.simulator.model.ScenarioAction;
 import com.consol.citrus.simulator.model.ScenarioExecution;
+import com.consol.citrus.simulator.model.ScenarioExecutionFilter;
 import com.consol.citrus.simulator.model.ScenarioParameter;
 import com.consol.citrus.simulator.repository.ScenarioExecutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ import java.util.*;
 @Service
 @Transactional
 public class ActivityService {
+
+    @Autowired
+    private QueryFilterAdapterFactory queryFilterAdapterFactory;
 
     private final ScenarioExecutionRepository scenarioExecutionRepository;
     private final MessageService messageService;
@@ -89,7 +93,11 @@ public class ActivityService {
         return scenarioExecutionRepository.findByScenarioNameOrderByStartDateDesc(testName);
     }
 
-    public Collection<ScenarioExecution> getScenarioExecutionsByStatus(ScenarioExecution.Status status) {
+    public Collection<ScenarioExecution> getScenarioExecutions(ScenarioExecutionFilter filter) {
+        return scenarioExecutionRepository.find(queryFilterAdapterFactory.getQueryAdapter(filter));
+	}
+
+	public Collection<ScenarioExecution> getScenarioExecutionsByStatus(ScenarioExecution.Status status) {
         return scenarioExecutionRepository.findByStatusOrderByStartDateDesc(status);
     }
 

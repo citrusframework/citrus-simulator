@@ -28,7 +28,7 @@ import java.util.List;
  * JPA repository for {@link ScenarioExecution}
  */
 @Repository
-public interface ScenarioExecutionRepository extends CrudRepository<ScenarioExecution, Long> {
+public interface ScenarioExecutionRepository extends CrudRepository<ScenarioExecution, Long>, ScenarioExecutionRepositoryCustom {
     List<ScenarioExecution> findByScenarioNameOrderByStartDateDesc(String scenarioName);
 
     List<ScenarioExecution> findByStatusOrderByStartDateDesc(ScenarioExecution.Status status);
