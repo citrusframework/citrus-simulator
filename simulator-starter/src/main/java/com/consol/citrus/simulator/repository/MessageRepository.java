@@ -29,8 +29,15 @@ import java.util.List;
  * JPA repository for {@link Message}
  */
 @Repository
-public interface MessageRepository extends CrudRepository<Message, Long> {
+public interface MessageRepository extends CrudRepository<Message, Long>, MessageRepositoryCustom {
+	
+	@Deprecated
     List<Message> findByDateBetweenAndDirectionIn(Date fromDate, Date toDate, Collection<Message.Direction> directions, Pageable pageable);
 
+	@Deprecated
     List<Message> findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(Date fromDate, Date toDate, Collection<Message.Direction> directions, String containingText, Pageable pageable);
+	
+	List<Message> findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(Date fromDate,
+            Date toDate, Collection<Message.Direction> directions, String containingText,
+            String headerParameterName, String headerParameterValue, Pageable pageable);
 }

@@ -76,7 +76,7 @@ public class MessageService {
         return messageRepository.findById(id).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to find message for id %s", id)));
     }
 
-    public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
+	public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
         Date calcFromDate = Optional.ofNullable(filter.getFromDate()).orElse(startOfDay());
         Date calcToDate = Optional.ofNullable(filter.getFromDate()).orElse(endOfDay());
         Integer calcPage = Optional.ofNullable(filter.getPageNumber()).orElse(0);
@@ -87,28 +87,19 @@ public class MessageService {
         Collection<Message.Direction> includeDirections = new TreeSet<>();
 
         if (includeInbound) {
-            includeDirections.add(Message.Direction.INBOUND);
+        	includeDirections.add(Message.Direction.INBOUND);
         }
 
         if (includeOutbound) {
-            includeDirections.add(Message.Direction.OUTBOUND);
+        	includeDirections.add(Message.Direction.OUTBOUND);
         }
 
         Pageable pageable = PageRequest.of(calcPage, calcSize, Sort.Direction.DESC, "date");
 
-        if (StringUtils.isNotEmpty(filter.getContainingText())) {
-            return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,
-                    calcToDate,
-                    includeDirections,
-                    filter.getContainingText(),
-                    pageable);
-        } else {
-            return messageRepository.findByDateBetweenAndDirectionIn(calcFromDate,
-                    calcToDate,
-                    includeDirections,
-                    pageable);
-        }
-    }
+        return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate, calcToDate,
+                includeDirections, filter.getContainingText(), filter.getMessageHeaderName(),
+                filter.getMessageHeaderValue(), pageable);
+	}
 
     public void clearMessages() {
         messageRepository.deleteAll();

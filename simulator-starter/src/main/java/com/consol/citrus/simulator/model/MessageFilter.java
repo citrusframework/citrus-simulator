@@ -32,4 +32,6 @@ public class MessageFilter {
     private Boolean directionInbound;
     private Boolean directionOutbound;
     private String containingText;
+    private String messageHeaderName;
+    private String messageHeaderValue;
 }

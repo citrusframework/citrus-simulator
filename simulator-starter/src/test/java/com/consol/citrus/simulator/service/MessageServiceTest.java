@@ -17,6 +17,7 @@
 package com.consol.citrus.simulator.service;
 
 import com.consol.citrus.simulator.model.Message;
+import com.consol.citrus.simulator.model.Message.Direction;
 import com.consol.citrus.simulator.model.MessageFilter;
 import com.consol.citrus.simulator.repository.MessageRepository;
 import org.mockito.ArgumentCaptor;
@@ -28,10 +29,15 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.notNull;
@@ -104,6 +110,91 @@ public class MessageServiceTest {
 
         assertPagingMatches(pageNumber, pageSize);
         assertDirectionMatches();
+    }
+    
+    @Test
+    void testFindByHeader() {
+
+        String payload = "This is a test message!";
+        String uid = UUID.randomUUID().toString();
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("h1", uid);
+
+        sut.saveMessage(Direction.INBOUND, payload, UUID.randomUUID().toString(), headers);
+
+        List<Message> result =
+                        messageRepository
+                                        .findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(
+                                                        null, null,
+                                                        Collections.singleton(Direction.INBOUND),
+                                                        null, "h1", uid, null);
+
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(payload, result.get(0).getPayload());
+
+    }
+
+    /**
+     * Passing only one parameter of headerParamName and headerParamValue should not perform any filtering
+     */
+    @Test
+    void testFindByHeaderInsufficientParams() {
+
+        String payload = "This is a test message!";
+        String uid = UUID.randomUUID().toString();
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("h1", uid);
+
+        sut.saveMessage(Direction.INBOUND, payload, UUID.randomUUID().toString(), headers);
+
+        // If headerParamName or headerParamValue is not supported no filtering should be performed
+        List<Message> result = messageRepository
+                        .findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(null, null,
+                                        Collections.singleton(Direction.INBOUND), null, "h1", null,
+                                        null);
+
+        // No filter thus all messages should be returned. Depending on the number of executed tests or savedMessages this should be a value > 0.
+        Assert.assertTrue(result.size() > 0);
+
+        result = messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(
+                        null, null, Collections.singleton(Direction.INBOUND), null, null, uid,
+                        null);
+
+        // No filter thus all messages should be returned. Depending on the number of executed tests or savedMessages this should be a value > 0.
+        Assert.assertTrue(result.size() > 0);
+
+    }
+
+
+    @Test
+    void testFindByAllParams() {
+
+        String payload = "This is a test message!";
+        String uid = UUID.randomUUID().toString();
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("h1", uid);
+
+        Date startSavingDate = Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC));
+
+        sut.saveMessage(Direction.INBOUND, payload,
+                        UUID.randomUUID().toString(), headers);
+
+        Date endSavingDate = Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC));
+
+        // Filter by all valid
+        List<Message> result = messageRepository
+                        .findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(
+                                        startSavingDate, endSavingDate,
+                                        Collections.singleton(Direction.INBOUND), payload, "h1",
+                                        uid, null);
+
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(payload, result.get(0).getPayload());
+
+
     }
 
     private List<Message> singleResult() {
