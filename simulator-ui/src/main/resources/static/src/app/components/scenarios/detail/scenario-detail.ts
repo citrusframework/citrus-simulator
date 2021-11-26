@@ -42,33 +42,33 @@ export class ScenarioDetailComponent implements OnInit {
 
     getScenario(name: string) {
         this.scenarioService.getScenario(name)
-            .subscribe(
-                scenario => {
+            .subscribe({
+                next: (scenario) => {
                     // TODO MM fix - should not have multiple scenario matching same name
                     this.scenario = scenario[0];
                     if(this.scenario.type == 'STARTER') {
                         this.getScenarioParameters(name);
                     }
                 },
-                error => this.errorMessage = <any>error
-            );
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     getScenarioParameters(name: string) {
         this.scenarioService.getScenarioParameters(name)
-            .subscribe(
-                scenarioParameters => this.scenarioParameters = scenarioParameters,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (scenarioParameters) => this.scenarioParameters = scenarioParameters,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
 
     getScenarioExecutions(name: string) {
         this.activityService.getScenarioExecutionsByScenarioName(name)
-            .subscribe(
-                scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (scenarioExecutions) => this.scenarioExecutions = scenarioExecutions,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     launchScenario() {
@@ -84,12 +84,13 @@ export class ScenarioDetailComponent implements OnInit {
     }
 
     launchScenarioNow() {
-        this.scenarioService.launchScenario(this.scenario.name, this.scenarioParameters).subscribe(
-            executionId => {
-                this.router.navigate(['activity', executionId]);
-            },
-            error => this.errorMessage = <any>error
-        );
+        this.scenarioService.launchScenario(this.scenario.name, this.scenarioParameters)
+            .subscribe({
+                next: (executionId) => {
+                    this.router.navigate(['activity', executionId]);
+                },
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     goBack() {

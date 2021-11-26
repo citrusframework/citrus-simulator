@@ -1,30 +1,28 @@
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-expand-md navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" [routerLink]="['/status']"><img src="assets/images/brand-logo.png"/> <span>Simulator</span></a>
+            <a class="navbar-brand nav-link" [routerLink]="['/status']" style="padding-left: 0"><img src="assets/images/brand-logo.png"/> <span>Simulator</span></a>
         </div>
+        <button class="navbar-toggler nav-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa fa-ellipsis-v"></i>
+        </button>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/status']"><i class="fa fa-pie-chart"></i> Status</a>
+        <div class="collapse navbar-collapse navbar-ex1-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto">
+                <li [routerLinkActive]="['active']" class="nav-item"><a class="nav-link text-white text-center" [routerLink]="['/status']"><i class="fa fa-pie-chart"></i> Status</a>
                 </li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/activity']"><i class="fa fa-cogs"></i> Activity</a>
+                <li [routerLinkActive]="['active']"><a class="nav-link text-white text-center" [routerLink]="['/activity']"><i class="fa fa-cogs"></i> Activity</a>
                 </li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/scenario']"><i class="fa fa-cubes"></i>
+                <li [routerLinkActive]="['active']"><a class="nav-link text-white text-center" [routerLink]="['/scenario']"><i class="fa fa-cubes"></i>
                     Scenarios</a></li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/message']"><i class="fa fa-envelope-o"></i>
+                <li [routerLinkActive]="['active']"><a class="nav-link text-white text-center" [routerLink]="['/message']"><i class="fa fa-envelope-o"></i>
                     Messages</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/about']"><i class="fa fa-info-circle"></i> About</a>
+                <li [routerLinkActive]="['active']"><a class="nav-link text-white text-center" [routerLink]="['/about']" style="min-width: 2em !important;"><i class="fa fa-info-circle"></i> About</a>
                 </li>
             </ul>
+
         </div>
         <!-- /.navbar-collapse -->
     </div>

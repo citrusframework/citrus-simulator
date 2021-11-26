@@ -8,8 +8,10 @@ import {AppInfoService} from "../services/appinfo-service";
 })
 export class AppComponent {
     constructor(private titleService: Title, private appInfoService: AppInfoService) {
-        this.appInfoService.getAppInfo().subscribe(
-            appInfo => this.titleService.setTitle(appInfo.simulator.name),
-            error => console.log(error));
+        this.appInfoService.getAppInfo()
+            .subscribe({
+                next: (appInfo) => this.titleService.setTitle(appInfo.simulator.name),
+                error: (error) => console.error(error)
+            });
     }
 }

@@ -2,10 +2,6 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-    padding-top: 70px
-}
-
 .label-pill {
     float: right;
     border-radius: 1em;
@@ -65,19 +61,19 @@ ul.pagination {
 
 .btn-primary,
 .btn-primary:focus {
-    background-color: #33abde;
-    border-color: #33abde;
+    background-color: #33abde !important;
+    border-color: #33abde !important;
 }
 
 .btn-primary:hover, .btn-primary.active:hover {
-    background-color: #33abde;
-    border-color: #33abde;
+    background-color: #33abde !important;
+    border-color: #33abde !important;
 }
 
 .btn-primary.active,
 .btn-primary.active:focus {
-    background-color: #0096D6;
-    border-color: #0096D6;
+    background-color: #0096D6 !important;
+    border-color: #0096D6 !important;
 }
 
 .btn-return {
@@ -93,6 +89,12 @@ ul.pagination {
 
 .btn-filter:focus, .btn-filter:active:focus, .btn-filter.active:focus, .btn-filter.focus, .btn-filter:active.focus, .btn-filter.active.focus {
     outline: 0;
+    box-shadow: none !important;
+}
+
+.filter {
+    border-radius: 0 !important;
+    height: 100% !important;
 }
 
 .clickable{
@@ -101,4 +103,23 @@ ul.pagination {
 
 tr td {
     font-size: 14px;
+}
+
+.page-link {
+    margin: -1px -1px;
+}
+
+.action-icon {
+    padding: 3px 3px;
+}
+
+.pageSizeCounter {
+    min-width: 4em !important;
+    border-color: #CED4DA !important;
+}
+
+.pageSizeDropDown{
+    border-color: #CED4DA !important;
+    color: black !important;
+    background-color: white !important;
 }

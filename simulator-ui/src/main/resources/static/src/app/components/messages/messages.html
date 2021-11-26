@@ -1,46 +1,49 @@
 <h1 class="page-header"><i class="fa fa-envelope-o"></i> Messages
     <div class="pull-right">
-        <span class="clickable" title="Refresh Messages" (click)="getMessages()"><i class="fa fa-refresh"></i></span>
-        <span class="clickable" title="Clear All Messages" (click)="clearMessages()"><i class="fa fa-recycle"></i></span>
+        <span class="clickable action-icon" title="Refresh Messages" (click)="getMessages()"><i class="fa fa-refresh"></i></span>
+        <span class="clickable action-icon" title="Clear All Messages" (click)="clearMessages()"><i class="fa fa-recycle"></i></span>
     </div>
 </h1>
+
+<hr/>
 
 <div class="input-group">
     <input [(ngModel)]="messageFilter.containingText" (keyup.enter)="getMessages();" type="text" class="form-control"
            placeholder="Filter By Content">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-primary btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
-        <button type="button" class="btn btn-primary btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
     </div>
 </div>
 
 <div class="navigation space-top-30">
     <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" style="min-width: 4em;">{{messageFilter.pageSize}}</button>
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
-        <ul class="dropdown-menu">
-            <li><a name="page_size">Page size</a></li>
+        <button type="button" class="btn btn-default" style="min-width: 4em; border-color: #CED4DA;">{{messageFilter.pageSize}}</button>
+        <button type="button" class="btn btn-secondary dropdown-toggle pageSizeDropDown" data-toggle="dropdown"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+        <ul class="dropdown-menu" aria-labelledby="pageSize">
+            <li><a class="dropdown-item disabled" id="page_size">Page size</a></li>
             <li role="separator" class="divider"></li>
-            <li><a name="page_size_10" (click)="changePageSize(10)" class="clickable">10</a></li>
-            <li><a name="page_size_25" (click)="changePageSize(25)" class="clickable">25</a></li>
-            <li><a name="page_size_50" (click)="changePageSize(50)" class="clickable">50</a></li>
-            <li><a name="page_size_100" (click)="changePageSize(100)" class="clickable">100</a></li>
-            <li><a name="page_size_250" (click)="changePageSize(250)" class="clickable">250</a></li>
-            <li><a name="page_size_500" (click)="changePageSize(500)" class="clickable">500</a></li>
-            <li><a name="page_size_1000" (click)="changePageSize(1000)" class="clickable">1000</a></li>
+            <li><a id="page_size_10" (click)="messageFilter.pageSize = 10" class="clickable dropdown-item">10</a></li>
+            <li><a id="page_size_25" (click)="messageFilter.pageSize = 25" class="clickable dropdown-item">25</a></li>
+            <li><a id="page_size_50" (click)="messageFilter.pageSize = 50" class="clickable dropdown-item">50</a></li>
+            <li><a id="page_size_100" (click)="messageFilter.pageSize = 100" class="clickable dropdown-item">100</a></li>
+            <li><a id="page_size_250" (click)="messageFilter.pageSize = 250" class="clickable dropdown-item">250</a></li>
+            <li><a id="page_size_500" (click)="messageFilter.pageSize = 500" class="clickable dropdown-item">500</a></li>
+            <li><a id="page_size_1000" (click)="messageFilter.pageSize = 1000" class="clickable dropdown-item">1000</a></li>
         </ul>
     </div>
 
-    <nav aria-label="Pages">
+    <nav aria-label="Page navigation" style="display: inline-flex;">
         <ul class="pagination">
-            <li>
-                <a name="prev-step" aria-label="Previous" (click)="prev()" class="clickable">
+            <li class="page-item">
+                <a id="prev-step" aria-label="Previous" (click)="prev()" class="clickable page-link">
                     <span aria-hidden="true"><i class="fa fa-caret-left"></i></span>
                 </a>
             </li>
-            <li><span><b>{{(messageFilter.pageNumber + 1)}}</b></span></li>
+            <li class="page-item"><span><b class="page-link">{{(messageFilter.pageNumber + 1)}}</b></span></li>
             <li>
-                <a name="next-step" aria-label="Next" (click)="next()" class="clickable">
+                <a id="next-step" aria-label="Next" (click)="next()" class="clickable page-link">
                     <span aria-hidden="true"><i class="fa fa-caret-right"></i> </span>
                 </a>
             </li>

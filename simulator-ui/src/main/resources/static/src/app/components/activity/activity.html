@@ -1,46 +1,49 @@
 <h1 class="page-header"><i class="fa fa-cogs"></i> Activity
     <div class="pull-right">
-        <span class="clickable" title="Refresh Activity" (click)="getActivity()"><i class="fa fa-refresh"></i></span>
-        <span class="clickable" title="Clear Activity" (click)="clearActivity()"><i class="fa fa-recycle"></i></span>
+        <span class="clickable action-icon" title="Refresh Activity" (click)="getActivity()"><i class="fa fa-refresh"></i></span>
+        <span class="clickable action-icon" title="Clear Activity" (click)="clearActivity()"><i class="fa fa-recycle"></i></span>
     </div>
 </h1>
+
+<hr/>
 
 <div class="input-group">
     <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-primary btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
-        <button type="button" class="btn btn-primary btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
-        <button type="button" class="btn btn-primary btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
     </div>
 </div>
 
 <div class="navigation space-top-30">
     <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" style="min-width: 4em;">{{pageSize}}</button>
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> </button>
-        <ul class="dropdown-menu">
-            <li><a name="page_size">Page size</a></li>
+        <button type="button" class="btn btn-default pageSizeCounter">{{pageSize}}</button>
+        <button type="button" class="btn btn-secondary pageSizeDropDown dropdown-toggle" data-toggle="dropdown"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+        <ul class="dropdown-menu" aria-labelledby="pageSize">
+            <li><a class="dropdown-item disabled" id="page_size">Page size</a></li>
             <li role="separator" class="divider"></li>
-            <li><a name="page_size_10" (click)="pageSize = 10" class="clickable">10</a></li>
-            <li><a name="page_size_25" (click)="pageSize = 25" class="clickable">25</a></li>
-            <li><a name="page_size_50" (click)="pageSize = 50" class="clickable">50</a></li>
-            <li><a name="page_size_100" (click)="pageSize = 100" class="clickable">100</a></li>
-            <li><a name="page_size_250" (click)="pageSize = 250" class="clickable">250</a></li>
-            <li><a name="page_size_500" (click)="pageSize = 500" class="clickable">500</a></li>
-            <li><a name="page_size_1000" (click)="pageSize = 1000" class="clickable">1000</a></li>
+            <li><a id="page_size_10" (click)="pageSize = 10" class="clickable dropdown-item">10</a></li>
+            <li><a id="page_size_25" (click)="pageSize = 25" class="clickable dropdown-item">25</a></li>
+            <li><a id="page_size_50" (click)="pageSize = 50" class="clickable dropdown-item">50</a></li>
+            <li><a id="page_size_100" (click)="pageSize = 100" class="clickable dropdown-item">100</a></li>
+            <li><a id="page_size_250" (click)="pageSize = 250" class="clickable dropdown-item">250</a></li>
+            <li><a id="page_size_500" (click)="pageSize = 500" class="clickable dropdown-item">500</a></li>
+            <li><a id="page_size_1000" (click)="pageSize = 1000" class="clickable dropdown-item">1000</a></li>
         </ul>
     </div>
 
-    <nav aria-label="Pages">
+    <nav aria-label="Page navigation" style="display: inline-flex;">
         <ul class="pagination">
-            <li>
-                <a name="prev-step" aria-label="Previous" (click)="prev()" class="clickable">
+            <li class="page-item">
+                <a id="prev-step" aria-label="Previous" (click)="prev()" class="clickable page-link">
                     <span aria-hidden="true"><i class="fa fa-caret-left"></i></span>
                 </a>
             </li>
-            <li><span><b>{{(page + 1)}}</b></span></li>
+            <li class="page-item"><span><b class="page-link">{{(page + 1)}}</b></span></li>
             <li>
-                <a name="next-step" aria-label="Next" (click)="next()" class="clickable">
+                <a id="next-step" aria-label="Next" (click)="next()" class="clickable page-link">
                     <span aria-hidden="true"><i class="fa fa-caret-right"></i> </span>
                 </a>
             </li>

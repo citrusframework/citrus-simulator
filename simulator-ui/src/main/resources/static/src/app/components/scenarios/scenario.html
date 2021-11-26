@@ -1,12 +1,15 @@
 <h1 class="page-header"><i class="fa fa-cubes"></i> Scenarios</h1>
 
+<hr/>
+
 <div class="input-group">
     <input [(ngModel)]="inputValue" type="text" class="form-control" placeholder="Filter By Name">
     <div class="input-group-btn">
-        <button type="button" class="btn btn-primary btn-filter {{starterState}}" (click)="toggleStarter()"><i [class]="starterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Starter</button>
-        <button type="button" class="btn btn-primary btn-filter {{nonStarterState}}" (click)="toggleNonStarter()"><i [class]="nonStarterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Non-Starter</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{starterState}}" (click)="toggleStarter()"><i [class]="starterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Starter</button>
+        <button type="button" class="btn btn-primary filter btn-filter {{nonStarterState}}" (click)="toggleNonStarter()"><i [class]="nonStarterState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Non-Starter</button>
     </div>
 </div>
+
 
 <div class="table-responsive space-top-30">
     <table class="table table-bordered table-hover">

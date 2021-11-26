@@ -29,10 +29,10 @@ export class MessageDetailComponent implements OnInit {
 
     getMessageById(id: number) {
         this.messageService.getMessageById(id)
-            .subscribe(
-                message => this.message = message,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (message) => this.message = message,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     goBack() {

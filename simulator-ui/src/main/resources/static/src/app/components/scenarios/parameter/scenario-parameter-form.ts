@@ -35,12 +35,13 @@ export class ScenarioParameterFormComponent implements OnChanges, OnInit {
 
     onSubmit() {
         this.scenarioParameters.forEach(scenarioParameter => this.updateValue(scenarioParameter));
-        this.scenarioService.launchScenario(this.scenario.name, this.scenarioParameters).subscribe(
-            executionId => {
-                this.router.navigate(['activity', executionId]);
-            },
-            error => this.errorMessage = <any>error
-        );
+        this.scenarioService.launchScenario(this.scenario.name, this.scenarioParameters)
+            .subscribe({
+                next: (executionId) => {
+                    this.router.navigate(['activity', executionId]);
+                },
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     private renderForm() {

@@ -11,6 +11,7 @@ import {MessageDetailComponent} from "./components/messages/detail/message-detai
 import {AboutComponent} from "./components/about/about";
 import {LocationStrategy, HashLocationStrategy} from "@angular/common";
 import {environment} from "../environments/environment";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 const routes: Routes = [
     {path: '', pathMatch: 'full', redirectTo: '/status'},
@@ -42,6 +43,7 @@ const routes: Routes = [
 
 @NgModule({
     imports: [
+        FontAwesomeModule,
         RouterModule.forRoot(routes,  { enableTracing: environment.traceRouting })
     ],
     exports: [RouterModule],

@@ -17,6 +17,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
     inboundState: string = 'active';
     outboundState: string = 'active';
 
+    pageSize = 25;
+    page = 0;
+
     autoRefreshId: number;
 
     constructor(private messageService: MessageService) {

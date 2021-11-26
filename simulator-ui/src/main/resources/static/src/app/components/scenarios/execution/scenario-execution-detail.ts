@@ -29,10 +29,10 @@ export class ScenarioExecutionDetailComponent implements OnInit {
 
     getScenarioExecutionsById(id: number) {
         this.activityService.getScenarioExecutionById(id)
-            .subscribe(
-                scenarioExecution => this.scenarioExecution = scenarioExecution,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (scenarioExecution) => this.scenarioExecution = scenarioExecution,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     goBack() {

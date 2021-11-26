@@ -26,14 +26,7 @@
     text-shadow: none;
 }
 
-.navbar .nav .active > a, .navbar .nav .active > a:hover, .navbar .nav .active > a:focus {
-    color: #ffffff;
-    background-color: rgba(255,255,255,0.2);
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-
-.navbar .nav > li > a.router-link-active, .navbar .nav > li > a.router-link-active:hover, .navbar .nav > li > a.router-link-active:focus {
+.active {
     color: #ffffff;
     background-color: rgba(255,255,255,0.2);
     -webkit-box-shadow: none;
@@ -43,4 +36,11 @@
 .navbar .nav > li > a:hover {
     color: #ffffff;
     background-color: rgba(255,255,255,0.2);
+}
+
+.nav-toggler, .nav-toggler:focus {
+    background-color: transparent;
+    font-size: 1.3rem;
+    color: white;
+    box-shadow: 0 0 0 0;
 }

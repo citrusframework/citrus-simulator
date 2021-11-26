@@ -39,26 +39,26 @@ export class StatusComponent implements OnInit, OnDestroy {
 
     getSimulatorInfo() {
         this.appInfoService.getAppInfo()
-            .subscribe(
-                appInfo => this.simulatorInfo = appInfo.simulator,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (appInfo) => this.simulatorInfo = appInfo.simulator,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     getSummary() {
         this.summaryService.getSummary()
-            .subscribe(
-                summary => this.summary = summary,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (summary) => this.summary = summary,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     getActive() {
         this.summaryService.getCountActiveScenarios()
-            .subscribe(
-                active => this.active = active || 0,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (active) => this.active = active || 0,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     onSelect(status: string) {
@@ -67,10 +67,10 @@ export class StatusComponent implements OnInit, OnDestroy {
 
     clearStatus() {
         this.summaryService.resetSummary()
-            .subscribe(
-                summary => this.summary = summary,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (summary) => this.summary = summary,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     refreshStatus() {

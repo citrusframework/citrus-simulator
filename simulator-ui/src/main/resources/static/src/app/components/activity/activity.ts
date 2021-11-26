@@ -59,17 +59,18 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
 
     getActivity() {
         this.activityService.getScenarioExecutions(this.page, this.pageSize)
-            .subscribe(
-                scenarioExecutions => this.scenarioExecutions = scenarioExecutions,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (scenarioExecutions) => this.scenarioExecutions = scenarioExecutions,
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     clearActivity() {
-        this.activityService.clearScenarioExecutions().subscribe(
-            success => this.getActivity(),
-            error => this.errorMessage = <any>error
-        );
+        this.activityService.clearScenarioExecutions()
+            .subscribe({
+                next: (success) => this.getActivity(),
+                error: (error) => this.errorMessage = <any>error
+            });
     }
 
     prev() {
