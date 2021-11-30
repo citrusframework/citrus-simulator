@@ -15,31 +15,16 @@
 # limitations under the License.
 # ---------------------------------------------------------------------------
 
-name: build_jdk11
+name: sonar
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '**.adoc'
-      - '**.md'
-      - 'KEYS'
-      - 'LICENSE'
-      - 'NOTICE'
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.adoc'
-      - '**.md'
-      - 'KEYS'
-      - 'LICENSE'
-      - 'NOTICE'
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
 jobs:
   build:
     runs-on: ubuntu-20.04
-    env:
-      BUILD_OPTS: '--no-transfer-progress'
+    if: github.ref == 'refs/heads/main' && github.repository == 'citrusframework/citrus-simulator'
+
     steps:
       - name: Set up JDK 11
         uses: AdoptOpenJDK/install-jdk@v1
@@ -57,9 +42,14 @@ jobs:
         run: |
           java -version
           ./mvnw -version
-      - name: Build Citrus-Simulator
+      - name: Analyze Citrus-Simulator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./mvnw --batch-mode install ${BUILD_OPTS}
-      - name: Verify Samples
-        run: |
-          ./mvnw --batch-mode -f simulator-samples/pom.xml verify ${BUILD_OPTS}
+          ./mvnw --batch-mode org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar \
+            -q \
+            -Dsonar.projectKey=citrus-simulator \
+            -Dsonar.organization=citrusframework \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
