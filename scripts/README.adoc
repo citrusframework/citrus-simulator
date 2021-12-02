@@ -189,7 +189,7 @@ This credential needs to be added to either your `~/.m2/settings.xml` or you can
 The credential needs to be added to the server with the id `sonatype-nexus-staging`.
 
 You have to perform the release from a locally checked out project repository, which can be either checkout from a branch like `1.0.x` for a
-patch release or directly from `master`.
+patch release or directly from `main`.
 It is highly recommended to run the release directly from a freshly cloned directory:
 
 [source,bash,indent=0,subs="verbatim,quotes"]
@@ -203,7 +203,7 @@ git clone --depth=1 https://github.com/citrusframework/citrus-simulator.git
 # Jump into the directory
 cd citrus-simulator
 
-# Switch to the target branch if needed (or stay on master)
+# Switch to the target branch if needed (or stay on main)
 git fetch --depth 1 origin 1.0.x:1.0.x
 git checkout 1.0.x
 
