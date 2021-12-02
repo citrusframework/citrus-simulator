@@ -35,7 +35,7 @@
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
-    
+
     <xerces.version>2.12.1</xerces.version>
   </properties>
 
@@ -144,7 +144,7 @@
         <artifactId>ant</artifactId>
         <version>1.10.11</version>
       </dependency>
-      
+
       <!-- Citrus Simulator -->
       <dependency>
         <groupId>com.consol.citrus</groupId>
@@ -431,9 +431,15 @@
           <configuration>
             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
             <serverId>sonatype-nexus-staging</serverId>
+            <stagingProgressTimeoutMinutes>60</stagingProgressTimeoutMinutes>
+            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
           </configuration>
         </plugin>
-
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>

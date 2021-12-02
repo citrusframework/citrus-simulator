@@ -1,0 +1,33 @@
+= Citrus Simulator Documentation
+:imagesdir: reference/html/images
+
+image::citrus-logo-small.png[citrus-logo]
+
+Citrus simulator provides online and offline documentation as HTML and PDF format.
+
+In case you miss something in our documentation please tell us. Also in case you discover something wrong or unclear please do not
+hesitate to contact us. Find below the reference documentation for the latest Citrus simulator releases.
+
+[cols="<,<,<"]
+|===
+|Version |HTML |PDF
+
+|Latest	|link:/citrus-simulator/reference/html/index.html[HTML] |link:/citrus-simulator/reference/pdf/citrus-reference.pdf[PDF]
+|2.0.0-SNAPSHOT	|link:/citrus-simulator/reference/2.0.0-SNAPSHOT/html/index.html[HTML] |link:/citrus-simulator/reference/2.0.0-SNAPSHOT/pdf/citrus-simulator-reference-2.0.0-SNAPSHOT.pdf[PDF]
+|1.1.0	|link:/citrus-simulator/reference/1.1.0/html/index.html[HTML] |link:/citrus-simulator/reference/1.1.0/pdf/citrus-simulator-reference-1.1.0.pdf[PDF]
+|1.0.2	|link:/citrus-simulator/reference/1.0.2/html/index.html[HTML] |link:/citrus-simulator/reference/1.0.2/pdf/citrus-simulator-reference-1.0.2.pdf[PDF]
+|===
+
+== Additional material
+
+* link:https://citrusframework.org/[Citrus Homepage]
+* link:https://citrusframework.org/news[News]
+* link:https://github.com/citrusframework/citrus-simulator[Java Sources]
+
+== Contribute changes
+
+In case you would like to checkout the Citrus code base and build Citrus yourself follow these instructions:
+
+* link:https://citrusframework.org/docs/development[Development quickstart]
+* link:https://citrusframework.org/docs/conventions[Coding conventions]
+* link:https://citrusframework.org/docs/contribute[How to contribute]
