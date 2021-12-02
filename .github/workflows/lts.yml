@@ -39,7 +39,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      BUILD_OPTS: '-Djava.version=17 -Dspring.version=5.3.10 -Dspring.boot.version=2.5.5'
+      BUILD_OPTS: '--no-transfer-progress -Djava.version=17 -Dspring.version=5.3.10 -Dspring.boot.version=2.5.5'
     steps:
       - name: Set up JDK 17
         uses: AdoptOpenJDK/install-jdk@v1
@@ -59,7 +59,7 @@ jobs:
           ./mvnw -version
       - name: Build Citrus-Simulator
         run: |
-          ./mvnw --batch-mode verify -q -Pskip-it ${BUILD_OPTS}
+          ./mvnw --batch-mode install ${BUILD_OPTS}
       - name: Verify Samples
         run: |
           ./mvnw --batch-mode -f simulator-samples/pom.xml verify ${BUILD_OPTS}
