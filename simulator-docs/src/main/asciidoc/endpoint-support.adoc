@@ -57,7 +57,7 @@ More importantly we need to define an inbound endpoint that is used as source fo
 
 [source,java]
 ----
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointComponentAdapter;
+import org.citrusframework.simulator.endpoint.SimulatorEndpointComponentAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

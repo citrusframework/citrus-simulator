@@ -18,7 +18,7 @@
                version="2.0" schemaLocation="HelloService.xsd">
 
   <jaxb:schemaBindings>
-    <jaxb:package name="com.consol.citrus.simulator.sample.model.xml.hello"/>
+    <jaxb:package name="org.citrusframework.simulator.sample.model.xml.hello"/>
   </jaxb:schemaBindings>
 
 </jaxb:bindings>

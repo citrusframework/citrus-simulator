@@ -10,7 +10,7 @@ the scenario is a normal Java class that implements following interface _Simulat
 
 [source,java]
 ----
-package com.consol.citrus.simulator.scenario;
+package org.citrusframework.simulator.scenario;
 
 public interface SimulatorScenario {
     ScenarioEndpoint getScenarioEndpoint();
@@ -23,7 +23,7 @@ public interface SimulatorScenario {
 
 The simulator scenario provides access to the endpoint that has been invoked to start this scenario. In the scenario logic you can receive that request message using this endpoint. Also you can send back a
 response using this scenario endpoint. The scenario logic goes to one of the default run methods depending on what designer or runner Java DSL API you want to use. Fortunately there is an abstract default
-implementation `com.consol.citrus.simulator.scenario.AbstractSimulatorScenario` that you can inherit from.
+implementation `org.citrusframework.simulator.scenario.AbstractSimulatorScenario` that you can inherit from.
 
 So a typical simulator scenario can look like the following code sample.
 

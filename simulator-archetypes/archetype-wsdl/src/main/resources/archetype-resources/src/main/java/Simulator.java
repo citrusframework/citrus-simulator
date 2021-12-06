@@ -19,7 +19,6 @@ package ${package};
 import com.consol.citrus.endpoint.EndpointAdapter;
 import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
 import com.consol.citrus.message.Message;
-import com.consol.citrus.simulator.ws.*;
 import com.consol.citrus.ws.message.SoapFault;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

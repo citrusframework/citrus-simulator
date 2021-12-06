@@ -16,8 +16,8 @@
 
 package ${package};
 
-import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
-import com.consol.citrus.simulator.jms.SimulatorJmsConfigurationProperties;
+import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
+import org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

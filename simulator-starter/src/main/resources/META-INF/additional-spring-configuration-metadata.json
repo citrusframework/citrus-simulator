@@ -10,7 +10,7 @@
       "name": "citrus.simulator.configuration.class",
       "type": "java.lang.String",
       "description": "Full qualified class name of additional Spring Java configuration to automatically load beans from.",
-      "defaultValue": "com.consol.citrus.simulator.SimulatorConfig"
+      "defaultValue": "org.citrusframework.simulator.SimulatorConfig"
     },
     {
       "name": "citrus.simulator.rest.swagger.enabled",

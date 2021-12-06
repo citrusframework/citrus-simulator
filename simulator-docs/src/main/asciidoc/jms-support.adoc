@@ -124,7 +124,7 @@ This is the simplest way to customize the simulator JMS support. We can also use
 
 [source,java]
 ----
-import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
+import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -255,7 +255,7 @@ The synchronous JMS communication needs to be enabled on the JMS simulator adapt
 
 [source,java]
 ----
-import com.consol.citrus.simulator.jms.SimulatorJmsAdapter;
+import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

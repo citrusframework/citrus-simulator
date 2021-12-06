@@ -18,9 +18,9 @@ package ${package};
 
 import com.consol.citrus.endpoint.Endpoint;
 import com.consol.citrus.mail.server.MailServer;
-import com.consol.citrus.simulator.endpoint.SimulatorEndpointComponentAdapter;
-import com.consol.citrus.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
-import com.consol.citrus.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.endpoint.SimulatorEndpointComponentAdapter;
+import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
+import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
