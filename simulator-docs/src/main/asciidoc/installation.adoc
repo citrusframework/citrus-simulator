@@ -138,7 +138,7 @@ See the following sample Maven project POM file that defines the project sources
     <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>2.0.0-SNAPSHOT</citrus.simulator.version>
+    <citrus.simulator.version>2.1.0-SNAPSHOT</citrus.simulator.version>
     <spring.boot.version>2.5.4</spring.boot.version>
   </properties>
 
