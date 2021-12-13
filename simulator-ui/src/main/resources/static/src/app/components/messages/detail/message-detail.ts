@@ -31,7 +31,7 @@ export class MessageDetailComponent implements OnInit {
         this.messageService.getMessageById(id)
             .subscribe({
                 next: (message) => this.message = message,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 

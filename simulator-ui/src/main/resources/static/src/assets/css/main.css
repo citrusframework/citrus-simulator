@@ -123,3 +123,23 @@ tr td {
     color: black !important;
     background-color: white !important;
 }
+
+.font {
+    font-size: 20px;
+    color: gray;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.padding-top {
+    padding-top: 25px;
+}
+
+.text {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}

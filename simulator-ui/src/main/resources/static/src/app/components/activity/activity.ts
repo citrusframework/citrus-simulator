@@ -61,7 +61,7 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
         this.activityService.getScenarioExecutions(this.page, this.pageSize)
             .subscribe({
                 next: (scenarioExecutions) => this.scenarioExecutions = scenarioExecutions,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -69,7 +69,7 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
         this.activityService.clearScenarioExecutions()
             .subscribe({
                 next: (success) => this.getActivity(),
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 

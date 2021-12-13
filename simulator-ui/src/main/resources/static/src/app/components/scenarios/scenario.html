@@ -10,7 +10,6 @@
     </div>
 </div>
 
-
 <div class="table-responsive space-top-30">
     <table class="table table-bordered table-hover">
         <thead>
@@ -23,7 +22,7 @@
         <tr class="scenario" *ngFor="let scenario of (scenarios | scenarioFilter : inputValue:includeStarter:includeNonStarter)">
             <td class="scenario" (click)="onSelect(scenario)">{{scenario.name}}</td>
             <td>
-                <button *ngIf="scenario.type.indexOf('STARTER') > -1" style="padding: 0px 10px" class="btn btn-sm btn-success" (click)="launchScenario(scenario)" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch </button>
+                <button *ngIf="scenario.type.indexOf('STARTER') > -1" class="btn btn-sm btn-success padding" (click)="launchScenario(scenario)" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch </button>
             </td>
         </tr>
         <tr class="no-scenarios">

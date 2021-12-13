@@ -50,7 +50,7 @@ export class ScenarioDetailComponent implements OnInit {
                         this.getScenarioParameters(name);
                     }
                 },
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -58,7 +58,7 @@ export class ScenarioDetailComponent implements OnInit {
         this.scenarioService.getScenarioParameters(name)
             .subscribe({
                 next: (scenarioParameters) => this.scenarioParameters = scenarioParameters,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -67,7 +67,7 @@ export class ScenarioDetailComponent implements OnInit {
         this.activityService.getScenarioExecutionsByScenarioName(name)
             .subscribe({
                 next: (scenarioExecutions) => this.scenarioExecutions = scenarioExecutions,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -89,7 +89,7 @@ export class ScenarioDetailComponent implements OnInit {
                 next: (executionId) => {
                     this.router.navigate(['activity', executionId]);
                 },
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
