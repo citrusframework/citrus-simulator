@@ -40,7 +40,7 @@ export class ScenarioParameterFormComponent implements OnChanges, OnInit {
                 next: (executionId) => {
                     this.router.navigate(['activity', executionId]);
                 },
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 

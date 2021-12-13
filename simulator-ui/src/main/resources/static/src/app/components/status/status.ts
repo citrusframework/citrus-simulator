@@ -41,7 +41,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this.appInfoService.getAppInfo()
             .subscribe({
                 next: (appInfo) => this.simulatorInfo = appInfo.simulator,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -49,7 +49,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this.summaryService.getSummary()
             .subscribe({
                 next: (summary) => this.summary = summary,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -57,7 +57,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this.summaryService.getCountActiveScenarios()
             .subscribe({
                 next: (active) => this.active = active || 0,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -69,7 +69,7 @@ export class StatusComponent implements OnInit, OnDestroy {
         this.summaryService.resetSummary()
             .subscribe({
                 next: (summary) => this.summary = summary,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 

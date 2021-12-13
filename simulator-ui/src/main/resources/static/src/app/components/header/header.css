@@ -44,3 +44,7 @@
     color: white;
     box-shadow: 0 0 0 0;
 }
+
+.padding-left {
+    padding-left: 0;
+}

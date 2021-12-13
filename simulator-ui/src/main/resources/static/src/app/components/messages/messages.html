@@ -18,7 +18,7 @@
 
 <div class="navigation space-top-30">
     <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default" style="min-width: 4em; border-color: #CED4DA;">{{messageFilter.pageSize}}</button>
+        <button type="button" class="btn btn-default width">{{messageFilter.pageSize}}</button>
         <button type="button" class="btn btn-secondary dropdown-toggle pageSizeDropDown" data-toggle="dropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
         <ul class="dropdown-menu" aria-labelledby="pageSize">
@@ -34,7 +34,7 @@
         </ul>
     </div>
 
-    <nav aria-label="Page navigation" style="display: inline-flex;">
+    <nav aria-label="Page navigation" class="d-inline-flex">
         <ul class="pagination">
             <li class="page-item">
                 <a id="prev-step" aria-label="Previous" (click)="prev()" class="clickable page-link">

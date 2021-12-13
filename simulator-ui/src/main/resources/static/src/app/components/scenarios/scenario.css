@@ -17,3 +17,6 @@ tr.scenario + tr.no-scenarios {
 .panel-heading div span{
     margin-left:5px;
 }
+.padding {
+    padding: 0 10px;
+}

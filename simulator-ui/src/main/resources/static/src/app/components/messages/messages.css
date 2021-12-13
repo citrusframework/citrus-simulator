@@ -6,3 +6,8 @@
 .panel-heading div span{
     margin-left:5px;
 }
+
+.width {
+    min-width: 4em;
+    border-color: #CED4DA;
+}

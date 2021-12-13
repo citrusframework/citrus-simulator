@@ -31,7 +31,7 @@ export class ScenarioExecutionDetailComponent implements OnInit {
         this.activityService.getScenarioExecutionById(id)
             .subscribe({
                 next: (scenarioExecution) => this.scenarioExecution = scenarioExecution,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 

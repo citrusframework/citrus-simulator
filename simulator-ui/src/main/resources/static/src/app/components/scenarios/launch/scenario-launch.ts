@@ -32,7 +32,7 @@ export class ScenarioLaunchComponent implements OnInit {
         this.scenarioService.getScenario(name)
             .subscribe({
                 next: (scenario) => this.scenario = scenario[0],
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
@@ -40,7 +40,7 @@ export class ScenarioLaunchComponent implements OnInit {
         this.scenarioService.getScenarioParameters(name)
             .subscribe({
                 next: (scenarioParameters) => this.scenarioParameters = scenarioParameters,
-                error: (error) => this.errorMessage = <any>error
+                error: (error) => this.errorMessage = error.toString()
             });
     }
 
