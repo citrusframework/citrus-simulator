@@ -53,7 +53,7 @@ jobs:
         local-file: true
     - name: Prepare Release Environment
       run: |
-        VERSION=${{ steps.metadata.outputs.current-version }}
+        VERSION=v${{ steps.metadata.outputs.current-version }}
         echo "Using VERSION=$VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -68,8 +68,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.VERSION }}
-        release_name: Release ${{ env.VERSION }}
+        release_name: ${{ env.VERSION }}
         body: |
-          Citrus simulator release v${{ env.VERSION }}
+          Citrus simulator release ${{ env.VERSION }}
         draft: false
         prerelease: false
