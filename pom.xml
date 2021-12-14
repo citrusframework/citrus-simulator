@@ -23,7 +23,7 @@
     <spring.ws.version>3.0.10.RELEASE</spring.ws.version>
     <spring.boot.version>2.5.4</spring.boot.version>
     <slf4j.version>1.7.30</slf4j.version>
-
+    <log4j2.version>2.15.0</log4j2.version>
     <logback.classic.version>1.2.3</logback.classic.version>
     <testng.version>7.3.0</testng.version>
     <lombok.version>1.18.20</lombok.version>
@@ -262,6 +262,16 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.classic.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>${log4j2.version}</version>
       </dependency>
 
       <!-- Test scoped -->
