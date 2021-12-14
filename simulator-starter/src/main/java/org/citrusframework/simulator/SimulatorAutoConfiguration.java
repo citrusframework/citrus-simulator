@@ -16,9 +16,15 @@
 
 package org.citrusframework.simulator;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Properties;
+
 import com.consol.citrus.Citrus;
-import com.consol.citrus.CitrusSpringContext;
+import com.consol.citrus.CitrusSpringContextProvider;
 import com.consol.citrus.config.CitrusSpringConfig;
+import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.config.SimulatorImportSelector;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
@@ -26,7 +32,6 @@ import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.repository.RepositoryConfig;
 import org.citrusframework.simulator.scenario.ScenarioBeanNameGenerator;
-import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +39,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.Properties;
 
 /**
  * @author Christoph Deppisch
@@ -100,7 +105,7 @@ public class SimulatorAutoConfiguration {
 
     @Bean
     public Citrus citrus(ApplicationContext applicationContext) {
-        return Citrus.newInstance(CitrusSpringContext.create(applicationContext));
+        return Citrus.newInstance(new CitrusSpringContextProvider(applicationContext));
     }
 
     @Bean
