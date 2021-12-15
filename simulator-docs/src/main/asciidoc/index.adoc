@@ -1,5 +1,6 @@
+[[citrus-simulator]]
 = Citrus Simulator
-Christoph Deppisch;Martin Maher;Georgi Todorov
+Authors: The Citrus Community
 :revnumber: {version}
 :revdate: {localdate}
 :sectanchors:
@@ -17,7 +18,6 @@ Christoph Deppisch;Martin Maher;Georgi Todorov
 
 ifndef::ebook-format[:leveloffset: 1]
 
-*Copyright © 2017 ConSol Software GmbH* +
 *Version: {version}*
 
 image:citrus-logo-small.png[citrus-logo]
