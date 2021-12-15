@@ -39,12 +39,12 @@
     <file>
       <source>${project.build.directory}/generated-docs/index.pdf</source>
       <outputDirectory>reference/${project.docs.version}/pdf</outputDirectory>
-      <destName>citrus-reference-${project.docs.version}.pdf</destName>
+      <destName>citrus-simulator-reference-${project.docs.version}.pdf</destName>
     </file>
     <file>
       <source>${project.build.directory}/generated-docs/index.pdf</source>
       <outputDirectory>reference/pdf</outputDirectory>
-      <destName>citrus-reference.pdf</destName>
+      <destName>citrus-simulator-reference.pdf</destName>
     </file>
   </files>
 </assembly>
