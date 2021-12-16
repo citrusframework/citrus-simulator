@@ -31,10 +31,10 @@ export class ScenarioComponent implements OnInit {
 
     getScenarios() {
         this.scenarioService.getScenarios()
-            .subscribe(
-                scenarios => this.scenarios = scenarios,
-                error => this.errorMessage = <any>error
-            );
+            .subscribe({
+                next: (scenarios) => this.scenarios = scenarios,
+                error: (error) => this.errorMessage = error.message
+            });
     }
 
     onSelect(scenario: Scenario) {
@@ -48,16 +48,16 @@ export class ScenarioComponent implements OnInit {
 
     launchScenario(scenario: Scenario) {
         this.scenarioService.getScenarioParameters(scenario.name)
-            .subscribe(
-                scenarioParameters => {
+            .subscribe({
+                next: (scenarioParameters) => {
                     if (scenarioParameters.length > 0) {
                         this.gotoScenarioLaunch(scenario);
                     } else {
                         this.launchScenarioNow(scenario);
                     }
                 },
-                error => this.errorMessage = <any>error
-            );
+                error: (error) => this.errorMessage = error.message
+            });
     }
 
     gotoScenarioLaunch(scenario: Scenario) {
@@ -65,12 +65,13 @@ export class ScenarioComponent implements OnInit {
     }
 
     launchScenarioNow(scenario: Scenario) {
-        this.scenarioService.launchScenario(scenario.name, []).subscribe(
-            executionId => {
-                this.router.navigate(['activity', executionId]);
-            },
-            error => this.errorMessage = <any>error
-        );
+        this.scenarioService.launchScenario(scenario.name, [])
+            .subscribe({
+                next: (executionId) => {
+                    this.router.navigate(['activity', executionId]);
+                },
+                error: (error) => this.errorMessage = error.message
+            });
     }
 
     toggleStarter() {

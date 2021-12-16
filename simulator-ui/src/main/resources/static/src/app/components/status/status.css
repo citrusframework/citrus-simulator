@@ -33,6 +33,7 @@
     border-style: solid;
     color: #404040;
     background-color: #fff;
+    margin: 0 3px;
 }
 
 .simulator-result span.badge-success:hover {
@@ -57,4 +58,13 @@
 
 .border-info {
     border-color: #5bc0de;
+}
+
+.status-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.status-item {
+    padding: 0 5px 0 5px;
 }

@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Scenario, ScenarioParameter} from "../model/scenario";
 import {ScenarioFilter} from "../model/filter";
 

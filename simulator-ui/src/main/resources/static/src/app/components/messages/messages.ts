@@ -17,6 +17,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
     inboundState: string = 'active';
     outboundState: string = 'active';
 
+    pageSize = 25;
+    page = 0;
+
     autoRefreshId: number;
 
     constructor(private messageService: MessageService) {
@@ -40,14 +43,14 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.messageService.getMessages(this.messageFilter)
             .subscribe(
                 messages => this.messages = messages,
-                error => this.errorMessage = <any>error
+                error => this.errorMessage = error.toString()
             );
     }
 
     clearMessages() {
         this.messageService.clearMessages().subscribe(
             success => this.getMessages(),
-            error => this.errorMessage = <any>error
+            error => this.errorMessage = error.toString()
         );
     }
 
