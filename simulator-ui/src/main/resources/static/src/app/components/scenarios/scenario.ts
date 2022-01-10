@@ -7,14 +7,12 @@ import {ActivityService} from "../../services/activity-service";
 @Component({
     moduleId: module.id,
     templateUrl: 'scenario.html',
-    styleUrls: ['scenario.css']
+    styleUrls: ['scenario.css',  '../../styles/filter-section.css']
 })
 export class ScenarioComponent implements OnInit {
     inputValue: string = '';
-    includeStarter: boolean = true;
-    includeNonStarter: boolean = true;
-    starterState: string = 'active';
-    nonStarterState: string = 'active';
+    starterState: boolean = true;
+    nonStarterState: boolean = true
 
     scenarios: Scenario[];
     selectedScenario: Scenario;
@@ -75,20 +73,10 @@ export class ScenarioComponent implements OnInit {
     }
 
     toggleStarter() {
-        this.includeStarter = !this.includeStarter;
-        if (this.includeStarter) {
-            this.starterState = 'active';
-        } else {
-            this.starterState = '';
-        }
+        this.starterState = !this.starterState
     }
 
     toggleNonStarter() {
-        this.includeNonStarter = !this.includeNonStarter;
-        if (this.includeNonStarter) {
-            this.nonStarterState = 'active';
-        } else {
-            this.nonStarterState = '';
-        }
+        this.nonStarterState = !this.nonStarterState;
     }
 }

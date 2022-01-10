@@ -17,10 +17,10 @@
 package org.citrusframework.simulator.controller;
 
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.citrusframework.simulator.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collection;
 import java.util.Date;
 
@@ -60,4 +60,10 @@ public class ActivityController {
     public ScenarioExecution getScenarioExecution(@PathVariable("id") Long id) {
         return activityService.getScenarioExecutionById(id);
     }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public Collection<ScenarioExecution> getScenarioExecutions(@RequestBody ScenarioExecutionFilter filter) {
+        return activityService.getScenarioExecutions(filter);
+    }
+
 }

@@ -17,27 +17,21 @@
 package org.citrusframework.simulator.service;
 
 import com.consol.citrus.exceptions.CitrusRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageFilter;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.repository.MessageRepository;
-import java.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.TreeSet;
-import javax.transaction.Transactional;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
 /**
  * Service for persisting and retrieving {@link Message} data.
@@ -46,11 +40,14 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class MessageService {
 
+    private QueryFilterAdapterFactory queryFilterAdapterFactory;
+
     private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository, QueryFilterAdapterFactory queryFilterAdapterFactory) {
         this.messageRepository = messageRepository;
+        this.queryFilterAdapterFactory = queryFilterAdapterFactory;
     }
 
     public Message saveMessage(Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers) {
@@ -76,39 +73,9 @@ public class MessageService {
         return messageRepository.findById(id).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to find message for id %s", id)));
     }
 
-    public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
-        Date calcFromDate = Optional.ofNullable(filter.getFromDate()).orElse(startOfDay());
-        Date calcToDate = Optional.ofNullable(filter.getFromDate()).orElse(endOfDay());
-        Integer calcPage = Optional.ofNullable(filter.getPageNumber()).orElse(0);
-        Integer calcSize = Optional.ofNullable(filter.getPageSize()).orElse(25);
-        boolean includeInbound = Optional.ofNullable(filter.getDirectionInbound()).orElse(true);
-        boolean includeOutbound = Optional.ofNullable(filter.getDirectionOutbound()).orElse(true);
-
-        Collection<Message.Direction> includeDirections = new TreeSet<>();
-
-        if (includeInbound) {
-            includeDirections.add(Message.Direction.INBOUND);
-        }
-
-        if (includeOutbound) {
-            includeDirections.add(Message.Direction.OUTBOUND);
-        }
-
-        Pageable pageable = PageRequest.of(calcPage, calcSize, Sort.Direction.DESC, "date");
-
-        if (StringUtils.isNotEmpty(filter.getContainingText())) {
-            return messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(calcFromDate,
-                    calcToDate,
-                    includeDirections,
-                    filter.getContainingText(),
-                    pageable);
-        } else {
-            return messageRepository.findByDateBetweenAndDirectionIn(calcFromDate,
-                    calcToDate,
-                    includeDirections,
-                    pageable);
-        }
-    }
+	public List<Message> getMessagesMatchingFilter(MessageFilter filter) {
+	    return messageRepository.find(queryFilterAdapterFactory.getQueryAdapter(filter));
+	}
 
     public void clearMessages() {
         messageRepository.deleteAll();
@@ -117,14 +84,5 @@ public class MessageService {
     private Date now() {
         return Date.from(LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant());
     }
-
-    private Date startOfDay() {
-        return Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
-    }
-
-    private Date endOfDay() {
-        return Date.from(LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
-    }
-
 
 }
