@@ -7,12 +7,46 @@
 
 <hr/>
 
-<div class="input-group">
-    <input [(ngModel)]="messageFilter.containingText" (keyup.enter)="getMessages();" type="text" class="form-control"
-           placeholder="Filter By Content">
-    <div class="input-group-btn">
-        <button type="button" class="btn btn-primary filter btn-filter {{inboundState}}" (click)="toggleInbound()"><i [class]="inboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
-        <button type="button" class="btn btn-primary filter btn-filter {{outboundState}}" (click)="toggleOutbound()"><i [class]="outboundState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
+<div style="border: 1px solid #ced4da; border-top: 0;">
+    <div class="input-group">
+        <input [(ngModel)]="messageFilter.containingText" (keyup.enter)="getMessages();" type="text" class="form-control filter-input first-input-element"
+               placeholder="Filter By Content">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-primary filter filter-input {{messageFilter.directionInbound}}" (click)="toggleInbound()"><i [class]="messageFilter.directionInbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
+            <button type="button" class="btn btn-primary filter filter-input {{messageFilter.directionOutbound}}" (click)="toggleOutbound()"><i [class]="messageFilter.directionOutbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
+        </div>
+    </div>
+    <input [(ngModel)]="messageFilter.headerFilter" id="headers" type="text" class="form-control filter-input header-filter" placeholder="Filter By Header" data-toggle="tooltip"
+           data-placement="top" title="Use optional key value pairs to filter via the MessageHeaders&#10;Pattern: key1:value1;key2:value2">
+    <div class="date-section">
+        <div class="date-box">
+            <mat-form-field color="primary" appearance="fill">
+                <i *ngIf="inputDateFrom" (click)="resetDateFrom();" class="fa fa-times clear-date clickable"></i>
+                <input #dateFromInput (dateChange)="inputDateFrom = dateFromInput.value; setDateTimeFrom();" matInput [matDatepicker]="dateFrom" placeholder="Date from">
+                <mat-datepicker-toggle matSuffix [for]="dateFrom"></mat-datepicker-toggle>
+                <mat-datepicker #dateFrom></mat-datepicker>
+            </mat-form-field>
+            <div class="time-div flex">
+                <i *ngIf="inputTimeFrom" (click)="resetTimeFrom();" class="fa fa-times clear-time clickable"></i>
+                <input [(ngModel)]="inputTimeFrom" (ngModelChange)="setDateTimeFrom()" matInput class="timepicker" [ngxTimepicker]="timeFrom" readonly placeholder="Time from">
+                <ngx-material-timepicker-toggle class="timepicker-icon" [for]="timeFrom"></ngx-material-timepicker-toggle>
+                <ngx-material-timepicker #timeFrom></ngx-material-timepicker>
+            </div>
+        </div>
+        <div class="date-box">
+            <mat-form-field appearance="fill">
+                <i *ngIf="inputDateTo" (click)="resetDateTo();" class="fa fa-times clear-date clickable"></i>
+                <input #dateToInput (dateChange)="inputDateTo = dateToInput.value; setDateTimeTo();" matInput [matDatepicker]="dateTo" placeholder="Date to">
+                <mat-datepicker-toggle matSuffix [for]="dateTo"></mat-datepicker-toggle>
+                <mat-datepicker #dateTo></mat-datepicker>
+            </mat-form-field>
+            <div class="time-div flex">
+                <i *ngIf="inputTimeTo" (click)="resetTimeTo();" class="fa fa-times clear-time clickable"></i>
+                <input [(ngModel)]="inputTimeTo" (ngModelChange)="setDateTimeTo()" matInput class="timepicker" [ngxTimepicker]="timeTo" readonly placeholder="Time to">
+                <ngx-material-timepicker-toggle class="timepicker-icon" [for]="timeTo"></ngx-material-timepicker-toggle>
+                <ngx-material-timepicker #timeTo></ngx-material-timepicker>
+            </div>
+        </div>
     </div>
 </div>
 

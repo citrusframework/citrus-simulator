@@ -6,14 +6,16 @@
 
 <div class="btn-group">
     <button class="btn btn-default" (click)="goBack()" title="Go Back"><span class="fa fa-arrow-left" aria-hidden="true"></span> Back</button>
-    <button type="button" class="btn btn-primary btn-filter {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
-    <button type="button" class="btn btn-primary btn-filter {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
-    <button type="button" class="btn btn-primary btn-filter {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+    <span class="btn-group" (click)="getScenarioExecutions(scenario?.name)">
+        <button type="button" class="btn btn-primary filter-input {{successState}}" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
+        <button type="button" class="btn btn-primary filter-input {{failedState}}" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
+        <button type="button" class="btn btn-primary filter-input {{activeState}}" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+    </span>
     <button *ngIf="scenario?.type.indexOf('STARTER') > -1" class="btn btn-success" (click)="launchScenario()" title="Launch Scenario"><span class="fa fa-play" aria-hidden="true"></span> Launch</button>
 </div>
 
 <div class="table-responsive space-top-30">
-    <scenario-execution-list [scenarioExecutions]="scenarioExecutions | activityFilter : '' : includeSuccess : includeFailed : includeActive" [hideName]="true"></scenario-execution-list>
+    <scenario-execution-list [scenarioExecutions]="scenarioExecutions" [hideName]="true"></scenario-execution-list>
 </div>
 
 <div *ngIf="errorMessage" class="alert alert-danger" role="alert">

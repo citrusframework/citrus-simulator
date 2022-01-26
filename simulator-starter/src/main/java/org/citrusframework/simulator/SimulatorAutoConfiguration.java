@@ -24,7 +24,6 @@ import java.util.Properties;
 import com.consol.citrus.Citrus;
 import com.consol.citrus.CitrusSpringContextProvider;
 import com.consol.citrus.config.CitrusSpringConfig;
-import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.config.SimulatorImportSelector;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
@@ -32,6 +31,8 @@ import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.repository.RepositoryConfig;
 import org.citrusframework.simulator.scenario.ScenarioBeanNameGenerator;
+import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
+import org.citrusframework.simulator.service.QueryFilterAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,5 +162,10 @@ public class SimulatorAutoConfiguration {
         }
 
         return outboundJsonDataDictionary;
+    }
+    
+    @Bean
+    public QueryFilterAdapterFactory queryFilterAdapterFactory(SimulatorConfigurationProperties cfg) {
+        return new QueryFilterAdapterFactory(cfg);
     }
 }

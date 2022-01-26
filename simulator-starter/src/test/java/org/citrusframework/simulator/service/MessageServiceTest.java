@@ -16,40 +16,45 @@
 
 package org.citrusframework.simulator.service;
 
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageFilter;
 import org.citrusframework.simulator.repository.MessageRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
 public class MessageServiceTest {
+
+    private QueryFilterAdapterFactory queryFilterAdapterFactory = new QueryFilterAdapterFactory(
+            new SimulatorConfigurationProperties());
+
     private MessageRepository messageRepository;
     private ArgumentCaptor<Collection<Message.Direction>> directionsCaptor;
     private ArgumentCaptor<Pageable> pageableCaptor;
 
     private MessageService sut;
+    private ArgumentCaptor<MessageFilter> messageFilterCaptor;
 
-    @BeforeMethod
+    @SuppressWarnings("unchecked")
+    @BeforeEach
     public void init() {
+        messageFilterCaptor = ArgumentCaptor.forClass(MessageFilter.class);
         messageRepository = Mockito.mock(MessageRepository.class);
         directionsCaptor = ArgumentCaptor.forClass(Collection.class);
         pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        sut = new MessageService(messageRepository);
+        sut = new MessageService(messageRepository, queryFilterAdapterFactory);
     }
 
     @AfterMethod
@@ -61,19 +66,13 @@ public class MessageServiceTest {
     public void shouldGetMessagesUsingDefaults() throws Exception {
         MessageFilter filter = new MessageFilter();
 
-        when(messageRepository.findByDateBetweenAndDirectionIn(
-                notNull(),
-                notNull(),
-                directionsCaptor.capture(),
-                pageableCaptor.capture())
-        ).thenReturn(singleResult());
+        when(messageRepository.find(messageFilterCaptor.capture())).thenReturn(singleResult());
 
         assertHasSingleResult(sut.getMessagesMatchingFilter(filter));
 
         assertPagingMatches(0, 25);
-        assertDirectionMatches(Message.Direction.INBOUND, Message.Direction.OUTBOUND);
+        assertDirectionMatches(true, true);
     }
-
 
     @Test
     public void shouldGetMessagesUsingNoDefaults() throws Exception {
@@ -92,18 +91,12 @@ public class MessageServiceTest {
         filter.setDirectionOutbound(false);
         filter.setContainingText(text);
 
-        when(messageRepository.findByDateBetweenAndDirectionInAndPayloadContainingIgnoreCase(
-                eq(dateFrom),
-                eq(dateTo),
-                directionsCaptor.capture(),
-                eq(text),
-                pageableCaptor.capture())
-        ).thenReturn(singleResult());
+        when(messageRepository.find(messageFilterCaptor.capture())).thenReturn(singleResult());
 
         assertHasSingleResult(sut.getMessagesMatchingFilter(filter));
 
         assertPagingMatches(pageNumber, pageSize);
-        assertDirectionMatches();
+        assertDirectionMatches(false, false);
     }
 
     private List<Message> singleResult() {
@@ -115,18 +108,13 @@ public class MessageServiceTest {
     }
 
     private void assertPagingMatches(int pageNumber, int pageSize) {
-        Assert.assertEquals(pageableCaptor.getValue().getPageNumber(), pageNumber);
-        Assert.assertEquals(pageableCaptor.getValue().getPageSize(), pageSize);
-        Assert.assertEquals(pageableCaptor.getValue().getSort().getOrderFor("date").getDirection(), Sort.Direction.DESC);
+        Assert.assertEquals(messageFilterCaptor.getValue().getPageNumber(), (Integer) pageNumber);
+        Assert.assertEquals(messageFilterCaptor.getValue().getPageSize(), (Integer) pageSize);
     }
 
-    private void assertDirectionMatches(Message.Direction... direction) {
-        int expectedSize = direction.length;
-        Assert.assertEquals(directionsCaptor.getValue().size(), expectedSize);
-
-        for (Message.Direction d : direction) {
-            Assert.assertEquals(directionsCaptor.getValue().contains(d), true);
-        }
+    private void assertDirectionMatches(boolean inbound, boolean outbound) {
+        Assert.assertEquals(messageFilterCaptor.getValue().getDirectionInbound(), (Boolean) inbound);
+        Assert.assertEquals(messageFilterCaptor.getValue().getDirectionOutbound(), (Boolean) outbound);
     }
 
 }

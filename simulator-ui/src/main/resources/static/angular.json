@@ -29,10 +29,11 @@
             "styles": [
               "./src/assets/css/main.css",
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/font-awesome/css/font-awesome.min.css"
+              "./node_modules/font-awesome/css/font-awesome.min.css",
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.js"
             ]
           },
           "configurations": {
