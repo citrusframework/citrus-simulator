@@ -65,7 +65,7 @@ public class ValidateIban extends AbstractSimulatorScenario {
             .send(builder -> builder
                     .response(HttpStatus.OK)
                     .payload(JSON_RESPONSE.placeholder())
-                    .contentType(MediaType.APPLICATION_JSON_UTF8.toString()));
+                    .contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     private TestAction validateIban() {
