@@ -36,7 +36,7 @@
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
 
-    <xerces.version>2.12.1</xerces.version>
+    <xerces.version>2.12.2</xerces.version>
   </properties>
 
   <licenses>
