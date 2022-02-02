@@ -82,16 +82,6 @@
       <artifactId>spring-webmvc</artifactId>
     </dependency>
 
-    <!-- Webjars -->
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>jquery</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>bootstrap</artifactId>
-    </dependency>
-
     <!-- Citrus -->
     <dependency>
       <groupId>com.consol.citrus</groupId>
