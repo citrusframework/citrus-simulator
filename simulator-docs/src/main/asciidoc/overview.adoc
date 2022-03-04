@@ -13,7 +13,7 @@ hesitate to contact us. Find below the reference documentation for the latest Ci
 |Version |HTML |PDF
 
 |Latest	|link:/citrus-simulator/reference/html/index.html[HTML] |link:/citrus-simulator/reference/pdf/citrus-simulator-reference.pdf[PDF]
-|2.1.0-SNAPSHOT	|link:/citrus-simulator/reference/2.1.0-SNAPSHOT/html/index.html[HTML] |link:/citrus-simulator/reference/2.1.0-SNAPSHOT/pdf/citrus-simulator-reference-2.1.0-SNAPSHOT.pdf[PDF]
+|2.1.0	|link:/citrus-simulator/reference/2.1.0/html/index.html[HTML] |link:/citrus-simulator/reference/2.1.0/pdf/citrus-simulator-reference-2.1.0.pdf[PDF]
 |2.0.1	|link:/citrus-simulator/reference/2.0.1/html/index.html[HTML] |link:/citrus-simulator/reference/2.0.1/pdf/citrus-simulator-reference-2.0.1.pdf[PDF]
 |2.0.0	|link:/citrus-simulator/reference/2.0.0/html/index.html[HTML] |link:/citrus-simulator/reference/2.0.0/pdf/citrus-simulator-reference-2.0.0.pdf[PDF]
 |1.1.0	|link:/citrus-simulator/reference/1.1.0/html/index.html[HTML] |link:/citrus-simulator/reference/1.1.0/pdf/citrus-simulator-reference-1.1.0.pdf[PDF]
