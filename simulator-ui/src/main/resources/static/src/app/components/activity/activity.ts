@@ -125,14 +125,17 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
 
     toggleSuccess() {
         this.successState = !this.successState;
+        this.getActivities();
     }
 
     toggleFailed() {
         this.failedState = !this.failedState;
+        this.getActivities();
     }
 
     toggleActive() {
         this.activeState = !this.activeState;
+        this.getActivities();
     }
 
     initScenarioExecutionFilter(): ScenarioExecutionFilter {

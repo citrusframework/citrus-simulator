@@ -1,6 +1,6 @@
 .first-input-element {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     border-left: 0;
 }
 .btn:active, .btn.active {
@@ -10,21 +10,20 @@
     box-shadow: none;
 }
 
-.btn-primary,
-.btn-primary:focus {
-    background-color: #33abde !important;
-    border-color: #33abde !important;
+.btn-primary-active{
+    background-color: #31708f !important;
+    border-color: #31708f !important;
+    color: #ffffff !important;
 }
 
 .btn-primary:hover, .btn-primary.active:hover {
-    background-color: #33abde !important;
-    border-color: #33abde !important;
-}
-
-.btn-primary.active,
-.btn-primary.active:focus {
     background-color: #0096D6 !important;
     border-color: #0096D6 !important;
+}
+
+.btn-primary{
+    background-color: #33abde !important;
+    border-color: #33abde !important;
 }
 
 .btn-return {
@@ -119,12 +118,17 @@
     background-color:#31708f;
 }
 
+mat-form-field {
+    min-width: 50px;
+}
+
 ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
     margin-left:0;
 }
 
 ::ng-deep .mat-form-field-wrapper {
     padding-bottom:0;
+    min-width: 50px!important;
 }
 
 ::ng-deep .mat-form-field-underline {

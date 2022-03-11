@@ -88,12 +88,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     setDateTimeFrom(): void {
         if (this.inputDateFrom && this.inputTimeFrom) {
-            /* converts 12h to 24h */
-            let time = moment(this.inputTimeFrom, ["h:mm A"]).format("HH:mm");
-            let date = this.inputDateFrom.split("/");
-            let timeNum = time.split(':').map(Number);
-            /* -1 because the month starts at index 0 */
-            this.messageFilter.fromDate = new Date(date[2], date[0]-1, date[1], timeNum[0], timeNum[1]).toISOString();
+            this.messageFilter.fromDate = this.convertTime(this.inputDateFrom, this.inputTimeFrom)
         } else if (this.inputDateFrom == null && this.inputTimeFrom == null) {
             this.messageFilter.fromDate = null;
             this.getMessages();
@@ -102,16 +97,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     setDateTimeTo(): void {
         if (this.inputDateTo && this.inputTimeTo) {
-            /* converts 12h to 24h */
-            let time = moment(this.inputTimeTo, ["h:mm A"]).format("HH:mm");
-            let date = this.inputDateTo.split("/");
-            let timeNum = time.split(':').map(Number);
-            /* -1 because the month starts at index 0 */
-            this.messageFilter.toDate = new Date(date[2], date[0]-1, date[1], Number(timeNum[0]), Number(timeNum[1])).toISOString();
+            this.messageFilter.toDate = this.convertTime(this.inputDateTo, this.inputTimeTo);
         } else if (this.inputDateTo == null && this.inputTimeTo == null) {
             this.messageFilter.toDate = null;
             this.getMessages();
         }
+    }
+
+    convertTime(date: any, time: any): string {
+        /* converts 12h to 24h */
+        let t = moment(time, ["h:mm A"]).format("HH:mm");
+        let d = date.split("/");
+        let timeNum = t.split(':').map(Number);
+        /* -1 because the month starts at index 0 */
+        return new Date(d[2], d[0]-1, d[1], Number(timeNum[0]), Number(timeNum[1])).toISOString();
     }
 
     toggleInbound() {
