@@ -58,13 +58,12 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
                 .send()
                 .get("/services/rest/bank")
                 .queryParam("sortCode", "12345670")
-                .queryParam("accountNumber", "0006219653")
-        ;
+                .queryParam("accountNumber", "0006219653");
 
         http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(CalculateIbanResponse.builder()
                         .bankAccount(BankAccount.builder()
                                 .iban("DE92123456700006219653")
@@ -87,13 +86,12 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
         http().client(simulatorClient)
                 .send()
                 .get("/services/rest/bank")
-                .queryParam("iban", "DE92123456700006219653")
-        ;
+                .queryParam("iban", "DE92123456700006219653");
 
         http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .payload(ValidateIbanResponse.builder()
                         .bankAccount(BankAccount.builder()
                                 .iban("DE92123456700006219653")
@@ -105,8 +103,7 @@ public class BankServiceSimulatorIT extends TestNGCitrusTestDesigner {
                         )
                         .valid(true)
                         .build().asJson()
-                )
-        ;
+                );
     }
 
     @Configuration

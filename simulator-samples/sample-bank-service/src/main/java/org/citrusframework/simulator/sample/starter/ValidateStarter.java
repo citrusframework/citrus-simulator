@@ -62,7 +62,7 @@ public class ValidateStarter extends AbstractScenarioStarter {
         scenario.http(builder -> builder.client(client)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_UTF8.toString()));
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         scenario.echo("Response received from Validate-IBAN REST Service");
     }

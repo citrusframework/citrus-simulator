@@ -21,7 +21,7 @@
     <citrus.version>3.2.0</citrus.version>
     <spring.version>5.3.16</spring.version>
     <spring.ws.version>3.1.2</spring.ws.version>
-    <spring.boot.version>2.5.10</spring.boot.version>
+    <spring.boot.version>2.6.3</spring.boot.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <logback.classic.version>1.2.10</logback.classic.version>
