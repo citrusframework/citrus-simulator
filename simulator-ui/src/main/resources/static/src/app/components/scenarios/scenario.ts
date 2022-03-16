@@ -73,10 +73,12 @@ export class ScenarioComponent implements OnInit {
     }
 
     toggleStarter() {
-        this.starterState = !this.starterState
+        this.starterState = !this.starterState;
+        this.getScenarios();
     }
 
     toggleNonStarter() {
         this.nonStarterState = !this.nonStarterState;
+        this.getScenarios();
     }
 }

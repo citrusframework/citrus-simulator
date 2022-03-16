@@ -7,15 +7,14 @@ import {Scenario} from "../model/scenario";
 export class ScenarioNamePipe implements PipeTransform {
     transform(scenarios: Scenario[], name: string, starter: boolean, nonStarter: boolean): Scenario[] {
         if (scenarios) {
-            let what = name.toLowerCase();
             return scenarios.filter(scenario => {
                 let type = scenario.type.toLowerCase();
 
-                if (!starter && type.indexOf('starter')) {
+                if (!starter && type == 'starter') {
                     return false;
                 }
 
-                if (!nonStarter && type.indexOf('message_triggered')) {
+                if (!nonStarter && type == 'message_triggered') {
                     return false;
                 }
 

@@ -10,9 +10,12 @@
 <div style="border: 1px solid #ced4da; border-top: 0;">
     <div class="input-group">
         <input [(ngModel)]="scenarioExecutionFilter.scenarioName" id="name" type="text" class="form-control filter-input first-input-element" placeholder="Filter By Name">
-        <button type="button" class="btn btn-primary filter filter-input {{successState}} filterButton" (click)="toggleSuccess()"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
-        <button type="button" class="btn btn-primary filter filter-input {{failedState}} filterButton" (click)="toggleFailed()"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
-        <button type="button" class="btn btn-primary filter filter-input {{activeState}} filterButton" (click)="toggleActive()"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
+        <button type="button" (click)="toggleSuccess()"
+                [class]="successState ? 'btn btn-primary filter filter-input {{successState}}' : 'btn btn-primary-active filter filter-input {{successState}}'"><i [class]="successState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Success</button>
+        <button type="button" (click)="toggleFailed()"
+                [class]="failedState ? 'btn btn-primary filter filter-input {{failedState}}' : 'btn btn-primary-active filter filter-input {{failedState}}'"><i [class]="failedState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Failed</button>
+        <button type="button" (click)="toggleActive()"
+                [class]="activeState ? 'btn btn-primary filter filter-input {{activeState}}' : 'btn btn-primary-active filter filter-input {{activeState}}'"><i [class]="activeState ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Active</button>
     </div>
     <input [(ngModel)]="scenarioExecutionFilter.headerFilter" id="headers" type="text" class="form-control filter-input header-filter" placeholder="Filter By Header" data-toggle="tooltip"
            data-placement="top" title="Use optional key value pairs to filter via the MessageHeaders&#10;Pattern: key1:value1;key2:value2">

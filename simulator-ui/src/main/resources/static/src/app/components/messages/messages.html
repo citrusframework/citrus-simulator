@@ -12,8 +12,10 @@
         <input [(ngModel)]="messageFilter.containingText" (keyup.enter)="getMessages();" type="text" class="form-control filter-input first-input-element"
                placeholder="Filter By Content">
         <div class="input-group-btn">
-            <button type="button" class="btn btn-primary filter filter-input {{messageFilter.directionInbound}}" (click)="toggleInbound()"><i [class]="messageFilter.directionInbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
-            <button type="button" class="btn btn-primary filter filter-input {{messageFilter.directionOutbound}}" (click)="toggleOutbound()"><i [class]="messageFilter.directionOutbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
+            <button type="button" (click)="toggleInbound()"
+                    [class]="messageFilter.directionInbound ? 'btn btn-primary filter filter-input {{messageFilter.directionInbound}}' : 'btn btn-primary-active filter filter-input {{messageFilter.directionInbound}}'"><i [class]="messageFilter.directionInbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Inbound</button>
+            <button type="button" (click)="toggleOutbound()"
+                    [class]="messageFilter.directionOutbound ? 'btn btn-primary filter filter-input {{messageFilter.directionOutbound}}' : 'btn btn-primary-active filter filter-input {{messageFilter.directionOutbound}}'"><i [class]="messageFilter.directionOutbound ? 'fa fa-check' : 'fa fa-eye-slash'"></i> Outbound</button>
         </div>
     </div>
     <input [(ngModel)]="messageFilter.headerFilter" id="headers" type="text" class="form-control filter-input header-filter" placeholder="Filter By Header" data-toggle="tooltip"
@@ -75,7 +77,7 @@
                     <span aria-hidden="true"><i class="fa fa-caret-left"></i></span>
                 </a>
             </li>
-            <li class="page-item"><span><b class="page-link">{{(messageFilter.pageNumber + 1)}}</b></span></li>
+            <li class="page-item"><span><b class="page-link">{{messageFilter.pageNumber + 1}}</b></span></li>
             <li>
                 <a id="next-step" aria-label="Next" (click)="next()" class="clickable page-link">
                     <span aria-hidden="true"><i class="fa fa-caret-right"></i> </span>

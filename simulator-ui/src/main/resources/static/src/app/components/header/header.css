@@ -48,3 +48,7 @@
 .padding-left {
     padding-left: 0;
 }
+
+li:hover {
+    background-color: #33abde;
+}
