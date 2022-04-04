@@ -39,7 +39,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      BUILD_OPTS: '--no-transfer-progress -Djava.version=17 -Dspring.version=5.3.15 -Dspring.boot.version=2.6.3'
+      BUILD_OPTS: '--no-transfer-progress -Djava.version=17'
     steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v2
