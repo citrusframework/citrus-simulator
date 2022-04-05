@@ -19,6 +19,7 @@ package org.citrusframework.simulator.repository;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -29,9 +30,9 @@ import java.util.List;
  */
 @Repository
 public interface ScenarioExecutionRepository extends CrudRepository<ScenarioExecution, Long>, ScenarioExecutionRepositoryCustom {
-    List<ScenarioExecution> findByScenarioNameOrderByStartDateDesc(String scenarioName);
+    List<ScenarioExecution> findByScenarioNameOrderByStartDateDesc(@Param("scenarioName") String scenarioName);
 
-    List<ScenarioExecution> findByStatusOrderByStartDateDesc(ScenarioExecution.Status status);
+    List<ScenarioExecution> findByStatusOrderByStartDateDesc(@Param("status") ScenarioExecution.Status status);
 
-    List<ScenarioExecution> findByStartDateBetweenOrderByStartDateDesc(Date fromDate, Date toDate, Pageable pageable);
+    List<ScenarioExecution> findByStartDateBetweenOrderByStartDateDesc(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate, Pageable pageable);
 }
