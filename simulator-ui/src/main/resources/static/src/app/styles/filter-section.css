@@ -140,15 +140,15 @@ mat-datepicker-toggle {
     color:#31708f!important;
 }
 
-.timepicker {
-    margin-left:25px;
+::ng-deep .timepicker {
+    margin-left:25px !important;
     margin-bottom:auto;
-    margin-top:2px;
     height:100%;
+    margin-top: 0.1em !important;
 }
 
-.timepicker-icon {
-    margin-top:9px;
+::ng-deep .ngx-material-timepicker-toggle{
+    padding-bottom: 0 !important;
 }
 
 .flex {
@@ -182,4 +182,8 @@ mat-datepicker-toggle {
     position: absolute;
     padding-top: 1px;
     padding-left: 6px;
+}
+
+::ng-deep .ngx-material-timepicker-toggle:focus {
+    background-color: rgba(0,0,0,0) !important;
 }

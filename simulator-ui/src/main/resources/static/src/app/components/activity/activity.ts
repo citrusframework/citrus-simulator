@@ -3,8 +3,8 @@ import {ActivatedRoute} from "@angular/router";
 import {ActivityService} from "../../services/activity-service";
 import {ScenarioExecution} from "../../model/scenario";
 import {ScenarioExecutionFilter} from "../../model/filter";
-import * as moment from "moment";
 import {MatInput} from "@angular/material/input";
+import {convertTime} from "../shared/date-time";
 
 @Component({
     moduleId: module.id,
@@ -97,13 +97,8 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
 
     setDateTimeFrom(): void {
         if (this.inputDateFrom && this.inputTimeFrom) {
-            /* converts 12h to 24h */
-            let time = moment(this.inputTimeFrom, ["h:mm A"]).format("HH:mm");
-            let date = this.inputDateFrom.split("/");
-            let timeNum = time.split(':').map(Number);
-            /* -1 because the month starts at index 0 */
-            this.scenarioExecutionFilter.fromDate = new Date(date[2], date[0]-1, date[1], timeNum[0], timeNum[1]).toISOString();
-        } else if (this.inputDateFrom == null && this.inputTimeFrom == null) {
+            this.scenarioExecutionFilter.fromDate = convertTime(this.inputDateFrom, this.inputTimeFrom);
+        } else {
             this.scenarioExecutionFilter.fromDate = null;
             this.getActivities();
         }
@@ -111,13 +106,8 @@ export class ActivityComponent implements OnInit, OnDestroy, AfterViewInit {
 
     setDateTimeTo(): void {
         if (this.inputDateTo && this.inputTimeTo) {
-            /* converts 12h to 24h */
-            let time = moment(this.inputTimeTo, ["h:mm A"]).format("HH:mm");
-            let date = this.inputDateTo.split("/");
-            let timeNum = time.split(':').map(Number);
-            /* -1 because the month starts at index 0 */
-            this.scenarioExecutionFilter.toDate = new Date(date[2], date[0]-1, date[1], Number(timeNum[0]), Number(timeNum[1])).toISOString();
-        } else if (this.inputDateTo == null && this.inputTimeTo == null) {
+            this.scenarioExecutionFilter.toDate = convertTime(this.inputDateTo, this.inputTimeTo);
+        } else {
             this.scenarioExecutionFilter.toDate = null;
             this.getActivities();
         }

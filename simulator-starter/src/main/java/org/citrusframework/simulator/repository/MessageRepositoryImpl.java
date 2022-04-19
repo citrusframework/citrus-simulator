@@ -41,7 +41,7 @@ public class MessageRepositoryImpl extends AbstractRepository implements Message
 
     private void addPagingRestrictions(MessageFilter queryFilter, TypedQuery<Message> messageQuery) {
         if (queryFilter != null) {
-            messageQuery.setFirstResult(queryFilter.getPageNumber());
+            messageQuery.setFirstResult(queryFilter.getPageNumber() * queryFilter.getPageSize());
             messageQuery.setMaxResults(queryFilter.getPageSize());
         }
     }

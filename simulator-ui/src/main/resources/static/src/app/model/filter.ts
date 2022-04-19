@@ -14,8 +14,8 @@ export class ScenarioExecutionFilter {
     constructor(
         public fromDate: string,
         public toDate: string,
-        public pageNumber: number,
-        public pageSize: number,
+        public pageNumber: number = 0,
+        public pageSize: number = 25,
         public headerFilter: string,
         public scenarioName: string,
         public executionStatus: string[],

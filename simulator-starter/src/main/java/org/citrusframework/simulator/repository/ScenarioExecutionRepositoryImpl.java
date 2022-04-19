@@ -41,7 +41,6 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
         TypedQuery<ScenarioExecution> messageQuery = em.createQuery(criteriaQuery.distinct(true));
         addPagingRestrictions(filter, messageQuery);
 
-        
         return messageQuery.getResultList();
     }
 
@@ -85,7 +84,7 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
      * @param query
      */
     private void addPagingRestrictions(ScenarioExecutionFilter filter, TypedQuery<?> query) {
-        query.setFirstResult(filter.getPageNumber());
+        query.setFirstResult(filter.getPageNumber() * filter.getPageSize());
         query.setMaxResults(filter.getPageSize());
     }
 

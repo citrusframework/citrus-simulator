@@ -2,9 +2,8 @@ import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {MessageService} from "../../services/message-service";
 import {Message} from "../../model/scenario";
 import {MessageFilter} from "../../model/filter";
-import * as moment from "moment";
 import {MatInput} from "@angular/material/input";
-import {forEach, toString} from "lodash";
+import {convertTime} from "../shared/date-time";
 
 @Component({
     moduleId: module.id,
@@ -49,14 +48,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
                     this.messages = messages;
                 },
                 error: (error) => this.errorMessage = error.toString(),
-                complete: () => {
-                    // TODO fix date parsing (server): the time of activity scenarios and messages is shifted by one hour.
-                    for (let i = 0; i < this.messages.length; i++) {
-                        let date = new Date(this.messages[i].date);
-                        date.setHours(date.getHours()-1);
-                        this.messages[i].date = Date.parse(date.toISOString());
-                    }
-                }
+                // TODO fix date parsing (server): the time of activity scenarios and messages is shifted by one hour.
             });
     }
 
@@ -88,8 +80,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     setDateTimeFrom(): void {
         if (this.inputDateFrom && this.inputTimeFrom) {
-            this.messageFilter.fromDate = this.convertTime(this.inputDateFrom, this.inputTimeFrom)
-        } else if (this.inputDateFrom == null && this.inputTimeFrom == null) {
+            this.messageFilter.fromDate = convertTime(this.inputDateFrom, this.inputTimeFrom);
+        } else {
             this.messageFilter.fromDate = null;
             this.getMessages();
         }
@@ -97,20 +89,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     setDateTimeTo(): void {
         if (this.inputDateTo && this.inputTimeTo) {
-            this.messageFilter.toDate = this.convertTime(this.inputDateTo, this.inputTimeTo);
-        } else if (this.inputDateTo == null && this.inputTimeTo == null) {
+            this.messageFilter.toDate = convertTime(this.inputDateTo, this.inputTimeTo);
+        } else {
             this.messageFilter.toDate = null;
             this.getMessages();
         }
-    }
-
-    convertTime(date: any, time: any): string {
-        /* converts 12h to 24h */
-        let t = moment(time, ["h:mm A"]).format("HH:mm");
-        let d = date.split("/");
-        let timeNum = t.split(':').map(Number);
-        /* -1 because the month starts at index 0 */
-        return new Date(d[2], d[0]-1, d[1], Number(timeNum[0]), Number(timeNum[1])).toISOString();
     }
 
     toggleInbound() {
