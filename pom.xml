@@ -18,26 +18,25 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <citrus.version>3.2.0</citrus.version>
-    <spring.version>5.3.18</spring.version>
-    <spring.ws.version>3.1.3</spring.ws.version>
-    <spring.boot.version>2.6.6</spring.boot.version>
-    <slf4j.version>1.7.36</slf4j.version>
+    <javadoc.doclint>none</javadoc.doclint>
+
     <log4j2.version>2.17.2</log4j2.version>
     <logback.classic.version>1.2.10</logback.classic.version>
-    <testng.version>7.3.0</testng.version>
     <lombok.version>1.18.20</lombok.version>
+    <citrus.version>3.2.1</citrus.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <spring.boot.version>2.6.7</spring.boot.version>
+    <spring.version>5.3.19</spring.version>
+    <spring.ws.version>3.1.3</spring.ws.version>
+    <testng.version>7.5</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
-
-    <javadoc.doclint>none</javadoc.doclint>
+    <xerces.version>2.12.1</xerces.version>
 
     <node.version>v16.13.1</node.version>
     <npm.version>8.1.2</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
-
-    <xerces.version>2.12.1</xerces.version>
   </properties>
 
   <licenses>
@@ -74,9 +73,29 @@
     <developer>
       <id>christophd</id>
       <name>Christoph Deppisch</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>https://www.redhat.com/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>bbortt</id>
+      <name>Timon Borter</name>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>PostFinance AG</organization>
+      <organizationUrl>https://www.postfinance.ch/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>tschlat</id>
+      <name>Thorsten Schlathoelter</name>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>PostFinance AG</organization>
+      <organizationUrl>https://www.postfinance.ch/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -84,9 +103,9 @@
     <developer>
       <id>maherma</id>
       <name>Martin Maher</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>SwissLife</organization>
+      <organizationUrl>https://www.swisslife.de/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -94,9 +113,9 @@
     <developer>
       <id>joroboro</id>
       <name>Georgi Todorov</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>BMW Group</organization>
+      <organizationUrl>https://www.bmwgroup.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -120,15 +139,11 @@
     </mailingList>
     <mailingList>
       <name>Project Development List</name>
-      <post>dev@citrusframework.org</post>
+      <post>citrus-dev@googlegroups.com</post>
     </mailingList>
     <mailingList>
       <name>Project User List</name>
-      <post>user@citrusframework.org</post>
-    </mailingList>
-    <mailingList>
-      <name>Internal Project Development List</name>
-      <post>citrus-dev-l@consol.de</post>
+      <post>citrus-users@googlegroups.com</post>
     </mailingList>
   </mailingLists>
 
@@ -303,6 +318,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
           <configuration>
@@ -319,10 +335,12 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.1.0</version>
           <configuration>
@@ -332,18 +350,22 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
           <version>1.11.2</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
@@ -355,6 +377,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.1.0</version>
           <executions>
@@ -368,6 +391,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.1.0</version>
           <configuration>
@@ -384,6 +408,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.2</version>
           <configuration>
@@ -394,6 +419,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.22.2</version>
           <configuration>
@@ -402,6 +428,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>1.6</version>
           <executions>
@@ -462,9 +489,11 @@
     <!-- Default plugins for all modules -->
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
@@ -481,20 +510,6 @@
       </extension>
     </extensions>
   </build>
-
-  <repositories>
-    <repository>
-      <id>consol-labs-snapshots</id>
-      <url>http://labs.consol.de/maven/snapshots-repository/</url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
 
   <profiles>
     <profile>
@@ -532,27 +547,5 @@
       </build>
     </profile>
 
-    <profile>
-      <id>release-labs</id>
-      <distributionManagement>
-        <repository>
-          <id>consol-labs-release</id>
-          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/repository</url>
-        </repository>
-        <snapshotRepository>
-          <id>consol-labs-snapshots</id>
-          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/snapshots-repository</url>
-        </snapshotRepository>
-      </distributionManagement>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>

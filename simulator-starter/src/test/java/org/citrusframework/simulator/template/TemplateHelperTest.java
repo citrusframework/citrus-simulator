@@ -1,7 +1,7 @@
 package org.citrusframework.simulator.template;
 
-import org.junit.Assert;
 import org.springframework.core.io.Resource;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
