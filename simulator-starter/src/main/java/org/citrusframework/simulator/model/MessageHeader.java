@@ -39,7 +39,7 @@ public class MessageHeader implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "`value`")
     private String value;
 
     @JsonIgnore

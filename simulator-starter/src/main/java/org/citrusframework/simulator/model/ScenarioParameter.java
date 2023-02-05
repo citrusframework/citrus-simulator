@@ -48,7 +48,7 @@ public class ScenarioParameter implements Serializable {
     @Column(nullable = false)
     private ControlType controlType;
 
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "CLOB", name = "`value`")
     @Lob
     private String value;
     private boolean required;
