@@ -18,7 +18,7 @@
     <citrus.simulator.version>2.2.0-SNAPSHOT</citrus.simulator.version>
     <spring.boot.version>2.5.4</spring.boot.version>
     <activemq.version>5.15.9</activemq.version>
-    <testng.version>7.3.0</testng.version>
+    <testng.version>7.7.0</testng.version>
   </properties>
 
   <dependencyManagement>
