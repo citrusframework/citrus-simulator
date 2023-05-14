@@ -16,8 +16,8 @@
 
 package ${package};
 
-import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.mail.server.MailServer;
+import org.citrusframework.endpoint.Endpoint;
+import org.citrusframework.mail.server.MailServer;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointComponentAdapter;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;

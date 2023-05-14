@@ -16,14 +16,14 @@
 
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
-import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
-import com.consol.citrus.ws.server.WebServiceEndpoint;
+import org.citrusframework.ws.interceptor.LoggingEndpointInterceptor;
+import org.citrusframework.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.*;

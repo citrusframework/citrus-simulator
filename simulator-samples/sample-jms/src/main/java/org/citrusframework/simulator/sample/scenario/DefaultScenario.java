@@ -33,6 +33,7 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 
         scenario
             .send()
-            .payload("<DefaultResponse>This is a default response!</DefaultResponse>");
+            .getMessageBuilderSupport()
+            .body("<DefaultResponse>This is a default response!</DefaultResponse>");
     }
 }

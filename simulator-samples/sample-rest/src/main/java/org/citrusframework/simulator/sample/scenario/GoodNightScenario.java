@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
+
 /**
  * @author Christoph Deppisch
  */
@@ -38,10 +40,14 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .http()
             .receive(builder -> builder
                     .post()
-                    .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    .getMessageBuilderSupport()
+                    .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                             "</GoodNight>")
-                    .extractFromHeader(CORRELATION_ID, "correlationId")
+                    .extract(
+                        fromHeaders()
+                            .header(CORRELATION_ID, "correlationId")
+                    )
             );
 
         scenario.correlation(correlationManager -> correlationManager.start()
@@ -52,7 +58,8 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .http()
             .send(builder -> builder
                     .response(HttpStatus.OK)
-                    .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    .getMessageBuilderSupport()
+                    .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
                             "</GoodNightResponse>"));
 
@@ -61,14 +68,16 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
             .receive(builder -> builder
                     .post()
                     .selector("x-correlationid = '1${correlationId}'")
-                    .payload("<InterveningRequest>In between!</InterveningRequest>")
+                    .getMessageBuilderSupport()
+                    .body("<InterveningRequest>In between!</InterveningRequest>")
             );
 
         scenario
             .http()
             .send(builder -> builder
                     .response(HttpStatus.OK)
-                    .payload("<InterveningResponse>In between!</InterveningResponse>")
+                    .getMessageBuilderSupport()
+                    .body("<InterveningResponse>In between!</InterveningResponse>")
             );
     }
 }

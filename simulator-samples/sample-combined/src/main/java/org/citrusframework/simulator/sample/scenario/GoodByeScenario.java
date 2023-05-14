@@ -33,13 +33,15 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
     public void run(ScenarioDesigner scenario) {
         scenario
             .receive()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say GoodBye!" +
                      "</GoodBye>");
 
         scenario
             .send()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Bye bye!" +
                      "</GoodByeResponse>");
     }

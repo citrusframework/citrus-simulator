@@ -16,15 +16,15 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.dsl.runner.TestRunner;
+import org.citrusframework.dsl.runner.TestRunnerBeforeSuiteSupport;
+import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
 import org.citrusframework.simulator.sample.Simulator;
-import com.consol.citrus.ws.client.WebServiceClient;
-import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
-import com.consol.citrus.xml.XsdSchemaRepository;
+import org.citrusframework.ws.client.WebServiceClient;
+import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

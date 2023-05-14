@@ -20,6 +20,9 @@ import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.springframework.http.HttpStatus;
 
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+import static org.citrusframework.validation.xml.XpathPayloadVariableExtractor.Builder.fromXpath;
+
 /**
  * @author Christoph Deppisch
  */
@@ -27,26 +30,36 @@ public abstract class AbstractGreetingScenario extends AbstractSimulatorScenario
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("Simulator: ${simulator.name}");
+        scenario.run(echo("Simulator: ${simulator.name}"));
 
         scenario
             .http()
             .receive(builder -> builder
                     .post()
-                    .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    .getMessageBuilderSupport()
+                    .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
                             "</Hello>")
-                    .extractFromPayload("//hello:Hello", "greeting")
+                    .extract(
+                        fromXpath()
+                            .expression("//hello:Hello", "greeting")
+                    )
             );
 
-        scenario.echo("Received greeting: ${greeting}");
+        scenario.run(echo("Received greeting: ${greeting}"));
 
         scenario
             .http()
             .send((builder -> builder
                     .response(HttpStatus.OK)
-                    .payload(String.format("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">%s</HelloResponse>",
-                            getGreetingMessage())))
+                    .getMessageBuilderSupport()
+                    .body(
+                        String.format(
+                            "<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">%s</HelloResponse>",
+                            getGreetingMessage()
+                        )
+                    )
+                )
             );
     }
 

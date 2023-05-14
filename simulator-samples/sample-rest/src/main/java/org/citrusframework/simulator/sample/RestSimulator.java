@@ -18,21 +18,14 @@ package org.citrusframework.simulator.sample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 /**
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-public class Simulator {
+public class RestSimulator {
 
     public static void main(String[] args) {
-        SpringApplication.run(Simulator.class, args);
+        SpringApplication.run(RestSimulator.class, args);
     }
-
-    @Bean
-    public SimulatorJmsConfig simulatorJmsConfig() {
-        return new SimulatorJmsConfig();
-    }
-
 }

@@ -16,9 +16,9 @@
 
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
-import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.http.interceptor.LoggingHandlerInterceptor;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.web.servlet.HandlerInterceptor;

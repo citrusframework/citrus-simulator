@@ -16,21 +16,23 @@
 
 package org.citrusframework.simulator.sample.starter;
 
-import com.consol.citrus.http.client.HttpClient;
+import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.sample.model.QueryParameter;
 import org.citrusframework.simulator.sample.model.Variable;
+import org.citrusframework.simulator.sample.scenario.ValidateIban;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
-import org.citrusframework.simulator.sample.scenario.ValidateIban;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * This starter can be used to test the simulator scenario
@@ -50,21 +52,22 @@ public class ValidateStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("Sending request to Validate-IBAN REST Service...");
+        scenario.run(echo("Sending request to Validate-IBAN REST Service..."));
 
-        scenario.http(builder -> builder.client(client)
+        scenario.http().client(client)
                 .send()
                 .get("/services/rest/bank")
-                .queryParam(QueryParameter.IBAN, Variable.IBAN.placeholder()));
+                .queryParam(QueryParameter.IBAN, Variable.IBAN.placeholder());
 
-        scenario.echo("Receiving response from Validate-IBAN REST Service...");
+        scenario.run(echo("Receiving response from Validate-IBAN REST Service..."));
 
-        scenario.http(builder -> builder.client(client)
+        scenario.http().client(client)
                 .receive()
                 .response(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+                .getMessageBuilderSupport()
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
 
-        scenario.echo("Response received from Validate-IBAN REST Service");
+        scenario.run(echo("Response received from Validate-IBAN REST Service"));
     }
 
     @Override

@@ -16,21 +16,21 @@
 
 package org.citrusframework.simulator.http;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
-import com.consol.citrus.http.controller.HttpMessageController;
-import com.consol.citrus.http.interceptor.LoggingHandlerInterceptor;
-import com.consol.citrus.http.message.DelegatingHttpEntityMessageConverter;
-import com.consol.citrus.http.servlet.RequestCachingServletFilter;
-import com.consol.citrus.report.MessageListeners;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.http.controller.HttpMessageController;
+import org.citrusframework.http.interceptor.LoggingHandlerInterceptor;
+import org.citrusframework.http.message.DelegatingHttpEntityMessageConverter;
+import org.citrusframework.http.servlet.RequestCachingServletFilter;
+import org.citrusframework.report.MessageListeners;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;

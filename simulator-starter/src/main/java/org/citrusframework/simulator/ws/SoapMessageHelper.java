@@ -16,9 +16,9 @@
 
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.ws.message.SoapMessage;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.message.Message;
+import org.citrusframework.ws.message.SoapMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 import org.w3c.dom.Document;
 
-import javax.xml.soap.*;
+import jakarta.xml.soap.*;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -60,7 +60,7 @@ public class SoapMessageHelper {
      *
      * @param request
      * @return
-     * @throws javax.xml.soap.SOAPException
+     * @throws jakarta.xml.soap.SOAPException
      * @throws java.io.IOException
      * @throws javax.xml.transform.TransformerException
      */

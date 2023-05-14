@@ -16,13 +16,13 @@
 
 package ${package};
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
 import org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 @SpringBootApplication
 public class Simulator extends SimulatorJmsAdapter {
@@ -31,9 +31,11 @@ public class Simulator extends SimulatorJmsAdapter {
         SpringApplication.run(Simulator.class, args);
     }
 
+    @Value("${spring.artemis.broker-url:tcp://localhost:61616}")
+    private String brokerURL;
     @Override
     public ConnectionFactory connectionFactory() {
-        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+        return new ActiveMQConnectionFactory(brokerURL);
     }
 
     @Override

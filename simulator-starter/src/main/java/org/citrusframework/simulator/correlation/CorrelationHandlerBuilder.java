@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 
-import com.consol.citrus.AbstractTestActionBuilder;
-import com.consol.citrus.TestAction;
+import org.citrusframework.AbstractTestActionBuilder;
+import org.citrusframework.TestAction;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.citrusframework.xml.namespace.NamespaceContextBuilder;
 
 /**
  * @author Christoph Deppisch

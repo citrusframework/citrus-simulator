@@ -1,10 +1,11 @@
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.dsl.builder.HttpActionBuilder;
+import org.citrusframework.TestAction;
+import org.citrusframework.http.actions.HttpActionBuilder;
+import org.citrusframework.http.actions.HttpServerActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
-import com.consol.citrus.spi.ReferenceResolver;
+import org.citrusframework.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -29,20 +30,20 @@ public class HttpScenarioRunnerActionBuilder extends HttpActionBuilder {
      * Default scenario receive operation.
      * @return
      */
-    public TestAction receive(HttpBuilderSupport<HttpServerReceiveActionBuilder> configurer) {
+    public TestAction receive(HttpBuilderSupport<HttpServerActionBuilder.HttpServerReceiveActionBuilder> configurer) {
         HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.receive());
-        return runner.run(builder.build()).build();
+        return runner.run(builder.build());
     }
 
     /**
      * Default scenario send response operation.
      * @return
      */
-    public TestAction send(HttpBuilderSupport<HttpServerSendActionBuilder> configurer) {
+    public TestAction send(HttpBuilderSupport<HttpServerActionBuilder.HttpServerSendActionBuilder> configurer) {
         HttpScenarioActionBuilder builder = new HttpScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.send());
-        return runner.run(builder.build()).build();
+        return runner.run(builder.build());
     }
 
     /**

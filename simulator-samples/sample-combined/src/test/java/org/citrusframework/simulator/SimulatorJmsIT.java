@@ -16,19 +16,24 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
+import org.citrusframework.simulator.sample.config.EndpointConfig;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
+
+import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
+import static org.citrusframework.actions.SleepAction.Builder.sleep;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = EndpointConfig.class)
-public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
+@ContextConfiguration(classes = {EndpointConfig.class})
+public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
 
     private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
@@ -41,16 +46,21 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testHelloRequest() {
-        send(jmsSyncEndpoint)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Say Hello!" +
-                         "</Hello>");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                    "</Hello>")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Hi there!" +
-                         "</HelloResponse>");
-
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                    "</HelloResponse>")
+        );
     }
 
     /**
@@ -58,15 +68,21 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        send(jmsSyncEndpoint)
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Say GoodBye!" +
-                         "</GoodBye>");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say GoodBye!" +
+                    "</GoodBye>")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Bye bye!" +
-                         "</GoodByeResponse>");
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Bye bye!" +
+                    "</GoodByeResponse>")
+        );
     }
 
     /**
@@ -74,13 +90,19 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        send(jmsSyncEndpoint)
-                .payload("<Default>" +
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<Default>" +
                             "Should trigger default scenario" +
-                        "</Default>");
+                        "</Default>")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload(defaultResponse);
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
     }
 
     /**
@@ -90,37 +112,64 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        send(jmsSyncEndpoint)
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Go to sleep!" +
-                        "</GoodNight>")
-                .header("x-correlationid", "${correlationId}");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Go to sleep!" +
+                    "</GoodNight>")
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Good Night!" +
-                        "</GoodNightResponse>");
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Good Night!" +
+                    "</GoodNightResponse>")
+        );
 
-        send(jmsSyncEndpoint)
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload(defaultResponse);
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
 
-        send(jmsSyncEndpoint)
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload("<InterveningResponse>In between!</InterveningResponse>");
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<InterveningResponse>In between!</InterveningResponse>")
+        );
 
-        sleep(2000L);
+        and(
+            sleep()
+                .milliseconds(2000L)
+        );
 
-        send(jmsSyncEndpoint)
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+        when(
+            send(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        receive(jmsSyncEndpoint)
-                .payload(defaultResponse);
+        then(
+            receive(jmsSyncEndpoint)
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
     }
 }

@@ -5,7 +5,7 @@ import org.citrusframework.simulator.model.Message.Direction;
 import org.citrusframework.simulator.model.MessageFilter;
 import org.citrusframework.simulator.model.MessageHeader;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;

@@ -3,7 +3,7 @@ package org.citrusframework.simulator.http;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import com.consol.citrus.http.controller.HttpMessageController;
+import org.citrusframework.http.controller.HttpMessageController;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;

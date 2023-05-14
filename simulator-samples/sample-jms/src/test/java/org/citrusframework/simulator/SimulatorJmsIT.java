@@ -16,31 +16,22 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
 import org.citrusframework.simulator.sample.Simulator;
-import com.consol.citrus.xml.XsdSchemaRepository;
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
+import org.citrusframework.testng.TestNGCitrusSupport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.Test;
+
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = SimulatorJmsIT.EndpointConfig.class)
-public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
+@SpringBootTest(classes = {Simulator.class}, webEnvironment = DEFINED_PORT)
+public class SimulatorJmsIT extends TestNGCitrusSupport {
 
     private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
@@ -120,51 +111,5 @@ public class SimulatorJmsIT extends TestNGCitrusTestDesigner {
 
         receive(jmsSyncEndpoint)
                 .payload(defaultResponse);
-    }
-
-    @Configuration
-    public static class EndpointConfig {
-        @Bean
-        public XsdSchemaRepository schemaRepository() {
-            XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
-            schemaRepository.getLocations().add("classpath:xsd/HelloService.xsd");
-            return schemaRepository;
-        }
-
-        @Bean(initMethod = "start", destroyMethod = "stop")
-        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public BrokerService messageBroker() throws Exception {
-            BrokerService brokerService = new BrokerService();
-            brokerService.setPersistent(false);
-            brokerService.addConnector("tcp://localhost:61616");
-            return brokerService;
-        }
-
-        @Bean
-        public ActiveMQConnectionFactory connectionFactory() {
-            return new ActiveMQConnectionFactory("tcp://localhost:61616");
-        }
-
-        @Bean
-        public JmsSyncEndpoint simulatorEndpoint() {
-            return CitrusEndpoints.jms()
-                    .synchronous()
-                    .connectionFactory(connectionFactory())
-                    .destination("Citrus.Simulator.Inbound")
-                    .timeout(10000L)
-                    .build();
-        }
-
-        @Bean
-        @DependsOn("messageBroker")
-        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
-        }
     }
 }

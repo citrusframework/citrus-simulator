@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.message.MessageHeaders;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.message.Message;
+import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.model.Message.Direction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.service.ActivityService;

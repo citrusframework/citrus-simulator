@@ -3,8 +3,8 @@ package org.citrusframework.simulator.http;
 import java.util.Arrays;
 import java.util.Collections;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import io.swagger.models.Operation;
 import org.mockito.Mock;

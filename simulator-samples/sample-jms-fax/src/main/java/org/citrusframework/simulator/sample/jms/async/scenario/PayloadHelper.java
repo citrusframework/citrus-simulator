@@ -19,7 +19,7 @@ package org.citrusframework.simulator.sample.jms.async.scenario;
 import org.citrusframework.simulator.sample.jms.async.model.*;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 /**
  * @author Martin Maher

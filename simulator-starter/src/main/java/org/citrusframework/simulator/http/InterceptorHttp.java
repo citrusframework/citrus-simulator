@@ -16,17 +16,17 @@
 
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.http.controller.HttpMessageController;
-import com.consol.citrus.message.RawMessage;
-import com.consol.citrus.report.MessageListeners;
-import com.consol.citrus.util.FileUtils;
-import com.consol.citrus.util.TypeConversionUtils;
+import org.citrusframework.http.controller.HttpMessageController;
+import org.citrusframework.message.RawMessage;
+import org.citrusframework.report.MessageListeners;
+import org.citrusframework.util.FileUtils;
+import org.citrusframework.util.TypeConversionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

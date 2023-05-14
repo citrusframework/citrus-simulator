@@ -1,6 +1,6 @@
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.message.MessageHeaders;
+import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
@@ -36,22 +36,22 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        scenario.echo("Generated scenario from WSDL operation: " + operation.getName());
-
         scenario
             .soap()
             .receive()
+            .getMessageBuilderSupport()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .dictionary(inboundDataDictionary)
-            .payload(input)
+            .body(input)
             .soapAction(soapAction);
 
         scenario
             .soap()
             .send()
+            .getMessageBuilderSupport()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .dictionary(outboundDataDictionary)
-            .payload(output);
+            .body(output);
     }
 
     /**

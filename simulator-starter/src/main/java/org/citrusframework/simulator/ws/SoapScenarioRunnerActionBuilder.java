@@ -1,10 +1,13 @@
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.dsl.builder.*;
+import org.citrusframework.TestAction;
+import org.citrusframework.http.actions.HttpActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
-import com.consol.citrus.spi.ReferenceResolver;
+import org.citrusframework.spi.ReferenceResolver;
+import org.citrusframework.ws.actions.ReceiveSoapMessageAction;
+import org.citrusframework.ws.actions.SendSoapFaultAction;
+import org.citrusframework.ws.actions.SendSoapMessageAction;
 
 /**
  * @author Christoph Deppisch
@@ -29,30 +32,30 @@ public class SoapScenarioRunnerActionBuilder extends HttpActionBuilder {
      * Default scenario receive operation.
      * @return
      */
-    public TestAction receive(SoapBuilderSupport<ReceiveSoapMessageActionBuilder> configurer) {
+    public TestAction receive(SoapBuilderSupport<ReceiveSoapMessageAction.Builder> configurer) {
         SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.receive());
-        return runner.run(builder.build()).build();
+        return runner.run(builder.build());
     }
 
     /**
      * Default scenario send response operation.
      * @return
      */
-    public TestAction send(SoapBuilderSupport<SendSoapMessageActionBuilder> configurer) {
+    public TestAction send(SoapBuilderSupport<SendSoapMessageAction.Builder> configurer) {
         SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.send());
-        return runner.run(builder.build()).build();
+        return runner.run(builder.build());
     }
 
     /**
      * Default scenario send fault operation.
      * @return
      */
-    public TestAction sendFault(SoapBuilderSupport<SendSoapFaultActionBuilder> configurer) {
+    public TestAction sendFault(SoapBuilderSupport<SendSoapFaultAction.Builder> configurer) {
         SoapScenarioActionBuilder builder = new SoapScenarioActionBuilder(scenarioEndpoint).withReferenceResolver(referenceResolver);
         configurer.configure(builder.sendFault());
-        return runner.run(builder.build()).build();
+        return runner.run(builder.build());
     }
     
     /**

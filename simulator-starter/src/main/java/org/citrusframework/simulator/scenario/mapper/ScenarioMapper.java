@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import com.consol.citrus.endpoint.adapter.mapping.MappingKeyExtractor;
+import org.citrusframework.endpoint.adapter.mapping.MappingKeyExtractor;
 
 /**
  * @author Christoph Deppisch

@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.report.MessageListeners;
+import org.citrusframework.report.MessageListeners;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;
-import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
-import com.consol.citrus.ws.interceptor.LoggingEndpointInterceptor;
+import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
+import org.citrusframework.ws.interceptor.LoggingEndpointInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.context.annotation.Bean;

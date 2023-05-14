@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.endpoint.adapter.mapping.SoapActionMappingKeyExtractor;
+import org.citrusframework.endpoint.adapter.mapping.SoapActionMappingKeyExtractor;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 
 /**

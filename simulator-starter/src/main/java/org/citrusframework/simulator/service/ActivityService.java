@@ -16,9 +16,9 @@
 
 package org.citrusframework.simulator.service;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.*;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDate;

@@ -16,10 +16,10 @@
 
 package ${package};
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
-import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.message.Message;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
+import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMappers;
 import org.springframework.boot.SpringApplication;

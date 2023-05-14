@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.message.Message;
+import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.ScenarioListAware;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
@@ -93,7 +93,7 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
         this.scenarioList = scenarioList.stream()
                                         .filter(scenario -> scenario instanceof HttpOperationScenario)
                                         .map(scenario -> (HttpOperationScenario) scenario)
-                                        .collect(Collectors.toList());
+                                        .toList();
     }
 
     /**

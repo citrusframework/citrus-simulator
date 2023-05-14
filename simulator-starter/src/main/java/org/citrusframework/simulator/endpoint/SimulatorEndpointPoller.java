@@ -16,15 +16,15 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.context.TestContextFactory;
-import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.exceptions.ActionTimeoutException;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.messaging.Producer;
-import com.consol.citrus.messaging.ReplyProducer;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.context.TestContextFactory;
+import org.citrusframework.endpoint.Endpoint;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.exceptions.ActionTimeoutException;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.message.Message;
+import org.citrusframework.messaging.Producer;
+import org.citrusframework.messaging.ReplyProducer;
 import org.citrusframework.simulator.exception.SimulatorException;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;

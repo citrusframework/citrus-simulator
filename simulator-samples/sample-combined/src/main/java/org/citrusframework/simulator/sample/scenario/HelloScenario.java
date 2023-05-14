@@ -22,6 +22,9 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+import static org.citrusframework.validation.xml.XpathPayloadVariableExtractor.Builder.fromXpath;
+
 /**
  * @author Christoph Deppisch
  */
@@ -31,20 +34,25 @@ public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        scenario.echo("Simulator: ${simulator.name}");
+        scenario.run(echo("Simulator: ${simulator.name}"));
 
         scenario
             .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     "Say Hello!" +
                     "</Hello>")
-            .extractFromPayload("//hello:Hello", "greeting");
+            .extract(
+                fromXpath()
+                    .expression("//hello:Hello", "greeting")
+            );
 
-        scenario.echo("Received greeting: ${greeting}");
+        scenario.run(echo("Received greeting: ${greeting}"));
 
         scenario
             .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     "Hi there!" +
                     "</HelloResponse>");
     }

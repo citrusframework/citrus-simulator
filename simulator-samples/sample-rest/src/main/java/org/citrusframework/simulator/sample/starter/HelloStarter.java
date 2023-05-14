@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+
 /**
  * @author Christoph Deppisch
  */
@@ -38,8 +40,8 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("${greeting}");
-        scenario.echo("${payload}");
+        scenario.run(echo("${greeting}"));
+        scenario.run(echo("${payload}"));
     }
 
     @Override

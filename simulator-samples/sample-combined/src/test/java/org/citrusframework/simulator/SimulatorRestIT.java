@@ -16,20 +16,24 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.simulator.sample.config.EndpointConfig;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.actions.SleepAction.Builder.sleep;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+
 /**
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = EndpointConfig.class)
-public class SimulatorRestIT extends TestNGCitrusTestDesigner {
+@ContextConfiguration(classes = {EndpointConfig.class})
+public class SimulatorRestIT extends TestNGCitrusSpringSupport {
 
     private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
@@ -42,19 +46,25 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testHelloRequest() {
-        http().client(simulatorClient)
+        when(
+            http().client(simulatorClient)
                 .send()
                 .post("hello")
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Say Hello!" +
-                         "</Hello>");
+                .getMessageBuilderSupport()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                        "</Hello>")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Hi there!" +
-                         "</HelloResponse>");
+                .getMessageBuilderSupport()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                        "</HelloResponse>")
+        );
     }
 
     /**
@@ -62,19 +72,25 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        http().client(simulatorClient)
+        when(
+            http().client(simulatorClient)
                 .send()
                 .post("goodbye")
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Say GoodBye!" +
-                         "</GoodBye>");
+                .getMessageBuilderSupport()
+                .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say GoodBye!" +
+                        "</GoodBye>")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Bye bye!" +
-                         "</GoodByeResponse>");
+                .getMessageBuilderSupport()
+                .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Bye bye!" +
+                        "</GoodByeResponse>")
+        );
     }
 
     /**
@@ -82,17 +98,23 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        http().client(simulatorClient)
+        when(
+            http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<Default>" +
+                .getMessageBuilderSupport()
+                .body("<Default>" +
                             "Should trigger default scenario" +
-                        "</Default>");
+                        "</Default>")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
     }
 
     /**
@@ -102,53 +124,77 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .send()
                 .post("goodnight")
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .getMessageBuilderSupport()
+                .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
-                .header("x-correlationid", "${correlationId}");
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .getMessageBuilderSupport()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
-                        "</GoodNightResponse>");
+                        "</GoodNightResponse>")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<InterveningResponse>In between!</InterveningResponse>");
+                .getMessageBuilderSupport()
+                .body("<InterveningResponse>In between!</InterveningResponse>")
+        );
 
-        sleep(2000L);
+        and(sleep().milliseconds(2000L));
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .send()
                 .put("goodnight")
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+                .getMessageBuilderSupport()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header("x-correlationid", "${correlationId}")
+        );
 
-        http().client(simulatorClient)
+        then(
+            http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .getMessageBuilderSupport()
+                .body(defaultResponse)
+        );
     }
 }

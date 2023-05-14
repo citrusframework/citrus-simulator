@@ -8,10 +8,10 @@ import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.persistence.criteria.CriteriaBuilder.In;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,10 +106,13 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
             joinHeader(criteriaBuilder, filter.getHeaderFilter(),
                     messageJoin, (root) -> root.join("headers", JoinType.INNER));
            
-            List<Predicate> additionalJoinPredicates = new ArrayList<Predicate>();
+            List<Predicate> additionalJoinPredicates = new ArrayList<>();
             addPayloadPredicate(filter, criteriaBuilder, messageJoin, additionalJoinPredicates);
             addDirectionPredicate(filter, criteriaBuilder, messageJoin, additionalJoinPredicates);
-            messageJoin.on(additionalJoinPredicates.toArray(new Predicate[0]));
+
+            if (!additionalJoinPredicates.isEmpty()) {
+                messageJoin.on(additionalJoinPredicates.toArray(new Predicate[0]));
+            }
         }
     }
 
@@ -122,10 +125,18 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
      * @param predicates
      */
     private void addPayloadPredicate(ScenarioExecutionFilter filter, CriteriaBuilder criteriaBuilder,
-            Join<ScenarioExecution, Message> parentJoin, List<Predicate> predicates) {
+                                     Join<ScenarioExecution, Message> parentJoin, List<Predicate> predicates) {
         if (StringUtils.hasText(filter.getContainingText())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(parentJoin.get("payload")),
-                    filter.getContainingText().toUpperCase()));
+            predicates.add(
+                    criteriaBuilder.like(
+                            criteriaBuilder.upper(
+                                    criteriaBuilder.toString(
+                                            parentJoin.get("payload")
+                                    )
+                            ),
+                            filter.getContainingText().toUpperCase()
+                    )
+            );
         }
     }
 

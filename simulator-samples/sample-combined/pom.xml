@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.9</activemq.version>
+    <artemis.version>2.30.0</artemis.version>
   </properties>
 
   <dependencyManagement>
@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-artemis</artifactId>
     </dependency>
 
     <!-- Citrus Simulator -->
@@ -48,40 +48,32 @@
 
     <!-- Citrus -->
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-jms</artifactId>
+    </dependency>
+
+    <!-- ActiveMQ Artemis broker -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-jms-server</artifactId>
+      <version>${artemis.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>com.sun.xml.messaging.saaj</groupId>
-          <artifactId>saaj-impl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.ws</groupId>
-          <artifactId>spring-ws-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-webmvc</artifactId>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>artemis-jms-client</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
 
+    <!-- Test scoped dependencies -->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <!-- ActiveMQ broker -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <version>${activemq.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-spring</artifactId>
-      <version>${activemq.version}</version>
     </dependency>
   </dependencies>
 
@@ -115,21 +107,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.activemq.tooling</groupId>
-        <artifactId>activemq-maven-plugin</artifactId>
-        <version>${activemq.version}</version>
-        <configuration>
-          <fork>false</fork>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>log4j.properties</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
@@ -145,5 +122,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

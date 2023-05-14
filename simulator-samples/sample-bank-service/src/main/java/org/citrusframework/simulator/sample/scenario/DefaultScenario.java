@@ -34,6 +34,7 @@ public class DefaultScenario extends AbstractSimulatorScenario {
             .http()
             .send(builder -> builder
                     .response(HttpStatus.BAD_REQUEST)
-                    .payload("{\"reason\":\"no mapping for this request\"}"));
+                    .getMessageBuilderSupport()
+                    .body("{\"reason\":\"no mapping for this request\"}"));
     }
 }

@@ -15,7 +15,7 @@
  */
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.http.message.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -150,13 +150,13 @@ public class HttpRequestAnnotationMatcher {
                 .filter(k -> !k.startsWith(cannotContainKeyPrefix))
                 .filter(k -> !requestQueryParamKeys.contains(k))
                 .map(k -> String.format("Expected but missing: %s", k))
-                .collect(Collectors.toList()));
+                .toList());
 
         invalidRequestQueryParamKeys.addAll(annotatedQueryParams.stream()
                 .filter(k -> k.startsWith(cannotContainKeyPrefix))
                 .filter(k -> requestQueryParamKeys.contains(k.substring(cannotContainKeyPrefix.length())))
                 .map(k -> String.format("Unexpected but present: %s", k.substring(cannotContainKeyPrefix.length())))
-                .collect(Collectors.toList()));
+                .toList());
 
         return invalidRequestQueryParamKeys;
     }
@@ -186,7 +186,7 @@ public class HttpRequestAnnotationMatcher {
                     .entrySet()
                     .stream()
                     .map(entry -> entry.getKey() + "=" + entry.getValue())
-                    .collect(Collectors.toList());
+                    .toList();
     }
 
     private List<String> getQueryParamKeys(List<String> queryParams) {
@@ -194,7 +194,7 @@ public class HttpRequestAnnotationMatcher {
                 .map(this::getQueryParamKeyValue)
                 .filter(strings -> strings.length > 0)
                 .map(strings -> strings[0])
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String[] getQueryParamKeyValue(String queryParam) {

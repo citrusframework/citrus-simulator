@@ -21,6 +21,6 @@
                     request-url="http://localhost:8080/services/ws/HelloService/v1"
                     interceptor="clientLoggingInterceptor"/>
 
-  <bean id="clientLoggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingClientInterceptor"/>
+  <bean id="clientLoggingInterceptor" class="org.citrusframework.ws.interceptor.LoggingClientInterceptor"/>
 
 </beans>

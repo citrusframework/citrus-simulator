@@ -16,15 +16,15 @@
 
 package org.citrusframework.simulator.listener;
 
-import com.consol.citrus.DefaultTestCase;
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
-import com.consol.citrus.TestResult;
-import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.common.Described;
-import com.consol.citrus.report.AbstractTestListener;
-import com.consol.citrus.report.TestActionListener;
-import com.consol.citrus.report.TestResults;
+import org.citrusframework.DefaultTestCase;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
+import org.citrusframework.TestResult;
+import org.citrusframework.actions.SleepAction;
+import org.citrusframework.common.Described;
+import org.citrusframework.report.AbstractTestListener;
+import org.citrusframework.report.TestActionListener;
+import org.citrusframework.report.TestResults;
 import org.citrusframework.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

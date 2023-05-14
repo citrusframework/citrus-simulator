@@ -16,12 +16,12 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.mail.client.MailClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.dsl.runner.TestRunner;
+import org.citrusframework.dsl.runner.TestRunnerBeforeSuiteSupport;
+import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
+import org.citrusframework.mail.client.MailClient;
 import org.citrusframework.simulator.sample.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;

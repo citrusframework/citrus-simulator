@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.citrusframework.simulator.exception.SimulatorException;
-import com.consol.citrus.util.FileUtils;
+import org.citrusframework.util.FileUtils;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;

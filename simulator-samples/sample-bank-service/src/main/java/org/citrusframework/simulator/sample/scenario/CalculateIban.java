@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.sample.scenario;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
+import org.citrusframework.TestAction;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.endpoint.resolver.DynamicEndpointUriResolver;
 import org.citrusframework.simulator.sample.service.BankService;
 import org.citrusframework.simulator.sample.service.QueryParameterService;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
 import static org.citrusframework.simulator.sample.model.QueryParameter.*;
 import static org.citrusframework.simulator.sample.model.Variable.JSON_RESPONSE;
 import static org.citrusframework.simulator.sample.model.Variable.QUERY_PARAMS;
@@ -55,7 +56,12 @@ public class CalculateIban extends AbstractSimulatorScenario {
             .http()
             .receive(builder -> builder
                         .get()
-                        .extractFromHeader(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name()));
+                        .getMessageBuilderSupport()
+                        .extract(
+                            fromHeaders()
+                                .header(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name())
+                        )
+            );
 
         scenario.run(calculateIban());
 
@@ -63,7 +69,8 @@ public class CalculateIban extends AbstractSimulatorScenario {
             .http()
             .send(builder -> builder
                     .response(HttpStatus.OK)
-                    .payload(JSON_RESPONSE.placeholder())
+                    .getMessageBuilderSupport()
+                    .body(JSON_RESPONSE.placeholder())
                     .contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 

@@ -36,7 +36,8 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
             .http()
             .receive((builder -> builder
                     .post()
-                    .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    .getMessageBuilderSupport()
+                    .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
                             "</GoodBye>"))
             );
@@ -45,7 +46,8 @@ public class GoodByeScenario extends AbstractSimulatorScenario {
             .http()
             .send((builder -> builder
                     .response(HttpStatus.OK)
-                    .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    .getMessageBuilderSupport()
+                    .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
                             "</GoodByeResponse>"))
             );

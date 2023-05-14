@@ -22,6 +22,8 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
+
 /**
  * @author Christoph Deppisch
  */
@@ -35,27 +37,34 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     public void run(ScenarioDesigner scenario) {
         scenario
             .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Go to sleep!" +
                      "</GoodNight>")
-            .extractFromHeader(CORRELATION_ID, "correlationId");
+            .extract(
+                fromHeaders()
+                    .header(CORRELATION_ID, "correlationId")
+            );
 
         scenario.correlation().start()
             .onHeader(CORRELATION_ID, "${correlationId}");
 
         scenario
             .send()
-            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+            .getMessageBuilderSupport()
+            .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
                     "</GoodNightResponse>");
 
         scenario
             .receive()
             .selector("x-correlationid = '${correlationId}'")
-            .payload("<InterveningRequest>In between!</InterveningRequest>");
+            .getMessageBuilderSupport()
+            .body("<InterveningRequest>In between!</InterveningRequest>");
 
         scenario
             .send()
-            .payload("<InterveningResponse>In between!</InterveningResponse>");
+            .getMessageBuilderSupport()
+            .body("<InterveningResponse>In between!</InterveningResponse>");
     }
 }

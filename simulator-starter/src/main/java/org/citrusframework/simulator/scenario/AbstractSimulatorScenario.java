@@ -18,7 +18,7 @@ package org.citrusframework.simulator.scenario;
 
 import org.citrusframework.simulator.correlation.CorrelationHandler;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * @author Christoph Deppisch

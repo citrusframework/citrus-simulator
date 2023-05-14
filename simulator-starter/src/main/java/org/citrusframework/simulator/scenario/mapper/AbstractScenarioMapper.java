@@ -16,9 +16,9 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import com.consol.citrus.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.message.Message;
+import org.citrusframework.endpoint.adapter.mapping.AbstractMappingKeyExtractor;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.config.SimulatorConfigurationPropertiesAware;
 import org.springframework.beans.factory.annotation.Autowired;

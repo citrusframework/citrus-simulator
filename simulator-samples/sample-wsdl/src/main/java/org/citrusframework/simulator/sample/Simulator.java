@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.sample;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.StaticEndpointAdapter;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.ws.message.SoapFault;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
+import org.citrusframework.message.Message;
+import org.citrusframework.ws.message.SoapFault;
 import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
 import org.citrusframework.simulator.ws.WsdlScenarioGenerator;

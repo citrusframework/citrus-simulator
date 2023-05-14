@@ -1,8 +1,9 @@
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.dsl.builder.HttpActionBuilder;
-import com.consol.citrus.spi.ReferenceResolver;
+import org.citrusframework.http.actions.HttpActionBuilder;
+import org.citrusframework.http.actions.HttpServerActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
+import org.citrusframework.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -29,7 +30,7 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * Default scenario receive operation.
      * @return
      */
-    public HttpServerReceiveActionBuilder receive() {
+    public HttpServerActionBuilder.HttpServerReceiveActionBuilder receive() {
         return server(scenarioEndpoint).receive();
     }
 
@@ -37,7 +38,7 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * Default scenario send response operation.
      * @return
      */
-    public HttpServerSendActionBuilder send() {
+    public HttpServerActionBuilder.HttpServerSendActionBuilder send() {
         return server(scenarioEndpoint).send();
     }
 }

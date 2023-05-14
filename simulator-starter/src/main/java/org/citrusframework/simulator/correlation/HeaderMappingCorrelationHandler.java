@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.correlation;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 
 /**

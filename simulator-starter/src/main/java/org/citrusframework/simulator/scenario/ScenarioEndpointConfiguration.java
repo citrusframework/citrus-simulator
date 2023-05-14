@@ -1,6 +1,6 @@
 package org.citrusframework.simulator.scenario;
 
-import com.consol.citrus.endpoint.AbstractEndpointConfiguration;
+import org.citrusframework.endpoint.AbstractEndpointConfiguration;
 
 /**
  * @author Christoph Deppisch

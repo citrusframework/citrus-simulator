@@ -16,23 +16,29 @@
 
 package org.citrusframework.simulator.scenario;
 
+import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.TestActionContainerBuilder;
+import org.citrusframework.container.TestActionContainer;
 import org.citrusframework.simulator.correlation.CorrelationBuilderSupport;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
+import org.citrusframework.simulator.correlation.StartCorrelationHandlerAction;
 import org.citrusframework.simulator.http.HttpScenarioRunnerActionBuilder;
+import org.citrusframework.simulator.ws.SoapBuilderSupport;
 import org.citrusframework.simulator.ws.SoapScenarioRunnerActionBuilder;
+import org.citrusframework.ws.actions.SoapActionBuilder;
 import org.springframework.context.ApplicationContext;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.dsl.builder.BuilderSupport;
-import com.consol.citrus.dsl.builder.SendSoapFaultActionBuilder;
-import com.consol.citrus.dsl.builder.SoapActionBuilder;
-import com.consol.citrus.dsl.runner.DefaultTestRunner;
-import com.consol.citrus.ws.actions.SendSoapFaultAction;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.ws.actions.SendSoapFaultAction;
+
+import java.util.Stack;
+
+import static org.citrusframework.container.FinallySequence.Builder.doFinally;
 
 /**
  * @author Christoph Deppisch
  */
-public class ScenarioRunner extends DefaultTestRunner {
+public class ScenarioRunner extends DefaultTestCaseRunner {
 
     /**
      * Scenario direct endpoint
@@ -41,6 +47,10 @@ public class ScenarioRunner extends DefaultTestRunner {
 
     /** Spring bean application context */
     private ApplicationContext applicationContext;
+
+    // TODO: Is this still relevant?
+    /** Optional stack of containers cached for execution */
+    protected Stack<TestActionContainerBuilder<? extends TestActionContainer, ?>> containers = new Stack<>();
 
     /**
      * Default constructor using fields.
@@ -60,9 +70,11 @@ public class ScenarioRunner extends DefaultTestRunner {
      *
      * @return
      */
-    public CorrelationHandlerBuilder correlation(CorrelationBuilderSupport configurer) {
+    public StartCorrelationHandlerAction correlation(CorrelationBuilderSupport configurer) {
         CorrelationHandlerBuilder builder = new CorrelationHandlerBuilder(scenarioEndpoint, applicationContext);
         configurer.configure(() -> builder);
+        // TODO: Not sure if this works? Where does this action get called?
+        // See: https://github.com/citrusframework/citrus/pull/946/files#diff-f5bc91f18a5e506ee478ab30a349ef1aee9eecf68efbb8954c5978a7eb14029eL749
         doFinally().actions(builder.stop());
         return run(builder);
     }
@@ -73,7 +85,7 @@ public class ScenarioRunner extends DefaultTestRunner {
      * @return
      */
     public HttpScenarioRunnerActionBuilder http() {
-        return new HttpScenarioRunnerActionBuilder(this, scenarioEndpoint).withReferenceResolver(getTestContext().getReferenceResolver());
+        return new HttpScenarioRunnerActionBuilder(this, scenarioEndpoint).withReferenceResolver(getContext().getReferenceResolver());
     }
 
     /**
@@ -82,7 +94,7 @@ public class ScenarioRunner extends DefaultTestRunner {
      * @return
      */
     public SoapScenarioRunnerActionBuilder soap() {
-        return new SoapScenarioRunnerActionBuilder(this, scenarioEndpoint).withReferenceResolver(getTestContext().getReferenceResolver());
+        return new SoapScenarioRunnerActionBuilder(this, scenarioEndpoint).withReferenceResolver(getContext().getReferenceResolver());
     }
 
     /**
@@ -90,15 +102,15 @@ public class ScenarioRunner extends DefaultTestRunner {
      *
      * @return
      */
-    public SendSoapFaultAction sendFault(BuilderSupport<SendSoapFaultActionBuilder> configurer) {
-    
-        SendSoapFaultActionBuilder sendFaultActionBuilder = new SoapActionBuilder().withReferenceResolver(getTestContext().getReferenceResolver())
-            .server(scenarioEndpoint.getName()).sendFault();
+    public SendSoapFaultAction sendFault(SoapBuilderSupport<SendSoapFaultAction.Builder> configurer) {
+        SendSoapFaultAction.Builder sendFaultActionBuilder = new SoapActionBuilder().withReferenceResolver(getContext().getReferenceResolver())
+            .server(scenarioEndpoint.getName())
+                .sendFault();
     
         configurer.configure(sendFaultActionBuilder);
         run(sendFaultActionBuilder);
     
-        return (SendSoapFaultAction) sendFaultActionBuilder.build();
+        return sendFaultActionBuilder.build();
     }
 
     /**

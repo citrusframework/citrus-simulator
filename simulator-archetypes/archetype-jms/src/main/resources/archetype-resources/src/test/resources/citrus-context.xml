@@ -14,11 +14,9 @@
   </citrus:schema-repository>
 
   <!-- Test JMS client -->
-  <citrus-jms:sync-endpoint id="simulatorEndpoint"
-                            destination-name="Citrus.Simulator.Inbound"/>
+  <citrus-jms:sync-endpoint id="simulatorEndpoint" destination-name="Citrus.Simulator.Inbound"/>
 
-  <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+  <bean id="connectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
     <property name="brokerURL" value="tcp://localhost:61616" />
   </bean>
-
 </beans>

@@ -96,7 +96,7 @@ As mail server endpoint support is not included by default in the simulator we n
 ----
 <!-- Citrus web service support -->
 <dependency>
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-mail</artifactId>
   <version>${citrus.version}</version>
 </dependency>

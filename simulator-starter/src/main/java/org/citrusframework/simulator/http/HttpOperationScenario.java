@@ -1,17 +1,34 @@
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.dsl.builder.HttpServerRequestActionBuilder;
-import com.consol.citrus.dsl.builder.HttpServerResponseActionBuilder;
-import com.consol.citrus.http.message.HttpMessageHeaders;
-import com.consol.citrus.message.MessageHeaders;
-import com.consol.citrus.message.MessageType;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
+import io.swagger.models.RefModel;
+import io.swagger.models.Response;
+import io.swagger.models.parameters.AbstractSerializableParameter;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.DateTimeProperty;
+import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FloatProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.LongProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
+import org.citrusframework.http.actions.HttpServerRequestActionBuilder;
+import org.citrusframework.http.actions.HttpServerResponseActionBuilder;
+import org.citrusframework.http.message.HttpMessageHeaders;
+import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.ScenarioDesigner;
-import com.consol.citrus.variable.dictionary.json.JsonPathMappingDataDictionary;
-import io.swagger.models.*;
-import io.swagger.models.parameters.*;
-import io.swagger.models.properties.*;
+import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.hamcrest.CustomMatcher;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -22,6 +39,12 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.HEAD;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 /**
  * @author Christoph Deppisch
@@ -70,50 +93,45 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioDesigner scenario) {
         scenario.name(operation.getOperationId());
-        scenario.echo("Generated scenario from swagger operation: " + operation.getOperationId());
 
         HttpServerRequestActionBuilder requestBuilder;
-        switch (method) {
-            case GET:
-                requestBuilder = scenario
+        if (method.equals(GET)) {
+            requestBuilder = scenario
                     .http()
                     .receive()
                     .get();
-                break;
-            case POST:
-                requestBuilder = scenario
+        } else if (method.equals(POST)) {
+            requestBuilder = scenario
                     .http()
                     .receive()
                     .post();
-                break;
-            case PUT:
-                requestBuilder = scenario
+        } else if (method.equals(PUT)) {
+            requestBuilder = scenario
                     .http()
                     .receive()
                     .put();
-                break;
-            case HEAD:
-                requestBuilder = scenario
+        } else if (method.equals(HEAD)) {
+            requestBuilder = scenario
                     .http()
                     .receive()
                     .head();
-                break;
-            case DELETE:
-                requestBuilder = scenario
+        } else if (method.equals(DELETE)) {
+            requestBuilder = scenario
                     .http()
                     .receive()
                     .delete();
-                break;
-            default:
-                throw new SimulatorException("Unsupported request method: " + method.name());
+        } else {
+            throw new SimulatorException("Unsupported request method: " + method.name());
         }
 
         requestBuilder
-            .messageType(MessageType.JSON)
+            // TODO: .messageType(MessageType.JSON)
+            .getMessageBuilderSupport()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
 
-        requestBuilder.
-            header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
+        requestBuilder
+                .getMessageBuilderSupport()
+                .header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
                 @Override
                 public boolean matches(Object item) {
                     return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
@@ -124,7 +142,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             operation.getParameters().stream()
                     .filter(p -> p instanceof HeaderParameter)
                     .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.header(p.getName(), createValidationExpression(((HeaderParameter) p))));
+                    .forEach(p -> requestBuilder.getMessageBuilderSupport().header(p.getName(), createValidationExpression(((HeaderParameter) p))));
 
             String queryParams = operation.getParameters().stream()
                     .filter(param -> param instanceof QueryParameter)
@@ -133,24 +151,25 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
                     .collect(Collectors.joining(", "));
 
             if (StringUtils.hasText(queryParams)) {
-                requestBuilder.header(HttpMessageHeaders.HTTP_QUERY_PARAMS, "@assertThat(allOf(" + queryParams + "))@");
+                requestBuilder.getMessageBuilderSupport().header(HttpMessageHeaders.HTTP_QUERY_PARAMS, "@assertThat(allOf(" + queryParams + "))@");
             }
 
             operation.getParameters().stream()
                     .filter(p -> p instanceof BodyParameter)
                     .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.payload(createValidationPayload((BodyParameter) p)));
+                    .forEach(p -> requestBuilder.getMessageBuilderSupport().body(createValidationPayload((BodyParameter) p)));
 
             if (inboundDataDictionary != null) {
-                requestBuilder.dictionary(inboundDataDictionary);
+                requestBuilder.getMessageBuilderSupport().dictionary(inboundDataDictionary);
             }
         }
 
-        HttpServerResponseActionBuilder responseBuilder = scenario
+        HttpServerResponseActionBuilder.HttpMessageBuilderSupport responseBuilder = scenario
             .http()
             .send()
             .response(statusCode)
-            .messageType(MessageType.JSON)
+            // TODO: .messageType(MessageType.JSON)
+            .getMessageBuilderSupport()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -167,7 +186,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
                     responseBuilder.dictionary(outboundDataDictionary);
                 }
 
-                responseBuilder.payload(createRandomValue(response.getSchema(), false));
+                responseBuilder.body(createRandomValue(response.getSchema(), false));
             }
         }
     }

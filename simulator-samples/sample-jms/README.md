@@ -37,7 +37,7 @@ You can build the simulator application locally with Maven:
 mvn clean install
 ```
 
-This will compile and package all resources for you. Also some prepared Citrus integration tests are executed during the build. 
+This will compile and package all resources for you. Also, some prepared Citrus integration tests are executed during the build. 
 After the successful build you are able to run the simulator with:
 
 ```

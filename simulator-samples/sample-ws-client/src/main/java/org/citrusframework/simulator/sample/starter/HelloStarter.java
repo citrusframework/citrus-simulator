@@ -19,7 +19,7 @@ package org.citrusframework.simulator.sample.starter;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.variables.Name;
 import org.citrusframework.simulator.sample.variables.Variables;
-import com.consol.citrus.ws.client.WebServiceClient;
+import org.citrusframework.ws.client.WebServiceClient;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import org.citrusframework.simulator.scenario.Starter;

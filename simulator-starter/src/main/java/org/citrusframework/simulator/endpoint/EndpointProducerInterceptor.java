@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Intercepts {@link com.consol.citrus.messaging.Producer#send(Message, TestContext)} method invocations
+ * Intercepts {@link org.citrusframework.messaging.Producer#send(Message, TestContext)} method invocations
  * so that the simulator can process the messages.
  */
 @Component

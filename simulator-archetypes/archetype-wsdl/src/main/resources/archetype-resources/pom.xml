@@ -14,9 +14,9 @@
     <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.version>3.1.0</citrus.version>
+    <citrus.version>4.0.0-M2</citrus.version>
     <citrus.simulator.version>2.2.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>2.5.4</spring.boot.version>
+    <spring.boot.version>3.1.2</spring.boot.version>
     <testng.version>7.7.0</testng.version>
   </properties>
 
@@ -33,11 +33,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
@@ -52,7 +47,7 @@
 
     <!-- Citrus -->
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-ws</artifactId>
       <version>${citrus.version}</version>
     </dependency>

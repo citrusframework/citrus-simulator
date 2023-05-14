@@ -83,7 +83,7 @@ public class ScenarioController {
                     }
                     return true;
                 })
-                .sorted(Comparator.comparing(Scenario::getName)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(Scenario::getName)).toList();
     }
 
     /**

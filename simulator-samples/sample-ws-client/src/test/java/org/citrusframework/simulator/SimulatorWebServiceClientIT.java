@@ -18,17 +18,17 @@ package org.citrusframework.simulator;
 
 import java.util.Arrays;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.dsl.runner.TestRunner;
+import org.citrusframework.dsl.runner.TestRunnerBeforeSuiteSupport;
+import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
+import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.Simulator;
 import org.citrusframework.simulator.sample.variables.Name;
-import com.consol.citrus.ws.server.WebServiceServer;
-import com.consol.citrus.xml.XsdSchemaRepository;
+import org.citrusframework.ws.server.WebServiceServer;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;

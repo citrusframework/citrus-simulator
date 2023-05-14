@@ -1,11 +1,11 @@
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.dsl.builder.ReceiveSoapMessageActionBuilder;
-import com.consol.citrus.dsl.builder.SendSoapFaultActionBuilder;
-import com.consol.citrus.dsl.builder.SendSoapMessageActionBuilder;
-import com.consol.citrus.dsl.builder.SoapActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
-import com.consol.citrus.spi.ReferenceResolver;
+import org.citrusframework.spi.ReferenceResolver;
+import org.citrusframework.ws.actions.ReceiveSoapMessageAction;
+import org.citrusframework.ws.actions.SendSoapFaultAction;
+import org.citrusframework.ws.actions.SendSoapMessageAction;
+import org.citrusframework.ws.actions.SoapActionBuilder;
 
 /**
  * @author Christoph Deppisch
@@ -35,15 +35,16 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
      * Default scenario receive operation.
      * @return
      */
-    public ReceiveSoapMessageActionBuilder receive() {
+    public ReceiveSoapMessageAction.Builder receive() {
         return server(scenarioEndpoint.getName()).withReferenceResolver(referenceResolver).receive().endpoint(scenarioEndpoint);
     }
 
     /**
      * Default scenario send response operation.
+     *
      * @return
      */
-    public SendSoapMessageActionBuilder send() {
+    public SendSoapMessageAction.Builder send() {
         return server(scenarioEndpoint.getName()).send().endpoint(scenarioEndpoint);
     }
 
@@ -51,7 +52,7 @@ public class SoapScenarioActionBuilder extends SoapActionBuilder {
      * Sends SOAP fault as scenario response.
      * @return
      */
-    public SendSoapFaultActionBuilder sendFault() {
+    public SendSoapFaultAction.Builder sendFault() {
         return server(scenarioEndpoint.getName()).sendFault().endpoint(scenarioEndpoint);
     }
 }

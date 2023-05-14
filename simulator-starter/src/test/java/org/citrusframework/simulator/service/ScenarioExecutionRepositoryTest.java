@@ -15,7 +15,7 @@
  */
 package org.citrusframework.simulator.service;
 
-import com.consol.citrus.DefaultTestCase;
+import org.citrusframework.DefaultTestCase;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.model.Message.Direction;

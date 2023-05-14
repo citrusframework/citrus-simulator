@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.ws;
 
-import com.consol.citrus.message.ErrorHandlingStrategy;
+import org.citrusframework.message.ErrorHandlingStrategy;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
-import com.consol.citrus.ws.client.WebServiceClient;
-import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
+import org.citrusframework.ws.client.WebServiceClient;
+import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

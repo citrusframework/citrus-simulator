@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.config;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 
 /**

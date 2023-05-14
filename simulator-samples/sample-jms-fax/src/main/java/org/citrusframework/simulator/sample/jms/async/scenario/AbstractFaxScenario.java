@@ -1,6 +1,6 @@
 package org.citrusframework.simulator.sample.jms.async.scenario;
 
-import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import org.citrusframework.jms.endpoint.JmsEndpoint;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

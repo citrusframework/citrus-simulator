@@ -16,11 +16,11 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.channel.ChannelSyncEndpoint;
-import com.consol.citrus.channel.ChannelSyncEndpointConfiguration;
-import com.consol.citrus.endpoint.Endpoint;
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.channel.ChannelSyncEndpoint;
+import org.citrusframework.channel.ChannelSyncEndpointConfiguration;
+import org.citrusframework.endpoint.Endpoint;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;

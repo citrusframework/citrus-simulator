@@ -7,12 +7,12 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.DefaultMessage;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.DefaultMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.util.SpringBeanTypeConverter;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.citrusframework.util.SpringBeanTypeConverter;
+import org.citrusframework.xml.namespace.NamespaceContextBuilder;
 
 /**
  * @author Christoph Deppisch
