@@ -16,15 +16,22 @@
 
 package org.citrusframework.simulator.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import org.springframework.util.StringUtils;
 
-import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,27 +39,20 @@ import java.util.List;
  */
 @Entity
 public class ScenarioExecution implements Serializable {
-    private static final Logger LOG = LoggerFactory.getLogger(ScenarioExecution.class);
+
+    @Serial
+    private static final long serialVersionUID = 2L;
 
     public static final String EXECUTION_ID = "scenarioExecutionId";
 
-    public enum Status {
-        ACTIVE,
-        SUCCESS,
-        FAILED
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "EXECUTION_ID")
     private Long executionId;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date startDate;
+    private Instant startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    private Instant endDate;
 
     @Column(nullable = false)
     private String scenarioName;
@@ -63,16 +63,18 @@ public class ScenarioExecution implements Serializable {
     @Column(length = 1000)
     private String errorMessage;
 
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("name ASC")
+    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "scenarioExecution" }, allowSetters = true)
     private List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("actionId ASC")
+    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ScenarioAction> scenarioActions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("messageId ASC")
+    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "headers", "scenarioExecution" }, allowSetters = true)
     private List<Message> scenarioMessages = new ArrayList<>();
 
     public Long getExecutionId() {
@@ -83,19 +85,19 @@ public class ScenarioExecution implements Serializable {
         this.executionId = executionId;
     }
 
-    public Date getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 
-    public Date getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
@@ -119,7 +121,7 @@ public class ScenarioExecution implements Serializable {
         return errorMessage;
     }
 
-    public void setErrorMessage(String errorMessage) {
+    public void setErrorMessage(String errorMessage) throws ErrorMessageTruncationException {
         this.errorMessage = errorMessage;
         if(StringUtils.hasLength(this.errorMessage)) {
             try {
@@ -129,7 +131,7 @@ public class ScenarioExecution implements Serializable {
                     this.errorMessage = this.errorMessage.substring(0, size);
                 }
             } catch (SecurityException | NoSuchFieldException ex) {
-                LOG.error(String.format("Error truncating error message", errorMessage), ex);
+                throw new ErrorMessageTruncationException(String.format("Error truncating error message '%s'!", errorMessage), ex);
             }
         }
     }
@@ -179,15 +181,27 @@ public class ScenarioExecution implements Serializable {
     @Override
     public String toString() {
         return "ScenarioExecution{" +
-                "endDate=" + endDate +
-                ", executionId=" + executionId +
-                ", startDate=" + startDate +
-                ", scenarioName='" + scenarioName + '\'' +
-                ", status=" + status +
-                ", errorMessage='" + errorMessage + '\'' +
-                ", scenarioParameters=" + scenarioParameters +
-                ", scenarioActions=" + scenarioActions +
-                ", scenarioMessages=" + scenarioMessages +
+                "executionId='" + getExecutionId() + "'" +
+                ", startDate='" + getStartDate() + "'" +
+                ", endDate='" + getEndDate() + "'" +
+                ", scenarioName='" + getScenarioName() + "'" +
+                ", status='" + getStatus() + "'" +
+                ", errorMessage='" + getErrorMessage() + "'" +
+                ", scenarioParameters='" + getScenarioParameters() + "'" +
+                ", scenarioActions='" + getScenarioActions() + "'" +
+                ", scenarioMessages='" + getScenarioMessages() + "'" +
                 '}';
+    }
+
+    public enum Status {
+        ACTIVE,
+        SUCCESS,
+        FAILED
+    }
+
+    public class ErrorMessageTruncationException extends Throwable {
+        public ErrorMessageTruncationException(String errorMessage, Exception exception) {
+            super(errorMessage, exception);
+        }
     }
 }

@@ -1,15 +1,15 @@
 package org.citrusframework.simulator.service;
 
-import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import org.citrusframework.simulator.model.MessageFilter;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.model.MessageFilter;
 import org.springframework.aop.framework.ProxyFactory;
+
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.Optional;
-
 
 /**
  * Factory for filters that provide default values.
@@ -21,7 +21,7 @@ public class QueryFilterAdapterFactory {
     public QueryFilterAdapterFactory(SimulatorConfigurationProperties simulatorConfiguration) {
         this.simulatorConfiguration = simulatorConfiguration;
     }
-    
+
     /**
      * Creates a filter that provides reasonable default values for the following certain filter attributes:<br>
      * 
@@ -46,19 +46,18 @@ public class QueryFilterAdapterFactory {
         proxyFactory.addAdvice(new DefaultValuesQueryAdvice<T>(delegate));
         return (T)proxyFactory.getProxy();
     }
-    
+
     private class DefaultValuesQueryAdvice<T extends MessageFilter> implements MethodInterceptor {
-        
+
         private final T delegate;
 
         public DefaultValuesQueryAdvice(T delegate) {
             super();
             this.delegate = delegate;
         }
-        
+
         @Override
         public Object invoke(MethodInvocation invocation) throws Throwable {
-            
             if ("getFromDate".equals(invocation.getMethod().getName())) {
                 return Optional.ofNullable(invocation.getMethod().invoke(delegate)).orElse(startOfDay());
             } else if ("getToDate".equals(invocation.getMethod().getName())) {
@@ -71,18 +70,17 @@ public class QueryFilterAdapterFactory {
                 return Optional.ofNullable(delegate.getDirectionInbound()).orElse(true);
             } else if ("getDirectionOutbound".equals(invocation.getMethod().getName())) {
                 return Optional.ofNullable(delegate.getDirectionOutbound()).orElse(true);
-            } 
+            }
+
             return invocation.getMethod().invoke(delegate, invocation.getArguments());
         }
-        
-        private Date startOfDay() {
-            return Date.from(LocalDate.now().atStartOfDay().plusDays(-simulatorConfiguration.getFilterStartDayShift())
-                    .toInstant(ZoneOffset.UTC));
+
+        private Instant startOfDay() {
+            return LocalDate.now().atStartOfDay().minusDays(simulatorConfiguration.getFilterStartDayShift()).toInstant(ZoneOffset.UTC);
         }
 
-        private Date endOfDay() {
-            return Date.from(LocalDate.now().plusDays(1).atStartOfDay()
-                    .toInstant(ZoneOffset.UTC));
+        private Instant endOfDay() {
+            return LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         }
     }
 }

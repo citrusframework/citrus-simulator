@@ -13,9 +13,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @DataJpaTest
 @ContextConfiguration(classes = { SimulatorAutoConfiguration.class })
@@ -134,9 +138,9 @@ class MessageRepositoryTest extends AbstractTestNGSpringContextTests{
 
     @Test
     void testFindByAllParams() {
-        Date startSavingDate = now();
+        Instant startSavingDate = now();
         String uid = createTestMessage();
-        Date endSavingDate = now();
+        Instant endSavingDate = now();
 
         // Filter by all valid
         MessageFilter filter = new MessageFilter();
@@ -172,8 +176,8 @@ class MessageRepositoryTest extends AbstractTestNGSpringContextTests{
         Assert.assertEquals(33, result.size());
     }
 
-    private Date now() {
-        return Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC));
+    private Instant now() {
+        return LocalDateTime.now().toInstant(ZoneOffset.UTC);
     }
 
     private String createTestMessage() {

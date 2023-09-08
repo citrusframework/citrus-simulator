@@ -20,9 +20,15 @@ import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.citrusframework.simulator.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 
 @RestController
 @RequestMapping("api/activity")
@@ -33,8 +39,8 @@ public class ActivityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public Collection<ScenarioExecution> getScenarioExecutions(
-            @RequestParam(value = "fromDate", required = false) Date fromDate,
-            @RequestParam(value = "toDate", required = false) Date toDate,
+            @RequestParam(value = "fromDate", required = false) Instant fromDate,
+            @RequestParam(value = "toDate", required = false) Instant toDate,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size
     ) {

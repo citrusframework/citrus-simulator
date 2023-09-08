@@ -16,16 +16,17 @@
 
 package org.citrusframework.simulator.model;
 
-import java.util.Date;
 import lombok.Data;
+
+import java.time.Instant;
 
 /**
  * Filter for filtering {@link Message}s
  */
 @Data
 public class MessageFilter {
-    private Date fromDate;
-    private Date toDate;
+    private Instant fromDate;
+    private Instant toDate;
     private Integer pageNumber;
     private Integer pageSize;
     private Boolean directionInbound;
@@ -42,5 +43,4 @@ public class MessageFilter {
      * filter.
      */
     private String headerFilter;
-
 }
