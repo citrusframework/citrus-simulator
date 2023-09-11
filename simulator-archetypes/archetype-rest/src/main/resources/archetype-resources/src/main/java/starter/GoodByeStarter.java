@@ -32,7 +32,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
     private TemplateService templateService;
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.echo("GoodBye starter was executed!");
         scenario.echo("${payload}");
     }

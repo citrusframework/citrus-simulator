@@ -10,11 +10,9 @@ import org.springframework.util.StringUtils;
  */
 @Service
 public class TemplateService {
-    private final SimulatorConfigurationProperties simulatorConfigurationProperties;
-    private TemplateHelper templateHelper;
+    private final TemplateHelper templateHelper;
 
     public TemplateService(SimulatorConfigurationProperties simulatorConfigurationProperties) {
-        this.simulatorConfigurationProperties = simulatorConfigurationProperties;
         templateHelper = createTemplateHelper(simulatorConfigurationProperties);
     }
 

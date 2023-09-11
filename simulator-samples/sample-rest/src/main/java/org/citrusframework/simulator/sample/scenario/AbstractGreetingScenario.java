@@ -21,7 +21,7 @@ import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.springframework.http.HttpStatus;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
-import static org.citrusframework.validation.xml.XpathPayloadVariableExtractor.Builder.fromXpath;
+import static org.citrusframework.dsl.MessageSupport.MessageBodySupport.fromBody;
 
 /**
  * @author Christoph Deppisch
@@ -30,37 +30,25 @@ public abstract class AbstractGreetingScenario extends AbstractSimulatorScenario
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.run(echo("Simulator: ${simulator.name}"));
+        scenario.$(echo("Simulator: ${simulator.name}"));
 
-        scenario
-            .http()
-            .receive(builder -> builder
-                    .post()
-                    .getMessageBuilderSupport()
-                    .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Say Hello!" +
-                            "</Hello>")
-                    .extract(
-                        fromXpath()
-                            .expression("//hello:Hello", "greeting")
-                    )
-            );
+        scenario.$(scenario.http()
+                .receive()
+                .post()
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                    "Say Hello!" +
+                                "</Hello>")
+                .extract(fromBody().expression("//hello:Hello", "greeting")));
 
-        scenario.run(echo("Received greeting: ${greeting}"));
+        scenario.$(echo("Received greeting: ${greeting}"));
 
-        scenario
-            .http()
-            .send((builder -> builder
-                    .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
-                    .body(
-                        String.format(
-                            "<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">%s</HelloResponse>",
-                            getGreetingMessage()
-                        )
-                    )
-                )
-            );
+        scenario.$(scenario.http()
+                .send()
+                .response(HttpStatus.OK)
+                .message()
+                .body(String.format("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">%s</HelloResponse>",
+                            getGreetingMessage())));
     }
 
     abstract String getGreetingMessage();

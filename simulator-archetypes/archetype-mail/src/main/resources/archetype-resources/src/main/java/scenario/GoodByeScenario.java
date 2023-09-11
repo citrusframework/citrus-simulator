@@ -22,7 +22,7 @@ import org.citrusframework.simulator.scenario.*;
 public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +

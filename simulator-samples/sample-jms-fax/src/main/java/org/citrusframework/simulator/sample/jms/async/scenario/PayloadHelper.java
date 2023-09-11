@@ -16,19 +16,22 @@
 
 package org.citrusframework.simulator.sample.jms.async.scenario;
 
-import org.citrusframework.simulator.sample.jms.async.model.*;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-
 import jakarta.xml.bind.JAXBElement;
+import org.citrusframework.simulator.sample.jms.async.model.CancelFaxType;
+import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
+import org.citrusframework.simulator.sample.jms.async.model.FaxStatusType;
+import org.citrusframework.simulator.sample.jms.async.model.FaxType;
+import org.citrusframework.simulator.sample.jms.async.model.ObjectFactory;
+import org.citrusframework.simulator.sample.jms.async.model.SendFaxType;
+import org.citrusframework.xml.Jaxb2Marshaller;
+import org.citrusframework.xml.Marshaller;
 
 /**
  * @author Martin Maher
  */
 public class PayloadHelper {
-    public Jaxb2Marshaller getMarshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath(ObjectFactory.class.getPackage().getName());
-        return marshaller;
+    public Marshaller getMarshaller() {
+        return new Jaxb2Marshaller(ObjectFactory.class.getPackage().getName());
     }
 
     public JAXBElement<SendFaxType> generateSendFaxMessage(String clientId, FaxType fax, String referenceId, boolean statusUpdates) {

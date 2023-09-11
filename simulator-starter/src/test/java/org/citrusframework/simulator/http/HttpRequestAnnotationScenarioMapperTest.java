@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  */
 public class HttpRequestAnnotationScenarioMapperTest {
 
-    private HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
+    private final HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
 
     @Mock
     private SimulatorConfigurationProperties simulatorConfiguration;

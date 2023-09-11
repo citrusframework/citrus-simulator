@@ -36,47 +36,40 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive(builder -> builder
+        scenario.$(scenario.http()
+                .receive()
                     .post()
-                    .getMessageBuilderSupport()
+                    .message()
                     .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Go to sleep!" +
+                                "Go to sleep!" +
                             "</GoodNight>")
-                    .extract(
-                        fromHeaders()
-                            .header(CORRELATION_ID, "correlationId")
-                    )
-            );
+                    .extract(fromHeaders().header(CORRELATION_ID, "correlationId")
+            ));
 
-        scenario.correlation(correlationManager -> correlationManager.start()
+        scenario.$(correlation().start()
                 .onHeader(CORRELATION_ID, "${correlationId}")
         );
 
-        scenario
-            .http()
-            .send(builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
+                    .message()
                     .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Good Night!" +
+                                "Good Night!" +
                             "</GoodNightResponse>"));
 
-        scenario
-            .http()
-            .receive(builder -> builder
+        scenario.$(scenario.http()
+                .receive()
                     .post()
                     .selector("x-correlationid = '1${correlationId}'")
-                    .getMessageBuilderSupport()
+                    .message()
                     .body("<InterveningRequest>In between!</InterveningRequest>")
             );
 
-        scenario
-            .http()
-            .send(builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
+                    .message()
                     .body("<InterveningResponse>In between!</InterveningResponse>")
             );
     }

@@ -40,6 +40,10 @@
     <!-- Citrus -->
     <dependency>
       <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-mail</artifactId>
     </dependency>
 

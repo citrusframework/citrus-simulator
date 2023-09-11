@@ -16,18 +16,21 @@
 
 package org.citrusframework.simulator.sample.jms.async.starter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
 import org.citrusframework.simulator.sample.jms.async.scenario.AbstractFaxScenario;
 import org.citrusframework.simulator.sample.jms.async.variables.ReferenceId;
 import org.citrusframework.simulator.sample.jms.async.variables.Status;
 import org.citrusframework.simulator.sample.jms.async.variables.StatusMessage;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.ScenarioStarter;
 import org.citrusframework.simulator.scenario.Starter;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
 
 /**
  * This scenario can be used for sending a status message. It can be triggered directly from the simulator GUI.
@@ -38,18 +41,19 @@ import java.util.List;
 public class StatusUpdateStarter extends AbstractFaxScenario implements ScenarioStarter {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.echo("Sending Status Message:  ${status}");
+    public void run(ScenarioRunner scenario) {
+        scenario.$(echo("Sending Status Message:  ${status}"));
 
-        scenario
-            .send(getStatusEndpoint())
-            .payload("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
+        scenario.$(send()
+                .endpoint(getStatusEndpoint())
+                .message()
+                .body("<StatusUpdateMessage xmlns=\"http://citrusframework.org/schemas/fax\">" +
                         "<referenceId>${referenceId}</referenceId>" +
                         "<status>${status}</status>" +
                         "<statusMessage>${statusMessage}</statusMessage>" +
-                    "</StatusUpdateMessage>");
+                    "</StatusUpdateMessage>"));
 
-        scenario.echo("Done");
+        scenario.$(echo("Done"));
     }
 
     @Override

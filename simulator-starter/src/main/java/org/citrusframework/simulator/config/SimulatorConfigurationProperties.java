@@ -108,7 +108,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
     /**
-     * Default shift in days for the start day of filtering. By default the filter starts at the beginning of the current day. 
+     * Default shift in days for the start day of filtering. By default the filter starts at the beginning of the current day.
      */
     private int filterStartDayShift = 0;
 
@@ -122,14 +122,14 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         templatePath = env.getProperty(SIMULATOR_TEMPLATE_PATH_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_PATH_ENV, templatePath));
         defaultScenario = env.getProperty(SIMULATOR_SCENARIO_PROPERTY, env.getProperty(SIMULATOR_SCENARIO_ENV, defaultScenario));
         defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
-        templateValidation = Boolean.valueOf(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
+        templateValidation = Boolean.parseBoolean(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
         exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
         inboundXmlDictionary = env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
         outboundXmlDictionary = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
         inboundJsonDictionary = env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
         outboundJsonDictionary = env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV, outboundJsonDictionary));
-        filterStartDayShift =  Integer.valueOf(env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_PROPERTY, env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_ENV, Integer.toString(filterStartDayShift))));
-        
+        filterStartDayShift =  Integer.parseInt(env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_PROPERTY, env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_ENV, Integer.toString(filterStartDayShift))));
+
         log.info("Using the simulator configuration: {}", this.toString());
     }
 
@@ -312,10 +312,10 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     public void setOutboundJsonDictionary(String outboundJsonDictionary) {
         this.outboundJsonDictionary = outboundJsonDictionary;
     }
-    
+
     /**
      * Gets the filterStartDayShift
-     * 
+     *
      * @return
      */
     public int getFilterStartDayShift() {
@@ -324,7 +324,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
 
     /**
      * Sets the filterStartDayShift
-     * 
+     *
      * @param filterStartDayShift
      */
     public void setFilterStartDayShift(int filterStartDayShift) {

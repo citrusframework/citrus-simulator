@@ -16,10 +16,15 @@
 
 package org.citrusframework.simulator.sample.jms.async.scenario;
 
+import org.citrusframework.message.builder.MarshallingPayloadBuilder;
 import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
-import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
 import org.citrusframework.simulator.sample.jms.async.variables.Variables;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
+
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
+import static org.citrusframework.dsl.MessageSupport.MessageBodySupport.fromBody;
+import static org.citrusframework.dsl.XpathSupport.xpath;
 
 /**
  * This scenario is the default or fallback scenario for any received Fax messages. Any Fax messages received by the
@@ -31,17 +36,18 @@ import org.citrusframework.simulator.sample.jms.async.variables.Variables;
 public class FaxQueuedScenario extends AbstractFaxScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive()
-            .xpath(Variables.ROOT_ELEMENT_XPATH, "SendFaxMessage")
-            .extractFromPayload(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_VAR);
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.receive()
+                .message()
+                .validate(xpath().expression(Variables.ROOT_ELEMENT_XPATH, "SendFaxMessage"))
+                .extract(fromBody().expression(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_VAR)));
 
-        scenario
-            .send(getStatusEndpoint())
-            .payload(
+        scenario.$(send()
+                .endpoint(getStatusEndpoint())
+                .message()
+                .body(new MarshallingPayloadBuilder(
                     getPayloadHelper().generateFaxStatusMessage(Variables.REFERENCE_ID_PH, FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                    getPayloadHelper().getMarshaller()
-            );
+                    getPayloadHelper().getMarshaller())
+            ));
     }
 }

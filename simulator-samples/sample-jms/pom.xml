@@ -44,10 +44,6 @@
     <!-- Citrus -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-endpoint-catalog</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-jms</artifactId>
     </dependency>
 
@@ -69,6 +65,11 @@
     </dependency>
 
     <!-- Test scoped dependencies -->
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -121,5 +122,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

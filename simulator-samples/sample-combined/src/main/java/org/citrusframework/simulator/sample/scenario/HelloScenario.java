@@ -18,12 +18,12 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
-import static org.citrusframework.validation.xml.XpathPayloadVariableExtractor.Builder.fromXpath;
+import static org.citrusframework.dsl.XpathSupport.xpath;
 
 /**
  * @author Christoph Deppisch
@@ -33,27 +33,22 @@ import static org.citrusframework.validation.xml.XpathPayloadVariableExtractor.B
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.run(echo("Simulator: ${simulator.name}"));
+    public void run(ScenarioRunner scenario) {
+        scenario.$(echo("Simulator: ${simulator.name}"));
 
-        scenario
-            .receive()
-            .getMessageBuilderSupport()
-            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
+        scenario.$(scenario.receive()
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
                     "</Hello>")
-            .extract(
-                fromXpath()
-                    .expression("//hello:Hello", "greeting")
-            );
+            .extract(xpath().expression("//hello:Hello", "greeting")));
 
-        scenario.run(echo("Received greeting: ${greeting}"));
+        scenario.$(echo("Received greeting: ${greeting}"));
 
-        scenario
-            .send()
-            .getMessageBuilderSupport()
-            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there!" +
-                    "</HelloResponse>");
+        scenario.$(scenario.send()
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                    "</HelloResponse>"));
     }
 }

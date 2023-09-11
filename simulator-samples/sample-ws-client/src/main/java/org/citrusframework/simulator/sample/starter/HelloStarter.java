@@ -16,17 +16,21 @@
 
 package org.citrusframework.simulator.sample.starter;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.variables.Name;
 import org.citrusframework.simulator.sample.variables.Variables;
-import org.citrusframework.ws.client.WebServiceClient;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
+import org.citrusframework.ws.client.WebServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collection;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
 
 @Starter("HelloStarter")
 public class HelloStarter extends AbstractScenarioStarter {
@@ -35,23 +39,27 @@ public class HelloStarter extends AbstractScenarioStarter {
     private WebServiceClient webServiceClient;
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.echo(String.format("Saying hello to: %s", Variables.NAME_PH));
+    public void run(ScenarioRunner scenario) {
+        scenario.$(echo(String.format("Saying hello to: %s", Variables.NAME_PH)));
 
-        scenario.send(webServiceClient)
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        scenario.$(send()
+                .endpoint(webServiceClient)
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             Variables.NAME_PH +
                         "</Hello>")
-                .header("citrus_soap_action", "Hello");
+                .header("citrus_soap_action", "Hello"));
 
-        scenario.receive(webServiceClient)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        scenario.$(receive()
+                .endpoint(webServiceClient)
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there " + Variables.NAME_PH +
-                        "</HelloResponse>");
+                        "</HelloResponse>"));
     }
 
     @Override
     public Collection<ScenarioParameter> getScenarioParameters() {
-        return Arrays.asList(new Name().asScenarioParameter());
+        return Collections.singletonList(new Name().asScenarioParameter());
     }
 }

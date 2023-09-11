@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.scenario;
 
 import org.citrusframework.simulator.correlation.CorrelationHandler;
+import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
 
 import jakarta.annotation.PostConstruct;
 
@@ -33,6 +34,15 @@ public abstract class AbstractSimulatorScenario implements SimulatorScenario, Co
     @PostConstruct
     public void init() throws Exception {
         scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
+    }
+
+    /**
+     * Start new message correlation so scenario is provided with additional inbound messages.
+     *
+     * @return
+     */
+    public CorrelationHandlerBuilder correlation() {
+        return new CorrelationHandlerBuilder(scenarioEndpoint);
     }
 
     @Override

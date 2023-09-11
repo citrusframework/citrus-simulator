@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.echo("Simulator: ${simulator.name}");
 
         scenario

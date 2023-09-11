@@ -16,6 +16,10 @@
 
 package org.citrusframework.simulator.sample.starter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.ScenarioParameterBuilder;
@@ -29,11 +33,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import static org.citrusframework.actions.EchoAction.Builder.echo;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+
 
 /**
  * This starter can be used to test the simulator scenario
@@ -53,23 +55,23 @@ public class CalculateStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.run(echo("Sending request to Calculate-IBAN REST Service..."));
+        scenario.$(echo("Sending request to Calculate-IBAN REST Service..."));
 
-        scenario.http().client(client)
+        scenario.$(http().client(client)
                     .send()
                     .get("/services/rest/bank")
                     .queryParam(QueryParameter.SORT_CODE, Variable.SORT_CODE.placeholder())
-                    .queryParam(QueryParameter.ACCOUNT_NUMBER, Variable.ACCOUNT.placeholder());
+                    .queryParam(QueryParameter.ACCOUNT_NUMBER, Variable.ACCOUNT.placeholder()));
 
-        scenario.run(echo("Receiving response from Calculate-IBAN REST Service..."));
+        scenario.$(echo("Receiving response from Calculate-IBAN REST Service..."));
 
-        scenario.http().client(client)
+        scenario.$(http().client(client)
                     .receive()
                     .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
-                    .contentType(MediaType.APPLICATION_JSON_VALUE);
+                    .message()
+                    .contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        scenario.run(echo("Response received from Calculate-IBAN REST Service"));
+        scenario.$(echo("Response received from Calculate-IBAN REST Service"));
     }
 
     @Override

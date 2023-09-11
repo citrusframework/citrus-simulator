@@ -302,6 +302,6 @@ favorite Java IDE. Build tools like Maven and Gradle compile and package the sim
 The simulator web application should start within seconds. Once the application is up and running on your local machine
 you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
 
-Now everything is set up and you can start to create some simulator scenarios. 
+Now everything is set up and you can start to create some simulator scenarios.
 
 That's it you are ready to use the Citrus simulator.

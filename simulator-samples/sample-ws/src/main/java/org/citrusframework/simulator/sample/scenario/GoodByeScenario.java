@@ -18,7 +18,7 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 /**
  * @author Christoph Deppisch
@@ -27,20 +27,20 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class GoodByeScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .soap()
-            .receive()
-            .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say GoodBye!" +
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.soap()
+                .receive()
+                .message()
+                .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say GoodBye!" +
                     "</GoodBye>")
-            .soapAction("GoodBye");
+                .soapAction("GoodBye"));
 
-        scenario
-            .soap()
-            .send()
-            .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Bye bye!" +
-                    "</GoodByeResponse>");
+        scenario.$(scenario.soap()
+                .send()
+                .message()
+                .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Bye bye!" +
+                    "</GoodByeResponse>"));
     }
 }

@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.sample.scenario;
 
-import org.citrusframework.http.actions.HttpServerActionBuilder.HttpServerReceiveActionBuilder;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
@@ -30,16 +29,13 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive((HttpServerReceiveActionBuilder::post));
+        scenario.$(scenario.http()
+                .receive().post());
 
-        scenario
-            .http()
-            .send((builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
-                    .body("<DefaultResponse>This is a default response!</DefaultResponse>"))
-            );
+                    .message()
+                    .body("<DefaultResponse>This is a default response!</DefaultResponse>"));
     }
 }

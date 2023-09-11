@@ -1,15 +1,19 @@
 package org.citrusframework.simulator.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MessageRepositoryImpl extends AbstractRepository implements MessageRepositoryCustom {
 
@@ -52,11 +56,11 @@ public class MessageRepositoryImpl extends AbstractRepository implements Message
             joinHeader(criteriaBuilder, filter.getHeaderFilter(), message, (root)->root.join("headers", JoinType.INNER));
         }
     }
-    
+
     private void addPayloadPredicate(MessageFilter filter, CriteriaBuilder criteriaBuilder,
                     Root<Message> message, List<Predicate> predicates) {
         if (StringUtils.hasText(filter.getContainingText())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(message.get("payload")),
+            predicates.add(criteriaBuilder.like(criteriaBuilder.upper(criteriaBuilder.toString(message.get("payload"))),
                             filter.getContainingText().toUpperCase()));
         }
     }
@@ -73,5 +77,5 @@ public class MessageRepositoryImpl extends AbstractRepository implements Message
                             filter.getToDate()));
         }
     }
- 
+
 }

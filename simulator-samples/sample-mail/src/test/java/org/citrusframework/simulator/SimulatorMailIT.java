@@ -17,12 +17,12 @@
 package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
-import org.citrusframework.dsl.runner.TestRunner;
-import org.citrusframework.dsl.runner.TestRunnerBeforeSuiteSupport;
-import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
 import org.citrusframework.mail.client.MailClient;
 import org.citrusframework.simulator.sample.Simulator;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,12 +31,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
+
 /**
  * @author Christoph Deppisch
  */
 @Test
 @ContextConfiguration(classes = SimulatorMailIT.EndpointConfig.class)
-public class SimulatorMailIT extends TestNGCitrusTestDesigner {
+public class SimulatorMailIT extends TestNGCitrusSpringSupport {
 
     /** Test mail client */
     @Autowired
@@ -47,8 +49,9 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testHelloRequest() {
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -58,7 +61,7 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say Hello!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
     }
 
     /**
@@ -66,8 +69,9 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -77,7 +81,7 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say GoodBye!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
     }
 
     /**
@@ -85,8 +89,9 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -96,7 +101,7 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say Default!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
     }
 
     /**
@@ -104,8 +109,9 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testInterveningRequest() {
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -115,10 +121,11 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say GoodNight!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
 
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -128,10 +135,11 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say Intervening!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
 
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -141,10 +149,11 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say Intervening!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
 
-        send(simulatorMailClient)
-                .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        $(send(simulatorMailClient)
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                             "<from>user@citrusframework.org</from>" +
                             "<to>citrus@citrusframework.org</to>" +
                             "<cc></cc>" +
@@ -154,7 +163,7 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
                                 "<contentType>text/plain; charset=utf-8</contentType>" +
                                 "<content>Say Intervening!</content>" +
                             "</body>" +
-                        "</mail-message>");
+                        "</mail-message>"));
     }
 
     @Configuration
@@ -170,13 +179,8 @@ public class SimulatorMailIT extends TestNGCitrusTestDesigner {
 
         @Bean
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
         }
     }
 }

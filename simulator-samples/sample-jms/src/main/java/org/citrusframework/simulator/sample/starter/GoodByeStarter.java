@@ -16,6 +16,9 @@
 
 package org.citrusframework.simulator.sample.starter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
@@ -24,8 +27,7 @@ import org.citrusframework.simulator.scenario.Starter;
 import org.citrusframework.simulator.service.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * @author Christoph Deppisch
@@ -38,8 +40,8 @@ public class GoodByeStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("GoodBye starter was executed!");
-        scenario.echo("${payload}");
+        scenario.$(echo("GoodBye starter was executed!"));
+        scenario.$(echo("${payload}"));
     }
 
     @Override

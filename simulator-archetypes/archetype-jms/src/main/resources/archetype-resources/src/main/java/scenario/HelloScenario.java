@@ -22,7 +22,7 @@ import org.citrusframework.simulator.scenario.*;
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.echo("Simulator: ${simulator.name}");
 
         scenario

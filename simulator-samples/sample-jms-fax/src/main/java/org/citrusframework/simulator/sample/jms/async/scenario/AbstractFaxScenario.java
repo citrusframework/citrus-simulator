@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class AbstractFaxScenario extends AbstractSimulatorScenario {
 
     /** Fax payload helper */
-    private PayloadHelper payloadHelper = new PayloadHelper();
+    private final PayloadHelper payloadHelper = new PayloadHelper();
 
     @Autowired
     @Qualifier("simulatorJmsStatusEndpoint")

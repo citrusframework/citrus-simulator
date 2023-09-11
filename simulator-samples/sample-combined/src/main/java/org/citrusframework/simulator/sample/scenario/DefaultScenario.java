@@ -18,7 +18,7 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 /**
  * @author Christoph Deppisch
@@ -27,13 +27,11 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive();
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.receive());
 
-        scenario
-            .send()
-            .getMessageBuilderSupport()
-            .body("<DefaultResponse>This is a default response!</DefaultResponse>");
+        scenario.$(scenario.send()
+                .message()
+                .body("<DefaultResponse>This is a default response!</DefaultResponse>"));
     }
 }

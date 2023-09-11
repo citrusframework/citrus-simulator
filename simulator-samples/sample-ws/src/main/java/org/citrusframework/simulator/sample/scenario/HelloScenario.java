@@ -18,7 +18,7 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 /**
  * @author Christoph Deppisch
@@ -27,20 +27,20 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .soap()
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.soap()
+                .receive()
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
                     "</Hello>")
-            .soapAction("Hello");
+                .soapAction("Hello"));
 
-        scenario
-            .soap()
-            .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there!" +
-                    "</HelloResponse>");
+        scenario.$(scenario.soap()
+                .send()
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                    "</HelloResponse>"));
     }
 }

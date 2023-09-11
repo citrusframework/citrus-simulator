@@ -18,7 +18,6 @@ package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
 import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
-import org.citrusframework.simulator.sample.config.EndpointConfig;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,10 +31,11 @@ import static org.citrusframework.actions.SleepAction.Builder.sleep;
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = {EndpointConfig.class})
+@ContextConfiguration(classes = EndpointConfig.class)
 public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
 
-    private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
+    public static final String JMS_CORRELATION_ID = "x_correlationid";
+    private final String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /** Test JMS endpoint */
     @Autowired
@@ -46,21 +46,18 @@ public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testHelloRequest() {
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
-                    "</Hello>")
-        );
+                            "Say Hello!" +
+                         "</Hello>"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(receive(jmsSyncEndpoint)
+                .message()
                 .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there!" +
-                    "</HelloResponse>")
-        );
+                            "Hi there!" +
+                         "</HelloResponse>"));
+
     }
 
     /**
@@ -68,21 +65,17 @@ public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say GoodBye!" +
-                    "</GoodBye>")
-        );
+                            "Say GoodBye!" +
+                         "</GoodBye>"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(receive(jmsSyncEndpoint)
+                .message()
                 .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Bye bye!" +
-                    "</GoodByeResponse>")
-        );
+                            "Bye bye!" +
+                         "</GoodByeResponse>"));
     }
 
     /**
@@ -90,19 +83,15 @@ public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<Default>" +
                             "Should trigger default scenario" +
-                        "</Default>")
-        );
+                        "</Default>"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
-                .body(defaultResponse)
-        );
+        $(receive(jmsSyncEndpoint)
+                .message()
+                .body(defaultResponse));
     }
 
     /**
@@ -112,64 +101,45 @@ public class SimulatorJmsIT extends TestNGCitrusSpringSupport {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Go to sleep!" +
-                    "</GoodNight>")
-                .header("x-correlationid", "${correlationId}")
-        );
+                            "Go to sleep!" +
+                        "</GoodNight>")
+                .header(JMS_CORRELATION_ID, "${correlationId}"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(receive(jmsSyncEndpoint)
+                .message()
                 .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Good Night!" +
-                    "</GoodNightResponse>")
-        );
+                            "Good Night!" +
+                        "</GoodNightResponse>"));
 
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(send(jmsSyncEndpoint)
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>"));
+
+        $(receive(jmsSyncEndpoint)
+                .message()
+                .body(defaultResponse));
+
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<InterveningRequest>In between!</InterveningRequest>")
-        );
+                .header(JMS_CORRELATION_ID, "${correlationId}"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
-                .body(defaultResponse)
-        );
+        $(receive(jmsSyncEndpoint)
+                .message()
+                .body("<InterveningResponse>In between!</InterveningResponse>"));
 
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
+        $(sleep().milliseconds(2000L));
+
+        $(send(jmsSyncEndpoint)
+                .message()
                 .body("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}")
-        );
+                .header(JMS_CORRELATION_ID, "${correlationId}"));
 
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
-                .body("<InterveningResponse>In between!</InterveningResponse>")
-        );
-
-        and(
-            sleep()
-                .milliseconds(2000L)
-        );
-
-        when(
-            send(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
-                .body("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}")
-        );
-
-        then(
-            receive(jmsSyncEndpoint)
-                .getMessageBuilderSupport()
-                .body(defaultResponse)
-        );
+        $(receive(jmsSyncEndpoint)
+                .message()
+                .body(defaultResponse));
     }
 }

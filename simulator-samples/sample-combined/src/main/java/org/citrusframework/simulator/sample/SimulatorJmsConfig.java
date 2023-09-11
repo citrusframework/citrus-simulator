@@ -10,15 +10,9 @@ import org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties;
  */
 public class SimulatorJmsConfig extends SimulatorJmsAdapter {
 
-    private final String brokerURL;
-
-    public SimulatorJmsConfig(String brokerURL) {
-        this.brokerURL = brokerURL;
-    }
-
     @Override
     public ConnectionFactory connectionFactory() {
-        return new ActiveMQConnectionFactory(brokerURL);
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
     }
 
     @Override

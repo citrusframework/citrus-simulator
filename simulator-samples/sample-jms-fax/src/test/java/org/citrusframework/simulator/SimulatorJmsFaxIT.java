@@ -17,15 +17,22 @@
 package org.citrusframework.simulator;
 
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
+import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.BeforeTest;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.container.SequenceBeforeTest;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
-import org.citrusframework.dsl.runner.TestRunner;
-import org.citrusframework.dsl.runner.TestRunnerBeforeSuiteSupport;
-import org.citrusframework.dsl.runner.TestRunnerBeforeTestSupport;
-import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.jms.endpoint.JmsEndpoint;
+import org.citrusframework.message.builder.MarshallingPayloadBuilder;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.jms.async.Simulator;
 import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
@@ -34,9 +41,8 @@ import org.citrusframework.simulator.sample.jms.async.scenario.PayloadHelper;
 import org.citrusframework.simulator.sample.jms.async.variables.ReferenceId;
 import org.citrusframework.simulator.sample.jms.async.variables.Status;
 import org.citrusframework.simulator.sample.jms.async.variables.StatusMessage;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.citrusframework.xml.XsdSchemaRepository;
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
@@ -50,13 +56,20 @@ import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
+import static org.citrusframework.actions.ReceiveTimeoutAction.Builder.receiveTimeout;
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
+import static org.citrusframework.actions.SleepAction.Builder.sleep;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+import static org.citrusframework.jms.actions.PurgeJmsQueuesAction.Builder.purgeQueues;
+
 /**
  * @author Martin Maher
  */
 @Test
 @ContextConfiguration(classes = SimulatorJmsFaxIT.EndpointConfig.class)
-public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
-    private PayloadHelper payloadHelper = new PayloadHelper();
+public class SimulatorJmsFaxIT extends TestNGCitrusSpringSupport {
+    private final PayloadHelper payloadHelper = new PayloadHelper();
 
     @Autowired
     @Qualifier("simulatorInboundEndpoint")
@@ -79,17 +92,19 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         FaxType fax = payloadHelper.createFaxType("Joe Bloggs", "Testing the default scenario", "01-223344", "01-556677");
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateSendFaxMessage("Non-Matchable Scenario", fax, referenceId.getValue(), true),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateSendFaxMessage("Non-Matchable Scenario", fax, referenceId.getValue(), true),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
+                        payloadHelper.getMarshaller())));
 
         // check no other status messages are sent; the default scenario only sends one status message
-        receiveTimeout(simulatorStatusEndpoint)
-                .timeout(3000);
+        $(receiveTimeout(simulatorStatusEndpoint)
+                .timeout(3000));
     }
 
     /**
@@ -101,19 +116,22 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         FaxType fax = payloadHelper.createFaxType("Joe Bloggs", "Testing the FaxSent scenario", "01-223344", "01-556677");
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateSendFaxMessage("FaxSent", fax, referenceId.getValue(), true),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateSendFaxMessage("FaxSent", fax, referenceId.getValue(), true),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
+                        payloadHelper.getMarshaller())));
 
-        sleep(2000L);
+        $(sleep().milliseconds(2000L));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.SUCCESS, "The fax message has been successfully sent"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.SUCCESS, "The fax message has been successfully sent"),
+                        payloadHelper.getMarshaller())));
     }
 
     /**
@@ -125,21 +143,25 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         FaxType fax = payloadHelper.createFaxType("Joe Bloggs", "Testing the FaxCancelled scenario", "01-223344", "01-556677");
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateSendFaxMessage("FaxCancelled", fax, referenceId.getValue(), true),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateSendFaxMessage("FaxCancelled", fax, referenceId.getValue(), true),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
+                        payloadHelper.getMarshaller())));
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateCancelFaxMessage(referenceId.getValue()),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateCancelFaxMessage(referenceId.getValue()),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.CANCELLED, "The fax message has been cancelled"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.CANCELLED, "The fax message has been cancelled"),
+                        payloadHelper.getMarshaller())));
     }
 
     /**
@@ -151,17 +173,20 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         FaxType fax = payloadHelper.createFaxType("Joe Bloggs", "Testing the FaxBusy scenario", "01-223344", "01-556677");
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateSendFaxMessage("FaxBusy", fax, referenceId.getValue(), true),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateSendFaxMessage("FaxBusy", fax, referenceId.getValue(), true),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: The receiving fax was busy"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: The receiving fax was busy"),
+                        payloadHelper.getMarshaller())));
     }
 
     /**
@@ -173,17 +198,20 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         FaxType fax = payloadHelper.createFaxType("Joe Bloggs", "Testing the FaxNoAnswer scenario", "01-223344", "01-556677");
 
-        send(simulatorInboundEndpoint)
-                .payload(payloadHelper.generateSendFaxMessage("FaxNoAnswer", fax, referenceId.getValue(), true),
-                        payloadHelper.getMarshaller());
+        $(send(simulatorInboundEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateSendFaxMessage("FaxNoAnswer", fax, referenceId.getValue(), true),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, "The fax message has been queued and will be send shortly"),
+                        payloadHelper.getMarshaller())));
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: No answer from the receiving fax"),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.ERROR, "Error transmitting fax: No answer from the receiving fax"),
+                        payloadHelper.getMarshaller())));
     }
 
     /**
@@ -196,24 +224,26 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
         Status status = new Status(FaxStatusEnumType.QUEUED);
         StatusMessage statusMessage = new StatusMessage("The fax message has been queued and will be send shortly");
 
-        http()
+        $(http()
             .client(restEndpoint)
             .send()
             .post("/api/scenario/launch/UpdateFaxStatus")
+            .message()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .payload(asJson(referenceId.asScenarioParameter(),
+            .body(asJson(referenceId.asScenarioParameter(),
                     status.asScenarioParameter(),
                     statusMessage.asScenarioParameter())
-            );
+            ));
 
-        http()
+        $(http()
             .client(restEndpoint)
-            .receive().response(HttpStatus.OK);
+            .receive().response(HttpStatus.OK));
 
 
-        receive(simulatorStatusEndpoint)
-                .payload(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, statusMessage.getValue()),
-                        payloadHelper.getMarshaller());
+        $(receive(simulatorStatusEndpoint)
+                .message()
+                .body(new MarshallingPayloadBuilder(payloadHelper.generateFaxStatusMessage(referenceId.getValue(), FaxStatusEnumType.QUEUED, statusMessage.getValue()),
+                        payloadHelper.getMarshaller())));
 
     }
 
@@ -237,10 +267,11 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
 
         @Bean(initMethod = "start", destroyMethod = "stop")
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public BrokerService messageBroker() throws Exception {
-            BrokerService brokerService = new BrokerService();
-            brokerService.setPersistent(false);
-            brokerService.addConnector("tcp://localhost:61616");
+        public EmbeddedActiveMQ messageBroker() {
+            EmbeddedActiveMQ brokerService = new EmbeddedActiveMQ();
+            SecurityConfiguration securityConfiguration = new SecurityConfiguration(Collections.singletonMap("citrus", "citrus"), Collections.singletonMap("citrus", Collections.singletonList("citrus")));
+            securityConfiguration.setDefaultUser("citrus");
+            brokerService.setSecurityManager(new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfiguration));
             return brokerService;
         }
 
@@ -276,29 +307,19 @@ public class SimulatorJmsFaxIT extends TestNGCitrusTestDesigner {
         }
 
         @Bean
-        public TestRunnerBeforeTestSupport purgeJmsQueues() {
-            return new TestRunnerBeforeTestSupport() {
-                @Override
-                public void beforeTest(TestRunner runner) {
-                    runner.purgeQueues(builder -> {
-                       builder.connectionFactory(connectionFactory());
-                       builder.queueNames("Fax.Inbound", "Fax.Status");
-                    });
-
-                }
-            };
+        public BeforeTest purgeJmsQueues() {
+            return new SequenceBeforeTest.Builder().actions(
+                purgeQueues()
+                    .connectionFactory(connectionFactory())
+                    .queueNames("Fax.Inbound", "Fax.Status")
+            ).build();
         }
 
         @Bean
         @DependsOn("messageBroker")
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
         }
     }
 }

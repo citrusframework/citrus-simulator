@@ -17,10 +17,19 @@
 package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
-import org.citrusframework.simulator.sample.config.EndpointConfig;
+import org.citrusframework.simulator.sample.RestSimulator;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,10 +42,10 @@ import static org.citrusframework.http.actions.HttpActionBuilder.http;
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = EndpointConfig.class)
+@ContextConfiguration(classes = SimulatorRestIT.EndpointConfig.class)
 public class SimulatorRestIT extends TestNGCitrusSpringSupport {
 
-    private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
+    private final String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /** Test Http REST client */
     @Autowired
@@ -47,26 +56,22 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testHelloRequest() {
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("hello")
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
-                    "</Hello>")
-        );
+                            "Say Hello!" +
+                         "</Hello>"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
+                .message()
                 .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
-                         "</HelloResponse>")
-        );
+                         "</HelloResponse>"));
     }
 
     /**
@@ -74,26 +79,22 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testHowdyRequest() {
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("howdy")
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
-                        "</Hello>")
-        );
+                        "</Hello>"));
 
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
+                .message()
                 .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Howdy partner!" +
-                        "</HelloResponse>")
-        );
+                        "</HelloResponse>"));
     }
 
 
@@ -103,26 +104,22 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("goodbye")
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>")
-        );
+                         "</GoodBye>"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
+                .message()
                 .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
-                         "</GoodByeResponse>")
-        );
+                         "</GoodByeResponse>"));
     }
 
     /**
@@ -130,22 +127,20 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<Default>" +
                             "Should trigger default scenario" +
-                        "</Default>")
-        );
+                        "</Default>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
-                .body(defaultResponse);
+                .message()
+                .body(defaultResponse));
     }
 
     /**
@@ -155,93 +150,102 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("goodnight")
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
-                .header("x-correlationid", "${correlationId}")
-        );
+                .header("x-correlationid", "${correlationId}"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
+                .message()
                 .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
-                        "</GoodNightResponse>")
-        );
+                        "</GoodNightResponse>"));
 
         //
         // Should be handled by default scenario
         //
 
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
-                .body("<InterveningRequest>No match correlation!</InterveningRequest>")
-        );
+                .body("<InterveningRequest>No match correlation!</InterveningRequest>"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
-                .body(defaultResponse)
-        );
+                .message()
+                .body(defaultResponse));
 
         //
         // Should be handled by good-night scenario
         //
 
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}")
-        );
+                .header("x-correlationid", "${correlationId}"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
-                .body("<InterveningResponse>In between!</InterveningResponse>")
-        );
+                .message()
+                .body("<InterveningResponse>In between!</InterveningResponse>"));
 
-        and(sleep().milliseconds(2000L));
+        $(sleep().milliseconds(2000L));
 
         //
         // Should be handled by default scenario -> the goodnight scenario should have completed by now
         //
 
-        when(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .getMessageBuilderSupport()
+                .message()
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .body("<InterveningRequest>After correlation!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}")
-        );
+                .header("x-correlationid", "${correlationId}"));
 
-        then(
-            http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .getMessageBuilderSupport()
-                .body(defaultResponse)
-        );
+                .message()
+                .body(defaultResponse));
+    }
+
+    @Configuration
+    @PropertySource("classpath:application.properties")
+    public static class EndpointConfig {
+
+        @Bean
+        public XsdSchemaRepository schemaRepository() {
+            XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
+            schemaRepository.getLocations().add("classpath:xsd/HelloService.xsd");
+            return schemaRepository;
+        }
+
+        @Bean
+        public HttpClient simulatorClient() {
+            return CitrusEndpoints.http().client()
+                    .requestUrl(String.format("http://localhost:%s/services/rest/simulator", 8080))
+                    .build();
+        }
+
+        @Bean
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(RestSimulator.class)).build();
+        }
     }
 }

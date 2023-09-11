@@ -1,5 +1,8 @@
 package org.citrusframework.simulator.http;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
@@ -25,26 +28,20 @@ import org.citrusframework.http.actions.HttpServerRequestActionBuilder;
 import org.citrusframework.http.actions.HttpServerResponseActionBuilder;
 import org.citrusframework.http.message.HttpMessageHeaders;
 import org.citrusframework.message.MessageHeaders;
+import org.citrusframework.message.MessageType;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.hamcrest.CustomMatcher;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.HEAD;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * @author Christoph Deppisch
@@ -61,7 +58,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     private final String path;
 
     /** Request method */
-    private final HttpMethod method;
+    private final RequestMethod method;
 
     /** Response */
     private Response response;
@@ -79,7 +76,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
      * @param operation
      * @param definitions
      */
-    public HttpOperationScenario(String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
+    public HttpOperationScenario(String path, RequestMethod method, Operation operation, Map<String, Model> definitions) {
         this.operation = operation;
         this.definitions = definitions;
         this.path = path;
@@ -91,47 +88,46 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     }
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.name(operation.getOperationId());
+        scenario.$(echo("Generated scenario from swagger operation: " + operation.getOperationId()));
 
         HttpServerRequestActionBuilder requestBuilder;
-        if (method.equals(GET)) {
-            requestBuilder = scenario
-                    .http()
+        switch (method) {
+            case GET:
+                requestBuilder = scenario.http()
                     .receive()
                     .get();
-        } else if (method.equals(POST)) {
-            requestBuilder = scenario
-                    .http()
+                break;
+            case POST:
+                requestBuilder = scenario.http()
                     .receive()
                     .post();
-        } else if (method.equals(PUT)) {
-            requestBuilder = scenario
-                    .http()
+                break;
+            case PUT:
+                requestBuilder = scenario.http()
                     .receive()
                     .put();
-        } else if (method.equals(HEAD)) {
-            requestBuilder = scenario
-                    .http()
+                break;
+            case HEAD:
+                requestBuilder = scenario.http()
                     .receive()
                     .head();
-        } else if (method.equals(DELETE)) {
-            requestBuilder = scenario
-                    .http()
+                break;
+            case DELETE:
+                requestBuilder = scenario.http()
                     .receive()
                     .delete();
-        } else {
-            throw new SimulatorException("Unsupported request method: " + method.name());
+                break;
+            default:
+                throw new SimulatorException("Unsupported request method: " + method.name());
         }
 
         requestBuilder
-            // TODO: .messageType(MessageType.JSON)
-            .getMessageBuilderSupport()
-            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
-
-        requestBuilder
-                .getMessageBuilderSupport()
-                .header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
+            .message()
+            .type(MessageType.JSON)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
+            .header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
                 @Override
                 public boolean matches(Object item) {
                     return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
@@ -142,7 +138,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             operation.getParameters().stream()
                     .filter(p -> p instanceof HeaderParameter)
                     .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.getMessageBuilderSupport().header(p.getName(), createValidationExpression(((HeaderParameter) p))));
+                    .forEach(p -> requestBuilder.message().header(p.getName(), createValidationExpression(((HeaderParameter) p))));
 
             String queryParams = operation.getParameters().stream()
                     .filter(param -> param instanceof QueryParameter)
@@ -151,44 +147,50 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
                     .collect(Collectors.joining(", "));
 
             if (StringUtils.hasText(queryParams)) {
-                requestBuilder.getMessageBuilderSupport().header(HttpMessageHeaders.HTTP_QUERY_PARAMS, "@assertThat(allOf(" + queryParams + "))@");
+                requestBuilder.message().header(HttpMessageHeaders.HTTP_QUERY_PARAMS, "@assertThat(allOf(" + queryParams + "))@");
             }
 
             operation.getParameters().stream()
                     .filter(p -> p instanceof BodyParameter)
                     .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.getMessageBuilderSupport().body(createValidationPayload((BodyParameter) p)));
+                    .forEach(p -> requestBuilder.message().body(createValidationPayload((BodyParameter) p)));
 
             if (inboundDataDictionary != null) {
-                requestBuilder.getMessageBuilderSupport().dictionary(inboundDataDictionary);
+                requestBuilder.message().dictionary(inboundDataDictionary);
             }
         }
 
-        HttpServerResponseActionBuilder.HttpMessageBuilderSupport responseBuilder = scenario
-            .http()
+        // Verify incoming request
+        scenario.$(requestBuilder);
+
+        HttpServerResponseActionBuilder responseBuilder = scenario.http()
             .send()
-            .response(statusCode)
-            // TODO: .messageType(MessageType.JSON)
-            .getMessageBuilderSupport()
+            .response(statusCode);
+
+        responseBuilder.message()
+            .type(MessageType.JSON)
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 
         if (response != null) {
             if (response.getHeaders() != null) {
                 for (Map.Entry<String, Property> header : response.getHeaders().entrySet()) {
-                    responseBuilder.header(header.getKey(), createRandomValue(header.getValue(), false));
+                    responseBuilder.message().header(header.getKey(), createRandomValue(header.getValue(), false));
                 }
             }
 
             if (response.getSchema() != null) {
                 if (outboundDataDictionary != null &&
                         (response.getSchema() instanceof RefProperty || response.getSchema() instanceof ArrayProperty)) {
-                    responseBuilder.dictionary(outboundDataDictionary);
+                    responseBuilder.message().dictionary(outboundDataDictionary);
                 }
 
-                responseBuilder.body(createRandomValue(response.getSchema(), false));
+                responseBuilder.message().body(createRandomValue(response.getSchema(), false));
             }
         }
+
+        // Return generated response
+        scenario.$(responseBuilder);
     }
 
     /**
@@ -391,7 +393,7 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
      *
      * @return
      */
-    public HttpMethod getMethod() {
+    public RequestMethod getMethod() {
         return method;
     }
 

@@ -15,16 +15,19 @@
  */
 package org.citrusframework.simulator.http;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.citrusframework.http.message.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.*;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Checks whether the {@link HttpMessage} satisfies the supported {@link RequestMapping} definition.
@@ -91,7 +94,7 @@ public class HttpRequestAnnotationMatcher {
      */
     public boolean checkRequestMethodSupported(HttpMessage request, RequestMapping requestMapping) {
         final RequestMethod[] requestMethods = requestMapping.method();
-        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : HttpMethod.POST.name();
+        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : RequestMethod.POST.name();
         if (requestMethods.length > 0) {
             for (RequestMethod method : requestMethods) {
                 if (method.name().equals(actualRequestMethod)) {

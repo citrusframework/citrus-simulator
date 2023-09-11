@@ -35,7 +35,7 @@ import java.util.*;
 @DataJpaTest
 @ContextConfiguration(classes = {SimulatorAutoConfiguration.class})
 public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContextTests {
-    
+
     private static final String TEST_SCENARIO= "test-scenario";
 
     private static final SimulatorConfigurationProperties PROPERTIES = new SimulatorConfigurationProperties();
@@ -83,7 +83,7 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
 
         ScenarioExecutionFilter scenarioExecutionFilter = new ScenarioExecutionFilter();
         scenarioExecutionFilter.setExecutionStatus(new Status[] {Status.FAILED});
-        
+
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
         List<ScenarioExecution> result = scenarioExecutionRepository.find(queryFilter);

@@ -17,8 +17,6 @@
 package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.TestAction;
-import org.citrusframework.actions.AbstractTestAction;
-import org.citrusframework.context.TestContext;
 import org.citrusframework.endpoint.resolver.DynamicEndpointUriResolver;
 import org.citrusframework.simulator.sample.service.BankService;
 import org.citrusframework.simulator.sample.service.QueryParameterService;
@@ -31,7 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
-import static org.citrusframework.simulator.sample.model.QueryParameter.*;
+import static org.citrusframework.simulator.sample.model.QueryParameter.ACCOUNT_NUMBER;
+import static org.citrusframework.simulator.sample.model.QueryParameter.IBAN;
+import static org.citrusframework.simulator.sample.model.QueryParameter.SORT_CODE;
 import static org.citrusframework.simulator.sample.model.Variable.JSON_RESPONSE;
 import static org.citrusframework.simulator.sample.model.Variable.QUERY_PARAMS;
 
@@ -53,37 +53,28 @@ public class ValidateIban extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive(builder -> builder
+        scenario.$(scenario.http()
+                .receive()
                     .get()
-                    .getMessageBuilderSupport()
-                    .extract(
-                        fromHeaders()
-                            .header(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name())
-                    )
-            );
+                    .message()
+                    .extract(fromHeaders().header(DynamicEndpointUriResolver.QUERY_PARAM_HEADER_NAME, QUERY_PARAMS.name())));
 
         scenario.run(validateIban());
 
-        scenario
-            .http()
-            .send(builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .getMessageBuilderSupport()
+                    .message()
                     .body(JSON_RESPONSE.placeholder())
                     .contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     private TestAction validateIban() {
-        return new AbstractTestAction() {
-            @Override
-            public void doExecute(TestContext context) {
-                final String queryParams = context.getVariable(QUERY_PARAMS.name(), String.class);
-                final String iban = queryParameterService.getIban(queryParams);
-                final String jsonResponse = bankService.validate(iban).asJson();
-                context.setVariable(JSON_RESPONSE.name(), jsonResponse);
-            }
+        return context -> {
+            final String queryParams = context.getVariable(QUERY_PARAMS.name(), String.class);
+            final String iban = queryParameterService.getIban(queryParams);
+            final String jsonResponse = bankService.validate(iban).asJson();
+            context.setVariable(JSON_RESPONSE.name(), jsonResponse);
         };
     }
 }

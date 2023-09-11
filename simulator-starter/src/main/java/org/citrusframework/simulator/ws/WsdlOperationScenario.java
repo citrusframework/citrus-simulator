@@ -1,12 +1,14 @@
 package org.citrusframework.simulator.ws;
 
+import javax.wsdl.BindingOperation;
+
 import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
-import javax.wsdl.BindingOperation;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * @author Christoph Deppisch
@@ -35,23 +37,23 @@ public class WsdlOperationScenario extends AbstractSimulatorScenario {
     }
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .soap()
+    public void run(ScenarioRunner scenario) {
+        scenario.$(echo("Generated scenario from WSDL operation: " + operation.getName()));
+
+        scenario.$(scenario.soap()
             .receive()
-            .getMessageBuilderSupport()
+            .message()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .dictionary(inboundDataDictionary)
             .body(input)
-            .soapAction(soapAction);
+            .soapAction(soapAction));
 
-        scenario
-            .soap()
+        scenario.$(scenario.soap()
             .send()
-            .getMessageBuilderSupport()
+            .message()
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
             .dictionary(outboundDataDictionary)
-            .body(output);
+            .body(output));
     }
 
     /**

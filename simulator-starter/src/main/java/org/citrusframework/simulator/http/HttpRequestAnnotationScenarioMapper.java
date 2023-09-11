@@ -44,7 +44,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper 
     @Autowired(required = false)
     private List<SimulatorScenario> scenarioList = new ArrayList<>();
 
-    private HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
+    private final HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
 
     @Override
     protected String getMappingKey(Message request) {

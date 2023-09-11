@@ -29,7 +29,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     private static final String CORRELATION_ID = "x-correlationid";
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .http()
             .receive()

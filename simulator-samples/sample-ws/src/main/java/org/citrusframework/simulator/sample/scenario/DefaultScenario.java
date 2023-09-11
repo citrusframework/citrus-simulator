@@ -18,7 +18,7 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 /**
  * @author Christoph Deppisch
@@ -27,12 +27,12 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .soap()
-            .sendFault()
-                .faultActor("SERVER")
-                .faultCode("{http://localhost:8080/HelloService/v1}CITRUS:SIM-1100")
-                .faultString("No matching scenario found");
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.soap()
+                .sendFault()
+                    .message()
+                    .faultActor("SERVER")
+                    .faultCode("{http://localhost:8080/HelloService/v1}CITRUS:SIM-1100")
+                    .faultString("No matching scenario found"));
     }
 }

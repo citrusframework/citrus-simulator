@@ -53,7 +53,7 @@ public class SoapMessageHelper {
     /**
      * Transformer
      */
-    private TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    private final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
     /**
      * Method reads SOAP body element from SOAP Envelope and transforms body payload to String.

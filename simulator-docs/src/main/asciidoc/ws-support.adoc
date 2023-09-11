@@ -177,7 +177,7 @@ within the simulator we can simply send back a response message in the scenario.
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .soap()
             .receive()

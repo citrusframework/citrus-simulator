@@ -24,7 +24,7 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     private static final String CORRELATION_ID = "correlationId";
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .receive()
             .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +

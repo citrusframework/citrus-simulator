@@ -3,7 +3,6 @@ package org.citrusframework.simulator.http;
 import org.citrusframework.http.actions.HttpActionBuilder;
 import org.citrusframework.http.actions.HttpServerActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
-import org.citrusframework.spi.ReferenceResolver;
 
 /**
  * @author Christoph Deppisch
@@ -15,15 +14,6 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
 
     public HttpScenarioActionBuilder(ScenarioEndpoint scenarioEndpoint) {
         this.scenarioEndpoint = scenarioEndpoint;
-    }
-
-    /**
-     * Sets the bean reference resolver.
-     * @param referenceResolver
-     */
-    public HttpScenarioActionBuilder withReferenceResolver(ReferenceResolver referenceResolver) {
-        super.withReferenceResolver(referenceResolver);
-        return this;
     }
 
     /**

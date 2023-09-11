@@ -26,7 +26,7 @@ import org.citrusframework.message.Message;
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.correlation().start()
             .withHandler(this);
 

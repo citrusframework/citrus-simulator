@@ -31,11 +31,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-artemis</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
@@ -49,11 +44,17 @@
     <!-- Citrus -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-endpoint-catalog</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-jms</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun.xml.messaging.saaj</groupId>
+          <artifactId>saaj-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.ws</groupId>
+          <artifactId>spring-ws-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- ActiveMQ Artemis broker -->
@@ -68,8 +69,17 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-artemis</artifactId>
+    </dependency>
 
     <!-- Test scoped dependencies -->
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>

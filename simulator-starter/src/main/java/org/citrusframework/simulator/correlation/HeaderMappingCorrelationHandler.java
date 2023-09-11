@@ -46,6 +46,7 @@ public class HeaderMappingCorrelationHandler extends AbstractCorrelationHandler 
 
     @Override
     public boolean isHandlerFor(Message message, TestContext context) {
-        return message.getHeader(headerName) != null && message.getHeader(headerName).equals(context.replaceDynamicContentInString(value));
+        Object header = message.getHeader(context.replaceDynamicContentInString(headerName));
+        return header != null && header.equals(context.replaceDynamicContentInString(value));
     }
 }
