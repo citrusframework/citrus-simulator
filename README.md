@@ -68,12 +68,12 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.consol.citrus:citrus-simulator-starter:1.2-SNAPSHOT")
+    implementation("org.citrusframework:citrus-simulator-starter:1.2-SNAPSHOT")
     testImplementation("junit:junit")
 }
 ```
@@ -90,17 +90,17 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator-sample</artifactId>
   <name>${project.artifactId}</name>
   <version>1.0.0</version>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>1.2-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
+    <citrus.simulator.version>2.2.0-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>3.1.2</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -116,15 +116,9 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
-
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-simulator-starter</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
@@ -190,7 +184,7 @@ In addition to that we should define one to many simulator scenarios that execut
 ```java
 package org.citrusframework.simulator;
 
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
@@ -246,7 +240,7 @@ In Maven we simply add the following dependency:
 
 ```xml
 <dependency>
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator-ui</artifactId>
   <version>${citrus.simulator.version}</version>
 </dependency>

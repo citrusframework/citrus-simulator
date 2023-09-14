@@ -18,7 +18,9 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
+
+import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
 
 /**
  * @author Christoph Deppisch
@@ -29,30 +31,30 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     private static final String CORRELATION_ID = "correlationId";
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
-            .extractFromHeader(CORRELATION_ID, "correlationId");
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.receive()
+                .message()
+                .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                         "</GoodNight>")
+                .extract(fromHeaders().header(CORRELATION_ID, "correlationId")) );
 
-        scenario.correlation().start()
-            .onHeader(CORRELATION_ID, "${correlationId}");
+        scenario.$(correlation().start()
+            .onHeader(CORRELATION_ID, "${correlationId}"));
 
-        scenario
-            .send()
-            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        scenario.$(scenario.send()
+                .message()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Good Night!" +
-                     "</GoodNightResponse>");
+                     "</GoodNightResponse>"));
 
-        scenario
-            .receive()
+        scenario.$(scenario.receive()
                 .selector(CORRELATION_ID + " = '${correlationId}'")
-            .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>"));
 
-        scenario
-            .send()
-            .payload("<InterveningResponse>In between!</InterveningResponse>");
+        scenario.$(scenario.send()
+                .message()
+                .body("<InterveningResponse>In between!</InterveningResponse>"));
     }
 }

@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.endpoint.Endpoint;
+import org.citrusframework.endpoint.Endpoint;
 import org.citrusframework.simulator.config.SimulatorConfigurer;
 import org.springframework.context.ApplicationContext;
 

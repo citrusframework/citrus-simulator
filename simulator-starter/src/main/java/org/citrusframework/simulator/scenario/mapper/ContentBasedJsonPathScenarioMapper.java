@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.consol.citrus.endpoint.adapter.mapping.JsonPayloadMappingKeyExtractor;
-import com.consol.citrus.message.Message;
+import org.citrusframework.endpoint.adapter.mapping.JsonPayloadMappingKeyExtractor;
+import org.citrusframework.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

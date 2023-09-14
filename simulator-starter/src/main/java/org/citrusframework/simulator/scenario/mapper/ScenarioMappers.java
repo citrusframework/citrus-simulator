@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import com.consol.citrus.message.Message;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationPropertiesAware;
 import org.citrusframework.simulator.http.HttpOperationScenario;
 import org.citrusframework.simulator.scenario.Scenario;

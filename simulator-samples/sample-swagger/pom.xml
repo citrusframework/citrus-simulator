@@ -27,11 +27,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
@@ -40,6 +35,11 @@
     <dependency>
       <groupId>org.citrusframework</groupId>
       <artifactId>citrus-simulator-ui</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
     </dependency>
 
     <dependency>

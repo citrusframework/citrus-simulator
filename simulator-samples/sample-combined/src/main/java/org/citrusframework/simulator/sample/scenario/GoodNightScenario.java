@@ -18,7 +18,8 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -29,33 +30,43 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
-    private static final String CORRELATION_ID = "x-correlationid";
+    private static final String HTTP_CORRELATION_ID = "x-correlationid";
+    private static final String JMS_CORRELATION_ID = "x_correlationid";
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario
-            .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
-            .extractFromHeader(CORRELATION_ID, "correlationId");
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.receive()
+            .message()
+            .validate((message, context) -> {
+                Assert.isTrue(message.getPayload(String.class).equals("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                            "Go to sleep!" +
+                        "</GoodNight>"), "Message body validation failed!");
 
-        scenario.correlation().start()
-            .onHeader(CORRELATION_ID, "${correlationId}");
+                if (message.getHeader(HTTP_CORRELATION_ID) != null) {
+                    context.setVariable("correlationIdHeader", HTTP_CORRELATION_ID);
+                    context.setVariable("correlationId", message.getHeader(HTTP_CORRELATION_ID));
+                } else if (message.getHeader(JMS_CORRELATION_ID) != null) {
+                    context.setVariable("correlationIdHeader", JMS_CORRELATION_ID);
+                    context.setVariable("correlationId", message.getHeader(JMS_CORRELATION_ID));
+                }
+            }));
 
-        scenario
-            .send()
-            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
-                    "</GoodNightResponse>");
+        scenario.$(correlation().start()
+            .onHeader("${correlationIdHeader}", "${correlationId}"));
 
-        scenario
-            .receive()
-            .selector("x-correlationid = '${correlationId}'")
-            .payload("<InterveningRequest>In between!</InterveningRequest>");
+        scenario.$(scenario.send()
+                .message()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Good Night!" +
+                            "</GoodNightResponse>"));
 
-        scenario
-            .send()
-            .payload("<InterveningResponse>In between!</InterveningResponse>");
+        scenario.$(scenario.receive()
+                .selector("${correlationIdHeader} = '${correlationId}'")
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>"));
+
+        scenario.$(scenario.send()
+                .message()
+                .body("<InterveningResponse>In between!</InterveningResponse>"));
     }
 }

@@ -16,14 +16,14 @@
 
 package org.citrusframework.simulator.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
-import com.consol.citrus.endpoint.EndpointAdapter;
-import com.consol.citrus.endpoint.adapter.EmptyResponseEndpointAdapter;
-import com.consol.citrus.jms.endpoint.JmsEndpoint;
-import com.consol.citrus.jms.endpoint.JmsEndpointConfiguration;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpointConfiguration;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.jms.endpoint.JmsEndpoint;
+import org.citrusframework.jms.endpoint.JmsEndpointConfiguration;
+import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
+import org.citrusframework.jms.endpoint.JmsSyncEndpointConfiguration;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;

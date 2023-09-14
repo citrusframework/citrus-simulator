@@ -28,12 +28,6 @@ public interface SimulatorScenario {
     ScenarioEndpoint getScenarioEndpoint();
 
     /**
-     * Default starter body method with provided scenario designer.
-     * @param designer
-     */
-    default void run(ScenarioDesigner designer) {}
-
-    /**
      * Default starter body method with provided scenario runner.
      * @param runner
      */

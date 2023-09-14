@@ -1,8 +1,8 @@
 package org.citrusframework.simulator.dictionary;
 
-import com.consol.citrus.context.TestContext;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.variable.dictionary.xml.XpathMappingDataDictionary;
+import org.citrusframework.variable.dictionary.xml.XpathMappingDataDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

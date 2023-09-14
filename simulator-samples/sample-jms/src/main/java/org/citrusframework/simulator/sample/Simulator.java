@@ -16,13 +16,12 @@
 
 package org.citrusframework.simulator.sample;
 
+import jakarta.jms.ConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
 import org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import javax.jms.ConnectionFactory;
 
 /**
  * @author Christoph Deppisch

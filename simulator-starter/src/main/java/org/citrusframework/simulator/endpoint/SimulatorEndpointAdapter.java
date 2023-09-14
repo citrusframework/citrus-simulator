@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.endpoint.adapter.RequestDispatchingEndpointAdapter;
-import com.consol.citrus.message.Message;
+import org.citrusframework.endpoint.adapter.RequestDispatchingEndpointAdapter;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;

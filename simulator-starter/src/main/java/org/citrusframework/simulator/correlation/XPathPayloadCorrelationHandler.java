@@ -16,33 +16,33 @@
 
 package org.citrusframework.simulator.correlation;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
+import org.citrusframework.xml.namespace.NamespaceContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author Christoph Deppisch
  */
 public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
     private static final Logger LOG = LoggerFactory.getLogger(XPathPayloadCorrelationHandler.class);
-    private XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
+    private final XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
     private final String value;
 
     /**
      * Default constructor using expression value to match.
      *
-     * @param namespaceContextBuilder
      * @param scenarioEndpoint
      * @param expression
      * @param value
      */
-    public XPathPayloadCorrelationHandler(NamespaceContextBuilder namespaceContextBuilder, ScenarioEndpoint scenarioEndpoint, String expression, String value) {
+    public XPathPayloadCorrelationHandler(ScenarioEndpoint scenarioEndpoint, String expression, String value) {
         super(scenarioEndpoint);
-        this.xPathPayloadMappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
         this.xPathPayloadMappingKeyExtractor.setXpathExpression(expression);
         this.value = value;
     }
@@ -58,5 +58,26 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
         }
         LOG.debug("Intermediate message({}): {}", message.getId(), isIntermediateMessage);
         return isIntermediateMessage;
+    }
+
+    public void lookupNamespaceContextBuilder(ApplicationContext applicationContext) {
+        NamespaceContextBuilder namespaceContextBuilder;
+        String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
+        if (beanNames.length > 0) {
+            if (beanNames.length > 1) {
+                LOG.warn("Expected to find 1 beans of type {} but found {} instead: {}",
+                        NamespaceContextBuilder.class.getCanonicalName(),
+                        beanNames.length,
+                        beanNames
+                );
+            }
+            LOG.debug("Using NamespaceContextBuilder - {}", beanNames[0]);
+            namespaceContextBuilder = applicationContext.getBean(beanNames[0], NamespaceContextBuilder.class);
+        } else {
+            LOG.debug("Using NamespaceContextBuilder - default");
+            namespaceContextBuilder = new NamespaceContextBuilder();
+        }
+
+        this.xPathPayloadMappingKeyExtractor.setNamespaceContextBuilder(namespaceContextBuilder);
     }
 }

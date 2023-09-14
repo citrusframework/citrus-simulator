@@ -18,7 +18,9 @@ package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
+
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * @author Christoph Deppisch
@@ -27,12 +29,12 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.echo("Simulator: ${simulator.name}");
+    public void run(ScenarioRunner scenario) {
+        scenario.$(echo("Simulator: ${simulator.name}"));
 
-        scenario
-            .receive()
-            .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        scenario.$(scenario.receive()
+                .message()
+                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<from>user@citrusframework.org</from>" +
                         "<to>citrus@citrusframework.org</to>" +
                         "<cc></cc>" +
@@ -42,13 +44,13 @@ public class HelloScenario extends AbstractSimulatorScenario {
                             "<contentType>text/plain; charset=utf-8</contentType>" +
                             "<content>Say Hello!</content>" +
                         "</body>" +
-                    "</mail-message>");
+                    "</mail-message>"));
 
-        scenario
-            .send()
-            .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+        scenario.$(scenario.send()
+                .message()
+                .body("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +
-                    "</mail-response>");
+                    "</mail-response>"));
     }
 }

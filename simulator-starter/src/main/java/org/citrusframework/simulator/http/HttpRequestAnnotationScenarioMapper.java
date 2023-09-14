@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.message.Message;
+import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioListAware;
@@ -44,7 +44,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper 
     @Autowired(required = false)
     private List<SimulatorScenario> scenarioList = new ArrayList<>();
 
-    private HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
+    private final HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
 
     @Override
     protected String getMappingKey(Message request) {

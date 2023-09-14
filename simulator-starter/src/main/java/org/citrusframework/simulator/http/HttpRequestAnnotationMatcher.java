@@ -15,16 +15,19 @@
  */
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.http.message.HttpMessage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.citrusframework.http.message.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.*;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Checks whether the {@link HttpMessage} satisfies the supported {@link RequestMapping} definition.
@@ -91,7 +94,7 @@ public class HttpRequestAnnotationMatcher {
      */
     public boolean checkRequestMethodSupported(HttpMessage request, RequestMapping requestMapping) {
         final RequestMethod[] requestMethods = requestMapping.method();
-        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : HttpMethod.POST.name();
+        final String actualRequestMethod = request.getRequestMethod() != null ? request.getRequestMethod().name() : RequestMethod.POST.name();
         if (requestMethods.length > 0) {
             for (RequestMethod method : requestMethods) {
                 if (method.name().equals(actualRequestMethod)) {
@@ -150,13 +153,13 @@ public class HttpRequestAnnotationMatcher {
                 .filter(k -> !k.startsWith(cannotContainKeyPrefix))
                 .filter(k -> !requestQueryParamKeys.contains(k))
                 .map(k -> String.format("Expected but missing: %s", k))
-                .collect(Collectors.toList()));
+                .toList());
 
         invalidRequestQueryParamKeys.addAll(annotatedQueryParams.stream()
                 .filter(k -> k.startsWith(cannotContainKeyPrefix))
                 .filter(k -> requestQueryParamKeys.contains(k.substring(cannotContainKeyPrefix.length())))
                 .map(k -> String.format("Unexpected but present: %s", k.substring(cannotContainKeyPrefix.length())))
-                .collect(Collectors.toList()));
+                .toList());
 
         return invalidRequestQueryParamKeys;
     }
@@ -186,7 +189,7 @@ public class HttpRequestAnnotationMatcher {
                     .entrySet()
                     .stream()
                     .map(entry -> entry.getKey() + "=" + entry.getValue())
-                    .collect(Collectors.toList());
+                    .toList();
     }
 
     private List<String> getQueryParamKeys(List<String> queryParams) {
@@ -194,7 +197,7 @@ public class HttpRequestAnnotationMatcher {
                 .map(this::getQueryParamKeyValue)
                 .filter(strings -> strings.length > 0)
                 .map(strings -> strings[0])
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String[] getQueryParamKeyValue(String queryParam) {

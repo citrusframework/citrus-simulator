@@ -1,7 +1,7 @@
 package org.citrusframework.simulator.http;
 
-import com.consol.citrus.dsl.builder.HttpActionBuilder;
-import com.consol.citrus.spi.ReferenceResolver;
+import org.citrusframework.http.actions.HttpActionBuilder;
+import org.citrusframework.http.actions.HttpServerActionBuilder;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 
 /**
@@ -17,19 +17,10 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
     }
 
     /**
-     * Sets the bean reference resolver.
-     * @param referenceResolver
-     */
-    public HttpScenarioActionBuilder withReferenceResolver(ReferenceResolver referenceResolver) {
-        super.withReferenceResolver(referenceResolver);
-        return this;
-    }
-
-    /**
      * Default scenario receive operation.
      * @return
      */
-    public HttpServerReceiveActionBuilder receive() {
+    public HttpServerActionBuilder.HttpServerReceiveActionBuilder receive() {
         return server(scenarioEndpoint).receive();
     }
 
@@ -37,7 +28,7 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * Default scenario send response operation.
      * @return
      */
-    public HttpServerSendActionBuilder send() {
+    public HttpServerActionBuilder.HttpServerSendActionBuilder send() {
         return server(scenarioEndpoint).send();
     }
 }

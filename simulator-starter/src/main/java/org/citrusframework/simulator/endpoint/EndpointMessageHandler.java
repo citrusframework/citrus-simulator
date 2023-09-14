@@ -16,10 +16,12 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.message.MessageHeaders;
+import java.util.Optional;
+
+import org.citrusframework.context.TestContext;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.message.Message;
+import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.model.Message.Direction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.service.ActivityService;
@@ -27,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.util.Optional;
 
 /**
  * Endpoint message handler for handling messages that were sent or received on a endpoint.

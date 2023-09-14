@@ -19,10 +19,10 @@ package org.citrusframework.simulator.scenario.mapper;
 import java.util.Arrays;
 import java.util.Optional;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.http.message.HttpMessage;
-import com.consol.citrus.message.DefaultMessage;
-import com.consol.citrus.message.Message;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.message.DefaultMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.http.HttpRequestAnnotationScenarioMapper;
 import org.citrusframework.simulator.http.HttpRequestPathScenarioMapper;

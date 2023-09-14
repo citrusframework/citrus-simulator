@@ -16,9 +16,9 @@
 
 package ${package};
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.mail.client.MailClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.dsl.testng.TestNGCitrusTestDesigner;
+import org.citrusframework.mail.client.MailClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,10 +44,10 @@ public class ScenarioLookupService {
     @PostConstruct
     private void init() {
         scenarios = getSimulatorScenarios(applicationContext);
-        LOG.info(String.format("Scenarios found: %n%s", Arrays.toString(scenarios.keySet().toArray())));
+        LOG.info(String.format("Scenarios found: %s", Arrays.toString(scenarios.keySet().toArray())));
 
         scenarioStarters = getScenarioStarters(applicationContext);
-        LOG.info(String.format("Starters found: %n%s", Arrays.toString(scenarioStarters.keySet().toArray())));
+        LOG.info(String.format("Starters found: %s", Arrays.toString(scenarioStarters.keySet().toArray())));
     }
 
     /**
@@ -71,7 +71,7 @@ public class ScenarioLookupService {
     public Collection<String> getStarterNames() {
         return scenarioStarters.keySet().stream()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -82,7 +82,7 @@ public class ScenarioLookupService {
     public Collection<String> getScenarioNames() {
         return scenarios.keySet().stream()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static Map<String, SimulatorScenario> getSimulatorScenarios(ApplicationContext context) {

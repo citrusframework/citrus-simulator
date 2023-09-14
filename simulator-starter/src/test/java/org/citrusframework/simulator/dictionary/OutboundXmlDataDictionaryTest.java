@@ -1,9 +1,9 @@
 package org.citrusframework.simulator.dictionary;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.*;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.*;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import com.consol.citrus.util.XMLUtils;
+import org.citrusframework.util.XMLUtils;
 
 import org.mockito.Mockito;
 import org.testng.Assert;

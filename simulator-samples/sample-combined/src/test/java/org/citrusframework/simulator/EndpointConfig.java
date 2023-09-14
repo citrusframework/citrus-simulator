@@ -1,14 +1,19 @@
 package org.citrusframework.simulator;
 
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.jms.endpoint.JmsSyncEndpoint;
+import java.util.Collections;
+
+import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
+import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
 import org.citrusframework.simulator.sample.Simulator;
-import com.consol.citrus.xml.XsdSchemaRepository;
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -36,10 +41,11 @@ public class EndpointConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-    public BrokerService messageBroker() throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setPersistent(false);
-        brokerService.addConnector("tcp://localhost:61616");
+    public EmbeddedActiveMQ messageBroker() {
+        EmbeddedActiveMQ brokerService = new EmbeddedActiveMQ();
+        SecurityConfiguration securityConfiguration = new SecurityConfiguration(Collections.singletonMap("citrus", "citrus"), Collections.singletonMap("citrus", Collections.singletonList("citrus")));
+        securityConfiguration.setDefaultUser("citrus");
+        brokerService.setSecurityManager(new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfiguration));
         return brokerService;
     }
 
@@ -61,12 +67,7 @@ public class EndpointConfig {
     @Bean
     @DependsOn("messageBroker")
     @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-    public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-        return new TestRunnerBeforeSuiteSupport() {
-            @Override
-            public void beforeSuite(TestRunner runner) {
-                SpringApplication.run(Simulator.class);
-            }
-        };
+    public BeforeSuite startEmbeddedSimulator() {
+        return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
     }
 }

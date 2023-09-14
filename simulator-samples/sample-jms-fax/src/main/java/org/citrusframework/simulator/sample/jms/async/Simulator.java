@@ -16,20 +16,20 @@
 
 package org.citrusframework.simulator.sample.jms.async;
 
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.jms.endpoint.JmsEndpoint;
 import org.citrusframework.simulator.jms.SimulatorJmsAdapter;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
-import com.consol.citrus.xml.namespace.NamespaceContextBuilder;
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.citrusframework.xml.namespace.NamespaceContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 /**
  * @author Martin Maher
@@ -44,12 +44,15 @@ public class Simulator extends SimulatorJmsAdapter {
     @Autowired
     private NamespaceContextBuilder namespaceContextBuilder;
 
+    @Value("${spring.artemis.broker-url:tcp://localhost:61616}")
+    private String brokerURL;
+
     @Value("${citrus.simulator.jms.status.destination}")
     private String statusDestinationName;
 
     @Override
     public ConnectionFactory connectionFactory() {
-        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+        return new ActiveMQConnectionFactory(brokerURL);
     }
 
     @Override
@@ -66,5 +69,4 @@ public class Simulator extends SimulatorJmsAdapter {
                 .connectionFactory(connectionFactory())
                 .build();
     }
-
 }

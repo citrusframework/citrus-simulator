@@ -96,7 +96,7 @@ As mail server endpoint support is not included by default in the simulator we n
 ----
 <!-- Citrus web service support -->
 <dependency>
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-mail</artifactId>
   <version>${citrus.version}</version>
 </dependency>
@@ -111,7 +111,7 @@ scenarios for different mail messages.
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +

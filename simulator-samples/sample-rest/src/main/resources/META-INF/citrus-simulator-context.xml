@@ -10,7 +10,7 @@
         <citrus:location path="classpath:xsd/HelloService.xsd"/>
       </citrus:locations>
     </citrus:schema-repository>
-    
+
     <citrus:global-variables>
         <citrus:variable name="simulator.name" value="Citrus REST Simulator"/>
     </citrus:global-variables>

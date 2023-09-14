@@ -76,7 +76,7 @@ Also we add an default scenario that is executed for incoming requests.
 ----
 package org.citrusframework.simulator;
 
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
@@ -139,7 +139,7 @@ See the following sample Maven project POM file that defines the project sources
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <citrus.simulator.version>2.2.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>2.5.4</spring.boot.version>
+    <spring.boot.version>3.1.2</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -155,13 +155,7 @@ See the following sample Maven project POM file that defines the project sources
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
-
     <dependency>
       <groupId>org.citrusframework</groupId>
       <artifactId>citrus-simulator-starter</artifactId>
@@ -233,7 +227,7 @@ Also we add an default scenario that is executed for incoming requests.
 ----
 package org.citrusframework.simulator;
 
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
 
@@ -308,6 +302,6 @@ favorite Java IDE. Build tools like Maven and Gradle compile and package the sim
 The simulator web application should start within seconds. Once the application is up and running on your local machine
 you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
 
-Now everything is set up and you can start to create some simulator scenarios. 
+Now everything is set up and you can start to create some simulator scenarios.
 
 That's it you are ready to use the Citrus simulator.

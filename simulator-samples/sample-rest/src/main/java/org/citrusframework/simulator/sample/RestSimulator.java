@@ -23,9 +23,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Christoph Deppisch
  */
 @SpringBootApplication
-public class Simulator {
+public class RestSimulator {
 
     public static void main(String[] args) {
-        SpringApplication.run(Simulator.class, args);
+        SpringApplication.run(RestSimulator.class, args);
     }
 }

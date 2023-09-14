@@ -2,8 +2,8 @@ package org.citrusframework.simulator.http;
 
 import java.util.Arrays;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  */
 public class HttpRequestAnnotationScenarioMapperTest {
 
-    private HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
+    private final HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
 
     @Mock
     private SimulatorConfigurationProperties simulatorConfiguration;

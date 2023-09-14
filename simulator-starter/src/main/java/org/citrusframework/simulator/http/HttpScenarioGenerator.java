@@ -3,13 +3,13 @@ package org.citrusframework.simulator.http;
 import java.io.IOException;
 import java.util.Map;
 
-import org.citrusframework.simulator.exception.SimulatorException;
-import com.consol.citrus.util.FileUtils;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -20,8 +20,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author Christoph Deppisch
@@ -75,7 +75,7 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
                         log.info("Register auto generated scenario as bean definition: " + operation.getValue().getOperationId());
                         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpOperationScenario.class)
                                 .addConstructorArgValue((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey())
-                                .addConstructorArgValue(HttpMethod.valueOf(operation.getKey().name()))
+                                .addConstructorArgValue(RequestMethod.valueOf(operation.getKey().name()))
                                 .addConstructorArgValue(operation.getValue())
                                 .addConstructorArgValue(swagger.getDefinitions());
 
@@ -90,7 +90,7 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
                         ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(operation.getValue().getOperationId(), beanDefinitionBuilder.getBeanDefinition());
                     } else {
                         log.info("Register auto generated scenario as singleton: " + operation.getValue().getOperationId());
-                        beanFactory.registerSingleton(operation.getValue().getOperationId(), createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey(), HttpMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
+                        beanFactory.registerSingleton(operation.getValue().getOperationId(), createScenario((contextPath + (swagger.getBasePath() != null ? swagger.getBasePath() : "")) + path.getKey(), RequestMethod.valueOf(operation.getKey().name()), operation.getValue(), swagger.getDefinitions()));
                     }
                 }
             }
@@ -107,7 +107,7 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
      * @param definitions
      * @return
      */
-    protected HttpOperationScenario createScenario(String path, HttpMethod method, Operation operation, Map<String, Model> definitions) {
+    protected HttpOperationScenario createScenario(String path, RequestMethod method, Operation operation, Map<String, Model> definitions) {
         return new HttpOperationScenario(path, method, operation, definitions);
     }
 

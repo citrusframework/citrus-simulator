@@ -16,22 +16,26 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
+
+import static org.citrusframework.actions.SleepAction.Builder.sleep;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
 @ContextConfiguration(classes = EndpointConfig.class)
-public class SimulatorRestIT extends TestNGCitrusTestDesigner {
+public class SimulatorRestIT extends TestNGCitrusSpringSupport {
 
-    private String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
+    public static final String HTTP_CORRELATION_ID = "x-correlationid";
+    private final String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /** Test Http REST client */
     @Autowired
@@ -42,19 +46,21 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testHelloRequest() {
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("hello")
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>");
+                         "</Hello>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hi there!" +
-                         "</HelloResponse>");
+                         "</HelloResponse>"));
     }
 
     /**
@@ -62,19 +68,21 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("goodbye")
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>");
+                         "</GoodBye>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Bye bye!" +
-                         "</GoodByeResponse>");
+                         "</GoodByeResponse>"));
     }
 
     /**
@@ -82,17 +90,19 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<Default>" +
+                .message()
+                .body("<Default>" +
                             "Should trigger default scenario" +
-                        "</Default>");
+                        "</Default>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .message()
+                .body(defaultResponse));
     }
 
     /**
@@ -102,53 +112,61 @@ public class SimulatorRestIT extends TestNGCitrusTestDesigner {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post("goodnight")
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
-                .header("x-correlationid", "${correlationId}");
+                .header(HTTP_CORRELATION_ID, "${correlationId}"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Good Night!" +
-                        "</GoodNightResponse>");
+                        "</GoodNightResponse>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<InterveningRequest>In between!</InterveningRequest>");
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .message()
+                .body(defaultResponse));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .post()
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header(HTTP_CORRELATION_ID, "${correlationId}"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("<InterveningResponse>In between!</InterveningResponse>");
+                .message()
+                .body("<InterveningResponse>In between!</InterveningResponse>"));
 
-        sleep(2000L);
+        $(sleep().milliseconds(2000L));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .send()
                 .put("goodnight")
-                .payload("<InterveningRequest>In between!</InterveningRequest>")
-                .header("x-correlationid", "${correlationId}");
+                .message()
+                .body("<InterveningRequest>In between!</InterveningRequest>")
+                .header(HTTP_CORRELATION_ID, "${correlationId}"));
 
-        http().client(simulatorClient)
+        $(http().client(simulatorClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload(defaultResponse);
+                .message()
+                .body(defaultResponse));
     }
 }

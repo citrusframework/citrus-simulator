@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.correlation;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 
 /**
@@ -46,6 +46,7 @@ public class HeaderMappingCorrelationHandler extends AbstractCorrelationHandler 
 
     @Override
     public boolean isHandlerFor(Message message, TestContext context) {
-        return message.getHeader(headerName) != null && message.getHeader(headerName).equals(context.replaceDynamicContentInString(value));
+        Object header = message.getHeader(context.replaceDynamicContentInString(headerName));
+        return header != null && header.equals(context.replaceDynamicContentInString(value));
     }
 }

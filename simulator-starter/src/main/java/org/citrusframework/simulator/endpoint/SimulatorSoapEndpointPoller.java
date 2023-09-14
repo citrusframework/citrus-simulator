@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import com.consol.citrus.message.Message;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.ws.SoapMessageHelper;
-import com.consol.citrus.ws.message.SoapMessage;
+import org.citrusframework.ws.message.SoapMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

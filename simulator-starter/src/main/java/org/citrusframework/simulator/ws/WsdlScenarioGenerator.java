@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.exception.SimulatorException;
-import com.consol.citrus.xml.schema.locator.JarWSDLLocator;
+import org.citrusframework.xml.schema.locator.JarWSDLLocator;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;

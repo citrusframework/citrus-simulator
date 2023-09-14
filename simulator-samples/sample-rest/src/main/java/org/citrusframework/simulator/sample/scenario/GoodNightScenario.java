@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.citrusframework.dsl.MessageSupport.MessageHeaderSupport.fromHeaders;
+
 /**
  * @author Christoph Deppisch
  */
@@ -34,41 +36,41 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive(builder -> builder
+        scenario.$(scenario.http()
+                .receive()
                     .post()
-                    .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Go to sleep!" +
+                    .message()
+                    .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Go to sleep!" +
                             "</GoodNight>")
-                    .extractFromHeader(CORRELATION_ID, "correlationId")
-            );
+                    .extract(fromHeaders().header(CORRELATION_ID, "correlationId")
+            ));
 
-        scenario.correlation(correlationManager -> correlationManager.start()
+        scenario.$(correlation().start()
                 .onHeader(CORRELATION_ID, "${correlationId}")
         );
 
-        scenario
-            .http()
-            .send(builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                            "Good Night!" +
+                    .message()
+                    .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                                "Good Night!" +
                             "</GoodNightResponse>"));
 
-        scenario
-            .http()
-            .receive(builder -> builder
+        scenario.$(scenario.http()
+                .receive()
                     .post()
                     .selector("x-correlationid = '1${correlationId}'")
-                    .payload("<InterveningRequest>In between!</InterveningRequest>")
+                    .message()
+                    .body("<InterveningRequest>In between!</InterveningRequest>")
             );
 
-        scenario
-            .http()
-            .send(builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .payload("<InterveningResponse>In between!</InterveningResponse>")
+                    .message()
+                    .body("<InterveningResponse>In between!</InterveningResponse>")
             );
     }
 }

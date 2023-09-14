@@ -25,6 +25,7 @@
         <configuration>
           <workingDirectory>src/main/resources/static</workingDirectory>
           <installDirectory>target</installDirectory>
+          <skip>true</skip>
         </configuration>
         <executions>
           <execution>

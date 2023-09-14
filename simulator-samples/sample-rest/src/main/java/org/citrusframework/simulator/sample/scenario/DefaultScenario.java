@@ -29,15 +29,13 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive((builder -> builder.post()));
+        scenario.$(scenario.http()
+                .receive().post());
 
-        scenario
-            .http()
-            .send((builder -> builder
+        scenario.$(scenario.http()
+                .send()
                     .response(HttpStatus.OK)
-                    .payload("<DefaultResponse>This is a default response!</DefaultResponse>"))
-            );
+                    .message()
+                    .body("<DefaultResponse>This is a default response!</DefaultResponse>"));
     }
 }

@@ -16,24 +16,34 @@
 
 package org.citrusframework.simulator.service;
 
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import org.citrusframework.simulator.model.*;
-import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import jakarta.transaction.Transactional;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.ScenarioAction;
+import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioExecutionFilter;
+import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for persisting and retrieving {@link ScenarioExecution} data.

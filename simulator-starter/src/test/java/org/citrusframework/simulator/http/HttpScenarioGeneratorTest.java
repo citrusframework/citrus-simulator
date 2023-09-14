@@ -6,13 +6,15 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -20,8 +22,8 @@ import static org.mockito.Mockito.when;
  */
 public class HttpScenarioGeneratorTest {
 
-    private ConfigurableListableBeanFactory beanFactory = Mockito.mock(ConfigurableListableBeanFactory.class);
-    private DefaultListableBeanFactory beanRegistry = Mockito.mock(DefaultListableBeanFactory.class);
+    private final ConfigurableListableBeanFactory beanFactory = Mockito.mock(ConfigurableListableBeanFactory.class);
+    private final DefaultListableBeanFactory beanRegistry = Mockito.mock(DefaultListableBeanFactory.class);
 
     @Test
     public void testGenerateScenarios() {
@@ -34,7 +36,7 @@ public class HttpScenarioGeneratorTest {
 
             Assert.assertNotNull(scenario.getOperation());
             Assert.assertEquals(scenario.getPath(), "/v2/pet");
-            Assert.assertEquals(scenario.getMethod(), HttpMethod.POST);
+            Assert.assertEquals(scenario.getMethod(), RequestMethod.POST);
 
             return null;
         }).when(beanFactory).registerSingleton(eq("addPet"), any(HttpOperationScenario.class));
@@ -44,7 +46,7 @@ public class HttpScenarioGeneratorTest {
 
             Assert.assertNotNull(scenario.getOperation());
             Assert.assertEquals(scenario.getPath(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getMethod(), HttpMethod.GET);
+            Assert.assertEquals(scenario.getMethod(), RequestMethod.GET);
 
             return null;
         }).when(beanFactory).registerSingleton(eq("getPetById"), any(HttpOperationScenario.class));
@@ -54,7 +56,7 @@ public class HttpScenarioGeneratorTest {
 
             Assert.assertNotNull(scenario.getOperation());
             Assert.assertEquals(scenario.getPath(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getMethod(), HttpMethod.DELETE);
+            Assert.assertEquals(scenario.getMethod(), RequestMethod.DELETE);
 
             return null;
         }).when(beanFactory).registerSingleton(eq("deletePet"), any(HttpOperationScenario.class));
@@ -76,7 +78,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.POST);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
@@ -88,7 +90,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.GET);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
@@ -100,7 +102,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.DELETE);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
@@ -134,7 +136,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.POST);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
@@ -146,7 +148,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.GET);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
@@ -158,7 +160,7 @@ public class HttpScenarioGeneratorTest {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
             Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, HttpMethod.class).getValue(), HttpMethod.DELETE);
+            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
             Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
             Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));

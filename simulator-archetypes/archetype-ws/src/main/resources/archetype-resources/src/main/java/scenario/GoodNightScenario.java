@@ -18,15 +18,15 @@ package ${package}.scenario;
 
 import org.citrusframework.simulator.scenario.*;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.citrusframework.message.Message;
 
 @Scenario("GoodNight")
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario.correlation().start()
             .withHandler(this);
 

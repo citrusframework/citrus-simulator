@@ -17,16 +17,16 @@
 package org.citrusframework.simulator.listener;
 
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.report.MessageListener;
-import com.consol.citrus.report.MessageListeners;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
+import org.citrusframework.report.MessageListener;
+import org.citrusframework.report.MessageListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This listener is called when the simulator sends or receives messages

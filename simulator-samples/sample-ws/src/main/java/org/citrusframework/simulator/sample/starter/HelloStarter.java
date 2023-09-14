@@ -16,13 +16,17 @@
 
 package org.citrusframework.simulator.sample.starter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.ScenarioParameterBuilder;
-
-import java.util.*;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
+
+import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
  * @author Christoph Deppisch
@@ -32,8 +36,8 @@ public class HelloStarter extends AbstractScenarioStarter {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.echo("${title} ${firstname} ${lastname} ");
-        scenario.echo("${greeting}");
+        scenario.$(echo("${title} ${firstname} ${lastname} "));
+        scenario.$(echo("${greeting}"));
     }
 
     @Override

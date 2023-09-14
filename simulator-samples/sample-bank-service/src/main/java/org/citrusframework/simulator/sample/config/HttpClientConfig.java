@@ -16,27 +16,29 @@
 
 package org.citrusframework.simulator.sample.config;
 
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.http.client.HttpClient;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import javax.net.ssl.SSLContext;
+
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.http.client.HttpClient;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 @Configuration
 public class HttpClientConfig {
@@ -66,7 +68,6 @@ public class HttpClientConfig {
     @Bean
     public CloseableHttpClient httpClient() {
         try {
-            //new ClassPathResource("").getURL()
             SSLContext sslcontext = SSLContexts.custom()
                     .loadTrustMaterial(keyStore, keyStorePassword.toCharArray(),
                             new TrustSelfSignedStrategy())
@@ -75,9 +76,12 @@ public class HttpClientConfig {
             SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                     sslcontext, NoopHostnameVerifier.INSTANCE);
 
-            return HttpClients.custom()
+            PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
                     .setSSLSocketFactory(sslSocketFactory)
-                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                    .build();
+
+            return HttpClients.custom()
+                    .setConnectionManager(connectionManager)
                     .build();
         } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
             throw new BeanCreationException("Failed to create http client for ssl connection", e);

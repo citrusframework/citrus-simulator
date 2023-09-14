@@ -1,15 +1,19 @@
 package org.citrusframework.simulator.repository;
 
-import org.citrusframework.simulator.model.Message;
-import org.citrusframework.simulator.model.Message.Direction;
-import org.citrusframework.simulator.model.MessageFilter;
-import org.citrusframework.simulator.model.MessageHeader;
-
-import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.Message.Direction;
+import org.citrusframework.simulator.model.MessageFilter;
+import org.citrusframework.simulator.model.MessageHeader;
 
 public abstract class AbstractRepository {
 
@@ -22,14 +26,14 @@ public abstract class AbstractRepository {
 
     /**
      * Adds direction predicates if the respective filters are set.
-     * 
+     *
      * @param filter
      * @param criteriaBuilder
      * @param path
      * @param predicates
      */
     protected void addDirectionPredicate(MessageFilter filter, CriteriaBuilder criteriaBuilder, Path<Message> path,
-            List<Predicate> predicates) {
+                                         List<Predicate> predicates) {
 
         if (!filter.getDirectionInbound()) {
             predicates.add(criteriaBuilder.notEqual(path.get("direction"), Direction.INBOUND));
@@ -42,7 +46,7 @@ public abstract class AbstractRepository {
 
     /**
      * Join {@link MessageHeader} to the {@link From} using the provided joinFunction.
-     *  
+     *
      * @param <T>
      * @param criteriaBuilder
      * @param headerFilter
@@ -72,7 +76,7 @@ public abstract class AbstractRepository {
 
     /**
      * Replace escaped chars by dedicated unique strings
-     * 
+     *
      * @param escapedString
      * @return
      */
@@ -82,7 +86,7 @@ public abstract class AbstractRepository {
 
     /**
      * Replace dedicated unique strings by unescaped chars
-     * 
+     *
      * @param safeString
      * @return
      */

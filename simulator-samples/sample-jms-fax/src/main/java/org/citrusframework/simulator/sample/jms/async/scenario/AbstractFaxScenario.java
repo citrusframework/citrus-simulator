@@ -1,6 +1,6 @@
 package org.citrusframework.simulator.sample.jms.async.scenario;
 
-import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import org.citrusframework.jms.endpoint.JmsEndpoint;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class AbstractFaxScenario extends AbstractSimulatorScenario {
 
     /** Fax payload helper */
-    private PayloadHelper payloadHelper = new PayloadHelper();
+    private final PayloadHelper payloadHelper = new PayloadHelper();
 
     @Autowired
     @Qualifier("simulatorJmsStatusEndpoint")

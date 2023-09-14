@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.controller;
 
-import com.consol.citrus.report.TestResults;
+import org.citrusframework.report.TestResults;
 import org.citrusframework.simulator.listener.SimulatorStatusListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

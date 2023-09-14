@@ -16,11 +16,11 @@
 
 package org.citrusframework.simulator.scenario;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.endpoint.AbstractEndpoint;
-import com.consol.citrus.message.Message;
-import com.consol.citrus.messaging.Consumer;
-import com.consol.citrus.messaging.Producer;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.endpoint.AbstractEndpoint;
+import org.citrusframework.message.Message;
+import org.citrusframework.messaging.Consumer;
+import org.citrusframework.messaging.Producer;
 import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
 import org.citrusframework.simulator.exception.SimulatorException;
 

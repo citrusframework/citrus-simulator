@@ -16,26 +16,26 @@
 
 package org.citrusframework.simulator.listener;
 
-import com.consol.citrus.DefaultTestCase;
-import com.consol.citrus.TestAction;
-import com.consol.citrus.TestCase;
-import com.consol.citrus.TestResult;
-import com.consol.citrus.actions.SleepAction;
-import com.consol.citrus.common.Described;
-import com.consol.citrus.report.AbstractTestListener;
-import com.consol.citrus.report.TestActionListener;
-import com.consol.citrus.report.TestResults;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.citrusframework.DefaultTestCase;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
+import org.citrusframework.TestResult;
+import org.citrusframework.actions.SleepAction;
+import org.citrusframework.common.Described;
+import org.citrusframework.report.AbstractTestListener;
+import org.citrusframework.report.TestActionListener;
+import org.citrusframework.report.TestResults;
 import org.citrusframework.simulator.service.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -79,14 +79,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-        
+
         TestResult result = null;
         if (test instanceof DefaultTestCase) {
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
         } else {
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
         }
-    
+
         testResults.addResult(result);
         LOG.info(result.toString());
         executionService.completeScenarioExecutionSuccess(test);
@@ -94,14 +94,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-    
+
         TestResult result = null;
         if (test instanceof DefaultTestCase) {
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
         } else {
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
-    
+
         testResults.addResult(result);
 
         LOG.info(result.toString());
@@ -138,7 +138,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     private String[] getParameters(TestCase test) {
         List<String> parameterStrings = new ArrayList<String>();
-        
+
         if (test instanceof DefaultTestCase) {
             for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
                 parameterStrings.add(param.getKey() + "=" + param.getValue());

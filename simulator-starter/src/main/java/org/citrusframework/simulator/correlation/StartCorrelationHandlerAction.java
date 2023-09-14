@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.correlation;
 
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.exception.SimulatorException;
 
 /**

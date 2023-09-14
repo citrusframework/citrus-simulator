@@ -27,11 +27,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
@@ -42,17 +37,24 @@
       <artifactId>citrus-simulator-ui</artifactId>
     </dependency>
 
+    <!-- Citrus -->
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.6</version>
+      <version>1.7</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
-      <version>4.3</version>
+      <version>4.4</version>
     </dependency>
 
+    <!-- Test scoped dependencies -->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -105,5 +107,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

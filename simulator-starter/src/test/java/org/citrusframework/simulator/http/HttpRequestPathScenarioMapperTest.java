@@ -3,14 +3,15 @@ package org.citrusframework.simulator.http;
 import java.util.Arrays;
 import java.util.Collections;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
-import com.consol.citrus.http.message.HttpMessage;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import io.swagger.models.Operation;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -38,13 +39,13 @@ public class HttpRequestPathScenarioMapperTest {
     public void testGetMappingKey() {
         Operation operation = Mockito.mock(Operation.class);
 
-        scenarioMapper.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos", HttpMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foos", HttpMethod.POST, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foo/{id}", HttpMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foo/detail", HttpMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bars", HttpMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bar/{id}", HttpMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bar/detail", HttpMethod.GET, operation, Collections.emptyMap())));
+        scenarioMapper.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos", RequestMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foos", RequestMethod.POST, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foo/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/foo/detail", RequestMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bars", RequestMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bar/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
+                                                        new HttpOperationScenario("/issues/bar/detail", RequestMethod.GET, operation, Collections.emptyMap())));
 
         when(operation.getOperationId())
                 .thenReturn("fooListScenario")

@@ -22,6 +22,6 @@
                     interceptor="clientLoggingInterceptor"
                     fault-strategy="propagateError"/>
 
-  <bean id="clientLoggingInterceptor" class="com.consol.citrus.ws.interceptor.LoggingClientInterceptor"/>
+  <bean id="clientLoggingInterceptor" class="org.citrusframework.ws.interceptor.LoggingClientInterceptor"/>
 
 </beans>

@@ -15,7 +15,11 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <activemq.version>5.15.9</activemq.version>
+    <artemis.version>2.30.0</artemis.version>
+    <jakarta.activation.api.version>2.1.2</jakarta.activation.api.version>
+    <jakarta.xml.bind-api.version>4.0.0</jakarta.xml.bind-api.version>
+    <jaxb.maven.plugin.version>3.1.0</jaxb.maven.plugin.version>
+    <jaxb.version>4.0.2</jaxb.version>
   </properties>
 
   <dependencyManagement>
@@ -31,11 +35,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
@@ -48,38 +47,87 @@
 
     <!-- Citrus -->
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-endpoint-catalog</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-jms</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- ActiveMQ broker -->
+    <!-- ActiveMQ Artemis broker -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <version>${activemq.version}</version>
+      <artifactId>artemis-jms-server</artifactId>
+      <version>${artemis.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>artemis-jms-client</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-spring</artifactId>
-      <version>${activemq.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-artemis</artifactId>
     </dependency>
 
     <!-- XML / JSON support -->
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-oxm</artifactId>
       <version>${spring.version}</version>
     </dependency>
+
+    <!-- Test scoped dependencies -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jaxb2-maven-plugin</artifactId>
+          <version>${jaxb.maven.plugin.version}</version>
+          <configuration>
+            <createJavaDocAnnotations>false</createJavaDocAnnotations>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.glassfish.jaxb</groupId>
+              <artifactId>jaxb-xjc</artifactId>
+              <version>${jaxb.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>jakarta.activation</groupId>
+              <artifactId>jakarta.activation-api</artifactId>
+              <version>${jakarta.activation.api.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>jakarta.xml.bind</groupId>
+              <artifactId>jakarta.xml.bind-api</artifactId>
+              <version>${jakarta.xml.bind-api.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-impl</artifactId>
+              <version>${jaxb.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+              <version>${xerces.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -109,48 +157,25 @@
       </plugin>
 
       <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.14.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.5</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>xjc-xsd-1</id>
             <goals>
-              <goal>generate</goal>
+              <goal>xjc</goal>
             </goals>
-            <configuration>
-              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
-              <schemaIncludes>
-                <include>*.xsd</include>
-              </schemaIncludes>
-              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
-              <bindingIncludes>
-                <include>*.xjb</include>
-              </bindingIncludes>
-            </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.activemq.tooling</groupId>
-        <artifactId>activemq-maven-plugin</artifactId>
-        <version>${activemq.version}</version>
         <configuration>
-          <fork>false</fork>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>log4j.properties</value>
-            </property>
-          </systemProperties>
+          <extension>true</extension>
+          <sourceType>xmlschema</sourceType>
+          <sources>
+            <source>src/main/resources/xsd/FaxGatewayService.xsd</source>
+          </sources>
+          <xjbSources>
+            <xjbSource>src/main/resources/xsd/FaxGatewayService.xjb</xjbSource>
+          </xjbSources>
+          <clearOutputDir>true</clearOutputDir>
         </configuration>
       </plugin>
 

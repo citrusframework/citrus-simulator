@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Aspect for adding additional behavior to Endpoints. This is used in particular for intercepting the creation of
- * {@link com.consol.citrus.messaging.Consumer}s and {@link com.consol.citrus.messaging.Producer}s.
+ * {@link org.citrusframework.messaging.Consumer}s and {@link org.citrusframework.messaging.Producer}s.
  */
 @Aspect
 @Component
@@ -38,14 +38,14 @@ public class EndpointAspect {
         this.producerInterceptor = producerInterceptor;
     }
 
-    @Around("execution(* com.consol.citrus.endpoint.Endpoint.createConsumer(..))")
+    @Around("execution(* org.citrusframework.endpoint.Endpoint.createConsumer(..))")
     public Object wrapConsumer(ProceedingJoinPoint joinPoint) throws Throwable {
         ProxyFactory proxyFactory = new ProxyFactory(joinPoint.proceed());
         proxyFactory.addAdvice(consumerInterceptor);
         return proxyFactory.getProxy();
     }
 
-    @Around("execution(* com.consol.citrus.endpoint.Endpoint.createProducer(..))")
+    @Around("execution(* org.citrusframework.endpoint.Endpoint.createProducer(..))")
     public Object wrapProducer(ProceedingJoinPoint joinPoint) throws Throwable {
         ProxyFactory proxyFactory = new ProxyFactory(joinPoint.proceed());
         proxyFactory.addAdvice(producerInterceptor);

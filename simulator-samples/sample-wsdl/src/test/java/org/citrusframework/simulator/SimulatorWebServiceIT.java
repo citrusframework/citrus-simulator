@@ -16,15 +16,15 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.simulator.sample.Simulator;
-import com.consol.citrus.ws.client.WebServiceClient;
-import com.consol.citrus.ws.interceptor.LoggingClientInterceptor;
-import com.consol.citrus.xml.XsdSchemaRepository;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
+import org.citrusframework.ws.client.WebServiceClient;
+import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,92 +34,104 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.ws.actions.SoapActionBuilder.soap;
+
 /**
  * @author Christoph Deppisch
  */
 @Test
 @ContextConfiguration(classes = SimulatorWebServiceIT.EndpointConfig.class)
-public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
+public class SimulatorWebServiceIT extends TestNGCitrusSpringSupport {
 
     @Autowired
     private WebServiceClient soapClient;
 
     @CitrusTest
     public void testHelloRequest() {
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .send()
+                .message()
                 .soapAction("Hello")
-                .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say Hello!" +
-                         "</Hello>");
+                         "</Hello>"));
 
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .receive()
-                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Hello!" +
-                         "</HelloResponse>");
+                         "</HelloResponse>"));
     }
 
     @CitrusTest
     public void testGoodByeRequest() {
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .send()
+                .message()
                 .soapAction("GoodBye")
-                .payload("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .body("<GoodBye xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Say GoodBye!" +
-                         "</GoodBye>");
+                         "</GoodBye>"));
 
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .receive()
-                .payload("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodByeResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "GoodBye!" +
-                         "</GoodByeResponse>");
+                         "</GoodByeResponse>"));
     }
 
     @CitrusTest
     public void testGoodNightRequest() {
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .send()
+                .message()
                 .soapAction("GoodNight")
-                .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
-                         "</GoodNight>");
+                         "</GoodNight>"));
 
-        soap().client(soapClient)
+        $(soap().client(soapClient)
                 .receive()
-                .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                .message()
+                .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "@ignore@" +
-                        "</GoodNightResponse>");
+                        "</GoodNightResponse>"));
     }
 
     @CitrusTest
     public void testUnknownRequest() {
-        assertSoapFault()
+        $(soap().client(soapClient)
+                .assertFault()
                 .faultActor("SERVER")
                 .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1100")
                 .faultString("No matching scenario found")
                 .when(
                     soap().client(soapClient)
                         .send()
+                        .message()
                         .soapAction("SomethingElse")
-                        .payload("<SomethingElse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        .body("<SomethingElse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                                 "Say something else!" +
-                                "</SomethingElse>"));
+                                "</SomethingElse>")));
     }
 
     @CitrusTest
     public void testInvalidSoapAction() {
-        assertSoapFault()
+        $(soap().client(soapClient)
+                .assertFault()
                 .faultActor("SERVER")
                 .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1001")
                 .faultString("Internal server error")
                 .when(
                     soap().client(soapClient)
                         .send()
+                        .message()
                         .soapAction("SomethingElse")
-                        .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                                 "Say Hello!" +
-                                "</Hello>"));
+                                "</Hello>")));
     }
 
     @Configuration
@@ -152,14 +164,9 @@ public class SimulatorWebServiceIT extends TestNGCitrusTestDesigner {
         }
 
         @Bean
-        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded", matchIfMissing = true)
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
         }
     }
 }

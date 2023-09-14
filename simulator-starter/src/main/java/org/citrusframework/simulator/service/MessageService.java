@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.service;
 
-import com.consol.citrus.exceptions.CitrusRuntimeException;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageFilter;
@@ -25,7 +25,7 @@ import org.citrusframework.simulator.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;

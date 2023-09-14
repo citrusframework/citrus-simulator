@@ -16,14 +16,14 @@
 
 package org.citrusframework.simulator;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.message.MessageType;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.message.MessageType;
 import org.citrusframework.simulator.sample.Simulator;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
@@ -36,12 +36,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+
 /**
  * @author Christoph Deppisch
  */
 @Test
 @ContextConfiguration(classes = SimulatorSwaggerIT.EndpointConfig.class)
-public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
+public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
 
     /** Test Http REST client */
     @Autowired
@@ -55,45 +57,49 @@ public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
 
     @CitrusTest
     public void testUiInfo() {
-        http().client(simulatorUiClient)
+        $(http().client(simulatorUiClient)
                 .send()
                 .get("/api/manage/info")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        http().client(simulatorUiClient)
+        $(http().client(simulatorUiClient)
                 .receive()
                 .response(HttpStatus.OK)
+                .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload("{" +
+                .body("{" +
                         "\"simulator\":" +
                             "{" +
                                 "\"name\":\"REST Petstore Simulator\"," +
                                 "\"version\":\"@ignore@\"" +
                             "}" +
-                        "}");
+                        "}"));
     }
 
     @CitrusTest
     public void testUiSummaryResults() {
-        http().client(simulatorUiClient)
+        $(http().client(simulatorUiClient)
                 .send()
                 .get("/api/summary/results")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        http().client(simulatorUiClient)
+        $(http().client(simulatorUiClient)
                 .receive()
                 .response(HttpStatus.OK)
+                .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload("{" +
+                .body("{" +
                             "\"size\":\"@isNumber()@\"," +
                             "\"failed\":\"@isNumber()@\"," +
                             "\"success\":\"@isNumber()@\"," +
                             "\"skipped\":0," +
                             "\"skippedPercentage\":\"0.0\"," +
                             "\"failedPercentage\":\"@ignore@\"," +
-                            "\"successPercentage\":\"@ignore@\"}");
+                            "\"successPercentage\":\"@ignore@\"}"));
     }
 
     @CitrusTest
@@ -103,45 +109,48 @@ public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
         variable("tags", "huge");
         variable("status", "pending");
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .post("/pet")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload(new ClassPathResource("templates/pet.json"));
+                .body(new ClassPathResource("templates/pet.json")));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.OK);
+                .response(HttpStatus.OK));
     }
 
     @CitrusTest
     public void testDeletePet() {
         variable("id", "citrus:randomNumber(10)");
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
-                .delete("/pet/${id}");
+                .delete("/pet/${id}"));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.OK);
+                .response(HttpStatus.OK));
     }
 
     @CitrusTest
     public void testGetPetById() {
         variable("id", "citrus:randomNumber(10)");
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .get("/pet/${id}")
-                .accept(MediaType.APPLICATION_JSON_VALUE);
+                .message()
+                .accept(MediaType.APPLICATION_JSON_VALUE));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
+                .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload(new ClassPathResource("templates/pet-control.json"));
+                .body(new ClassPathResource("templates/pet-control.json")));
     }
 
     @CitrusTest
@@ -151,90 +160,99 @@ public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
         variable("tags", "cute");
         variable("status", "sold");
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .put("/pet")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload(new ClassPathResource("templates/pet.json"));
+                .body(new ClassPathResource("templates/pet.json")));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.OK);
+                .response(HttpStatus.OK));
     }
 
     @CitrusTest
     public void testFindByStatus() {
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .get("/pet/findByStatus")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("status", "pending");
+                .queryParam("status", "pending"));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
+                .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload("[ citrus:readFile(templates/pet-control.json) ]");
+                .body("[ citrus:readFile(templates/pet-control.json) ]"));
     }
 
     @CitrusTest
     public void testFindByStatusMissingQueryParameter() {
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .get("/pet/findByStatus")
-                .accept(MediaType.APPLICATION_JSON_VALUE);
+                .message()
+                .accept(MediaType.APPLICATION_JSON_VALUE));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.INTERNAL_SERVER_ERROR);
+                .response(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
     @CitrusTest
     public void testFindByTags() {
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .get("/pet/findByTags")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("tags", "huge,cute");
+                .queryParam("tags", "huge,cute"));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
+                .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload("[ citrus:readFile(templates/pet-control.json) ]");
+                .body("[ citrus:readFile(templates/pet-control.json) ]"));
     }
 
     @CitrusTest
     public void testPlaceOrder() {
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .post("/store/order")
+                .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .payload(new ClassPathResource("templates/order.json"));
+                .body(new ClassPathResource("templates/order.json")));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
-                .response(HttpStatus.OK);
+                .response(HttpStatus.OK));
     }
 
     @CitrusTest
     public void testLoginUser() {
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .send()
                 .get("/user/login")
                 .queryParam("username", "citrus:randomString(10)")
                 .queryParam("password", "citrus:randomString(8)")
-                .accept("text/plain");
+                .message()
+                .accept("text/plain"));
 
-        http().client(petstoreClient)
+        $(http().client(petstoreClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .messageType(MessageType.PLAINTEXT)
-                .payload("@notEmpty()@")
+                .message()
+                .type(MessageType.PLAINTEXT)
+                .body("@notEmpty()@")
                 .header("X-Rate-Limit", "@isNumber()@")
-                .header("X-Expires-After", "@matchesDatePattern('yyyy-MM-dd'T'hh:mm:ss')@");
+                .header("X-Expires-After", "@matchesDatePattern('yyyy-MM-dd'T'hh:mm:ss')@"));
     }
 
     @Configuration
@@ -256,13 +274,8 @@ public class SimulatorSwaggerIT extends TestNGCitrusTestDesigner {
 
         @Bean
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
         }
     }
 }

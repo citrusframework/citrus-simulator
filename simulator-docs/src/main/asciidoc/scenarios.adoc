@@ -33,7 +33,7 @@ So a typical simulator scenario can look like the following code sample.
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
@@ -61,7 +61,7 @@ So we could also extract dynamic values from the request in order to reuse those
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .receive()
             .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +

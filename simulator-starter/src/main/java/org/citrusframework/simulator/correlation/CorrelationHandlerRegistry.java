@@ -1,7 +1,7 @@
 package org.citrusframework.simulator.correlation;
 
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.message.Message;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +35,7 @@ public class CorrelationHandlerRegistry {
 
         while (registeredHandlers.size() > queueCapacity) {
             Stream.of(registeredHandlers.keySet()).limit(queueCapacity / 10)
-                    .collect(Collectors.toList())
+                    .toList()
                     .parallelStream()
                     .forEach(toDelete -> registeredHandlers.remove(toDelete));
         }

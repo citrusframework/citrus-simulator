@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import com.consol.citrus.http.controller.HttpMessageController;
-import com.consol.citrus.http.message.DelegatingHttpEntityMessageConverter;
+import org.citrusframework.http.controller.HttpMessageController;
+import org.citrusframework.http.message.DelegatingHttpEntityMessageConverter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;

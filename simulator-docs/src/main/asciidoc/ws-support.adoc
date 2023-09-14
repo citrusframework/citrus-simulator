@@ -28,7 +28,7 @@ As SOAP web service support is not included by default in the simulator we need 
 ----
 <!-- Citrus web service support -->
 <dependency>
-  <groupId>com.consol.citrus</groupId>
+  <groupId>org.citrusframework</groupId>
   <artifactId>citrus-ws</artifactId>
   <version>${citrus.version}</version>
 </dependency>
@@ -177,7 +177,7 @@ within the simulator we can simply send back a response message in the scenario.
 public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
+    public void run(ScenarioRunner scenario) {
         scenario
             .soap()
             .receive()

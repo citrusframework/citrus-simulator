@@ -18,17 +18,17 @@ package org.citrusframework.simulator;
 
 import java.util.Arrays;
 
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.container.SequenceBeforeSuite;
+import org.citrusframework.dsl.endpoint.CitrusEndpoints;
+import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.sample.Simulator;
 import org.citrusframework.simulator.sample.variables.Name;
-import com.consol.citrus.ws.server.WebServiceServer;
-import com.consol.citrus.xml.XsdSchemaRepository;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
+import org.citrusframework.ws.server.WebServiceServer;
+import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
@@ -42,6 +42,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.testng.annotations.Test;
 
+import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
+import static org.citrusframework.actions.SendMessageAction.Builder.send;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+
 /**
  * Verifies that the webservice client is working properly.
  *
@@ -49,7 +53,7 @@ import org.testng.annotations.Test;
  */
 @Test
 @ContextConfiguration(classes = SimulatorWebServiceClientIT.EndpointConfig.class)
-public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
+public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
 
     @Autowired
     @Qualifier("testSoapServer")
@@ -66,28 +70,31 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
     public void testHelloRequest() {
         Name name = new Name();
 
-        http()
+        $(http()
             .client(restEndpoint)
             .send()
             .post("/api/scenario/launch/HelloStarter")
+            .message()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .payload(asJson(name.asScenarioParameter()));
+            .body(asJson(name.asScenarioParameter())));
 
-        http()
+        $(http()
             .client(restEndpoint)
             .receive()
-            .response(HttpStatus.OK);
+            .response(HttpStatus.OK));
 
-        receive(soapServer)
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        $(receive(soapServer)
+            .message()
+            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     name.getValue() +
                     "</Hello>")
-            .header("citrus_soap_action", "Hello");
+            .header("citrus_soap_action", "Hello"));
 
-        send(soapServer)
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        $(send(soapServer)
+            .message()
+            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                     "Hi there " + name.getValue() +
-                    "</HelloResponse>");
+                    "</HelloResponse>"));
 
     }
 
@@ -134,13 +141,8 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusTestDesigner {
 
         @Bean
         @ConditionalOnProperty(name = "simulator.mode", havingValue = "embedded")
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        public BeforeSuite startEmbeddedSimulator() {
+            return new SequenceBeforeSuite.Builder().actions(context -> SpringApplication.run(Simulator.class)).build();
         }
     }
 }
