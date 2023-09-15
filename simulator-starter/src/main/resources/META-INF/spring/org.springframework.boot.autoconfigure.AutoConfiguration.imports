@@ -1,6 +1,6 @@
 org.citrusframework.simulator.SimulatorAutoConfiguration
+org.citrusframework.simulator.endpoint.SimulatorEndpointAutoConfiguration
 org.citrusframework.simulator.http.SimulatorRestAutoConfiguration
 org.citrusframework.simulator.jms.SimulatorJmsAutoConfiguration
-org.citrusframework.simulator.endpoint.SimulatorEndpointAutoConfiguration
 org.citrusframework.simulator.ws.SimulatorWebServiceAutoConfiguration
 org.citrusframework.simulator.ws.SimulatorWebServiceClientAutoConfiguration

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -13,19 +13,64 @@
   <artifactId>citrus-simulator-ui</artifactId>
   <name>${project.artifactId}</name>
 
+  <properties>
+    <frontendSkip>true</frontendSkip>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-simulator-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+            <filesets>
+                <fileset>
+                    <directory>node_modules</directory>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                </fileset>
+            </filesets>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <configuration>
-          <workingDirectory>src/main/resources/static</workingDirectory>
           <installDirectory>target</installDirectory>
-          <skip>true</skip>
+          <skip>${frontendSkip}</skip>
         </configuration>
         <executions>
           <execution>
@@ -44,7 +89,17 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>ci</arguments>
+              <arguments>ci --cache .npm</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm-test</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <arguments>test</arguments>
             </configuration>
           </execution>
           <execution>
@@ -52,36 +107,14 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>compile</phase>
             <configuration>
               <arguments>run build</arguments>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>static/dist/**</include>
-                <include>static/node_modules/**</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
     </plugins>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>static/dist/**</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
 
   <profiles>
@@ -102,10 +135,11 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <!--
       This profile can be activated to speed up the maven build when re-building the citrus-simulator-ui module.
-      It skips removal of the npm direcory, avoiding having to re-download all the javascript dependencies again.
+      It skips removal of the npm directory, avoiding having to re-download all the javascript dependencies again.
       As long as the javascript dependencies haven't changed you can activate this profile.
       -->
       <id>ui-node-modules-skip-clean</id>
@@ -116,10 +150,10 @@
             <configuration>
               <filesets>
                 <fileset>
-                  <directory>src/main/resources</directory>
-                  <includes>
-                    <include>static/dist/**</include>
-                  </includes>
+                  <directory>node_modules</directory>
+                  <excludes>
+                    <exclude>**/*</exclude>
+                  </excludes>
                 </fileset>
               </filesets>
             </configuration>

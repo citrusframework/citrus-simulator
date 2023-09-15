@@ -1,8 +1,0 @@
-tr.no-parameters {
-    display: table-row;
-}
-
-tr.parameter + tr.no-parameters {
-    display: none;
-}
-

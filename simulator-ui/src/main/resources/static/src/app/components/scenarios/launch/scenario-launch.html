@@ -1,9 +1,0 @@
-<h2 class="sub-header"><i class="fa fa-cube"></i> Start scenario: {{scenario?.name}}</h2>
-
-<scenario-parameter-form [scenarioParameters]="scenarioParameters" [scenario]="scenario"></scenario-parameter-form>
-
-<div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    <span class="fa fa-exclamation" aria-hidden="true"></span>
-    <span class="sr-only">Error:</span>
-    {{errorMessage}}
-</div>

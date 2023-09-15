@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "baseName": "citrus-simulator",
+    "clientFramework": "angular",
+    "clientTheme": "yeti",
+    "clientThemeVariant": "primary",
+    "creationTimestamp": 1694794967405,
+    "devServerPort": 4200,
+    "enableTranslation": true,
+    "entities": [],
+    "jhipsterVersion": "8.0.0-beta.3",
+    "languages": ["en"],
+    "microfrontend": false,
+    "microfrontends": [],
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "skipClient": false,
+    "skipCommitHook": true,
+    "skipServer": true,
+    "testFrameworks": [],
+    "withAdminUi": false
+  }
+}
