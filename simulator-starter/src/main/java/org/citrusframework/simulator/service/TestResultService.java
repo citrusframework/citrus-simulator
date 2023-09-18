@@ -16,8 +16,11 @@
 
 package org.citrusframework.simulator.service;
 
+import org.citrusframework.TestResult;
 import org.citrusframework.simulator.repository.TestResultRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TestResultService {
@@ -26,5 +29,13 @@ public class TestResultService {
 
     public TestResultService(TestResultRepository testResultRepository) {
         this.testResultRepository = testResultRepository;
+    }
+
+    public org.citrusframework.simulator.model.TestResult save(TestResult result) {
+        return testResultRepository.save(new org.citrusframework.simulator.model.TestResult(result));
+    }
+
+    public List<org.citrusframework.simulator.model.TestResult> findAll() {
+        return testResultRepository.findAll();
     }
 }
