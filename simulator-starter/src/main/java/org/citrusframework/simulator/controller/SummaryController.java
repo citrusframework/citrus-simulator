@@ -18,8 +18,11 @@ package org.citrusframework.simulator.controller;
 
 import org.citrusframework.report.TestResults;
 import org.citrusframework.simulator.listener.SimulatorStatusListener;
+import org.citrusframework.simulator.model.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/summary")
@@ -34,8 +37,8 @@ public class SummaryController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/results")
-    public TestResults getSummaryTestResults() {
-        return statusListener.getTestResults();
+    public List<TestResult> getSummaryTestResults() {
+        return statusListener.getTestResultService();
     }
 
     /**
