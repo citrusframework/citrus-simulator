@@ -36,11 +36,11 @@ public abstract class AbstractRepository {
                                          List<Predicate> predicates) {
 
         if (!filter.getDirectionInbound()) {
-            predicates.add(criteriaBuilder.notEqual(path.get("direction"), Direction.INBOUND));
+            predicates.add(criteriaBuilder.notEqual(path.get("direction"), Direction.INBOUND.getId()));
         }
 
         if (!filter.getDirectionOutbound()) {
-            predicates.add(criteriaBuilder.notEqual(path.get("direction"), Direction.OUTBOUND));
+            predicates.add(criteriaBuilder.notEqual(path.get("direction"), Direction.OUTBOUND.getId()));
         }
     }
 

@@ -87,7 +87,7 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
         String inUid = UUID.randomUUID().toString();
         String outUid = UUID.randomUUID().toString();
 
-        String uniqueScenarioName = TEST_SCENARIO + UUID.randomUUID().toString();
+        String uniqueScenarioName = TEST_SCENARIO + UUID.randomUUID();
         createTestScenarioExecution(uniqueScenarioName, inUid + 1, PAYLOAD, outUid + 1, PAYLOAD, Status.SUCCESS);
         Long failedScenarioExecutionId = createTestScenarioExecution(uniqueScenarioName, inUid + 2, PAYLOAD, outUid + 2, PAYLOAD, Status.FAILED);
 
@@ -246,7 +246,7 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
         ScenarioExecution scenarioExecution = activityService.createExecutionScenario(scenarioName, Collections.emptySet());
         activityService.saveScenarioMessage(scenarioExecution.getExecutionId(), Direction.INBOUND, inPayload, inUid, inHeaders);
 
-        Map<String, Object> outHeaders = new HashMap<String, Object>();
+        Map<String, Object> outHeaders = new HashMap<>();
         outHeaders.put(OUT_HEADER_NAME1, outUid);
         outHeaders.put(OUT_HEADER_NAME2, outUid + "_2");
         activityService.saveScenarioMessage(scenarioExecution.getExecutionId(), Direction.OUTBOUND, outPayload, outUid, outHeaders);

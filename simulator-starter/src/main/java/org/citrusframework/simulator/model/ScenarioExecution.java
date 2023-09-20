@@ -25,14 +25,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
-import org.springframework.util.StringUtils;
-
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.util.StringUtils;
 
 /**
  * JPA entity for representing a scenario execution
@@ -46,20 +48,26 @@ public class ScenarioExecution implements Serializable {
     public static final String EXECUTION_ID = "scenarioExecutionId";
 
     @Id
+    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long executionId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Instant startDate;
 
     private Instant endDate;
 
-    @Column(nullable = false)
+    @NotEmpty
+    @Column(nullable = false, updatable = false)
     private String scenarioName;
 
+    /**
+     * Actual status as a numerical representation of {@link Status}
+     */
     @Column(nullable = false)
-    private Status status;
+    private Integer status;
 
+    @Size(max = 1000)
     @Column(length = 1000)
     private String errorMessage;
 
@@ -79,10 +87,6 @@ public class ScenarioExecution implements Serializable {
 
     public Long getExecutionId() {
         return executionId;
-    }
-
-    public void setExecutionId(Long executionId) {
-        this.executionId = executionId;
     }
 
     public Instant getEndDate() {
@@ -110,11 +114,11 @@ public class ScenarioExecution implements Serializable {
     }
 
     public Status getStatus() {
-        return status;
+        return Status.fromId(status);
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        this.status = status.id;
     }
 
     public String getErrorMessage() {
@@ -131,7 +135,8 @@ public class ScenarioExecution implements Serializable {
                     this.errorMessage = this.errorMessage.substring(0, size);
                 }
             } catch (SecurityException | NoSuchFieldException ex) {
-                throw new ErrorMessageTruncationException(String.format("Error truncating error message '%s'!", errorMessage), ex);
+                throw new ErrorMessageTruncationException(
+                    String.format("Error truncating error message '%s'!", errorMessage), ex);
             }
         }
     }
@@ -187,19 +192,32 @@ public class ScenarioExecution implements Serializable {
                 ", scenarioName='" + getScenarioName() + "'" +
                 ", status='" + getStatus() + "'" +
                 ", errorMessage='" + getErrorMessage() + "'" +
-                ", scenarioParameters='" + getScenarioParameters() + "'" +
-                ", scenarioActions='" + getScenarioActions() + "'" +
-                ", scenarioMessages='" + getScenarioMessages() + "'" +
-                '}';
+                "}";
     }
 
     public enum Status {
-        ACTIVE,
-        SUCCESS,
-        FAILED
+
+        UNKNOWN(0), RUNNING(1), SUCCESS(2), FAILED(3);
+
+        private final int id;
+
+        Status(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public static Status fromId(int id) {
+            return Arrays.stream(values())
+                .filter(status -> status.id == id)
+                .findFirst()
+                .orElse(Status.UNKNOWN);
+        }
     }
 
-    public class ErrorMessageTruncationException extends Throwable {
+    public static class ErrorMessageTruncationException extends Exception {
         public ErrorMessageTruncationException(String errorMessage, Exception exception) {
             super(errorMessage, exception);
         }

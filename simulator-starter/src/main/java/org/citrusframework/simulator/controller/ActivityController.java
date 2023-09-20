@@ -16,7 +16,10 @@
 
 package org.citrusframework.simulator.controller;
 
+import java.time.Instant;
+import java.util.Collection;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioExecution.Status;
 import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.citrusframework.simulator.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.Instant;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("api/activity")
@@ -59,7 +59,7 @@ public class ActivityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/status/{status}")
     public Collection<ScenarioExecution> getScenarioExecutionsByStatus(@PathVariable("status") String status) {
-        return activityService.getScenarioExecutionsByStatus(ScenarioExecution.Status.valueOf(status));
+        return activityService.getScenarioExecutionsByStatus(Status.valueOf(status));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")

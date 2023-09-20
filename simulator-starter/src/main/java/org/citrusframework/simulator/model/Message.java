@@ -27,10 +27,11 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
-
+import jakarta.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -42,23 +43,23 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     @Serial
     private static final long serialVersionUID = 2L;
 
-    public enum Direction {
-        INBOUND,
-        OUTBOUND
-    }
-
     @Id
+    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
 
-    @Column(nullable = false)
-    private Direction direction;
+    /**
+     * Actual direction as a numerical representation of {@link Direction}
+     */
+    @Column(nullable = false, updatable = false)
+    private Integer direction;
 
     @Lob
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "CLOB", updatable = false)
     private String payload;
 
-    @Column(unique = true)
+    @NotEmpty
+    @Column(unique = true, nullable = false, updatable = false)
     private String citrusMessageId;
 
     @OrderBy("name ASC")
@@ -73,20 +74,16 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return messageId;
     }
 
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
-
     public ScenarioExecution getScenarioExecution() {
         return scenarioExecution;
     }
 
     public Direction getDirection() {
-        return direction;
+        return Direction.fromId(direction);
     }
 
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        this.direction = direction.id;
     }
 
     public String getPayload() {
@@ -137,7 +134,6 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return null;
     }
 
-
     @Override
     public String toString() {
         return "Message{" +
@@ -146,9 +142,28 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
                 ", direction='" + getDirection() + "'" +
                 ", payload='" + getPayload() + "'" +
                 ", citrusMessageId='" + getCitrusMessageId() + "'" +
-                ", headers='" + getHeaders() + "'" +
-                ", scenarioExecution='" + getScenarioExecution() + "'" +
-                '}';
+                "}";
     }
 
+    public enum Direction {
+
+        UNKNOWN(0), INBOUND(1), OUTBOUND(2);
+
+        private final int id;
+
+        Direction(int i) {
+            this.id = i;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public static Direction fromId(int id) {
+            return Arrays.stream(values())
+                .filter(direction -> direction.id == id)
+                .findFirst()
+                .orElse(Direction.UNKNOWN);
+        }
+    }
 }

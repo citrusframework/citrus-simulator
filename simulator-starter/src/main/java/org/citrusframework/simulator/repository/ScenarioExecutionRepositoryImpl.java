@@ -1,5 +1,6 @@
 package org.citrusframework.simulator.repository;
 
+import ch.qos.logback.classic.spi.Configurator.ExecutionStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,8 +74,8 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
     private void addScenarioStatusPredicate(ScenarioExecutionFilter filter, CriteriaBuilder criteriaBuilder,
             Root<ScenarioExecution> scenarioExecution, List<Predicate> predicates) {
         if (filter.getExecutionStatus() != null && filter.getExecutionStatus().length>0) {
-            CriteriaBuilder.In<Status> inClause = criteriaBuilder.in(scenarioExecution.get("status"));
-            Arrays.stream(filter.getExecutionStatus()).forEach(inClause::value);
+            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(scenarioExecution.get("status"));
+            Arrays.stream(filter.getExecutionStatus()).map(Status::getId).forEach(inClause::value);
             predicates.add(inClause);
         }
     }
