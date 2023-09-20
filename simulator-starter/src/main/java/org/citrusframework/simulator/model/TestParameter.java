@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
@@ -64,6 +65,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
     @ManyToOne
     @MapsId("testResultId")
     @JoinColumn(name = "test_result_id")
+    @JsonIgnoreProperties(value = { "testParameters" }, allowSetters = true)
     private TestResult testResult;
 
     /**
@@ -96,6 +98,14 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
     public TestResult getTestResult() {
         return testResult;
+    }
+
+    @Override
+    public String toString() {
+        return "TestParameter{" +
+            "key='" + getKey() + "'" +
+            "value='" + getValue() + "'" +
+            "}";
     }
 
     /**

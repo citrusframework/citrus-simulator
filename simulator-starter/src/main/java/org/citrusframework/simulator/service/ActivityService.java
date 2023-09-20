@@ -17,12 +17,26 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.transaction.Transactional;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioExecution.Status;
 import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
@@ -32,20 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service for persisting and retrieving {@link ScenarioExecution} data.
@@ -80,7 +80,7 @@ public class ActivityService {
         scenarioExecution.setScenarioName(scenarioName);
         scenarioExecution.setStartDate(getTimeNow());
         scenarioExecution.setEndDate(getTimeNow());
-        scenarioExecution.setStatus(ScenarioExecution.Status.ACTIVE);
+        scenarioExecution.setStatus(Status.RUNNING);
 
         if (scenarioParameters != null) {
             for (ScenarioParameter tp : scenarioParameters) {
@@ -92,11 +92,11 @@ public class ActivityService {
     }
 
     public void completeScenarioExecutionSuccess(TestCase testCase) {
-        completeScenarioExecution(ScenarioExecution.Status.SUCCESS, testCase, null);
+        completeScenarioExecution(Status.SUCCESS, testCase, null);
     }
 
     public void completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
-        completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
+        completeScenarioExecution(Status.FAILED, testCase, cause);
     }
 
     public Collection<ScenarioExecution> getScenarioExecutionsByName(String testName) {
@@ -197,7 +197,7 @@ public class ActivityService {
 
         ScenarioExecution scenarioExecution = lookupScenarioExecution(testCase);
         ScenarioAction scenarioAction = new ScenarioAction();
-        scenarioAction.setName(testAction.getName());
+        scenarioAction.setName(StringUtils.isNotBlank(testAction.getName()) ? testAction.getName() : scenarioExecution.getScenarioName());
         scenarioAction.setStartDate(getTimeNow());
         scenarioExecution.addScenarioAction(scenarioAction);
     }
@@ -207,25 +207,26 @@ public class ActivityService {
             return;
         }
 
-        ScenarioExecution te = lookupScenarioExecution(testCase);
-        Iterator<ScenarioAction> iterator = te.getScenarioActions().iterator();
+        ScenarioExecution scenarioExecution = lookupScenarioExecution(testCase);
+        Iterator<ScenarioAction> scenarioActions = scenarioExecution.getScenarioActions().iterator();
         ScenarioAction lastScenarioAction = null;
-        while (iterator.hasNext()) {
-            lastScenarioAction = iterator.next();
+        while (scenarioActions.hasNext()) {
+            lastScenarioAction = scenarioActions.next();
         }
 
         if (lastScenarioAction == null) {
-            throw new CitrusRuntimeException(String.format("No test action found with name %s", testAction.getName()));
+            throw new CitrusRuntimeException(String.format("No test action found with name' %s'", testAction.getName()));
         }
-        if (!lastScenarioAction.getName().equals(testAction.getName())) {
-            throw new CitrusRuntimeException(String.format("Expected to find last test action with name %s but got %s", testAction.getName(), lastScenarioAction.getName()));
+        if ((StringUtils.isNotBlank(testAction.getName()) && !lastScenarioAction.getName().equals(testAction.getName()))
+            || (StringUtils.isBlank(testAction.getName()) && !lastScenarioAction.getName().equals(scenarioExecution.getScenarioName()))) {
+            throw new CitrusRuntimeException(String.format("Expected to find last test action with name '%s' but got '%s'", testAction.getName(), lastScenarioAction.getName()));
         }
 
         lastScenarioAction.setEndDate(getTimeNow());
     }
 
     private boolean skipTestAction(TestAction testAction) {
-        List<String> ignoreList = Arrays.asList("create-variables");
+        List<String> ignoreList = List.of("create-variables");
         return ignoreList.contains(testAction.getName());
     }
 

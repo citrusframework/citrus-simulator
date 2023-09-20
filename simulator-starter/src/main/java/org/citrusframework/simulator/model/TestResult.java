@@ -24,7 +24,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
      * Actual result as a numerical representation of {@link Status}
      */
     @Column(nullable = false, updatable = false)
-    private int status;
+    private Integer status;
 
     /**
      * Name of the test
@@ -129,10 +128,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     }
 
     public Status getStatus() {
-        return Arrays.stream(Status.values())
-                .filter(result -> result.id == status)
-                .findFirst()
-                .orElse(Status.UNKNOWN);
+        return Status.fromId(status);
     }
 
     public String getTestName() {
@@ -167,6 +163,20 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
                 .id;
     }
 
+    @Override
+    public String toString() {
+        return "TestResult{" +
+            "id='" + getId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", testName='" + getTestName() + "'" +
+            ", className='" + getClassName() + "'" +
+            ", errorMessage='" +getErrorMessage() + "'" +
+            ", failureStack='" +getFailureStack() + "'" +
+            ", failureType='" +getFailureType() + "'" +
+            "}";
+    }
+
     public enum Status {
 
         UNKNOWN(0), SUCCESS(1), FAILURE(2), SKIP(3);
@@ -175,6 +185,17 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
         Status(int i) {
             this.id = i;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public static Status fromId(int id) {
+            return Arrays.stream(values())
+                .filter(status -> status.id == id)
+                .findFirst()
+                .orElse(Status.UNKNOWN);
         }
     }
 }
