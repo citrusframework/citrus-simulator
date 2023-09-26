@@ -1,7 +1,18 @@
 {
   "home": {
     "title": "Citrus Simulator",
+    "version": "Version {{version}}",
     "like": "If you like Citrus and the Simulator, don't forget to give us a star on",
-    "github": "GitHub"
+    "github": "GitHub",
+    "simulations": {
+      "title": "Simulations",
+      "documentation": "Documentation",
+      "noSimulationsRanYet": "No simulations ran yet! Try starting one:",
+      "results": {
+        "total": "Total:",
+        "successful": "Successful:",
+        "failed": "Failed:"
+      }
+    }
   }
 }

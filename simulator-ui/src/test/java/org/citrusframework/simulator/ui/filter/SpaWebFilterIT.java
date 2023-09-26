@@ -7,12 +7,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 @AutoConfigureMockMvc
 class SpaWebFilterIT {
+
+    private static final String REST_URL_MAPPING = "/simulator/rest";
+    private static final String WS_SERVLET_PATH = "/simulator/ws";
 
     @Autowired
     private MockMvc mockMvc;
@@ -22,26 +26,14 @@ class SpaWebFilterIT {
         mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(forwardedUrl("/index.html"));
     }
 
-    // TODO: Use valid endpoint
-    // @Test
-    // void testFilterDoesNotForwardToIndexForApi() throws Exception {
-    //     mockMvc.perform(get("/api/authenticate")).andExpect(status().isOk()).andExpect(forwardedUrl(null));
-    // }
-
-    // TODO: Maybe add swagger UI?
-    // @Test
-    // void testFilterDoesNotForwardToIndexForV3ApiDocs() throws Exception {
-    //     mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andExpect(forwardedUrl(null));
-    // }
+    @Test
+    void testFilterDoesNotForwardToIndexForApi() throws Exception {
+        mockMvc.perform(get("/api/test-results")).andExpect(status().isOk()).andExpect(forwardedUrl(null));
+    }
 
     @Test
     void testFilterDoesNotForwardToIndexForDotFile() throws Exception {
         mockMvc.perform(get("/file.js")).andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getBackendEndpoint() throws Exception {
-        mockMvc.perform(get("/test")).andExpect(status().isOk()).andExpect(forwardedUrl("/index.html"));
     }
 
     @Test
@@ -65,17 +57,17 @@ class SpaWebFilterIT {
     }
 
     @Test
-    void getUnmappedFirstLevelFile() throws Exception {
-        mockMvc.perform(get("/foo.js")).andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getUnmappedSecondLevelFile() throws Exception {
-        mockMvc.perform(get("/foo/bar.js")).andExpect(status().isNotFound());
-    }
-
-    @Test
     void getUnmappedThirdLevelFile() throws Exception {
         mockMvc.perform(get("/foo/another/bar.js")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void executeRestSimulation() throws Exception {
+        mockMvc.perform(get(REST_URL_MAPPING)).andExpect(status().isOk()).andExpect(forwardedUrl(null));
+    }
+
+    @Test
+    void executeWsSimulation() throws Exception {
+        mockMvc.perform(post(WS_SERVLET_PATH)).andExpect(status().isNotFound()).andExpect(forwardedUrl(null));
     }
 }

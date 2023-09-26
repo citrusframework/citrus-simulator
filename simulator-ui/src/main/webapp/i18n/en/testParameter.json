@@ -1,0 +1,20 @@
+{
+  "citrusSimulatorApp": {
+    "testParameter": {
+      "home": {
+        "title": "Test Parameters",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Test Parameters found"
+      },
+      "detail": {
+        "title": "Test Parameter"
+      },
+      "id": "ID",
+      "key": "Key",
+      "value": "Value",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date",
+      "testResult": "Test Result"
+    }
+  }
+}

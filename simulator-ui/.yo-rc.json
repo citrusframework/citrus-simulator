@@ -8,7 +8,7 @@
     "creationTimestamp": 1694794967405,
     "devServerPort": 4200,
     "enableTranslation": true,
-    "entities": [],
+    "entities": ["TestParameter", "TestResult"],
     "jhipsterVersion": "8.0.0-beta.3",
     "languages": ["en"],
     "microfrontend": false,

@@ -239,6 +239,6 @@ public class ActivityService {
     }
 
     private Instant getTimeNow() {
-        return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant();
+        return LocalDateTime.now().toInstant(ZoneOffset.UTC);
     }
 }

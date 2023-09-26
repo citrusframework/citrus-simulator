@@ -68,12 +68,12 @@ public class MessageRepositoryImpl extends AbstractRepository implements Message
     private void addDatePredicates(MessageFilter filter, CriteriaBuilder criteriaBuilder,
                     Root<Message> message, List<Predicate> predicates) {
         if (filter.getFromDate() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(message.get("date"),
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(message.get("createdDate"),
                             filter.getFromDate()));
         }
 
         if (filter.getToDate() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(message.get("date"),
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(message.get("createdDate"),
                             filter.getToDate()));
         }
     }

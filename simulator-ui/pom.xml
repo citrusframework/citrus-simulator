@@ -14,10 +14,16 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <frontendSkip>true</frontendSkip>
+    <skipFrontend>true</skipFrontend>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-simulator-starter</artifactId>
+    </dependency>
+
+    <!-- Additional UI dependencies -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
@@ -27,6 +33,7 @@
       <artifactId>spring-security-web</artifactId>
     </dependency>
 
+    <!-- Core web dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -38,9 +45,16 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Annotation Processors -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-simulator-starter</artifactId>
+      <artifactId>citrus-ws</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -55,22 +69,23 @@
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
-            <filesets>
-                <fileset>
-                    <directory>node_modules</directory>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                </fileset>
-            </filesets>
+          <filesets>
+            <fileset>
+              <directory>node_modules</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </fileset>
+          </filesets>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <configuration>
           <installDirectory>target</installDirectory>
-          <skip>${frontendSkip}</skip>
+          <skip>${skipFrontend}</skip>
         </configuration>
         <executions>
           <execution>
@@ -114,11 +129,42 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>${spring-boot.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
+      <!--
+      This profile makes it possible to serve the frontend using Maven only. It starts the angular development server
+      and therefore starts serving the pages (reloading on changes being enabled).
+      -->
       <id>development</id>
       <build>
         <plugins>
@@ -138,9 +184,9 @@
 
     <profile>
       <!--
-      This profile can be activated to speed up the maven build when re-building the citrus-simulator-ui module.
-      It skips removal of the npm directory, avoiding having to re-download all the javascript dependencies again.
-      As long as the javascript dependencies haven't changed you can activate this profile.
+      This profile can be activated to speed up the maven build when re-building the citrus-simulator-ui module. It
+      skips removal of the npm directory, avoiding having to re-download all the javascript dependencies again. As long
+      as the javascript dependencies haven't changed you can activate this profile.
       -->
       <id>ui-node-modules-skip-clean</id>
       <build>

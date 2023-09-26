@@ -120,7 +120,7 @@ To build the final jar and optimize the `citrus-simulator` application for produ
 root directory of `citrus-simulator`:
 
 ```
-./mvnw install -DfrontendSkip=false
+./mvnw install -DskipFrontend=false
 ```
 
 This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references

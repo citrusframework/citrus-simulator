@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 /**
  * Base abstract class for entities which will hold definitions for created and last modified by attributes.
@@ -37,11 +38,6 @@ public abstract class AbstractAuditingEntity<T, I> implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public T createdDate(Instant createdDate) {
-        setCreatedDate(createdDate);
-        return (T) this;
-    }
-
     public Instant getLastModifiedDate() {
         return lastModifiedDate;
     }
@@ -50,8 +46,20 @@ public abstract class AbstractAuditingEntity<T, I> implements Serializable {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public T lastModifiedDate(Instant lastModifiedDate) {
-        setLastModifiedDate(lastModifiedDate);
-        return (T) this;
+    public static abstract class AuditingEntityBuilder<B extends AuditingEntityBuilder<B, E, A>, E extends AbstractAuditingEntity<E, A>, A> {
+
+        @SuppressWarnings("unchecked")
+        public B createdDate(ZonedDateTime createdDate) {
+            getEntity().setCreatedDate(createdDate.toInstant());
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B lastModifiedDate(ZonedDateTime lastModifiedDate) {
+            getEntity().setLastModifiedDate(lastModifiedDate.toInstant());
+            return (B) this;
+        }
+
+        protected abstract E getEntity();
     }
 }

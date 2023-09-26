@@ -29,6 +29,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a parameter of a test result, holding a key-value pair of parameter details. It is linked to
@@ -64,7 +65,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
     @ManyToOne
     @MapsId("testResultId")
-    @JoinColumn(name = "test_result_id")
+    @JoinColumn(name = "test_result_id", nullable = false)
     @JsonIgnoreProperties(value = { "testParameters" }, allowSetters = true)
     private TestResult testResult;
 
@@ -88,6 +89,10 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
         this.testResult = testResult;
     }
 
+    public static TestParameterBuilder builder() {
+        return new TestParameterBuilder();
+    }
+
     public String getKey() {
         return testParameterId.key;
     }
@@ -98,6 +103,10 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
     public TestResult getTestResult() {
         return testResult;
+    }
+
+    public void setTestResult(TestResult testResult) {
+        this.testResult = testResult;
     }
 
     @Override
@@ -124,7 +133,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
      * @see org.citrusframework.simulator.model.TestResult
      */
     @Embeddable
-    public class TestParameterId implements Serializable {
+    public static class TestParameterId implements Serializable {
 
         @Serial
         private static final long serialVersionUID = 1L;
@@ -152,6 +161,34 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
         public TestParameterId(String key, TestResult testResult) {
             this.key = key;
             this.testResultId = testResult.getId();
+        }
+    }
+
+    public static class TestParameterBuilder extends AuditingEntityBuilder<TestParameterBuilder, TestParameter, TestParameterId> {
+
+        private final TestParameter testParameter = new TestParameter();
+
+        public TestParameter build() {
+            return testParameter;
+        }
+
+        public TestParameterBuilder key(String key) {
+            if (Objects.isNull(testParameter.testParameterId)) {
+                testParameter.testParameterId = new TestParameterId();
+            }
+
+            testParameter.testParameterId.key = key;
+            return this;
+        }
+
+        public TestParameterBuilder value(String value) {
+            testParameter.value = value;
+            return this;
+        }
+
+        @Override
+        protected TestParameter getEntity() {
+            return testParameter;
         }
     }
 }

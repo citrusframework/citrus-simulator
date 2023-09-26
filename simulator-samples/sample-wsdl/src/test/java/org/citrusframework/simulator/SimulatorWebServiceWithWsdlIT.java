@@ -40,8 +40,8 @@ import static org.citrusframework.ws.actions.SoapActionBuilder.soap;
  * @author Christoph Deppisch
  */
 @Test
-@ContextConfiguration(classes = SimulatorWebServiceIT.EndpointConfig.class)
-public class SimulatorWebServiceIT extends TestNGCitrusSpringSupport {
+@ContextConfiguration(classes = SimulatorWebServiceWithWsdlIT.EndpointConfig.class)
+public class SimulatorWebServiceWithWsdlIT extends TestNGCitrusSpringSupport {
 
     @Autowired
     private WebServiceClient soapClient;

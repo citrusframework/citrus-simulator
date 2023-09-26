@@ -55,7 +55,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 @Configuration
 @ComponentScan(basePackages = {
+        // TODO: Remove when scenario controller has been migrated
         "org.citrusframework.simulator.controller",
+        "org.citrusframework.simulator.web.rest",
         "org.citrusframework.simulator.listener",
         "org.citrusframework.simulator.service",
         "org.citrusframework.simulator.endpoint",
@@ -163,7 +165,7 @@ public class SimulatorAutoConfiguration {
 
         return outboundJsonDataDictionary;
     }
-    
+
     @Bean
     public QueryFilterAdapterFactory queryFilterAdapterFactory(SimulatorConfigurationProperties cfg) {
         return new QueryFilterAdapterFactory(cfg);

@@ -24,7 +24,7 @@
       "error",
       {
         "type": "element",
-        "prefix": "jhi",
+        "prefix": ["app", "jhi"],
         "style": "kebab-case"
       }
     ],
@@ -95,5 +95,13 @@
     "object-shorthand": ["error", "always", { "avoidExplicitReturnArrows": true }],
     "radix": "error",
     "spaced-comment": ["warn", "always"]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["./src/main/webapp/**/*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    }
+  ]
 }

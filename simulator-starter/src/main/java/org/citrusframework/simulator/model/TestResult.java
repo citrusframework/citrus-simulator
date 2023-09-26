@@ -24,6 +24,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -123,8 +124,17 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         failureType = testResult.getFailureType();
     }
 
+    public static TestResultBuilder builder() {
+        return new TestResultBuilder();
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public TestResult id(Long id) {
+        this.id = id;
+        return this;
     }
 
     public Status getStatus() {
@@ -143,6 +153,10 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return testParameters;
     }
 
+    public void addTestParameter(TestParameter testParameter) {
+        testParameters.add(testParameter);
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -157,10 +171,10 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
     private int convertToStatus(String resultName) {
         return Arrays.stream(Status.values())
-                .filter(result -> result.name().equals(resultName))
-                .findFirst()
-                .orElse(Status.UNKNOWN)
-                .id;
+            .filter(result -> result.name().equals(resultName))
+            .findFirst()
+            .orElse(Status.UNKNOWN)
+            .id;
     }
 
     @Override
@@ -171,9 +185,9 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
             ", status='" + getStatus() + "'" +
             ", testName='" + getTestName() + "'" +
             ", className='" + getClassName() + "'" +
-            ", errorMessage='" +getErrorMessage() + "'" +
-            ", failureStack='" +getFailureStack() + "'" +
-            ", failureType='" +getFailureType() + "'" +
+            ", errorMessage='" + getErrorMessage() + "'" +
+            ", failureStack='" + getFailureStack() + "'" +
+            ", failureType='" + getFailureType() + "'" +
             "}";
     }
 
@@ -196,6 +210,50 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
                 .filter(status -> status.id == id)
                 .findFirst()
                 .orElse(Status.UNKNOWN);
+        }
+    }
+
+    public static class TestResultBuilder extends AuditingEntityBuilder<TestResultBuilder, TestResult, Long> {
+
+        private final TestResult testResult = new TestResult();
+
+        public TestResult build() {
+            return testResult;
+        }
+
+        public TestResultBuilder status(Integer status) {
+            testResult.status = status;
+            return this;
+        }
+
+        public TestResultBuilder testName(String testName) {
+            testResult.testName = testName;
+            return this;
+        }
+
+        public TestResultBuilder className(String className) {
+            testResult.className = className;
+            return this;
+        }
+
+        public TestResultBuilder errorMessage(String errorMessage) {
+            testResult.errorMessage = errorMessage;
+            return this;
+        }
+
+        public TestResultBuilder failureStack(String failureStack) {
+            testResult.failureStack = failureStack;
+            return this;
+        }
+
+        public TestResultBuilder failureType(String failureType) {
+            testResult.failureType = failureType;
+            return this;
+        }
+
+        @Override
+        protected TestResult getEntity() {
+            return testResult;
         }
     }
 }

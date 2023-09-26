@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.listener;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.citrusframework.DefaultTestCase;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -49,7 +48,9 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     private static final Logger logger = LoggerFactory.getLogger(SimulatorStatusListener.class);
 
     /**
-     * Currently running test
+     * Currently running test.
+     *
+     * TODO: Replace with metric.
      */
     private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
@@ -85,7 +86,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
         }
 
-        testResultService.save(result);
+        testResultService.transformAndSave(result);
         executionService.completeScenarioExecutionSuccess(test);
 
         logger.info(result.toString());
@@ -100,7 +101,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
 
-        testResultService.save(result);
+        testResultService.transformAndSave(result);
         executionService.completeScenarioExecutionFailure(test, cause);
 
         logger.info(result.toString());
@@ -128,17 +129,13 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         }
     }
 
-    private boolean ignoreTestAction(TestAction testAction) {
-        return testAction.getClass().equals(SleepAction.class);
-    }
-
 
     @Override
     public void onTestActionSkipped(TestCase testCase, TestAction testAction) {
     }
 
     private String[] getParameters(TestCase test) {
-        List<String> parameterStrings = new ArrayList<String>();
+        List<String> parameterStrings = new ArrayList<>();
 
         if (test instanceof DefaultTestCase) {
             for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
@@ -146,41 +143,10 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             }
         }
 
-        return parameterStrings.toArray(new String[parameterStrings.size()]);
+        return parameterStrings.toArray(new String[0]);
     }
 
-    /**
-     * Gets the value of the testResults property.
-     *
-     * @return the testResults
-     */
-    public List<org.citrusframework.simulator.model.TestResult> getTestResultService() {
-        return testResultService.findAll();
-    }
-
-    /**
-     * Gets the value of the runningTests property.
-     *
-     * @return the runningTests
-     */
-    public Map<String, TestResult> getRunningTests() {
-        return runningTests;
-    }
-
-    /**
-     * Deletes all test results. Shall be removed, but will be kept for now to ensure backward compatibility.
-     *
-     * @deprecated will be removed wihin the next breaking release!
-     */
-    @Deprecated(forRemoval = true)
-    public void clearResults() {
-        throw new NotImplementedException("This method will be removed within the next breaking release!");
-    }
-
-    /**
-     * Get the count of active scenarios
-     */
-    public int getCountActiveScenarios() {
-        return runningTests.size();
+    private boolean ignoreTestAction(TestAction testAction) {
+        return testAction.getClass().equals(SleepAction.class);
     }
 }

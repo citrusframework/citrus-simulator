@@ -3,6 +3,7 @@ export interface InfoResponse {
   git?: any;
   build?: any;
   activeProfiles?: string[];
+  simulator?: SimulatorInfo;
 }
 
 export class ProfileInfo {
@@ -11,5 +12,12 @@ export class ProfileInfo {
     public ribbonEnv?: string,
     public inProduction?: boolean,
     public openAPIEnabled?: boolean,
+  ) {}
+}
+
+export class SimulatorInfo {
+  constructor(
+    public name?: string,
+    public version?: string,
   ) {}
 }

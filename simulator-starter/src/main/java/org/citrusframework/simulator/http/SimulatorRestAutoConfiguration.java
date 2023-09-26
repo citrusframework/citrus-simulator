@@ -96,6 +96,7 @@ public class SimulatorRestAutoConfiguration {
             urlMapping = urlMapping.substring(0, urlMapping.length() - 1);
         }
         filterRegistrationBean.setUrlPatterns(Collections.singleton(urlMapping));
+
         return filterRegistrationBean;
     }
 

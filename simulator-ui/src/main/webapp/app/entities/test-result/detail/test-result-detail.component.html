@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="testResult">
+      <h2 data-cy="testResultDetailsHeading"><span jhiTranslate="citrusSimulatorApp.testResult.detail.title">Test Result</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ testResult.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
+        <dd>
+          <span>{{ testResult.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span></dt>
+        <dd>
+          <span>{{ testResult.testName }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span></dt>
+        <dd>
+          <span>{{ testResult.className }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
+        <dd>
+          <span>{{ testResult.errorMessage }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.failureStack">Failure Stack</span></dt>
+        <dd>
+          <span>{{ testResult.failureStack }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span></dt>
+        <dd>
+          <span>{{ testResult.failureType }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span></dt>
+        <dd>
+          <span>{{ testResult.createdDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span></dt>
+        <dd>
+          <span>{{ testResult.lastModifiedDate | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>

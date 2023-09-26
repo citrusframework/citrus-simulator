@@ -74,7 +74,8 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                             "{" +
                                 "\"name\":\"REST Petstore Simulator\"," +
                                 "\"version\":\"@ignore@\"" +
-                            "}" +
+                            "}," +
+                            "\"activeProfiles\": []" +
                         "}"));
     }
 

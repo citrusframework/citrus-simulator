@@ -16,14 +16,11 @@
 
 package org.citrusframework.simulator.model;
 
-import lombok.Data;
-
 import java.time.Instant;
 
 /**
  * Filter for filtering {@link Message}s
  */
-@Data
 public class MessageFilter {
     private Instant fromDate;
     private Instant toDate;
@@ -43,4 +40,68 @@ public class MessageFilter {
      * filter.
      */
     private String headerFilter;
+
+    public Instant getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Instant fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Instant getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Instant toDate) {
+        this.toDate = toDate;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Boolean getDirectionInbound() {
+        return directionInbound;
+    }
+
+    public void setDirectionInbound(Boolean directionInbound) {
+        this.directionInbound = directionInbound;
+    }
+
+    public Boolean getDirectionOutbound() {
+        return directionOutbound;
+    }
+
+    public void setDirectionOutbound(Boolean directionOutbound) {
+        this.directionOutbound = directionOutbound;
+    }
+
+    public String getContainingText() {
+        return containingText;
+    }
+
+    public void setContainingText(String containingText) {
+        this.containingText = containingText;
+    }
+
+    public String getHeaderFilter() {
+        return headerFilter;
+    }
+
+    public void setHeaderFilter(String headerFilter) {
+        this.headerFilter = headerFilter;
+    }
 }

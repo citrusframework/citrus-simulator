@@ -1,0 +1,45 @@
+<div>
+  <h3 class="mb-3">
+    <fa-icon icon="chart-pie"></fa-icon>
+    <span jhiTranslate="home.simulations.title"> Test Results </span>
+  </h3>
+
+  <div class="row" *ngIf="testResults?.total !== 0; else infoNoSimulationsRanYet">
+    <div class="col-md-3">
+      <ngb-alert type="info" [dismissible]="false">
+        <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
+        <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+      </ngb-alert>
+    </div>
+
+    <div class="col-md-3">
+      <ngb-alert type="success" [dismissible]="false">
+        <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
+        <h5>
+          {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
+        </h5>
+      </ngb-alert>
+    </div>
+
+    <div class="col-md-3">
+      <ngb-alert type="danger" [dismissible]="false">
+        <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
+        <h5>
+          {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
+        </h5>
+      </ngb-alert>
+    </div>
+  </div>
+
+  <ng-template #infoNoSimulationsRanYet>
+    <ngb-alert class="mt-3" type="warning" [dismissible]="false">
+      <span jhiTranslate="home.simulations.noSimulationsRanYet">No simulations ran yet! Try starting one:</span>
+      <a
+        href="https://citrusframework.org/citrus-simulator/reference/html/index.html#scenarios"
+        target="_blank"
+        jhiTranslate="home.simulations.documentation"
+        >Documentation</a
+      >
+    </ngb-alert>
+  </ng-template>
+</div>

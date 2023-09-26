@@ -1,6 +1,6 @@
 package org.citrusframework.simulator.ui;
 
-import org.citrusframework.simulator.ui.config.SimulatorUiAutoconfiguration;
+import org.citrusframework.simulator.ui.test.TestApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {SimulatorUiAutoconfiguration.class})
+@SpringBootTest(classes = {TestApplication.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface IntegrationTest {
 }

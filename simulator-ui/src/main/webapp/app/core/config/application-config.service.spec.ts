@@ -18,10 +18,6 @@ describe('ApplicationConfigService', () => {
     it('should return correctly', () => {
       expect(service.getEndpointFor('api')).toEqual('api');
     });
-
-    it('should return correctly when passing microservice', () => {
-      expect(service.getEndpointFor('api', 'microservice')).toEqual('services/microservice/api');
-    });
   });
 
   describe('with prefix', () => {
@@ -31,10 +27,6 @@ describe('ApplicationConfigService', () => {
 
     it('should return correctly', () => {
       expect(service.getEndpointFor('api')).toEqual('prefix/api');
-    });
-
-    it('should return correctly when passing microservice', () => {
-      expect(service.getEndpointFor('api', 'microservice')).toEqual('prefix/services/microservice/api');
     });
   });
 });

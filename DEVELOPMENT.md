@@ -9,6 +9,8 @@ After forking/cloning the source code repository from [https://github.com/citrus
 mvn clean install
 ```
 
+Add the `-DskipFrontend=false` parameter to include the `simulator-ui` into the build.
+
 ## Lombok
 
 This will compile all classes and generate constructors as well as getters and setters using [Project Lombok](https://projectlombok.org/).
