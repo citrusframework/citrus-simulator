@@ -4,13 +4,14 @@ import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,11 +19,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class HttpRequestAnnotationMatcherTest {
-
-    HttpRequestAnnotationMatcher cut = HttpRequestAnnotationMatcher.instance();
+class HttpRequestAnnotationMatcherTest {
 
     private static final RequestMapping REQ_MAP_WITH_PATH_NAME = getRequestMapping(new ScenarioWithPathName());
     private static final RequestMapping REQ_MAP_WITH_PATH_VALUE = getRequestMapping(new ScenarioWithPathValue());
@@ -32,192 +32,194 @@ public class HttpRequestAnnotationMatcherTest {
     private static final RequestMapping REQ_MAP_WITH_QUERY_PARAMS = getRequestMapping(new ScenarioWithQueryParams());
     private static final RequestMapping REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS = getRequestMapping(new ScenarioWithAllSupportedRestrictions());
 
-    @DataProvider
-    public Object[][] dpScenarios() {
-        return new Object[][]{
-                new Object[]{
+    HttpRequestAnnotationMatcher fixture;
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = HttpRequestAnnotationMatcher.instance();
+    }
+
+    static Stream<Arguments> checkRequestPathSupported() {
+        return Stream.of(
+            Arguments.of(
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("/path/name", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("/path/name", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_NAME,
                         setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("/path/value", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_VALUE,
                         setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/place-holder/123", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/place-holder/123", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PLACEHOLDER,
                         setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         false
-                },
-
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/pattern/match-me", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/pattern/match-me", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/wrong-pattern", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("/path/wrong-pattern", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PATH_PATTERN,
                         setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                         false,
                         false
-                },
-
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PUT_METHOD,
                         setupHttpMessage("/any-path", RequestMethod.PUT, Collections.emptyMap()),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_PUT_METHOD,
                         setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("a", Collections.emptySet())),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", RequestMethod.GET, Stream.of("a=1","b=2").map(item -> item.split("=")).collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> Collections.singleton(keyValuePair[1])))),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("c", Collections.singleton("3"))),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_QUERY_PARAMS,
                         setupHttpMessage("/any-path", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
+            ),
 
-                new Object[]{
+            Arguments.of(
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         true
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/wrong-path", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", RequestMethod.PUT, Collections.singletonMap("a", Collections.singleton("1"))),
                         true,
                         false
-                },
-                new Object[]{
+            ),
+            Arguments.of(
                         REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                         setupHttpMessage("/path/value", RequestMethod.GET, Collections.emptyMap()),
                         true,
                         false
-                },
-        };
+            )
+        );
     }
 
-    @Test(dataProvider = "dpScenarios")
-    public void testCheckRequestSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean exactMatch, boolean expectedResult) throws Exception {
-        boolean actual = cut.checkRequestPathSupported(httpMessage, requestMapping, exactMatch)
-                && cut.checkRequestMethodSupported(httpMessage, requestMapping)
-                && cut.checkRequestQueryParamsSupported(httpMessage, requestMapping);
-        Assert.assertEquals(actual, expectedResult);
+    @MethodSource
+    @ParameterizedTest
+    void checkRequestPathSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean exactMatch, boolean expectedResult) throws Exception {
+        boolean actual = fixture.checkRequestPathSupported(httpMessage, requestMapping, exactMatch)
+            && fixture.checkRequestMethodSupported(httpMessage, requestMapping)
+            && fixture.checkRequestQueryParamsSupported(httpMessage, requestMapping);
+        assertEquals(actual, expectedResult);
     }
 
     @Scenario("ScenarioWithPathName")
@@ -259,7 +261,7 @@ public class HttpRequestAnnotationMatcherTest {
         return AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class);
     }
 
-    private HttpMessage setupHttpMessage(String path, RequestMethod method, Map<String, Collection<String>> queryParams) {
+    private static HttpMessage setupHttpMessage(String path, RequestMethod method, Map<String, Collection<String>> queryParams) {
         final HttpMessage httpMessage = Mockito.mock(HttpMessage.class);
         when(httpMessage.getPath()).thenReturn(path);
         when(httpMessage.getRequestMethod()).thenReturn(method);
