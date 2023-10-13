@@ -65,7 +65,7 @@ class TestResultResourceIT {
     private TestResultRepository testResultRepository;
 
     @Autowired
-    private EntityManager em;
+    private EntityManager entityManager;
 
     @Autowired
     private MockMvc restTestResultMockMvc;
@@ -94,7 +94,7 @@ class TestResultResourceIT {
 
     @BeforeEach
     public void initTest() {
-        testResult = createEntity(em);
+        testResult = createEntity(entityManager);
     }
 
     @Test
@@ -709,14 +709,14 @@ class TestResultResourceIT {
     @Transactional
     void getAllTestResultsByTestParameterIsEqualToSomething() throws Exception {
         TestParameter testParameter;
-        if (TestUtil.findAll(em, TestParameter.class).isEmpty()) {
+        if (TestUtil.findAll(entityManager, TestParameter.class).isEmpty()) {
             testResultRepository.saveAndFlush(testResult);
-            testParameter = TestParameterResourceIT.createEntity(em);
+            testParameter = TestParameterResourceIT.createEntity(entityManager);
         } else {
-            testParameter = TestUtil.findAll(em, TestParameter.class).get(0);
+            testParameter = TestUtil.findAll(entityManager, TestParameter.class).get(0);
         }
-        em.persist(testParameter);
-        em.flush();
+        entityManager.persist(testParameter);
+        entityManager.flush();
         testResult.addTestParameter(testParameter);
         testResultRepository.saveAndFlush(testResult);
         String testParameterKey = testParameter.getKey();

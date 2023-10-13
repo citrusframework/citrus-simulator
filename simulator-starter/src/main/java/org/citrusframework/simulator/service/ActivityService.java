@@ -17,18 +17,6 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.transaction.Transactional;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -36,16 +24,20 @@ import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
-import org.citrusframework.simulator.model.ScenarioExecution.Status;
-import org.citrusframework.simulator.model.ScenarioExecutionFilter;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service for persisting and retrieving {@link ScenarioExecution} data.
@@ -56,13 +48,11 @@ public class ActivityService {
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
-    @Autowired
-    private QueryFilterAdapterFactory queryFilterAdapterFactory;
+    private final TimeProvider timeProvider = new TimeProvider();
 
     private final ScenarioExecutionRepository scenarioExecutionRepository;
     private final MessageService messageService;
 
-    @Autowired
     public ActivityService(ScenarioExecutionRepository scenarioExecutionRepository, MessageService messageService) {
         this.scenarioExecutionRepository = scenarioExecutionRepository;
         this.messageService = messageService;
@@ -78,9 +68,8 @@ public class ActivityService {
     public ScenarioExecution createExecutionScenario(String scenarioName, Collection<ScenarioParameter> scenarioParameters) {
         ScenarioExecution scenarioExecution = new ScenarioExecution();
         scenarioExecution.setScenarioName(scenarioName);
-        scenarioExecution.setStartDate(getTimeNow());
-        scenarioExecution.setEndDate(getTimeNow());
-        scenarioExecution.setStatus(Status.RUNNING);
+        scenarioExecution.setStartDate(timeProvider.getTimeNow());
+        scenarioExecution.setStatus(ScenarioExecution.Status.RUNNING);
 
         if (scenarioParameters != null) {
             for (ScenarioParameter tp : scenarioParameters) {
@@ -88,27 +77,16 @@ public class ActivityService {
             }
         }
 
-        return scenarioExecutionRepository.save(scenarioExecution);
+        scenarioExecution = scenarioExecutionRepository.save(scenarioExecution);
+        return scenarioExecution;
     }
 
     public void completeScenarioExecutionSuccess(TestCase testCase) {
-        completeScenarioExecution(Status.SUCCESS, testCase, null);
+        completeScenarioExecution(ScenarioExecution.Status.SUCCESS, testCase, null);
     }
 
     public void completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
-        completeScenarioExecution(Status.FAILED, testCase, cause);
-    }
-
-    public Collection<ScenarioExecution> getScenarioExecutionsByName(String testName) {
-        return scenarioExecutionRepository.findByScenarioNameOrderByStartDateDesc(testName);
-    }
-
-    public Collection<ScenarioExecution> getScenarioExecutions(ScenarioExecutionFilter filter) {
-        return scenarioExecutionRepository.find(queryFilterAdapterFactory.getQueryAdapter(filter));
-	}
-
-	public Collection<ScenarioExecution> getScenarioExecutionsByStatus(ScenarioExecution.Status status) {
-        return scenarioExecutionRepository.findByStatusOrderByStartDateDesc(status);
+        completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
     }
 
     public ScenarioExecution getScenarioExecutionById(Long id) {
@@ -139,53 +117,30 @@ public class ActivityService {
                 return message.get();
             }
         }
-        final Message message = messageService.saveMessage(direction, payload, citrusMessageId, headers);
+
+        Message message = messageService.save(
+            Message.builder()
+                .direction(direction)
+                .payload(payload)
+                .citrusMessageId(citrusMessageId)
+                .headers(headers)
+                .build()
+        );
         scenarioExecution.addScenarioMessage(message);
         return message;
     }
 
-    public void clearScenarioExecutions() {
-        scenarioExecutionRepository.deleteAll();
-    }
-
-    public Collection<ScenarioExecution> getScenarioExecutionsByStartDate(Instant fromDate, Instant toDate, Integer page, Integer size) {
-        Instant calcFromDate = fromDate;
-        if (calcFromDate == null) {
-            calcFromDate = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC);
-        }
-        Instant calcToDate = toDate;
-        if (calcToDate == null) {
-            calcToDate = LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
-        }
-
-        Integer calcPage = page;
-        if (calcPage == null) {
-            calcPage = 0;
-        }
-
-        Integer calcSize = size;
-        if (calcSize == null) {
-            calcSize = 25;
-        }
-
-        Pageable pageable = PageRequest.of(calcPage, calcSize);
-
-        return scenarioExecutionRepository.findByStartDateBetweenOrderByStartDateDesc(calcFromDate, calcToDate, pageable);
-    }
-
     private void completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, Throwable cause) {
         ScenarioExecution scenarioExecution = lookupScenarioExecution(testCase);
-        scenarioExecution.setEndDate(getTimeNow());
+        scenarioExecution.setEndDate(timeProvider.getTimeNow());
         scenarioExecution.setStatus(status);
-        if (cause != null) {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            cause.printStackTrace(printWriter);
 
-            try {
+        if (cause != null) {
+            try (StringWriter stringWriter = new StringWriter(); PrintWriter printWriter = new PrintWriter(stringWriter)) {
+                cause.printStackTrace(printWriter);
                 scenarioExecution.setErrorMessage(stringWriter.toString());
-            } catch (ScenarioExecution.ErrorMessageTruncationException e) {
-                logger.error("Error completing scenario execution!", e);
+            } catch (IOException | ScenarioExecution.ErrorMessageTruncationException e) {
+                logger.warn("Failed to write error message to scenario execution!", e);
             }
         }
     }
@@ -196,9 +151,11 @@ public class ActivityService {
         }
 
         ScenarioExecution scenarioExecution = lookupScenarioExecution(testCase);
+
         ScenarioAction scenarioAction = new ScenarioAction();
         scenarioAction.setName(StringUtils.isNotBlank(testAction.getName()) ? testAction.getName() : scenarioExecution.getScenarioName());
-        scenarioAction.setStartDate(getTimeNow());
+        scenarioAction.setStartDate(timeProvider.getTimeNow());
+
         scenarioExecution.addScenarioAction(scenarioAction);
     }
 
@@ -215,14 +172,13 @@ public class ActivityService {
         }
 
         if (lastScenarioAction == null) {
-            throw new CitrusRuntimeException(String.format("No test action found with name' %s'", testAction.getName()));
-        }
-        if ((StringUtils.isNotBlank(testAction.getName()) && !lastScenarioAction.getName().equals(testAction.getName()))
+            throw new CitrusRuntimeException(String.format("No test action found with name %s", testAction.getName()));
+        } else if ((StringUtils.isNotBlank(testAction.getName()) && !lastScenarioAction.getName().equals(testAction.getName()))
             || (StringUtils.isBlank(testAction.getName()) && !lastScenarioAction.getName().equals(scenarioExecution.getScenarioName()))) {
             throw new CitrusRuntimeException(String.format("Expected to find last test action with name '%s' but got '%s'", testAction.getName(), lastScenarioAction.getName()));
         }
 
-        lastScenarioAction.setEndDate(getTimeNow());
+        lastScenarioAction.setEndDate(timeProvider.getTimeNow());
     }
 
     private boolean skipTestAction(TestAction testAction) {
@@ -236,9 +192,5 @@ public class ActivityService {
 
     private long lookupScenarioExecutionId(TestCase testCase) {
         return Long.parseLong(testCase.getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID).toString());
-    }
-
-    private Instant getTimeNow() {
-        return LocalDateTime.now().toInstant(ZoneOffset.UTC);
     }
 }

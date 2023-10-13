@@ -50,7 +50,7 @@ class ScenarioMappersTest {
                 new ContentBasedJsonPathScenarioMapper().addJsonPathExpression("$.foo"),
                 new HttpRequestPathScenarioMapper(),
                 new HttpRequestAnnotationScenarioMapper(),
-                new HeaderMapper("bar"));
+            new HeaderMapper("bar"));
 
         SimulatorConfigurationProperties configurationProperties = new SimulatorConfigurationProperties();
         configurationProperties.setDefaultScenario(DEFAULT_SCENARIO);
@@ -103,7 +103,7 @@ class ScenarioMappersTest {
         assertThrows(CitrusRuntimeException.class, () -> mapperChain.getMappingKey(new DefaultMessage()));
     }
 
-    private class HeaderMapper implements ScenarioMapper {
+    private static class HeaderMapper implements ScenarioMapper {
 
         private final String name;
 

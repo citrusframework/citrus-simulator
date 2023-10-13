@@ -66,8 +66,7 @@ public class InterceptorHttp implements HandlerInterceptor {
     }
 
     private String getResponseContent(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (handler instanceof HttpMessageController) {
-            HttpMessageController handlerController = (HttpMessageController) handler;
+        if (handler instanceof HttpMessageController handlerController) {
             ResponseEntity<?> responseEntity = handlerController.getResponseCache(request);
             if (responseEntity != null) {
                 return TypeConversionUtils.convertIfNecessary(responseEntity.getBody(), String.class);

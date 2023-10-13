@@ -35,18 +35,6 @@ public class TestResultQueryService extends QueryService<TestResult> {
     }
 
     /**
-     * Return a {@link List} of {@link TestResult} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the matching entities.
-     */
-    @Transactional(readOnly = true)
-    public List<TestResult> findByCriteria(TestResultCriteria criteria) {
-        logger.debug("find by criteria : {}", criteria);
-        final Specification<TestResult> specification = createSpecification(criteria);
-        return testResultRepository.findAll(specification);
-    }
-
-    /**
      * Return a {@link Page} of {@link TestResult} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
      * @param page The page, which should be returned.

@@ -8,9 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the TestResult entity.
+ * Spring Data JPA repository for the {@link TestResult} entity.
  */
-@SuppressWarnings("unused")
 @Repository
 public interface TestResultRepository extends JpaRepository<TestResult, Long>, JpaSpecificationExecutor<TestResult> {
 

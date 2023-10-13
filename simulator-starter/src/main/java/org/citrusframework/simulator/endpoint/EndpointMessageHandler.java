@@ -16,8 +16,6 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import java.util.Optional;
-
 import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.message.Message;
@@ -29,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 /**
  * Endpoint message handler for handling messages that were sent or received on a endpoint.
@@ -75,19 +75,16 @@ public class EndpointMessageHandler {
                 return Optional.of(Long.parseLong(executionId));
             }
         } catch (NumberFormatException e) {
-            LOG.error("Error parsing the execution id. Was expection a Long", e);
+            LOG.error("Error parsing the execution id. Was expecting a Long", e);
         }
         return Optional.empty();
     }
 
     private Optional<String> extractCitrusMessageId(Message message) {
-        Object headerValue = message.getHeader(MessageHeaders.ID);
-        if (headerValue != null && headerValue instanceof String) {
-            String stringHeaderValue = (String) headerValue;
-            if (StringUtils.hasText(stringHeaderValue)) {
-                return Optional.of(stringHeaderValue);
-            }
+        if (message.getHeader(MessageHeaders.ID) instanceof String stringHeaderValue && StringUtils.hasText(stringHeaderValue)) {
+            return Optional.of(stringHeaderValue);
         }
+
         return Optional.empty();
     }
 }

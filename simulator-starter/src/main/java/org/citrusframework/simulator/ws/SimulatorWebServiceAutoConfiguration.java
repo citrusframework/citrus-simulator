@@ -160,6 +160,6 @@ public class SimulatorWebServiceAutoConfiguration {
             Collections.addAll(interceptors, configurer.interceptors());
         }
         interceptors.add(loggingEndpointInterceptor);
-        return interceptors.toArray(new EndpointInterceptor[interceptors.size()]);
+        return interceptors.toArray(new EndpointInterceptor[0]);
     }
 }

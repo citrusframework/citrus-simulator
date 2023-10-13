@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the TestParameter entity.
+ * Spring Data JPA repository for the {@link TestParameter} entity.
  */
-@SuppressWarnings("unused")
 @Repository
 public interface TestParameterRepository extends JpaRepository<TestParameter, TestParameter.TestParameterId>, JpaSpecificationExecutor<TestParameter> {}

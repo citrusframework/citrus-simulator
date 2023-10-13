@@ -45,6 +45,18 @@
             <li>
               <a
                 class="dropdown-item"
+                routerLink="/message"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.entities.message">Message</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
                 routerLink="/test-parameter"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"

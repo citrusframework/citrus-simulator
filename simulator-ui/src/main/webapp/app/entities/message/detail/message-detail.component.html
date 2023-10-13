@@ -1,0 +1,44 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="message">
+      <h2 data-cy="messageDetailsHeading"><span jhiTranslate="citrusSimulatorApp.message.detail.title">Message</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="citrusSimulatorApp.message.id">ID</span></dt>
+        <dd>
+          <span>{{ message.messageId }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span></dt>
+        <dd>
+          <span>{{ message.direction }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span></dt>
+        <dd>
+          <span>{{ message.payload }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span></dt>
+        <dd>
+          <span>{{ message.citrusMessageId }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span></dt>
+        <dd>
+          <span>{{ message.createdDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span></dt>
+        <dd>
+          <span>{{ message.lastModifiedDate | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>

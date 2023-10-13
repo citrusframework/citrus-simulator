@@ -76,14 +76,6 @@ export class TestParameterService {
     return testParameterCollection;
   }
 
-  protected convertDateFromClient<T extends ITestParameter>(testParameter: T): RestOf<T> {
-    return {
-      ...testParameter,
-      createdDate: testParameter.createdDate?.toJSON() ?? null,
-      lastModifiedDate: testParameter.lastModifiedDate?.toJSON() ?? null,
-    };
-  }
-
   protected convertDateFromServer(restTestParameter: RestTestParameter): ITestParameter {
     return {
       ...restTestParameter,

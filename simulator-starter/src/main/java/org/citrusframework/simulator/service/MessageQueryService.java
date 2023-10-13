@@ -1,0 +1,96 @@
+package org.citrusframework.simulator.service;
+
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
+import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.Message_;
+import org.citrusframework.simulator.repository.MessageRepository;
+import org.citrusframework.simulator.service.criteria.MessageCriteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * Service for executing complex queries for {@link Message} entities in the database.
+ * The main input is a {@link MessageCriteria} which gets converted to {@link Specification},
+ * in a way that all the filters must apply.
+ * It returns a {@link List} of {@link Message} or a {@link Page} of {@link Message} which fulfills the criteria.
+ */
+@Service
+@Transactional(readOnly = true)
+public class MessageQueryService extends QueryService<Message> {
+
+    private final Logger log = LoggerFactory.getLogger(MessageQueryService.class);
+
+    private final MessageRepository messageRepository;
+
+    public MessageQueryService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
+    /**
+     * Return a {@link Page} of {@link Message} which matches the criteria from the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Message> findByCriteria(MessageCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", criteria, page);
+        final Specification<Message> specification = createSpecification(criteria);
+        return messageRepository.findAll(specification, page);
+    }
+
+    /**
+     * Return the number of matching entities in the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(MessageCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<Message> specification = createSpecification(criteria);
+        return messageRepository.count(specification);
+    }
+
+    /**
+     * Function to convert {@link MessageCriteria} to a {@link Specification}
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the matching {@link Specification} of the entity.
+     */
+    protected Specification<Message> createSpecification(MessageCriteria criteria) {
+        Specification<Message> specification = Specification.where(null);
+        if (criteria != null) {
+            // This has to be called first, because the distinct method returns null
+            if (criteria.getDistinct() != null) {
+                specification = specification.and(distinct(criteria.getDistinct()));
+            }
+            if (criteria.getMessageId() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getMessageId(), Message_.messageId));
+            }
+            if (criteria.getDirection() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getDirection(), Message_.direction));
+            }
+            if (criteria.getPayload() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getPayload(), Message_.payload));
+            }
+            if (criteria.getCitrusMessageId() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getCitrusMessageId(), Message_.citrusMessageId));
+            }
+            if (criteria.getCreatedDate() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getCreatedDate(), Message_.createdDate));
+            }
+            if (criteria.getLastModifiedDate() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getLastModifiedDate(), Message_.lastModifiedDate));
+            }
+        }
+        return specification;
+    }
+}

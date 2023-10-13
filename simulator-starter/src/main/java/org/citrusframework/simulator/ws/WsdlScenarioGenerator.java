@@ -99,11 +99,10 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                 String soapAction = "";
                 List extensions = operation.getExtensibilityElements();
                 if (extensions != null) {
-                    for (int i = 0; i < extensions.size(); i++) {
-                        ExtensibilityElement extElement = (ExtensibilityElement) extensions.get(i);
-                        if (extElement instanceof SOAPOperation) {
-                            SOAPOperation soapOp = (SOAPOperation) extElement;
-                            soapAction = soapOp.getSoapActionURI();
+                    for (Object extension : extensions) {
+                        ExtensibilityElement extElement = (ExtensibilityElement) extension;
+                        if (extElement instanceof SOAPOperation soapOperation) {
+                            soapAction = soapOperation.getSoapActionURI();
                         }
                     }
                 }
@@ -327,7 +326,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      * @param schemaNsPrefix
      */
     private String[] getNestedSchemas(XmlObject wsdl, String[] namespacesWsdl, String schemaNsPrefix) {
-        List<String> schemas = new ArrayList<String>();
+        List<String> schemas = new ArrayList<>();
         String openedStartTag = "<" + schemaNsPrefix + "schema";
         String endTag = "</" + schemaNsPrefix + "schema>";
 
@@ -337,18 +336,18 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             int end = wsdl.xmlText().indexOf(endTag, begin) + endTag.length();
             int insertPointNamespacesWsdl = wsdl.xmlText().indexOf(" ", begin);
 
-            StringBuffer buf = new StringBuffer();
-            buf.append(wsdl.xmlText().substring(begin, insertPointNamespacesWsdl)).append(" ");
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(wsdl.xmlText(), begin, insertPointNamespacesWsdl).append(" ");
 
             for (String nsWsdl : namespacesWsdl) {
                 String nsPrefix = nsWsdl.substring(0, nsWsdl.indexOf("="));
                 if (!wsdl.xmlText().substring(begin, end).contains(nsPrefix)) {
-                    buf.append(nsWsdl).append(" ");
+                    stringBuilder.append(nsWsdl).append(" ");
                 }
             }
 
-            buf.append(wsdl.xmlText().substring(insertPointNamespacesWsdl, end));
-            schemas.add(buf.toString());
+            stringBuilder.append(wsdl.xmlText().substring(insertPointNamespacesWsdl, end));
+            schemas.add(stringBuilder.toString());
             cursor = end;
         }
 

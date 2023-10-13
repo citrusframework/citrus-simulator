@@ -60,10 +60,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * @author Christoph Deppisch
  */
 @Configuration
+@ConditionalOnWebApplication
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorRestConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnWebApplication
 public class SimulatorRestAutoConfiguration {
 
     @Autowired(required = false)
@@ -233,7 +233,7 @@ public class SimulatorRestAutoConfiguration {
         }
         interceptors.add(new LoggingHandlerInterceptor());
         interceptors.add(httpInterceptor());
-        return interceptors.toArray(new HandlerInterceptor[interceptors.size()]);
+        return interceptors.toArray(new HandlerInterceptor[0]);
     }
 
 }

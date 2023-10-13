@@ -42,10 +42,10 @@ class HttpRequestAnnotationScenarioMapperTest {
     @Test
     void testGetMappingKey() {
         fixture.setScenarioList(Arrays.asList(new IssueScenario(),
-                                                    new FooScenario(),
-                                                    new GetFooScenario(),
-                                                    new PutFooScenario(),
-                                                    new OtherScenario()));
+            new FooScenario(),
+            new GetFooScenario(),
+            new PutFooScenario(),
+            new OtherScenario()));
 
         assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/foo")), "FooScenario");
         assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.GET)), "GetFooScenario");
@@ -66,26 +66,26 @@ class HttpRequestAnnotationScenarioMapperTest {
 
     @Scenario("FooScenario")
     @RequestMapping(value = "/issues/foo", method = RequestMethod.POST)
-    private class FooScenario extends AbstractSimulatorScenario {
+    private static class FooScenario extends AbstractSimulatorScenario {
     }
 
     @Scenario("GetFooScenario")
     @RequestMapping(value = "/issues/foo", method = RequestMethod.GET)
-    private class GetFooScenario extends AbstractSimulatorScenario {
+    private static class GetFooScenario extends AbstractSimulatorScenario {
     }
 
     @Scenario("PutFooScenario")
     @RequestMapping(value = "/issues/foo", method = RequestMethod.PUT)
-    private class PutFooScenario extends AbstractSimulatorScenario {
+    private static class PutFooScenario extends AbstractSimulatorScenario {
     }
 
     @Scenario("IssueScenario")
     @RequestMapping(value = "/issues/{name}", method = { RequestMethod.GET, RequestMethod.DELETE })
-    private class IssueScenario extends AbstractSimulatorScenario {
+    private static class IssueScenario extends AbstractSimulatorScenario {
     }
 
     @Scenario("OtherScenario")
     @RequestMapping("/issues/other")
-    private class OtherScenario extends AbstractSimulatorScenario {
+    private static class OtherScenario extends AbstractSimulatorScenario {
     }
 }
