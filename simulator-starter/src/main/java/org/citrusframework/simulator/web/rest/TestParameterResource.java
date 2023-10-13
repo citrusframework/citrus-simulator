@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * REST controller for managing {@link org.citrusframework.simulator.model.TestParameter}.
+ * REST controller for managing {@link TestParameter}.
  */
 @RestController
 @RequestMapping("/api")

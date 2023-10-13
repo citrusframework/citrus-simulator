@@ -60,7 +60,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
      * Actual result as a numerical representation of {@link Status}
      */
     @Column(nullable = false, updatable = false)
-    private Integer status;
+    private Integer status = Status.UNKNOWN.getId();
 
     /**
      * Name of the test
@@ -132,9 +132,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return id;
     }
 
-    public TestResult id(Long id) {
+    void setId(Long id) {
         this.id = id;
-        return this;
     }
 
     public Status getStatus() {
@@ -175,6 +174,23 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
             .findFirst()
             .orElse(Status.UNKNOWN)
             .id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof TestResult testResult) {
+            return id != null && id.equals(testResult.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     @Override
@@ -219,6 +235,11 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
         public TestResult build() {
             return testResult;
+        }
+
+        public TestResultBuilder id(Long id) {
+            testResult.id = id;
+            return this;
         }
 
         public TestResultBuilder status(Integer status) {

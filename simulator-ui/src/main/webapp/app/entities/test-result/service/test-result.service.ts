@@ -81,14 +81,6 @@ export class TestResultService {
     return testResultCollection;
   }
 
-  protected convertDateFromClient<T extends ITestResult | NewTestResult>(testResult: T): RestOf<T> {
-    return {
-      ...testResult,
-      createdDate: testResult.createdDate?.toJSON() ?? null,
-      lastModifiedDate: testResult.lastModifiedDate?.toJSON() ?? null,
-    };
-  }
-
   protected convertDateFromServer(restTestResult: RestTestResult): ITestResult {
     return {
       ...restTestResult,

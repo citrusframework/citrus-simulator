@@ -1,0 +1,20 @@
+{
+  "citrusSimulatorApp": {
+    "message": {
+      "home": {
+        "title": "Messages",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Messages found"
+      },
+      "detail": {
+        "title": "Message"
+      },
+      "id": "ID",
+      "direction": "Direction",
+      "payload": "Payload",
+      "citrusMessageId": "Citrus Message Id",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date"
+    }
+  }
+}

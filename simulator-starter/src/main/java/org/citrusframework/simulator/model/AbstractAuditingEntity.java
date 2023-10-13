@@ -16,8 +16,8 @@ import java.time.ZonedDateTime;
  * Base abstract class for entities which will hold definitions for created and last modified by attributes.
  */
 @MappedSuperclass
-@EntityListeners({ AuditingEntityListener.class })
-@JsonIgnoreProperties(value = { "createdDate", "lastModifiedDate" }, allowGetters = true)
+@EntityListeners({AuditingEntityListener.class})
+@JsonIgnoreProperties(value = {"createdDate", "lastModifiedDate"}, allowGetters = true)
 public abstract class AbstractAuditingEntity<T, I> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,15 +48,23 @@ public abstract class AbstractAuditingEntity<T, I> implements Serializable {
 
     public static abstract class AuditingEntityBuilder<B extends AuditingEntityBuilder<B, E, A>, E extends AbstractAuditingEntity<E, A>, A> {
 
-        @SuppressWarnings("unchecked")
         public B createdDate(ZonedDateTime createdDate) {
-            getEntity().setCreatedDate(createdDate.toInstant());
-            return (B) this;
+            return createdDate(createdDate.toInstant());
         }
 
         @SuppressWarnings("unchecked")
+        public B createdDate(Instant createdDate) {
+            getEntity().setCreatedDate(createdDate);
+            return (B) this;
+        }
+
         public B lastModifiedDate(ZonedDateTime lastModifiedDate) {
-            getEntity().setLastModifiedDate(lastModifiedDate.toInstant());
+            return lastModifiedDate(lastModifiedDate.toInstant());
+        }
+
+        @SuppressWarnings("unchecked")
+        public B lastModifiedDate(Instant lastModifiedDate) {
+            getEntity().setLastModifiedDate(lastModifiedDate);
             return (B) this;
         }
 

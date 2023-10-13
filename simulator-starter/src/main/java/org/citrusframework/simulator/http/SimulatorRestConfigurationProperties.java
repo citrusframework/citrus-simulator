@@ -7,8 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import jakarta.annotation.PostConstruct;
-
 /**
  * @author Christoph Deppisch
  */

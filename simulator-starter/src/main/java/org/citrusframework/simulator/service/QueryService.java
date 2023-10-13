@@ -365,7 +365,7 @@ public abstract class QueryService<ENTITY> {
      */
     protected Specification<ENTITY> likeUpperSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction,
                                                            String value) {
-        return (root, query, builder) -> builder.like(builder.upper(metaclassFunction.apply(root)), wrapLikeQuery(value));
+        return (root, query, builder) -> builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value));
     }
 
     /**
@@ -377,7 +377,7 @@ public abstract class QueryService<ENTITY> {
      */
     protected Specification<ENTITY> doesNotContainSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction,
                                                                 String value) {
-        return (root, query, builder) -> builder.not(builder.like(builder.upper(metaclassFunction.apply(root)), wrapLikeQuery(value)));
+        return (root, query, builder) -> builder.not(builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value)));
     }
 
     /**

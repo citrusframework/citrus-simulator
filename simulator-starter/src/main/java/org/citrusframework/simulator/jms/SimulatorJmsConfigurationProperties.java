@@ -71,9 +71,9 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private void loadProperties() {
         inboundDestination = env.getProperty(SIMULATOR_INBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_INBOUND_DESTINATION_ENV, inboundDestination));
         replyDestination = env.getProperty(SIMULATOR_REPLY_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_REPLY_DESTINATION_ENV, replyDestination));
-        synchronous = Boolean.valueOf(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
-        useSoap = Boolean.valueOf(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
-        pubSubDomain = Boolean.valueOf(env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_PROPERTY, env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_ENV, String.valueOf(pubSubDomain))));
+        synchronous = Boolean.parseBoolean(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
+        useSoap = Boolean.parseBoolean(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
+        pubSubDomain = Boolean.parseBoolean(env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_PROPERTY, env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_ENV, String.valueOf(pubSubDomain))));
 
         log.info("Using the simulator configuration: {}", this.toString());
     }

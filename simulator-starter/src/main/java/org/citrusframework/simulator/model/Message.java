@@ -28,11 +28,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * JPA entity for representing inbound and outbound messages
@@ -52,7 +56,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
      * Actual direction as a numerical representation of {@link Direction}
      */
     @Column(nullable = false, updatable = false)
-    private Integer direction;
+    private Integer direction = Direction.UNKNOWN.getId();
 
     @Lob
     @Column(columnDefinition = "CLOB", updatable = false)
@@ -67,15 +71,19 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     private Collection<MessageHeader> headers = new ArrayList<>();
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
+
+    public static MessageBuilder builder() {
+        return new MessageBuilder();
+    }
 
     public Long getMessageId() {
         return messageId;
     }
 
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
+    void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 
     public Direction getDirection() {
@@ -135,14 +143,31 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof Message message) {
+            return messageId != null && messageId.equals(message.messageId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Message{" +
-                "messageId='" + getMessageId() + "'" +
-                ", createdDate='" + getCreatedDate() + "'" +
-                ", direction='" + getDirection() + "'" +
-                ", payload='" + getPayload() + "'" +
-                ", citrusMessageId='" + getCitrusMessageId() + "'" +
-                "}";
+            "messageId='" + getMessageId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", direction='" + getDirection() + "'" +
+            ", payload='" + getPayload() + "'" +
+            ", citrusMessageId='" + getCitrusMessageId() + "'" +
+            "}";
     }
 
     public enum Direction {
@@ -164,6 +189,51 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
                 .filter(direction -> direction.id == id)
                 .findFirst()
                 .orElse(Direction.UNKNOWN);
+        }
+    }
+
+    public static class MessageBuilder extends AuditingEntityBuilder<MessageBuilder, Message, Long> {
+
+        private final Message message = new Message();
+
+        public Message build() {
+            return message;
+        }
+
+        @Override
+        protected Message getEntity() {
+            return message;
+        }
+
+        public MessageBuilder direction(Direction direction) {
+            message.setDirection(direction);
+            return this;
+        }
+
+        public MessageBuilder payload(String payload) {
+            message.setPayload(payload);
+            return this;
+        }
+
+        public MessageBuilder citrusMessageId(String citrusMessageId) {
+            message.setCitrusMessageId(citrusMessageId);
+            return this;
+        }
+
+        public MessageBuilder headers(Map<String, Object> headers) {
+            headers.entrySet().stream()
+                .map(header -> {
+                    if (header.getValue() != null
+                        && StringUtils.isNotEmpty(header.getValue().toString())) {
+                        return new MessageHeader(header.getKey(), header.getValue().toString());
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList()
+                .forEach(message::addHeader);
+            return this;
         }
     }
 }

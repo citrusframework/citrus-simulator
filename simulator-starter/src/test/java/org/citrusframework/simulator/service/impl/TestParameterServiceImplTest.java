@@ -66,7 +66,7 @@ class TestParameterServiceImplTest {
         Long testResultId = 1L;
         String key = "key";
 
-        TestResult testResult = new TestResult().id(testResultId);
+        TestResult testResult = TestResult.builder().id(testResultId).build();
         Optional<TestResult> optionalTestResult = Optional.of(testResult);
         doReturn(optionalTestResult).when(testResultServiceMock).findOne(testResultId);
 

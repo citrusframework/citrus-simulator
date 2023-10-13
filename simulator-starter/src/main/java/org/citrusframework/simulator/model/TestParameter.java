@@ -57,7 +57,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    private TestParameterId testParameterId;
+    private TestParameterId testParameterId = new TestParameterId();
 
     @NotEmpty
     @Column(name = "parameter_value", nullable = false, updatable = false)
@@ -107,6 +107,23 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
     public void setTestResult(TestResult testResult) {
         this.testResult = testResult;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof TestParameter testParameter) {
+            return testParameterId != null && testParameterId.equals(testParameter.testParameterId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     @Override
@@ -161,6 +178,17 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
         public TestParameterId(String key, TestResult testResult) {
             this.key = key;
             this.testResultId = testResult.getId();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o instanceof TestParameterId testParameterId) {
+                return key != null && testResultId != null && key.equals(testParameterId.key) && testResultId.equals(testParameterId.testResultId);
+            }
+            return false;
         }
     }
 

@@ -5,6 +5,11 @@ import { RouterModule } from '@angular/router';
   imports: [
     RouterModule.forChild([
       {
+        path: 'message',
+        data: { pageTitle: 'citrusSimulatorApp.message.home.title' },
+        loadChildren: () => import('./message/message.routes'),
+      },
+      {
         path: 'test-parameter',
         data: { pageTitle: 'citrusSimulatorApp.testParameter.home.title' },
         loadChildren: () => import('./test-parameter/test-parameter.routes'),
