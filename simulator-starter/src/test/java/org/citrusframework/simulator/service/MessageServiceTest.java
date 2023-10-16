@@ -22,54 +22,50 @@ import org.citrusframework.simulator.model.MessageFilter;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class MessageServiceTest {
+@ExtendWith(MockitoExtension.class)
+class MessageServiceTest {
 
-    private QueryFilterAdapterFactory queryFilterAdapterFactory = new QueryFilterAdapterFactory(
-            new SimulatorConfigurationProperties());
+    private final QueryFilterAdapterFactory queryFilterAdapterFactory = new QueryFilterAdapterFactory(new SimulatorConfigurationProperties());
 
-    private MessageRepository messageRepository;
+    @Mock
+    private MessageRepository messageRepositoryMock;
 
-    private MessageService sut;
     private ArgumentCaptor<MessageFilter> messageFilterCaptor;
 
-    @SuppressWarnings("unchecked")
-    @BeforeEach
-    public void init() {
-        messageFilterCaptor = ArgumentCaptor.forClass(MessageFilter.class);
-        messageRepository = Mockito.mock(MessageRepository.class);
-        sut = new MessageService(messageRepository, queryFilterAdapterFactory);
-    }
+    private MessageService fixture;
 
-    @AfterMethod
-    public void clear() {
-        Mockito.reset(messageRepository);
+    @BeforeEach
+    void beforeEachSetup() {
+        messageFilterCaptor = ArgumentCaptor.forClass(MessageFilter.class);
+        fixture = new MessageService(messageRepositoryMock, queryFilterAdapterFactory);
     }
 
     @Test
-    public void shouldGetMessagesUsingDefaults() throws Exception {
+    void shouldGetMessagesUsingDefaults() {
         MessageFilter filter = new MessageFilter();
 
-        when(messageRepository.find(messageFilterCaptor.capture())).thenReturn(singleResult());
+        when(messageRepositoryMock.find(messageFilterCaptor.capture())).thenReturn(singleResult());
 
-        assertHasSingleResult(sut.getMessagesMatchingFilter(filter));
+        assertHasSingleResult(fixture.getMessagesMatchingFilter(filter));
 
         assertPagingMatches(0, 25);
         assertDirectionMatches(true, true);
     }
 
     @Test
-    public void shouldGetMessagesUsingNoDefaults() throws Exception {
+    void shouldGetMessagesUsingNoDefaults() {
         Instant dateFrom = Instant.now();
         Instant dateTo = Instant.now();
         int pageNumber = 10;
@@ -85,9 +81,9 @@ public class MessageServiceTest {
         filter.setDirectionOutbound(false);
         filter.setContainingText(text);
 
-        when(messageRepository.find(messageFilterCaptor.capture())).thenReturn(singleResult());
+        when(messageRepositoryMock.find(messageFilterCaptor.capture())).thenReturn(singleResult());
 
-        assertHasSingleResult(sut.getMessagesMatchingFilter(filter));
+        assertHasSingleResult(fixture.getMessagesMatchingFilter(filter));
 
         assertPagingMatches(pageNumber, pageSize);
         assertDirectionMatches(false, false);
@@ -98,16 +94,16 @@ public class MessageServiceTest {
     }
 
     private void assertHasSingleResult(List<Message> messages) {
-        Assert.assertEquals(messages.size(), 1);
+        assertEquals(messages.size(), 1);
     }
 
     private void assertPagingMatches(int pageNumber, int pageSize) {
-        Assert.assertEquals(messageFilterCaptor.getValue().getPageNumber(), (Integer) pageNumber);
-        Assert.assertEquals(messageFilterCaptor.getValue().getPageSize(), (Integer) pageSize);
+        assertEquals(messageFilterCaptor.getValue().getPageNumber(), (Integer) pageNumber);
+        assertEquals(messageFilterCaptor.getValue().getPageSize(), (Integer) pageSize);
     }
 
     private void assertDirectionMatches(boolean inbound, boolean outbound) {
-        Assert.assertEquals(messageFilterCaptor.getValue().getDirectionInbound(), (Boolean) inbound);
-        Assert.assertEquals(messageFilterCaptor.getValue().getDirectionOutbound(), (Boolean) outbound);
+        assertEquals(messageFilterCaptor.getValue().getDirectionInbound(), (Boolean) inbound);
+        assertEquals(messageFilterCaptor.getValue().getDirectionOutbound(), (Boolean) outbound);
     }
 }

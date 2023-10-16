@@ -1,177 +1,174 @@
 package org.citrusframework.simulator.http;
 
 import io.swagger.models.Operation;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Christoph Deppisch
  */
-public class HttpScenarioGeneratorTest {
+@ExtendWith(MockitoExtension.class)
+class HttpScenarioGeneratorTest {
 
-    private final ConfigurableListableBeanFactory beanFactory = Mockito.mock(ConfigurableListableBeanFactory.class);
-    private final DefaultListableBeanFactory beanRegistry = Mockito.mock(DefaultListableBeanFactory.class);
+    @Mock
+    private ConfigurableListableBeanFactory beanFactoryMock;
 
-    @Test
-    public void testGenerateScenarios() {
-        HttpScenarioGenerator scenarioGenerator = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
+    @Mock
+    private DefaultListableBeanFactory beanRegistryMock;
 
-        reset(beanFactory);
+    private HttpScenarioGenerator fixture;
 
-        doAnswer(invocation -> {
-            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
-
-            Assert.assertNotNull(scenario.getOperation());
-            Assert.assertEquals(scenario.getPath(), "/v2/pet");
-            Assert.assertEquals(scenario.getMethod(), RequestMethod.POST);
-
-            return null;
-        }).when(beanFactory).registerSingleton(eq("addPet"), any(HttpOperationScenario.class));
-
-        doAnswer(invocation -> {
-            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
-
-            Assert.assertNotNull(scenario.getOperation());
-            Assert.assertEquals(scenario.getPath(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getMethod(), RequestMethod.GET);
-
-            return null;
-        }).when(beanFactory).registerSingleton(eq("getPetById"), any(HttpOperationScenario.class));
-
-        doAnswer(invocation -> {
-            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
-
-            Assert.assertNotNull(scenario.getOperation());
-            Assert.assertEquals(scenario.getPath(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getMethod(), RequestMethod.DELETE);
-
-            return null;
-        }).when(beanFactory).registerSingleton(eq("deletePet"), any(HttpOperationScenario.class));
-
-        scenarioGenerator.postProcessBeanFactory(beanFactory);
-
-        verify(beanFactory).registerSingleton(eq("addPet"), any(HttpOperationScenario.class));
-        verify(beanFactory).registerSingleton(eq("getPetById"), any(HttpOperationScenario.class));
-        verify(beanFactory).registerSingleton(eq("deletePet"), any(HttpOperationScenario.class));
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
     }
 
     @Test
-    public void testGenerateScenariosWithBeandDefinitionRegistry() {
-        HttpScenarioGenerator scenarioGenerator = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
-
-        reset(beanRegistry);
-
+    void generateHttpScenarios() {
         doAnswer(invocation -> {
-            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertNotNull(scenario.getOperation());
+            assertEquals(scenario.getPath(), "/v2/pet");
+            assertEquals(scenario.getMethod(), RequestMethod.POST);
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
+        }).when(beanFactoryMock).registerSingleton(eq("addPet"), any(HttpOperationScenario.class));
 
         doAnswer(invocation -> {
-            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertNotNull(scenario.getOperation());
+            assertEquals(scenario.getPath(), "/v2/pet/{petId}");
+            assertEquals(scenario.getMethod(), RequestMethod.GET);
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
+        }).when(beanFactoryMock).registerSingleton(eq("getPetById"), any(HttpOperationScenario.class));
 
         doAnswer(invocation -> {
-            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+            HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertNotNull(scenario.getOperation());
+            assertEquals(scenario.getPath(), "/v2/pet/{petId}");
+            assertEquals(scenario.getMethod(), RequestMethod.DELETE);
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+        }).when(beanFactoryMock).registerSingleton(eq("deletePet"), any(HttpOperationScenario.class));
 
-        scenarioGenerator.postProcessBeanFactory(beanRegistry);
+        fixture.postProcessBeanFactory(beanFactoryMock);
 
-        verify(beanRegistry).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
-        verify(beanRegistry).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
-        verify(beanRegistry).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+        verify(beanFactoryMock).registerSingleton(eq("addPet"), any(HttpOperationScenario.class));
+        verify(beanFactoryMock).registerSingleton(eq("getPetById"), any(HttpOperationScenario.class));
+        verify(beanFactoryMock).registerSingleton(eq("deletePet"), any(HttpOperationScenario.class));
     }
 
     @Test
-    public void testGenerateScenariosWithDataDictionaries() {
-        HttpScenarioGenerator scenarioGenerator = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
+    void testGenerateScenariosWithBeandDefinitionRegistry() {
+        doAnswer(invocation -> {
+            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-        reset(beanRegistry);
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
-        BeanDefinition inboundJsonDataDictionary = Mockito.mock(BeanDefinition.class);
-        BeanDefinition outboundJsonDataDictionary = Mockito.mock(BeanDefinition.class);
-
-        when(beanRegistry.containsBeanDefinition("inboundJsonDataDictionary")).thenReturn(true);
-        when(beanRegistry.containsBeanDefinition("outboundJsonDataDictionary")).thenReturn(true);
-
-        when(beanRegistry.getBeanDefinition("inboundJsonDataDictionary")).thenReturn(inboundJsonDataDictionary);
-        when(beanRegistry.getBeanDefinition("outboundJsonDataDictionary")).thenReturn(outboundJsonDataDictionary);
+            return null;
+        }).when(beanRegistryMock).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+
+        fixture.postProcessBeanFactory(beanRegistryMock);
+
+        verify(beanRegistryMock).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+    }
+
+    @Test
+    void testGenerateScenariosWithDataDictionaries() {
+        when(beanRegistryMock.containsBeanDefinition("inboundJsonDataDictionary")).thenReturn(true);
+        when(beanRegistryMock.containsBeanDefinition("outboundJsonDataDictionary")).thenReturn(true);
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
-            Assert.assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
-            Assert.assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
-            Assert.assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
-            Assert.assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.POST);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
             return null;
-        }).when(beanRegistry).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
 
-        scenarioGenerator.postProcessBeanFactory(beanRegistry);
+        doAnswer(invocation -> {
+            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-        verify(beanRegistry).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
-        verify(beanRegistry).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
-        verify(beanRegistry).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.GET);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+
+            return null;
+        }).when(beanRegistryMock).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
+
+        doAnswer(invocation -> {
+            BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
+
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(0, String.class).getValue(), "/v2/pet/{petId}");
+            assertEquals(scenario.getConstructorArgumentValues().getArgumentValue(1, RequestMethod.class).getValue(), RequestMethod.DELETE);
+            assertNotNull(scenario.getConstructorArgumentValues().getArgumentValue(2, Operation.class).getValue());
+            assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
+            assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
+
+            return null;
+        }).when(beanRegistryMock).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
+
+        fixture.postProcessBeanFactory(beanRegistryMock);
+
+        verify(beanRegistryMock).registerBeanDefinition(eq("addPet"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("getPetById"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("deletePet"), any(BeanDefinition.class));
     }
 }

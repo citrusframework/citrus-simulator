@@ -1,64 +1,67 @@
 package org.citrusframework.simulator.http;
 
-import java.util.Arrays;
-
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Christoph Deppisch
  */
-public class HttpRequestAnnotationScenarioMapperTest {
-
-    private final HttpRequestAnnotationScenarioMapper scenarioMapper = new HttpRequestAnnotationScenarioMapper();
+@ExtendWith(MockitoExtension.class)
+class HttpRequestAnnotationScenarioMapperTest {
 
     @Mock
     private SimulatorConfigurationProperties simulatorConfiguration;
 
-    @BeforeClass
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        scenarioMapper.setConfiguration(simulatorConfiguration);
+    private HttpRequestAnnotationScenarioMapper fixture;
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new HttpRequestAnnotationScenarioMapper();
+        fixture.setConfiguration(simulatorConfiguration);
 
         when(simulatorConfiguration.getDefaultScenario()).thenReturn("default");
     }
 
     @Test
-    public void testGetMappingKey() {
-        scenarioMapper.setScenarioList(Arrays.asList(new IssueScenario(),
+    void testGetMappingKey() {
+        fixture.setScenarioList(Arrays.asList(new IssueScenario(),
                                                     new FooScenario(),
                                                     new GetFooScenario(),
                                                     new PutFooScenario(),
                                                     new OtherScenario()));
 
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/foo")), "FooScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.GET)), "GetFooScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.PUT)), "PutFooScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/other")), "OtherScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.GET)), "IssueScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.DELETE)), "IssueScenario");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)), "default");
-        Assert.assertEquals(scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar")), "default");
-        Assert.assertEquals(scenarioMapper.getMappingKey(null), "default");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/foo")), "FooScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.GET)), "GetFooScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/foo").method(HttpMethod.PUT)), "PutFooScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/other")), "OtherScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.GET)), "IssueScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.DELETE)), "IssueScenario");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)), "default");
+        assertEquals(fixture.getMappingKey(new HttpMessage().path("/issues/bar")), "default");
+        assertEquals(fixture.getMappingKey(null), "default");
 
-        scenarioMapper.setUseDefaultMapping(false);
+        fixture.setUseDefaultMapping(false);
 
-        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)));
-        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(new HttpMessage().path("/issues/bar")));
-        Assert.assertThrows(CitrusRuntimeException.class, () -> scenarioMapper.getMappingKey(null));
+        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(new HttpMessage().path("/issues/bar").method(HttpMethod.PUT)));
+        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(new HttpMessage().path("/issues/bar")));
+        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(null));
     }
 
     @Scenario("FooScenario")

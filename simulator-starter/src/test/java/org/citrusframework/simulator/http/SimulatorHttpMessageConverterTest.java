@@ -1,45 +1,53 @@
 package org.citrusframework.simulator.http;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-
 import org.citrusframework.http.controller.HttpMessageController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimulatorHttpMessageConverterTest {
+class SimulatorHttpMessageConverterTest {
 
-    private SimulatorHttpMessageConverter converter = new SimulatorHttpMessageConverter();
+    private SimulatorHttpMessageConverter fixture;
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new SimulatorHttpMessageConverter();
+    }
 
     @Test
-    public void testSimulatorMessageConverter() throws IOException {
-        Assert.assertFalse(converter.canRead(Object.class, Object.class, MediaType.ALL));
-        Assert.assertFalse(converter.canRead(Object.class, MediaType.ALL));
-        Assert.assertFalse(converter.canWrite(Object.class, Object.class, MediaType.ALL));
-        Assert.assertFalse(converter.canWrite(Object.class, MediaType.ALL));
+    void testSimulatorMessageConverter() throws IOException {
+        assertFalse(fixture.canRead(Object.class, Object.class, MediaType.ALL));
+        assertFalse(fixture.canRead(Object.class, MediaType.ALL));
+        assertFalse(fixture.canWrite(Object.class, Object.class, MediaType.ALL));
+        assertFalse(fixture.canWrite(Object.class, MediaType.ALL));
 
-        Assert.assertEquals(converter.read(String.class, HttpMessageController.class, new MockHttpInputMessage("Hello".getBytes(Charset.forName("UTF-8")))), "Hello");
+        assertEquals(fixture.read(String.class, HttpMessageController.class, new MockHttpInputMessage("Hello".getBytes(StandardCharsets.UTF_8))), "Hello");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void testUnsupportedRead() throws IOException {
-        converter.read(Object.class, new MockHttpInputMessage("Hello".getBytes(Charset.forName("UTF-8"))));
+    @Test
+    void testUnsupportedRead() {
+        assertThrows(IllegalStateException.class, () -> fixture.read(Object.class, new MockHttpInputMessage("Hello".getBytes(StandardCharsets.UTF_8))));
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void testUnsupportedWrite() {
-        converter.write("Hello", MediaType.TEXT_PLAIN, new MockHttpOutputMessage());
+    @Test
+    void testUnsupportedWrite() {
+        assertThrows(IllegalStateException.class, () -> fixture.write("Hello", MediaType.TEXT_PLAIN, new MockHttpOutputMessage()));
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void testUnsupportedGenericWrite() {
-        converter.write("Hello", String.class, MediaType.TEXT_PLAIN, new MockHttpOutputMessage());
+    @Test
+    void testUnsupportedGenericWrite() {
+        assertThrows(IllegalStateException.class, () -> fixture.write("Hello", String.class, MediaType.TEXT_PLAIN, new MockHttpOutputMessage()));
     }
-
 }

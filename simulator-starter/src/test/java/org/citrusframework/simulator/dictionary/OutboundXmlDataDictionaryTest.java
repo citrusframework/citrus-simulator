@@ -1,39 +1,49 @@
 package org.citrusframework.simulator.dictionary;
 
 import org.citrusframework.context.TestContext;
-import org.citrusframework.message.*;
+import org.citrusframework.message.DefaultMessage;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.util.XMLUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.mockito.Mockito;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Christoph Deppisch
  */
-public class OutboundXmlDataDictionaryTest {
+@ExtendWith(MockitoExtension.class)
+class OutboundXmlDataDictionaryTest {
 
-    private TestContext context = Mockito.mock(TestContext.class);
+    private static final String MESSAGE_INPUT = String.format("<v1:TestResponse xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"false\" id=\"100\" name=\"string\">%n" +
+        "  <v1:name>string</v1:name>%n" +
+        "  <v1:id>100</v1:id>%n" +
+        "  <v1:flag>true</v1:flag>%n" +
+        "  <v1:restricted>stringstri</v1:restricted>%n" +
+        "</v1:TestResponse>");
 
-    private String input = String.format("<v1:TestResponse xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"false\" id=\"100\" name=\"string\">%n" +
-            "  <v1:name>string</v1:name>%n" +
-            "  <v1:id>100</v1:id>%n" +
-            "  <v1:flag>true</v1:flag>%n" +
-            "  <v1:restricted>stringstri</v1:restricted>%n" +
-            "</v1:TestResponse>");
+    @Mock
+    private TestContext testContextMock;
+
+    private OutboundXmlDataDictionary fixture;
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new OutboundXmlDataDictionary(new SimulatorConfigurationProperties());
+    }
 
     @Test
-   public void testInboundDictionary() {
-        OutboundXmlDataDictionary dictionary = new OutboundXmlDataDictionary(new SimulatorConfigurationProperties());
+    void testInboundDictionary() {
+        when(testContextMock.replaceDynamicContentInString(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
 
-        when(context.replaceDynamicContentInString(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
-
-        Message request = new DefaultMessage(input);
-        Message translated = dictionary.transform(request, context);
+        Message request = new DefaultMessage(MESSAGE_INPUT);
+        Message translated = fixture.transform(request, testContextMock);
 
         String payload = XMLUtils.prettyPrint(translated.getPayload(String.class));
         String controlPayload = XMLUtils.prettyPrint(String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -43,8 +53,7 @@ public class OutboundXmlDataDictionaryTest {
                 "  <v1:flag>true</v1:flag>%n" +
                 "  <v1:restricted>citrus:randomString(10)</v1:restricted>%n" +
                 "</v1:TestResponse>%n"));
-        
-        Assert.assertEquals(payload, controlPayload);
-    }
 
+        assertEquals(payload, controlPayload);
+    }
 }
