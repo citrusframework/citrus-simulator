@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [ 18, 19 ]
+        version: [ 18, 19, 20 ]
         os: [ ubuntu-20.04 ]
     runs-on: ${{ matrix.os }}
     steps:
