@@ -15,6 +15,7 @@
  */
 package org.citrusframework.simulator.service;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.DefaultTestCase;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
@@ -27,10 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 @DataJpaTest
 @ContextConfiguration(classes = {SimulatorAutoConfiguration.class})
@@ -54,6 +61,9 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
     private ActivityService activityService;
 
     @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
     private ScenarioExecutionRepository scenarioExecutionRepository;
 
     @Test
@@ -69,7 +79,7 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
 
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
     }
 
     @Test
@@ -87,8 +97,8 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
         List<ScenarioExecution> result = scenarioExecutionRepository.find(queryFilter);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(failedScenarioExecutionId, result.get(0).getExecutionId());
+        assertEquals(1, result.size());
+        assertEquals(failedScenarioExecutionId, result.get(0).getExecutionId());
     }
 
     @Test
@@ -103,11 +113,11 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
 
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setHeaderFilter(IN_HEADER_NAME1 + ":" + inUid + "mod");
 
-        Assert.assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
     }
 
     @Test
@@ -121,11 +131,11 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
 
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setHeaderFilter(IN_HEADER_NAME1 + ":" + inUid + ";" + IN_HEADER_NAME2 + ":" + inUid + "_3");
 
-        Assert.assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
     }
 
     @Test
@@ -142,26 +152,26 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
 
         scenarioExecutionFilter.setContainingText(inPayload);
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setContainingText(inPayload + "mod");
-        Assert.assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setDirectionInbound(false);
         scenarioExecutionFilter.setContainingText(inPayload);
-        Assert.assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setDirectionInbound(true);
         scenarioExecutionFilter.setContainingText(inPayload);
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setDirectionOutbound(true);
         scenarioExecutionFilter.setContainingText(outPayload);
-        Assert.assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(1, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setDirectionOutbound(false);
         scenarioExecutionFilter.setContainingText(outPayload);
-        Assert.assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(0, scenarioExecutionRepository.find(queryFilter).size());
     }
 
     @Test
@@ -178,25 +188,32 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
         ScenarioExecutionFilter queryFilter = queryFilterAdapterFactory.getQueryAdapter(scenarioExecutionFilter);
         List<ScenarioExecution> result = scenarioExecutionRepository.find(queryFilter);
 
-        Assert.assertEquals(33, result.size());
+        assertEquals(result.size(), 33);
     }
 
     @Test
     void testFindByDate() {
+        String uniquePayload = "FindByDatePayload" + UUID.randomUUID();
 
-        Date t1 = new Date();
-        String uniquePayload = "FindByDatePayload" + UUID.randomUUID().toString();
-        for (int i = 0; i < 100; i++) {
+        Instant t1 = Instant.now();
+
+        int batch1Size = 100;
+        for (int i = 0; i < batch1Size; i++) {
             createTestScenarioExecution(UUID.randomUUID().toString(), uniquePayload + "-in", UUID.randomUUID().toString(), uniquePayload + "-out");
         }
 
-        Date t2 = new Date();
+        entityManager.flush();
 
-        for (int i = 0; i < 50; i++) {
+        Instant t2 = Instant.now();
+
+        int batch2Size = 50;
+        for (int i = 0; i < batch2Size; i++) {
             createTestScenarioExecution(UUID.randomUUID().toString(), uniquePayload + "-in", UUID.randomUUID().toString(), uniquePayload + "-out");
         }
 
-        Date t3 = new Date();
+        entityManager.flush();
+
+        Instant t3 = Instant.now();
 
         ScenarioExecutionFilter scenarioExecutionFilter = new ScenarioExecutionFilter();
         scenarioExecutionFilter.setPageNumber(0);
@@ -206,15 +223,15 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
 
         scenarioExecutionFilter.setFromDate(t1);
         scenarioExecutionFilter.setToDate(t2);
-        Assert.assertEquals(100, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(batch1Size, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setFromDate(t1);
         scenarioExecutionFilter.setToDate(t3);
-        Assert.assertEquals(150, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(batch1Size + batch2Size, scenarioExecutionRepository.find(queryFilter).size());
 
         scenarioExecutionFilter.setFromDate(t2);
         scenarioExecutionFilter.setToDate(t3);
-        Assert.assertEquals(50, scenarioExecutionRepository.find(queryFilter).size());
+        assertEquals(batch2Size, scenarioExecutionRepository.find(queryFilter).size());
     }
 
     private Long createTestScenarioExecution(String inUid, String inPayload, String outUid, String outPayload) {
@@ -222,8 +239,7 @@ public class ScenarioExecutionRepositoryTest extends AbstractTestNGSpringContext
     }
 
     private Long createTestScenarioExecution(String scenarioName, String inUid, String inPayload, String outUid, String outPayload, Status status) {
-
-        Map<String, Object> inHeaders = new HashMap<String, Object>();
+        Map<String, Object> inHeaders = new HashMap<>();
         inHeaders.put(IN_HEADER_NAME1, inUid);
         inHeaders.put(IN_HEADER_NAME2, inUid + "_2");
 

@@ -15,9 +15,17 @@
  */
 package org.citrusframework.simulator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 
-import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,14 +34,13 @@ import java.io.Serializable;
  * @author Georgi Todorov
  */
 @Entity
-public class MessageHeader implements Serializable {
+public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> implements Serializable {
 
-    private static final long serialVersionUID = 6645135139541485915L;
+    @Serial
+    private static final long serialVersionUID = 2L;
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "HEADER_ID")
     private Long headerId;
 
     @Column(nullable = false)
@@ -42,8 +49,10 @@ public class MessageHeader implements Serializable {
     @Column(nullable = false, name = "`value`")
     private String value;
 
-    @JsonIgnore
-    @ManyToOne
+    @NotNull
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    @JsonIgnoreProperties(value = { "headers", "scenarioExecution" }, allowSetters = true)
     private Message message;
 
     public MessageHeader() {
@@ -89,10 +98,11 @@ public class MessageHeader implements Serializable {
     @Override
     public String toString() {
         return "MessageHeader{" +
-                "headerId=" + headerId +
-                ", name='" + name + '\'' +
-                ", value='" + value + '\'' +
+                "headerId='" + getHeaderId() + "'" +
+                ", createdDate='" + getCreatedDate() + "'" +
+                ", name='" + getName() + "'" +
+                ", value='" + getValue() + "'" +
+                ", message='" + getMessage() + "'" +
                 '}';
     }
-
 }

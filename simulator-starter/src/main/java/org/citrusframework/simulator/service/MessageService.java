@@ -16,8 +16,9 @@
 
 package org.citrusframework.simulator.service;
 
-import org.citrusframework.exceptions.CitrusRuntimeException;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageFilter;
 import org.citrusframework.simulator.model.MessageHeader;
@@ -25,10 +26,6 @@ import org.citrusframework.simulator.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,7 +49,6 @@ public class MessageService {
 
     public Message saveMessage(Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers) {
         Message message = new Message();
-        message.setDate(now());
         message.setDirection(direction);
         message.setPayload(payload);
         message.setCitrusMessageId(citrusMessageId);
@@ -80,9 +76,4 @@ public class MessageService {
     public void clearMessages() {
         messageRepository.deleteAll();
     }
-
-    private Date now() {
-        return Date.from(LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant());
-    }
-
 }

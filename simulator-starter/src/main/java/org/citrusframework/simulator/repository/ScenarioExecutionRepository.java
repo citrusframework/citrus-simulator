@@ -22,7 +22,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -34,5 +34,5 @@ public interface ScenarioExecutionRepository extends CrudRepository<ScenarioExec
 
     List<ScenarioExecution> findByStatusOrderByStartDateDesc(@Param("status") ScenarioExecution.Status status);
 
-    List<ScenarioExecution> findByStartDateBetweenOrderByStartDateDesc(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate, Pageable pageable);
+    List<ScenarioExecution> findByStartDateBetweenOrderByStartDateDesc(@Param("fromDate") Instant fromDate, @Param("toDate") Instant toDate, Pageable pageable);
 }

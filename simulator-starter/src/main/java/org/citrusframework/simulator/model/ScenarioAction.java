@@ -16,11 +16,17 @@
 
 package org.citrusframework.simulator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
-import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * JPA entity for representing a scenario action
@@ -28,23 +34,23 @@ import java.util.Date;
 @Entity
 public class ScenarioAction implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 2L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ACTION_ID")
     private Long actionId;
-
-    @JsonIgnore
-    @ManyToOne
-    private ScenarioExecution scenarioExecution;
 
     @Column(nullable = false)
     private String name;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
+    private Instant startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    private Instant endDate;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
+    private ScenarioExecution scenarioExecution;
 
     public Long getActionId() {
         return actionId;
@@ -52,30 +58,6 @@ public class ScenarioAction implements Serializable {
 
     public void setActionId(Long actionId) {
         this.actionId = actionId;
-    }
-
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public String getName() {
@@ -86,13 +68,38 @@ public class ScenarioAction implements Serializable {
         this.name = name;
     }
 
+    public Instant getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Instant startDate) {
+        this.startDate = startDate;
+    }
+
+    public Instant getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Instant endDate) {
+        this.endDate = endDate;
+    }
+
+    public ScenarioExecution getScenarioExecution() {
+        return scenarioExecution;
+    }
+
+    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
+        this.scenarioExecution = scenarioExecution;
+    }
+
     @Override
     public String toString() {
         return "ScenarioAction{" +
-                "actionId=" + actionId +
-                ", name='" + name + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
+                "actionId='" + getActionId() + "'" +
+                ", name='" + getName() + "'" +
+                ", startDate='" + getStartDate() + "'" +
+                ", endDate='" + getEndDate() + "'" +
+                ", scenarioExecution='" + getScenarioExecution() + "'" +
                 '}';
     }
 }

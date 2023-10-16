@@ -22,12 +22,11 @@ import org.springframework.util.StringUtils;
 public class ScenarioExecutionRepositoryImpl extends AbstractRepository implements ScenarioExecutionRepositoryCustom {
 
     @Autowired
-    private EntityManager em;
+    private EntityManager entityManager;
 
     @Override
     public List<ScenarioExecution> find(ScenarioExecutionFilter filter) {
-
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<ScenarioExecution> criteriaQuery = criteriaBuilder.createQuery(ScenarioExecution.class);
 
         Root<ScenarioExecution> scenarioExecution = criteriaQuery.from(ScenarioExecution.class);
@@ -41,7 +40,7 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
 
         criteriaQuery.orderBy(criteriaBuilder.desc(scenarioExecution.get("startDate")));
 
-        TypedQuery<ScenarioExecution> messageQuery = em.createQuery(criteriaQuery.distinct(true));
+        TypedQuery<ScenarioExecution> messageQuery = entityManager.createQuery(criteriaQuery.distinct(true));
         addPagingRestrictions(filter, messageQuery);
 
         return messageQuery.getResultList();
@@ -143,15 +142,13 @@ public class ScenarioExecutionRepositoryImpl extends AbstractRepository implemen
      * @param predicates
      */
     private void addDatePredicates(ScenarioExecutionFilter filter, CriteriaBuilder criteriaBuilder,
-            Root<ScenarioExecution> scenarioExecution, List<Predicate> predicates) {
+                                   Root<ScenarioExecution> scenarioExecution, List<Predicate> predicates) {
         if (filter.getFromDate() != null) {
-            predicates.add(
-                    criteriaBuilder.greaterThanOrEqualTo(scenarioExecution.get("startDate"), filter.getFromDate()));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(scenarioExecution.get("startDate"), filter.getFromDate()));
         }
 
         if (filter.getToDate() != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(scenarioExecution.get("endDate"), filter.getToDate()));
         }
     }
-
 }

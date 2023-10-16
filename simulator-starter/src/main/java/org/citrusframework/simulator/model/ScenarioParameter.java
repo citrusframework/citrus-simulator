@@ -18,7 +18,10 @@ package org.citrusframework.simulator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,21 +29,14 @@ import java.util.List;
  * JPA entity for representing a scenario parameter
  */
 @Entity
-public class ScenarioParameter implements Serializable {
-    public enum ControlType {
-        TEXTBOX,
-        TEXTAREA,
-        DROPDOWN
-    }
+public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter, Long> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PARAMETER_ID")
     private Long parameterId;
-
-    @JsonIgnore
-    @ManyToOne
-    private ScenarioExecution scenarioExecution;
 
     @Column(nullable = false)
     private String name;
@@ -48,10 +44,16 @@ public class ScenarioParameter implements Serializable {
     @Column(nullable = false)
     private ControlType controlType;
 
-    @Column(columnDefinition = "CLOB", name = "`value`")
     @Lob
+    @Column(columnDefinition = "CLOB", name = "`value`")
     private String value;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
+    private ScenarioExecution scenarioExecution;
+
     private boolean required;
+
     private String label;
 
     @Transient
@@ -63,14 +65,6 @@ public class ScenarioParameter implements Serializable {
 
     public void setParameterId(Long parameterId) {
         this.parameterId = parameterId;
-    }
-
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
     }
 
     public String getLabel() {
@@ -113,6 +107,14 @@ public class ScenarioParameter implements Serializable {
         this.value = value;
     }
 
+    public ScenarioExecution getScenarioExecution() {
+        return scenarioExecution;
+    }
+
+    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
+        this.scenarioExecution = scenarioExecution;
+    }
+
     public boolean isRequired() {
         return required;
     }
@@ -124,13 +126,21 @@ public class ScenarioParameter implements Serializable {
     @Override
     public String toString() {
         return "ScenarioParameter{" +
-                "controlType=" + controlType +
-                ", parameterId=" + parameterId +
-                ", name='" + name + '\'' +
-                ", value='" + value + '\'' +
-                ", required=" + required +
-                ", label='" + label + '\'' +
-                ", options=" + options +
+                ", parameterId='" + getParameterId() +
+                ", createdDate='" + getCreatedDate() +
+                ", name='" + getName() + '\'' +
+                ", controlType='" + getControlType() +
+                ", value='" + getValue() + '\'' +
+                ", options='" + getScenarioExecution() +
+                ", required='" + isRequired() +
+                ", label='" + getLabel() +
+                ", options='" + getOptions() +
                 '}';
+    }
+
+    public enum ControlType {
+        TEXTBOX,
+        TEXTAREA,
+        DROPDOWN
     }
 }

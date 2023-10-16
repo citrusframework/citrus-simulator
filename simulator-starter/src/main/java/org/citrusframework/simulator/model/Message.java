@@ -16,20 +16,31 @@
 
 package org.citrusframework.simulator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 
-import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * JPA entity for representing inbound and outbound messages
  */
 @Entity
-public class Message implements Serializable {
-    private static final long serialVersionUID = -4858126051234255084L;
+public class Message extends AbstractAuditingEntity<Message, Long> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2L;
 
     public enum Direction {
         INBOUND,
@@ -38,30 +49,25 @@ public class Message implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MESSAGE_ID")
     private Long messageId;
-
-    @JsonIgnore
-    @ManyToOne
-    private ScenarioExecution scenarioExecution;
 
     @Column(nullable = false)
     private Direction direction;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-
-    @Column(columnDefinition = "CLOB")
     @Lob
+    @Column(columnDefinition = "CLOB")
     private String payload;
 
     @Column(unique = true)
     private String citrusMessageId;
 
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("name ASC")
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<MessageHeader> headers = new ArrayList<>();
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
+    private ScenarioExecution scenarioExecution;
 
     public Long getMessageId() {
         return messageId;
@@ -73,32 +79,6 @@ public class Message implements Serializable {
 
     public ScenarioExecution getScenarioExecution() {
         return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
-    }
-
-    public Long getScenarioExecutionId() {
-        if (scenarioExecution != null) {
-            return scenarioExecution.getExecutionId();
-        }
-        return null;
-    }
-
-    public String getScenarioName() {
-        if (scenarioExecution != null) {
-            return scenarioExecution.getScenarioName();
-        }
-        return null;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public Direction getDirection() {
@@ -139,18 +119,35 @@ public class Message implements Serializable {
         return headers;
     }
 
+    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
+        this.scenarioExecution = scenarioExecution;
+    }
+
+    public Long getScenarioExecutionId() {
+        if (scenarioExecution != null) {
+            return scenarioExecution.getExecutionId();
+        }
+        return null;
+    }
+
+    public String getScenarioName() {
+        if (scenarioExecution != null) {
+            return scenarioExecution.getScenarioName();
+        }
+        return null;
+    }
+
 
     @Override
     public String toString() {
         return "Message{" +
-                "date=" + date +
-                ", messageId=" + messageId +
-                ", direction=" + direction +
-                ", payload='" + payload + '\'' +
-                ", citrusMessageId=" + citrusMessageId +
-                ", scenarioExecutionId=" + getScenarioExecutionId() +
-                ", scenarioName=" + getScenarioName() +
-                ", headers=" + headers +
+                "messageId='" + getMessageId() + "'" +
+                ", createdDate='" + getCreatedDate() + "'" +
+                ", direction='" + getDirection() + "'" +
+                ", payload='" + getPayload() + "'" +
+                ", citrusMessageId='" + getCitrusMessageId() + "'" +
+                ", headers='" + getHeaders() + "'" +
+                ", scenarioExecution='" + getScenarioExecution() + "'" +
                 '}';
     }
 

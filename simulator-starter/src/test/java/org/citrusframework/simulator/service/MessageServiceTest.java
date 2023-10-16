@@ -28,9 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -76,8 +76,8 @@ public class MessageServiceTest {
 
     @Test
     public void shouldGetMessagesUsingNoDefaults() throws Exception {
-        Date dateFrom = new Date();
-        Date dateTo = new Date();
+        Instant dateFrom = Instant.now();
+        Instant dateTo = Instant.now();
         int pageNumber = 10;
         int pageSize = 1000;
         String text = "abc";
