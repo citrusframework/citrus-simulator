@@ -23,8 +23,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -40,13 +40,16 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long headerId;
 
-    @Column(nullable = false)
+    @NotEmpty
+    @Column(nullable = false, updatable = false)
     private String name;
 
-    @Column(nullable = false, name = "`value`")
+    @NotEmpty
+    @Column(name = "header_value", nullable = false, updatable = false)
     private String value;
 
     @NotNull
@@ -56,6 +59,7 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     private Message message;
 
     public MessageHeader() {
+        // Hibernate constructor
     }
 
     public MessageHeader(String name, String value) {
@@ -65,10 +69,6 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
 
     public Long getHeaderId() {
         return headerId;
-    }
-
-    public void setHeaderId(Long headerId) {
-        this.headerId = headerId;
     }
 
     public String getName() {
@@ -102,7 +102,6 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
                 ", createdDate='" + getCreatedDate() + "'" +
                 ", name='" + getName() + "'" +
                 ", value='" + getValue() + "'" +
-                ", message='" + getMessage() + "'" +
-                '}';
+                "}";
     }
 }

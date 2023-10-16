@@ -20,9 +20,11 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+
     <lombok.version>1.18.20</lombok.version>
     <citrus.version>4.0.0-M2</citrus.version>
-    <spring.boot.version>3.1.2</spring.boot.version>
+    <spring-boot.version>3.1.2</spring-boot.version>
     <spring.version>6.0.9</spring.version>
     <spring.ws.version>3.1.3</spring.ws.version>
     <testng.version>7.5.1</testng.version>
@@ -34,8 +36,8 @@
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.1.2 -->
     <logback.classic.version>1.4.8</logback.classic.version>
 
-    <node.version>v16.13.1</node.version>
-    <npm.version>8.1.2</npm.version>
+    <node.version>v18.18.0</node.version>
+    <npm.version>9.8.1</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
@@ -164,7 +166,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
+        <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -252,12 +254,6 @@
         <version>${testng.version}</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>2.15.0</version>
-        <scope>test</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -292,13 +288,6 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${java.version}</source>
             <target>${java.version}</target>
-            <annotationProcessorPaths>
-              <path>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-              </path>
-            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>
@@ -377,21 +366,32 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.2</version>
+          <version>3.1.2</version>
           <configuration>
+            <excludes>
+              <exclude>**/*IT.java</exclude>
+            </excludes>
+            <failIfNoTests>false</failIfNoTests>
             <forkCount>1</forkCount>
             <reuseForks>${reuseForks}</reuseForks>
-            <failIfNoTests>false</failIfNoTests>
           </configuration>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.2</version>
+          <version>3.1.2</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>

@@ -16,13 +16,19 @@
 
 package org.citrusframework.simulator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,17 +41,22 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long parameterId;
 
-    @Column(nullable = false)
+    @NotEmpty
+    @Column(nullable = false, updatable = false)
     private String name;
 
-    @Column(nullable = false)
-    private ControlType controlType;
+    /**
+     * Actual control type as a numerical representation of {@link ControlType}
+     */
+    @Column(nullable = false, updatable = false)
+    private Integer controlType;
 
     @Lob
-    @Column(columnDefinition = "CLOB", name = "`value`")
+    @Column(columnDefinition = "CLOB", name = "parameter_value", nullable = false, updatable = false)
     private String value;
 
     @ManyToOne
@@ -61,10 +72,6 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
 
     public Long getParameterId() {
         return parameterId;
-    }
-
-    public void setParameterId(Long parameterId) {
-        this.parameterId = parameterId;
     }
 
     public String getLabel() {
@@ -92,11 +99,11 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     }
 
     public ControlType getControlType() {
-        return controlType;
+        return ControlType.fromId(controlType);
     }
 
     public void setControlType(ControlType controlType) {
-        this.controlType = controlType;
+        this.controlType = controlType.id;
     }
 
     public String getValue() {
@@ -126,21 +133,35 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     @Override
     public String toString() {
         return "ScenarioParameter{" +
-                ", parameterId='" + getParameterId() +
-                ", createdDate='" + getCreatedDate() +
-                ", name='" + getName() + '\'' +
-                ", controlType='" + getControlType() +
-                ", value='" + getValue() + '\'' +
-                ", options='" + getScenarioExecution() +
-                ", required='" + isRequired() +
-                ", label='" + getLabel() +
-                ", options='" + getOptions() +
-                '}';
+                ", parameterId='" + getParameterId() + "'" +
+                ", createdDate='" + getCreatedDate() + "'" +
+                ", name='" + getName() + "'" + "'" +
+                ", controlType='" + getControlType() + "'" +
+                ", value='" + getValue() + "'" +
+                ", required='" + isRequired() + "'" +
+                ", label='" + getLabel() + "'" +
+                "}";
     }
 
     public enum ControlType {
-        TEXTBOX,
-        TEXTAREA,
-        DROPDOWN
+
+        UNKNOWN(0), TEXTBOX(1), TEXTAREA(2), DROPDOWN(3);
+
+        private final int id;
+
+        ControlType(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public static ControlType fromId(int id) {
+            return Arrays.stream(values())
+                .filter(controlType -> controlType.id == id)
+                .findFirst()
+                .orElse(ControlType.UNKNOWN);
+        }
     }
 }

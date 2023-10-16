@@ -40,7 +40,7 @@ public class Simulator extends SimulatorWebServiceAdapter {
 
     @Override
     public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return "/services/ws/HelloService/v1/*";
+        return "/services/ws/HelloService/*";
     }
 
     @Override

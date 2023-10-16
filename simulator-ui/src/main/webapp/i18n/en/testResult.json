@@ -1,0 +1,24 @@
+{
+  "citrusSimulatorApp": {
+    "testResult": {
+      "home": {
+        "title": "Test Results",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Test Results found"
+      },
+      "detail": {
+        "title": "Test Result"
+      },
+      "id": "ID",
+      "status": "Status",
+      "testName": "Test Name",
+      "className": "Class Name",
+      "errorMessage": "Error Message",
+      "failureStack": "Failure Stack",
+      "failureType": "Failure Type",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date",
+      "testParameter": "Test Parameter"
+    }
+  }
+}

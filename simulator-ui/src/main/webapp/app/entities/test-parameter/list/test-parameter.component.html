@@ -1,0 +1,104 @@
+<div>
+  <h2 id="page-heading" data-cy="TestParameterHeading">
+    <span jhiTranslate="citrusSimulatorApp.testParameter.home.title">Test Parameters</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="citrusSimulatorApp.testParameter.home.refreshListLabel">Refresh list</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <jhi-filter [filters]="filters"></jhi-filter>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="testParameters?.length === 0">
+    <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="testParameters && testParameters.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="key">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="value">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="createdDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="lastModifiedDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="testResult.id">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let testParameter of testParameters; trackBy: trackId" data-cy="entityTable">
+          <td>{{ testParameter.key }}</td>
+          <td>{{ testParameter.value }}</td>
+          <td>{{ testParameter.createdDate | formatMediumDatetime }}</td>
+          <td>{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
+          <td>
+            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']">{{ testParameter.testResult.id }}</a>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/test-parameter', testParameter.testResult.id, testParameter.key, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="testParameters && testParameters.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

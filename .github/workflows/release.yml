@@ -34,7 +34,7 @@ jobs:
       with:
         version: "17"
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Cache Maven modules
       uses: actions/cache@v1
       with:

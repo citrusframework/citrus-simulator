@@ -23,7 +23,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-
+import jakarta.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -38,12 +38,15 @@ public class ScenarioAction implements Serializable {
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long actionId;
 
-    @Column(nullable = false)
+    @NotEmpty
+    @Column(nullable = false, updatable = false)
     private String name;
 
+    @Column(nullable = false, updatable = false)
     private Instant startDate;
 
     private Instant endDate;
@@ -54,10 +57,6 @@ public class ScenarioAction implements Serializable {
 
     public Long getActionId() {
         return actionId;
-    }
-
-    public void setActionId(Long actionId) {
-        this.actionId = actionId;
     }
 
     public String getName() {
@@ -99,7 +98,6 @@ public class ScenarioAction implements Serializable {
                 ", name='" + getName() + "'" +
                 ", startDate='" + getStartDate() + "'" +
                 ", endDate='" + getEndDate() + "'" +
-                ", scenarioExecution='" + getScenarioExecution() + "'" +
-                '}';
+                "}";
     }
 }

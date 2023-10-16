@@ -1,0 +1,59 @@
+{
+  "changelogDate": "20230926185108",
+  "dto": "no",
+  "entityTableName": "test_result",
+  "fields": [
+    {
+      "fieldName": "status",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "testName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "className",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "errorMessage",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "failureStack",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "failureType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "createdDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastModifiedDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TestResult",
+  "pagination": "pagination",
+  "readOnly": true,
+  "relationships": [
+    {
+      "otherEntityName": "testParameter",
+      "otherEntityRelationshipName": "testResult",
+      "relationshipName": "testParameter",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

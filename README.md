@@ -299,6 +299,6 @@ Information
 Read the simulator [user manual](https://citrusframework.org/citrus-simulator/) for detailed instructions and features.
 For more information on Citrus see [citrusframework.org][2], including a complete [reference manual][3].
 
- [1]: https://citrusframework.org/img/brand-logo.png "Citrus"
+ [1]: simulator-ui/src/main/webapp/content/images/favicon-32x32.png "Citrus-Simulator"
  [2]: https://citrusframework.org
  [3]: https://citrusframework.org/reference/html/

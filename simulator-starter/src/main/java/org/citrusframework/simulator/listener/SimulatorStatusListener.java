@@ -16,11 +16,6 @@
 
 package org.citrusframework.simulator.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.citrusframework.DefaultTestCase;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -29,14 +24,17 @@ import org.citrusframework.actions.SleepAction;
 import org.citrusframework.common.Described;
 import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
-import org.citrusframework.report.TestResults;
 import org.citrusframework.simulator.service.ActivityService;
+import org.citrusframework.simulator.service.TestResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Christoph Deppisch
@@ -47,24 +45,26 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     /**
      * Logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SimulatorStatusListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorStatusListener.class);
 
     /**
-     * Currently running test
+     * Currently running test.
+     *
+     * TODO: Replace with metric.
      */
     private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
-    /**
-     * Accumulated test results
-     */
-    private TestResults testResults = new TestResults();
+    private final ActivityService executionService;
 
-    @Autowired
-    protected ActivityService executionService;
+    private final TestResultService testResultService;
+
+    public SimulatorStatusListener(ActivityService executionService, TestResultService testResultService) {
+        this.executionService = executionService;
+        this.testResultService = testResultService;
+    }
 
     @Override
     public void onTestStart(TestCase test) {
-
         if (test instanceof DefaultTestCase) {
             runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
         } else {
@@ -79,43 +79,45 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestSuccess(TestCase test) {
-
-        TestResult result = null;
+        TestResult result;
         if (test instanceof DefaultTestCase) {
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
         } else {
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
         }
 
-        testResults.addResult(result);
-        LOG.info(result.toString());
+        testResultService.transformAndSave(result);
         executionService.completeScenarioExecutionSuccess(test);
+
+        logger.info(result.toString());
     }
 
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
-
-        TestResult result = null;
+        TestResult result;
         if (test instanceof DefaultTestCase) {
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
         } else {
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
 
-        testResults.addResult(result);
-
-        LOG.info(result.toString());
-        LOG.info(result.getFailureType());
+        testResultService.transformAndSave(result);
         executionService.completeScenarioExecutionFailure(test, cause);
+
+        logger.info(result.toString());
+        logger.info(result.getFailureType());
     }
 
     @Override
     public void onTestActionStart(TestCase testCase, TestAction testAction) {
         if (!ignoreTestAction(testAction)) {
-            LOG.debug(testCase.getName() + "(" +
-                    StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
-                    testAction.getName() + ": " +
-                    (testAction instanceof Described && StringUtils.hasText(((Described)testAction).getDescription()) ? ((Described)testAction).getDescription() : ""));
+            if (logger.isDebugEnabled()) {
+                logger.debug(testCase.getName() + "(" +
+                        StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
+                        testAction.getName() + ": " +
+                        (testAction instanceof Described && StringUtils.hasText(((Described) testAction).getDescription()) ? ((Described) testAction).getDescription() : ""));
+            }
+
             executionService.createTestAction(testCase, testAction);
         }
     }
@@ -127,17 +129,13 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         }
     }
 
-    private boolean ignoreTestAction(TestAction testAction) {
-        return testAction.getClass().equals(SleepAction.class);
-    }
-
 
     @Override
     public void onTestActionSkipped(TestCase testCase, TestAction testAction) {
     }
 
     private String[] getParameters(TestCase test) {
-        List<String> parameterStrings = new ArrayList<String>();
+        List<String> parameterStrings = new ArrayList<>();
 
         if (test instanceof DefaultTestCase) {
             for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
@@ -145,38 +143,10 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             }
         }
 
-        return parameterStrings.toArray(new String[parameterStrings.size()]);
+        return parameterStrings.toArray(new String[0]);
     }
 
-    /**
-     * Gets the value of the testResults property.
-     *
-     * @return the testResults
-     */
-    public TestResults getTestResults() {
-        return testResults;
-    }
-
-    /**
-     * Gets the value of the runningTests property.
-     *
-     * @return the runningTests
-     */
-    public Map<String, TestResult> getRunningTests() {
-        return runningTests;
-    }
-
-    /**
-     * Clear test results.
-     */
-    public void clearResults() {
-        testResults = new TestResults();
-    }
-
-    /**
-     * Get the count of active scenarios
-     */
-    public int getCountActiveScenarios() {
-        return runningTests.size();
+    private boolean ignoreTestAction(TestAction testAction) {
+        return testAction.getClass().equals(SleepAction.class);
     }
 }

@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col-md-3">
+    <span class="hipster img-fluid rounded"></span>
+  </div>
+
+  <div class="col-md-9">
+    <div class="row">
+      <h1 class="display-4">
+        <i *ngIf="simulatorInfo; else defaultTitle">{{ simulatorInfo!.name }}</i>
+
+        <ng-template #defaultTitle>
+          <span jhiTranslate="home.title">Citrus Simulator</span>
+        </ng-template>
+      </h1>
+
+      <p>
+        <b *ngIf="simulatorInfo" jhiTranslate="home.version" [translateValues]="{ version: simulatorInfo!.version }"></b>
+      </p>
+
+      <p>
+        <span jhiTranslate="home.like">If you like Citrus and the Simulator, don't forget to give us a star on</span>
+        <a href="https://github.com/citrusframework/citrus-simulator" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github">
+          GitHub
+        </a>
+        !
+      </p>
+    </div>
+
+    <div class="row mt-3">
+      <div>
+        <app-test-result-summary></app-test-result-summary>
+      </div>
+    </div>
+  </div>
+</div>

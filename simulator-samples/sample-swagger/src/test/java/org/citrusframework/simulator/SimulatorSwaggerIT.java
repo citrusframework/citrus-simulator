@@ -74,32 +74,9 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                             "{" +
                                 "\"name\":\"REST Petstore Simulator\"," +
                                 "\"version\":\"@ignore@\"" +
-                            "}" +
+                            "}," +
+                            "\"activeProfiles\": []" +
                         "}"));
-    }
-
-    @CitrusTest
-    public void testUiSummaryResults() {
-        $(http().client(simulatorUiClient)
-                .send()
-                .get("/api/summary/results")
-                .message()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
-
-        $(http().client(simulatorUiClient)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{" +
-                            "\"size\":\"@isNumber()@\"," +
-                            "\"failed\":\"@isNumber()@\"," +
-                            "\"success\":\"@isNumber()@\"," +
-                            "\"skipped\":0," +
-                            "\"skippedPercentage\":\"0.0\"," +
-                            "\"failedPercentage\":\"@ignore@\"," +
-                            "\"successPercentage\":\"@ignore@\"}"));
     }
 
     @CitrusTest

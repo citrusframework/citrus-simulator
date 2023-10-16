@@ -1,0 +1,34 @@
+{
+  "changelogDate": "20230926184642",
+  "dto": "no",
+  "entityTableName": "test_parameter",
+  "fields": [
+    {
+      "fieldName": "key",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "value",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "createdDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastModifiedDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TestParameter",
+  "pagination": "pagination",
+  "readOnly": true,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

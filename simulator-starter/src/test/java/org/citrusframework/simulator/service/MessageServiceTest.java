@@ -24,12 +24,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.data.domain.Pageable;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,8 +39,6 @@ public class MessageServiceTest {
             new SimulatorConfigurationProperties());
 
     private MessageRepository messageRepository;
-    private ArgumentCaptor<Collection<Message.Direction>> directionsCaptor;
-    private ArgumentCaptor<Pageable> pageableCaptor;
 
     private MessageService sut;
     private ArgumentCaptor<MessageFilter> messageFilterCaptor;
@@ -52,8 +48,6 @@ public class MessageServiceTest {
     public void init() {
         messageFilterCaptor = ArgumentCaptor.forClass(MessageFilter.class);
         messageRepository = Mockito.mock(MessageRepository.class);
-        directionsCaptor = ArgumentCaptor.forClass(Collection.class);
-        pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
         sut = new MessageService(messageRepository, queryFilterAdapterFactory);
     }
 
@@ -116,5 +110,4 @@ public class MessageServiceTest {
         Assert.assertEquals(messageFilterCaptor.getValue().getDirectionInbound(), (Boolean) inbound);
         Assert.assertEquals(messageFilterCaptor.getValue().getDirectionOutbound(), (Boolean) outbound);
     }
-
 }

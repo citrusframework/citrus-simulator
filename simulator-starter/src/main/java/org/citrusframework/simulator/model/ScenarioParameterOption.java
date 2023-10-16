@@ -52,8 +52,8 @@ public class ScenarioParameterOption implements Serializable {
     @Override
     public String toString() {
         return "ScenarioParameterOption{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+                "key='" + key + "'" +
+                ", value='" + value + "'" +
+                "}";
     }
 }
