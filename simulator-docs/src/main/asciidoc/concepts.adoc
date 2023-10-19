@@ -89,6 +89,7 @@ citrus.simulator.defaultScenario:: Default scenario name.
 citrus.simulator.defaultTimeout:: Timeout when waiting for inbound messages.
 citrus.simulator.templateValidation:: Enable/disable schema validation.
 citrus.simulator.exceptionDelay:: Default delay in milliseconds to wait after uncategorized exceptions.
+citrus.simulator.executor.threads:: The number of threads available for parallel scenario execution.
 citrus.simulator.rest.urlMapping:: Handler adapter url mapping for inbound requests
 citrus.simulator.ws.servletMapping:: Message dispatcher servlet mapping for inbound SOAP requests
 citrus.simulator.jms.inboundDestination:: JMS destination name to consume inbound messages from
@@ -109,6 +110,7 @@ citrus.simulator.default.scenario:: Default scenario name.
 citrus.simulator.default.timeout:: Timeout when waiting for inbound messages.
 citrus.simulator.template.validation:: Enable/disable schema validation.
 citrus.simulator.exception.delay:: Default delay in milliseconds to wait after uncategorized exceptions.
+citrus.simulator.executor.threads:: The number of threads available for parallel scenario execution.
 citrus.simulator.rest.url.mapping:: Handler adapter url mapping for inbound requests
 citrus.simulator.ws.servlet.mapping:: Message dispatcher servlet mapping for inbound SOAP requests
 citrus.simulator.jms.inbound.destination:: JMS destination name to consume inbound messages from
@@ -133,6 +135,7 @@ CITRUS_SIMULATOR_DEFAULT_SCENARIO:: Default scenario name.
 CITRUS_SIMULATOR_DEFAULT_TIMEOUT:: Timeout when waiting for inbound messages.
 CITRUS_SIMULATOR_TEMPLATE_VALIDATION:: Enable/disable schema validation.
 CITRUS_SIMULATOR_EXCEPTION_DELAY:: Default delay in milliseconds to wait after uncategorized exceptions.
+CITRUS_SIMULATOR_EXECUTOR_THREADS:: The number of threads available for parallel scenario execution.
 CITRUS_SIMULATOR_REST_URL_MAPPING:: Handler adapter url mapping for inbound requests
 CITRUS_SIMULATOR_WS_SERVLET_MAPPING:: Message dispatcher servlet mapping for inbound SOAP requests
 CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION:: JMS destination name to consume inbound messages from
