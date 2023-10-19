@@ -67,7 +67,7 @@ class TestParameterResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static TestParameter createEntity(EntityManager em) {
+    public static TestParameter createEntity(EntityManager entityManager) {
         TestParameter testParameter = TestParameter.builder()
             .key(DEFAULT_KEY)
             .value(DEFAULT_VALUE)
@@ -76,12 +76,12 @@ class TestParameterResourceIT {
             .build();
 
         TestResult testResult;
-        if (findAll(em, TestResult.class).isEmpty()) {
-            testResult = TestResultResourceIT.createEntity(em);
-            em.persist(testResult);
-            em.flush();
+        if (findAll(entityManager, TestResult.class).isEmpty()) {
+            testResult = TestResultResourceIT.createEntity(entityManager);
+            entityManager.persist(testResult);
+            entityManager.flush();
         } else {
-            testResult = findAll(em, TestResult.class).get(0);
+            testResult = findAll(entityManager, TestResult.class).get(0);
         }
         testParameter.setTestResult(testResult);
 

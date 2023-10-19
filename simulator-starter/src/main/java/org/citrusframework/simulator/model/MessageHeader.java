@@ -25,6 +25,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -55,20 +56,28 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @JsonIgnoreProperties(value = { "headers", "scenarioExecution" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
     private Message message;
 
     public MessageHeader() {
         // Hibernate constructor
     }
 
-    public MessageHeader(String name, String value) {
+    MessageHeader(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
+    public static MessageHeaderBuilder builder() {
+        return new MessageHeaderBuilder();
+    }
+
     public Long getHeaderId() {
         return headerId;
+    }
+
+    void setHeaderId(Long headerId) {
+        this.headerId = headerId;
     }
 
     public String getName() {
@@ -96,12 +105,54 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof MessageHeader messageHeader) {
+            return headerId != null && headerId.equals(messageHeader.headerId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "MessageHeader{" +
-                "headerId='" + getHeaderId() + "'" +
-                ", createdDate='" + getCreatedDate() + "'" +
-                ", name='" + getName() + "'" +
-                ", value='" + getValue() + "'" +
-                "}";
+            "headerId='" + getHeaderId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", name='" + getName() + "'" +
+            ", value='" + getValue() + "'" +
+            "}";
+    }
+
+    public static class MessageHeaderBuilder extends AuditingEntityBuilder<MessageHeaderBuilder, MessageHeader, Long> {
+
+        private final MessageHeader messageHeader = new MessageHeader();
+
+        public MessageHeaderBuilder name(String name) {
+            messageHeader.setName(name);
+            return this;
+        }
+
+        public MessageHeaderBuilder value(String value) {
+            messageHeader.setValue(value);
+            return this;
+        }
+
+        public MessageHeaderBuilder message(Message message) {
+            messageHeader.setMessage(message);
+            return this;
+        }
+
+        @Override
+        protected MessageHeader getEntity() {
+            return messageHeader;
+        }
     }
 }

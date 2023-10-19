@@ -78,7 +78,7 @@ class TestResultResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static TestResult createEntity(EntityManager em) {
+    public static TestResult createEntity(EntityManager entityManager) {
         TestResult testResult = TestResult.builder()
             .status(DEFAULT_STATUS.getId())
             .testName(DEFAULT_TEST_NAME)

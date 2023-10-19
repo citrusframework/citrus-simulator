@@ -233,10 +233,6 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
         private final TestResult testResult = new TestResult();
 
-        public TestResult build() {
-            return testResult;
-        }
-
         public TestResultBuilder id(Long id) {
             testResult.id = id;
             return this;
