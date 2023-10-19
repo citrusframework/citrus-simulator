@@ -1,19 +1,5 @@
 package org.citrusframework.simulator.ws;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.factory.WSDLFactory;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.citrusframework.exceptions.CitrusRuntimeException;
-import org.citrusframework.simulator.exception.SimulatorException;
-import org.citrusframework.xml.schema.locator.JarWSDLLocator;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
@@ -22,6 +8,9 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.xml.schema.locator.JarWSDLLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -36,32 +25,39 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.xml.sax.InputSource;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.factory.WSDLFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Christoph Deppisch
  */
 public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
-    /** Logger */
-    private static Logger log = LoggerFactory.getLogger(WsdlScenarioGenerator.class);
-
-    /** Target wsdl to generate scenarios from */
-    private final Resource wsdlResource;
-
-    /** Naming strategy for generated scenarios */
-    private WsdlScenarioNamingStrategy namingStrategy = WsdlScenarioNamingStrategy.INPUT;
-
-    /** Optional WSDL file location system property for auto generated scenarios */
+    /**
+     * Optional WSDL file location system property for auto generated scenarios
+     */
     private static final String SIMULATOR_WSDL_LOCATION_PROPERTY = "citrus.simulator.ws.wsdl.location";
     private static final String SIMULATOR_WSDL_LOCATION_ENV = "CITRUS_SIMULATOR_WS_WSDL_LOCATION";
-
     /**
-     * Enum representing different kinds of scenario naming.
+     * Logger
      */
-    public enum WsdlScenarioNamingStrategy {
-        INPUT,
-        OPERATION,
-        SOAP_ACTION
-    }
+    private static final Logger log = LoggerFactory.getLogger(WsdlScenarioGenerator.class);
+    /**
+     * Target wsdl to generate scenarios from
+     */
+    private final Resource wsdlResource;
+    /**
+     * Naming strategy for generated scenarios
+     */
+    private WsdlScenarioNamingStrategy namingStrategy = WsdlScenarioNamingStrategy.INPUT;
 
     /**
      * Default constructor.
@@ -72,16 +68,31 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Constructor using wsdl file resource.
+     *
      * @param wsdlResource
      */
     public WsdlScenarioGenerator(Resource wsdlResource) {
         this.wsdlResource = wsdlResource;
     }
 
+    private static String getSoapAction(BindingOperation operation) {
+        String soapAction = "";
+        List extensions = operation.getExtensibilityElements();
+        if (extensions != null) {
+            for (Object extension : extensions) {
+                ExtensibilityElement extElement = (ExtensibilityElement) extension;
+                if (extElement instanceof SOAPOperation soapOperation) {
+                    soapAction = soapOperation.getSoapActionURI();
+                }
+            }
+        }
+        return soapAction;
+    }
+
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         Assert.notNull(wsdlResource,
-                "Missing either WSDL location system property setting or explicit WSDL resource for scenario auto generation");
+            "Missing either WSDL location system property setting or explicit WSDL resource for scenario auto generation");
 
         Definition wsdl = getWsdlDefinition(wsdlResource);
         XmlObject wsdlObject = compileWsdl(wsdlResource);
@@ -96,39 +107,20 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                 SchemaType requestElem = getSchemaType(schemaTypeSystem, operation.getName(), operation.getOperation().getInput().getName());
                 SchemaType responseElem = getSchemaType(schemaTypeSystem, operation.getName(), operation.getOperation().getOutput().getName());
 
-                String soapAction = "";
-                List extensions = operation.getExtensibilityElements();
-                if (extensions != null) {
-                    for (Object extension : extensions) {
-                        ExtensibilityElement extElement = (ExtensibilityElement) extension;
-                        if (extElement instanceof SOAPOperation soapOperation) {
-                            soapAction = soapOperation.getSoapActionURI();
-                        }
-                    }
-                }
-
-                String scenarioName;
-                switch (namingStrategy) {
-                    case INPUT:
-                        scenarioName = operation.getOperation().getInput().getName();
-                        break;
-                    case OPERATION:
-                        scenarioName = operation.getOperation().getName();
-                        break;
-                    case SOAP_ACTION:
-                        scenarioName = soapAction;
-                        break;
-                    default:
-                        throw new SimulatorException("Unknown scenario naming strategy");
-                }
+                String soapAction = getSoapAction(operation);
+                String scenarioName = switch (namingStrategy) {
+                    case INPUT -> operation.getOperation().getInput().getName();
+                    case OPERATION -> operation.getOperation().getName();
+                    case SOAP_ACTION -> soapAction;
+                };
 
                 if (beanFactory instanceof BeanDefinitionRegistry) {
                     log.info("Register auto generated scenario as bean definition: " + scenarioName);
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(WsdlOperationScenario.class)
-                            .addConstructorArgValue(operation)
-                            .addPropertyValue("soapAction", soapAction)
-                            .addPropertyValue("input", generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)))
-                            .addPropertyValue("output", generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
+                        .addConstructorArgValue(operation)
+                        .addPropertyValue("soapAction", soapAction)
+                        .addPropertyValue("input", generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)))
+                        .addPropertyValue("output", generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
 
                     if (beanFactory.containsBeanDefinition("inboundXmlDataDictionary")) {
                         beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundXmlDataDictionary");
@@ -150,6 +142,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Creates the scenario with given WSDL operation information.
+     *
      * @param operation
      * @param soapAction
      * @param input
@@ -158,13 +151,14 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      */
     protected WsdlOperationScenario createScenario(BindingOperation operation, String soapAction, String input, String output) {
         return new WsdlOperationScenario(operation)
-                .withInput(input)
-                .withOutput(output)
-                .withSoapAction(soapAction);
+            .withInput(input)
+            .withOutput(output)
+            .withSoapAction(soapAction);
     }
 
     /**
      * Generates request body. Subclasses may add special request body generating logic here.
+     *
      * @param operation
      * @param body
      * @return
@@ -175,6 +169,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Generates response body. Subclasses may add special response body generating logic here.
+     *
      * @param operation
      * @param body
      * @return
@@ -197,11 +192,12 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         }
 
         throw new SimulatorException("Unable to find schema type declaration '" + elementName + "'" +
-                " for WSDL operation '" + operation + "'");
+            " for WSDL operation '" + operation + "'");
     }
 
     /**
      * Reads WSDL definition from resource.
+     *
      * @param wsdl
      * @return
      * @throws IOException
@@ -227,6 +223,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Compiles WSDL file resource to a XmlObject.
+     *
      * @return
      * @throws IOException
      */
@@ -235,7 +232,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             return XmlObject.Factory.parse(wsdlResource.getInputStream(), (new XmlOptions()).setLoadLineNumbers().setLoadMessageDigest().setCompileDownloadUrls());
         } catch (XmlException e) {
             for (Object error : e.getErrors()) {
-                log.error(((XmlError)error).getLine() + "" + error.toString());
+                log.error(((XmlError) error).getLine() + String.valueOf(error));
             }
             throw new SimulatorException("WSDL could not be parsed", e);
         } catch (Exception e) {
@@ -245,6 +242,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Finds nested XML schema definition and compiles it to a schema type system instance.
+     *
      * @param wsdl
      * @return
      */
@@ -257,7 +255,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
         XmlObject[] xsd = new XmlObject[schemas.length];
         try {
-            for (int i=0; i < schemas.length; i++) {
+            for (int i = 0; i < schemas.length; i++) {
                 xsd[i] = XmlObject.Factory.parse(schemas[i], (new XmlOptions()).setLoadLineNumbers().setLoadMessageDigest().setCompileDownloadUrls());
             }
         } catch (Exception e) {
@@ -269,7 +267,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             schemaTypeSystem = XmlBeans.compileXsd(xsd, XmlBeans.getContextTypeLoader(), new XmlOptions());
         } catch (XmlException e) {
             for (Object error : e.getErrors()) {
-                log.error("Line " + ((XmlError)error).getLine() + ": " + error.toString());
+                log.error("Line " + ((XmlError) error).getLine() + ": " + error);
             }
             throw new SimulatorException("Failed to compile XSD schema", e);
         } catch (Exception e) {
@@ -290,7 +288,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         int noNs = StringUtils.countOccurrencesOf(nsWsdlOrig, "xmlns:");
         String[] namespacesWsdl = new String[noNs];
         cursor = 0;
-        for (int i=0; i<noNs; i++) {
+        for (int i = 0; i < noNs; i++) {
             int begin = nsWsdlOrig.indexOf("xmlns:", cursor);
             int end = nsWsdlOrig.indexOf("\"", begin + 20);
             namespacesWsdl[i] = nsWsdlOrig.substring(begin, end) + "\"";
@@ -301,6 +299,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
      * Finds schema tag and extracts the namespace prefix.
+     *
      * @param wsdl
      * @return
      */
@@ -346,12 +345,12 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                 }
             }
 
-            stringBuilder.append(wsdl.xmlText().substring(insertPointNamespacesWsdl, end));
+            stringBuilder.append(wsdl.xmlText(), insertPointNamespacesWsdl, end);
             schemas.add(stringBuilder.toString());
             cursor = end;
         }
 
-        return schemas.toArray(new String[] {});
+        return schemas.toArray(new String[]{});
     }
 
     /**
@@ -370,6 +369,15 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      */
     public void setNamingStrategy(WsdlScenarioNamingStrategy namingStrategy) {
         this.namingStrategy = namingStrategy;
+    }
+
+    /**
+     * Enum representing different kinds of scenario naming.
+     */
+    public enum WsdlScenarioNamingStrategy {
+        INPUT,
+        OPERATION,
+        SOAP_ACTION
     }
 
 }

@@ -16,12 +16,6 @@
 
 package org.citrusframework.simulator.service;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.citrusframework.Citrus;
 import org.citrusframework.annotations.CitrusAnnotations;
@@ -41,6 +35,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Service capable of executing test executables. The service takes care on setting up the executable before execution. Service
@@ -155,7 +155,7 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         executorService.shutdownNow();
     }
 

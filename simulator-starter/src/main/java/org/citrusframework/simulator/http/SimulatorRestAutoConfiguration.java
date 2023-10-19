@@ -18,12 +18,6 @@ package org.citrusframework.simulator.http;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
@@ -34,6 +28,7 @@ import org.citrusframework.report.MessageListeners;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;
+import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -55,6 +50,12 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
@@ -117,21 +118,7 @@ public class SimulatorRestAutoConfiguration {
 
     @Bean
     public HandlerAdapter simulatorRestHandlerAdapter(final ApplicationContext applicationContext) {
-        final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
-            @Override
-            protected void initHandlerMethods() {
-                detectHandlerMethods(createRestController(applicationContext));
-                super.initHandlerMethods();
-            }
-
-            @Override
-            protected boolean isHandler(Class<?> beanType) {
-                return (beanType.isAssignableFrom(HttpMessageController.class)) && super.isHandler(beanType);
-            }
-        };
-
-        handlerMapping.setApplicationContext(applicationContext);
-        handlerMapping.afterPropertiesSet();
+        final RequestMappingHandlerMapping handlerMapping = getRequestMappingHandlerMapping(applicationContext);
 
         requestMappingHandlerAdapter.getMessageConverters().add(0, new SimulatorHttpMessageConverter());
         requestMappingHandlerAdapter.getMessageConverters().add(new DelegatingHttpEntityMessageConverter());
@@ -148,6 +135,25 @@ public class SimulatorRestAutoConfiguration {
                 return requestMappingHandlerAdapter.handle(request, response, handlerMapping.getHandler(request).getHandler());
             }
         };
+    }
+
+    private RequestMappingHandlerMapping getRequestMappingHandlerMapping(ApplicationContext applicationContext) {
+        final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
+            @Override
+            protected void initHandlerMethods() {
+                detectHandlerMethods(createRestController(applicationContext));
+                super.initHandlerMethods();
+            }
+
+            @Override
+            protected boolean isHandler(Class<?> beanType) {
+                return (beanType.isAssignableFrom(HttpMessageController.class)) && super.isHandler(beanType);
+            }
+        };
+
+        handlerMapping.setApplicationContext(applicationContext);
+        handlerMapping.afterPropertiesSet();
+        return handlerMapping;
     }
 
     @Bean

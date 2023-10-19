@@ -16,13 +16,17 @@
 
 package org.citrusframework.simulator.controller;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,28 +47,11 @@ public class ScenarioController {
         this.scenarios = getScenarioList(scenarioLookupService);
     }
 
-    @Data
-    public static class Scenario {
-        public enum ScenarioType {
-            STARTER,
-            MESSAGE_TRIGGERED;
-        }
-
-        private final String name;
-        private final ScenarioType type;
-    }
-
     private static List<Scenario> getScenarioList(ScenarioLookupService scenarioLookupService) {
         final List<Scenario> scenarios = new ArrayList<>();
         scenarioLookupService.getScenarioNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
         scenarioLookupService.getStarterNames().forEach(name -> scenarios.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
         return scenarios;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class ScenarioFilter {
-        private String name;
     }
 
     /**
@@ -76,13 +63,13 @@ public class ScenarioController {
     @RequestMapping(method = RequestMethod.POST)
     public Collection<Scenario> getScenarioNames(@RequestBody(required = false) ScenarioFilter filter) {
         return scenarios.stream()
-                .filter(scenario -> {
-                    if (filter != null && StringUtils.hasText(filter.getName())) {
-                        return scenario.getName().contains(filter.getName());
-                    }
-                    return true;
-                })
-                .sorted(Comparator.comparing(Scenario::getName)).toList();
+            .filter(scenario -> {
+                if (filter != null && StringUtils.hasText(filter.getName())) {
+                    return scenario.name().contains(filter.getName());
+                }
+                return true;
+            })
+            .sorted(Comparator.comparing(Scenario::name)).toList();
     }
 
     /**
@@ -104,9 +91,23 @@ public class ScenarioController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/launch/{name}")
     public Long launchScenario(
-            @PathVariable("name") String name,
-            @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
+        @PathVariable("name") String name,
+        @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
         return scenarioExecutionService.run(name, scenarioParameters);
+    }
+
+    public record Scenario(String name, ScenarioController.Scenario.ScenarioType type) {
+        public enum ScenarioType {
+            STARTER,
+            MESSAGE_TRIGGERED
+        }
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class ScenarioFilter {
+        private String name;
     }
 
 }

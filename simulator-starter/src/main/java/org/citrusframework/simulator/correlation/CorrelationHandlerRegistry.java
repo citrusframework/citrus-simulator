@@ -16,19 +16,18 @@ public class CorrelationHandlerRegistry {
     /**
      * Map of active handlers
      */
-    private ConcurrentMap<CorrelationHandler, TestContext> registeredHandlers = new ConcurrentHashMap<>();
-
-    /**
-     * Maximum capacity of active tests
-     */
-    private int queueCapacity = 1000;
+    private final ConcurrentMap<CorrelationHandler, TestContext> registeredHandlers = new ConcurrentHashMap<>();
 
     /**
      * Add new correlation manager to registry.
      * @param handler
      */
     public void register(CorrelationHandler handler, TestContext context) {
-        if (!registeredHandlers.keySet().contains(handler)) {
+        register(handler, context, 1000);
+    }
+
+    public void register(CorrelationHandler handler, TestContext context, int queueCapacity) {
+        if (!registeredHandlers.containsKey(handler)) {
             registeredHandlers.put(handler, context);
         }
 

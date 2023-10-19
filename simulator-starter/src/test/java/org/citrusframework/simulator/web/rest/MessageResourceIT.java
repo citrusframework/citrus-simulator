@@ -69,14 +69,13 @@ class MessageResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Message createEntity(EntityManager entityManager) {
-        Message message = Message.builder()
+        return Message.builder()
             .direction(DEFAULT_DIRECTION)
             .payload(DEFAULT_PAYLOAD)
             .citrusMessageId(DEFAULT_CITRUS_MESSAGE_ID)
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
             .build();
-        return message;
     }
 
     /**
@@ -86,14 +85,13 @@ class MessageResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Message createUpdatedEntity(EntityManager entityManager) {
-        Message message = Message.builder()
+        return Message.builder()
             .direction(UPDATED_DIRECTION)
             .payload(UPDATED_PAYLOAD)
             .citrusMessageId(UPDATED_CITRUS_MESSAGE_ID)
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE)
             .build();
-        return message;
     }
 
     @BeforeEach

@@ -16,10 +16,9 @@
 
 package org.citrusframework.simulator.scenario;
 
+import jakarta.annotation.PostConstruct;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * @author Christoph Deppisch
@@ -32,7 +31,7 @@ public abstract class AbstractSimulatorScenario implements SimulatorScenario, Co
     private ScenarioEndpoint scenarioEndpoint;
 
     @PostConstruct
-    public void init() throws Exception {
+    public void init() {
         scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
     }
 

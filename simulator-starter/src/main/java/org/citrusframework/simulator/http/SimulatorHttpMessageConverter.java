@@ -1,9 +1,5 @@
 package org.citrusframework.simulator.http;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import org.citrusframework.http.controller.HttpMessageController;
 import org.citrusframework.http.message.DelegatingHttpEntityMessageConverter;
 import org.springframework.http.HttpInputMessage;
@@ -12,6 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.GenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Special generic message converter only applies to {@link HttpMessageController} context class when reading data.
@@ -63,7 +63,7 @@ public class SimulatorHttpMessageConverter implements GenericHttpMessageConverte
     }
 
     @Override
-    public Object read(Class clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    public Object read(Class clazz, HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
         throw new IllegalStateException("Illegal read operation on simulator message converter.");
     }
 

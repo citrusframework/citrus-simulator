@@ -16,9 +16,6 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.DefaultMessage;
@@ -33,6 +30,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,12 +44,12 @@ class ScenarioMappersTest {
     private static final String DEFAULT_SCENARIO = "default";
 
     @Test
-    void testMappingChain() throws Exception {
+    void testMappingChain() {
         ScenarioMappers mapperChain = ScenarioMappers.of(new HeaderMapper("foo"),
-                new ContentBasedXPathScenarioMapper().addXPathExpression("/foo"),
-                new ContentBasedJsonPathScenarioMapper().addJsonPathExpression("$.foo"),
-                new HttpRequestPathScenarioMapper(),
-                new HttpRequestAnnotationScenarioMapper(),
+            new ContentBasedXPathScenarioMapper().addXPathExpression("/foo"),
+            new ContentBasedJsonPathScenarioMapper().addJsonPathExpression("$.foo"),
+            new HttpRequestPathScenarioMapper(),
+            new HttpRequestAnnotationScenarioMapper(),
             new HeaderMapper("bar"));
 
         SimulatorConfigurationProperties configurationProperties = new SimulatorConfigurationProperties();
@@ -63,9 +63,9 @@ class ScenarioMappersTest {
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("foo").setHeader("foo", "something")), DEFAULT_SCENARIO);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage().setHeader("foo", FooScenario.SCENARIO_NAME)), FooScenario.SCENARIO_NAME);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage().setHeader("foo", FooScenario.SCENARIO_NAME)
-                                                                          .setHeader("bar", BarScenario.SCENARIO_NAME)), FooScenario.SCENARIO_NAME);
+            .setHeader("bar", BarScenario.SCENARIO_NAME)), FooScenario.SCENARIO_NAME);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage().setHeader("foo", "something")
-                                                                          .setHeader("bar", BarScenario.SCENARIO_NAME)), BarScenario.SCENARIO_NAME);
+            .setHeader("bar", BarScenario.SCENARIO_NAME)), BarScenario.SCENARIO_NAME);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage().setHeader("bar", BarScenario.SCENARIO_NAME)), BarScenario.SCENARIO_NAME);
 
         assertEquals(mapperChain.getMappingKey(new HttpMessage().path("/other").method(HttpMethod.GET).setHeader("foo", FooScenario.SCENARIO_NAME)), FooScenario.SCENARIO_NAME);
@@ -74,12 +74,12 @@ class ScenarioMappersTest {
 
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("{ \"foo\": \"something\" }")), DEFAULT_SCENARIO);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("{ \"foo\": \"something\" }")), DEFAULT_SCENARIO);
-        assertEquals(mapperChain.getMappingKey(new DefaultMessage("{ \"bar\": \"" + FooScenario.SCENARIO_NAME  + "\" }")), DEFAULT_SCENARIO);
+        assertEquals(mapperChain.getMappingKey(new DefaultMessage("{ \"bar\": \"" + FooScenario.SCENARIO_NAME + "\" }")), DEFAULT_SCENARIO);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("{ \"foo\": \"" + FooScenario.SCENARIO_NAME + "\" }")), FooScenario.SCENARIO_NAME);
         assertEquals(mapperChain.getMappingKey(new HttpMessage("{ \"foo\": \"" + FooScenario.SCENARIO_NAME + "\" }").path("/other").method(HttpMethod.GET)), FooScenario.SCENARIO_NAME);
 
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("<foo>something</foo>")), DEFAULT_SCENARIO);
-        assertEquals(mapperChain.getMappingKey(new DefaultMessage("<bar>" + FooScenario.SCENARIO_NAME  + "</bar>")), DEFAULT_SCENARIO);
+        assertEquals(mapperChain.getMappingKey(new DefaultMessage("<bar>" + FooScenario.SCENARIO_NAME + "</bar>")), DEFAULT_SCENARIO);
         assertEquals(mapperChain.getMappingKey(new DefaultMessage("<foo>" + FooScenario.SCENARIO_NAME + "</foo>")), FooScenario.SCENARIO_NAME);
         assertEquals(mapperChain.getMappingKey(new HttpMessage("<foo>" + FooScenario.SCENARIO_NAME + "</foo>").path("/other").method(HttpMethod.GET)), FooScenario.SCENARIO_NAME);
 
@@ -103,19 +103,13 @@ class ScenarioMappersTest {
         assertThrows(CitrusRuntimeException.class, () -> mapperChain.getMappingKey(new DefaultMessage()));
     }
 
-    private static class HeaderMapper implements ScenarioMapper {
-
-        private final String name;
-
-        private HeaderMapper(String name) {
-            this.name = name;
-        }
+    private record HeaderMapper(String name) implements ScenarioMapper {
 
         @Override
         public String extractMappingKey(Message request) {
             return Optional.ofNullable(request.getHeader(name))
-                        .map(Object::toString)
-                        .orElseThrow(CitrusRuntimeException::new);
+                .map(Object::toString)
+                .orElseThrow(CitrusRuntimeException::new);
         }
     }
 
