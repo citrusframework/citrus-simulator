@@ -30,7 +30,7 @@ class TemplateHelperTest {
 
     @MethodSource
     @ParameterizedTest
-    void getFileResource(String basePath, String fileName, String fileExtension, boolean shouldExist) throws Exception {
+    void getFileResource(String basePath, String fileName, String fileExtension, boolean shouldExist) {
         final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
         final Resource fileResource = testling.getFileResource(fileName, fileExtension);
 
@@ -51,7 +51,7 @@ class TemplateHelperTest {
 
     @MethodSource
     @ParameterizedTest
-    void getXmlMessageTemplate(String basePath, String fileName, String expectedContent) throws Exception {
+    void getXmlMessageTemplate(String basePath, String fileName, String expectedContent) {
         final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
         try {
             final String content = testling.getXmlMessageTemplate(fileName);
@@ -75,7 +75,7 @@ class TemplateHelperTest {
 
     @MethodSource
     @ParameterizedTest
-    void getJsonMessageTemplate(String basePath, String fileName, String expectedContent) throws Exception {
+    void getJsonMessageTemplate(String basePath, String fileName, String expectedContent) {
         final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
         try {
             final String content = testling.getJsonMessageTemplate(fileName);

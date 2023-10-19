@@ -16,13 +16,13 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
+import io.swagger.models.Operation;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationPropertiesAware;
 import org.citrusframework.simulator.http.HttpOperationScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioListAware;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
-import io.swagger.models.Operation;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -99,7 +99,7 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         scenarioMapperList.stream()
                 .filter(mapper -> mapper instanceof ScenarioListAware)
                 .map(mapper -> (ScenarioListAware) mapper)

@@ -92,36 +92,24 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
         scenario.name(operation.getOperationId());
         scenario.$(echo("Generated scenario from swagger operation: " + operation.getOperationId()));
 
-        HttpServerRequestActionBuilder requestBuilder;
-        switch (method) {
-            case GET:
-                requestBuilder = scenario.http()
+        HttpServerRequestActionBuilder requestBuilder = switch (method) {
+            case GET -> scenario.http()
                     .receive()
                     .get();
-                break;
-            case POST:
-                requestBuilder = scenario.http()
+            case POST -> scenario.http()
                     .receive()
                     .post();
-                break;
-            case PUT:
-                requestBuilder = scenario.http()
+            case PUT -> scenario.http()
                     .receive()
                     .put();
-                break;
-            case HEAD:
-                requestBuilder = scenario.http()
+            case HEAD -> scenario.http()
                     .receive()
                     .head();
-                break;
-            case DELETE:
-                requestBuilder = scenario.http()
+            case DELETE -> scenario.http()
                     .receive()
                     .delete();
-                break;
-            default:
-                throw new SimulatorException("Unsupported request method: " + method.name());
-        }
+            default -> throw new SimulatorException("Unsupported request method: " + method.name());
+        };
 
         requestBuilder
             .message()

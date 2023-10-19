@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.http;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.citrusframework.http.controller.HttpMessageController;
 import org.citrusframework.message.RawMessage;
 import org.citrusframework.report.MessageListeners;
@@ -25,8 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -50,14 +50,14 @@ public class InterceptorHttp implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
         if (messageListeners != null) {
             messageListeners.onOutboundMessage(new RawMessage(getResponseContent(request, response, handler)), null);
         }
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
     }
 

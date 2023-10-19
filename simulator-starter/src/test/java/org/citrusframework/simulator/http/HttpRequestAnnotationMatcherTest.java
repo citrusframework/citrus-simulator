@@ -215,7 +215,7 @@ class HttpRequestAnnotationMatcherTest {
 
     @MethodSource
     @ParameterizedTest
-    void checkRequestPathSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean exactMatch, boolean expectedResult) throws Exception {
+    void checkRequestPathSupported(RequestMapping requestMapping, HttpMessage httpMessage, boolean exactMatch, boolean expectedResult) {
         boolean actual = fixture.checkRequestPathSupported(httpMessage, requestMapping, exactMatch)
             && fixture.checkRequestMethodSupported(httpMessage, requestMapping)
             && fixture.checkRequestQueryParamsSupported(httpMessage, requestMapping);

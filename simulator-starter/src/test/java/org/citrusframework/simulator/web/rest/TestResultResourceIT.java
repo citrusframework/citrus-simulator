@@ -79,7 +79,7 @@ class TestResultResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static TestResult createEntity(EntityManager entityManager) {
-        TestResult testResult = TestResult.builder()
+        return TestResult.builder()
             .status(DEFAULT_STATUS.getId())
             .testName(DEFAULT_TEST_NAME)
             .className(DEFAULT_CLASS_NAME)
@@ -89,7 +89,6 @@ class TestResultResourceIT {
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
             .build();
-        return testResult;
     }
 
     @BeforeEach

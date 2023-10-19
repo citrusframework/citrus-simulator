@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.Endpoint;
@@ -26,7 +27,6 @@ import org.citrusframework.message.Message;
 import org.citrusframework.messaging.Producer;
 import org.citrusframework.messaging.ReplyProducer;
 import org.citrusframework.simulator.exception.SimulatorException;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -35,7 +35,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Christoph Deppisch
@@ -186,14 +191,14 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (autoStart) {
             start();
         }
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         stop();
     }
 
