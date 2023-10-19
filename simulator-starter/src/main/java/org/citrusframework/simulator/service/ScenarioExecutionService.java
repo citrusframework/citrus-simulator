@@ -26,6 +26,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.citrusframework.Citrus;
 import org.citrusframework.annotations.CitrusAnnotations;
 import org.citrusframework.context.TestContext;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
@@ -55,18 +56,22 @@ public class ScenarioExecutionService implements DisposableBean, ApplicationList
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
 
-    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
-            .setDaemon(true)
-            .setNameFormat("execution-svc-thread-%d")
-            .build();
-
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10, threadFactory);
+    private final ExecutorService executorService;
 
     @Autowired
-    public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext, Citrus citrus) {
+    public ScenarioExecutionService(ActivityService activityService, ApplicationContext applicationContext,
+                                    Citrus citrus, SimulatorConfigurationProperties properties) {
         this.activityService = activityService;
         this.applicationContext = applicationContext;
         this.citrus = citrus;
+
+        this.executorService = Executors.newFixedThreadPool(
+            properties.getExecutorThreads(),
+            new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("execution-svc-thread-%d")
+                .build()
+        );
     }
 
     /**

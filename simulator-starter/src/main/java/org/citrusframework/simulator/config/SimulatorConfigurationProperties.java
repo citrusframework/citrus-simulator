@@ -46,6 +46,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
     private static final String SIMULATOR_EXCEPTION_DELAY_PROPERTY = "citrus.simulator.exception.delay";
     private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
+    private static final String SIMULATOR_EXECUTOR_THREADS_PROPERTY = "citrus.simulator.executor.threads";
+    private static final String SIMULATOR_EXECUTOR_THREADS_ENV = "CITRUS_SIMULATOR_EXECUTOR_THREADS";
     private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary";
     private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY";
     private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary";
@@ -88,6 +90,12 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private Long exceptionDelay = 5000L;
 
     /**
+     * Defines how many scenarios the simulator can run in parallel.
+     * Defaults to 10.
+     */
+    private int executorThreads = 10;
+
+    /**
      * Optional inbound XML data dictionary mapping file which gets automatically loaded when default inbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
      */
     private String inboundXmlDictionary = "inbound-xml-dictionary.xml";
@@ -124,6 +132,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
         templateValidation = Boolean.parseBoolean(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
         exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
+        executorThreads = Integer.parseInt(env.getProperty(SIMULATOR_EXECUTOR_THREADS_PROPERTY, env.getProperty(SIMULATOR_EXECUTOR_THREADS_ENV, Integer.toString(executorThreads))));
         inboundXmlDictionary = env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
         outboundXmlDictionary = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
         inboundJsonDictionary = env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
@@ -242,6 +251,21 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     }
 
     /**
+     * Gets the number of threads available to the scenario executor.
+     */
+    public int getExecutorThreads() {
+        return executorThreads;
+    }
+
+    /**
+     * Sets the number of threads for parallel scenario execution.
+     * @param executorThreads
+     */
+    public void setExecutorThreads(int executorThreads) {
+        this.executorThreads = executorThreads;
+    }
+
+    /**
      * Gets the inboundXmlDictionary.
      *
      * @return
@@ -339,6 +363,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
                 ", defaultScenario='" + defaultScenario + '\'' +
                 ", defaultTimeout=" + defaultTimeout +
                 ", exceptionDelay=" + exceptionDelay +
+                ", executorThreads=" + executorThreads +
                 ", templateValidation=" + templateValidation +
                 ", inboundXmlDictionary=" + inboundXmlDictionary +
                 ", outboundXmlDictionary=" + outboundXmlDictionary +
