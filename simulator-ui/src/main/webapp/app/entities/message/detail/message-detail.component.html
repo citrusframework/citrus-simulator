@@ -26,6 +26,12 @@
         <dd>
           <span>{{ message.citrusMessageId }}</span>
         </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.message.scenarioExecution">Scenario Execution</span></dt>
+        <dd>
+          <div *ngIf="message.scenarioExecutionId">
+            <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']">{{ message.scenarioName }}</a>
+          </div>
+        </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span></dt>
         <dd>
           <span>{{ message.createdDate | formatMediumDatetime }}</span>

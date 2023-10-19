@@ -9,6 +9,7 @@
         "main": "Entities",
         "message": "Message",
         "messageHeader": "Message Header",
+        "scenarioExecution": "Scenario Execution",
         "testParameter": "Test Parameter",
         "testResult": "Test Result",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"

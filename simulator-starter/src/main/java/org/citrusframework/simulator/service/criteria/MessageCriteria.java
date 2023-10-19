@@ -35,6 +35,10 @@ public class MessageCriteria implements Serializable, Criteria {
 
     private StringFilter citrusMessageId;
 
+    private LongFilter headersId;
+
+    private LongFilter scenarioExecutionId;
+
     private InstantFilter createdDate;
 
     private InstantFilter lastModifiedDate;
@@ -49,6 +53,8 @@ public class MessageCriteria implements Serializable, Criteria {
         this.direction = other.direction == null ? null : other.direction.copy();
         this.payload = other.payload == null ? null : other.payload.copy();
         this.citrusMessageId = other.citrusMessageId == null ? null : other.citrusMessageId.copy();
+        this.headersId = other.headersId == null ? null : other.headersId.copy();
+        this.scenarioExecutionId = other.scenarioExecutionId == null ? null : other.scenarioExecutionId.copy();
         this.createdDate = other.createdDate == null ? null : other.createdDate.copy();
         this.lastModifiedDate = other.lastModifiedDate == null ? null : other.lastModifiedDate.copy();
         this.distinct = other.distinct;
@@ -63,7 +69,7 @@ public class MessageCriteria implements Serializable, Criteria {
         return messageId;
     }
 
-    public LongFilter id() {
+    public LongFilter messageId() {
         if (messageId == null) {
             messageId = new LongFilter();
         }
@@ -119,6 +125,36 @@ public class MessageCriteria implements Serializable, Criteria {
         this.citrusMessageId = citrusMessageId;
     }
 
+    public LongFilter getHeadersId() {
+        return headersId;
+    }
+
+    public LongFilter headersId() {
+        if (headersId == null) {
+            headersId = new LongFilter();
+        }
+        return headersId;
+    }
+
+    public void setHeadersId(LongFilter headersId) {
+        this.headersId = headersId;
+    }
+
+    public LongFilter getScenarioExecutionId() {
+        return scenarioExecutionId;
+    }
+
+    public LongFilter scenarioExecutionId() {
+        if (scenarioExecutionId == null) {
+            scenarioExecutionId = new LongFilter();
+        }
+        return scenarioExecutionId;
+    }
+
+    public void setScenarioExecutionId(LongFilter scenarioExecutionId) {
+        this.scenarioExecutionId = scenarioExecutionId;
+    }
+
     public InstantFilter getCreatedDate() {
         return createdDate;
     }
@@ -171,6 +207,8 @@ public class MessageCriteria implements Serializable, Criteria {
                 Objects.equals(direction, that.direction) &&
                 Objects.equals(payload, that.payload) &&
                 Objects.equals(citrusMessageId, that.citrusMessageId) &&
+                Objects.equals(headersId, that.headersId) &&
+                Objects.equals(scenarioExecutionId, that.scenarioExecutionId) &&
                 Objects.equals(createdDate, that.createdDate) &&
                 Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
                 Objects.equals(distinct, that.distinct)
@@ -179,7 +217,7 @@ public class MessageCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(messageId, direction, payload, citrusMessageId, createdDate, lastModifiedDate, distinct);
+        return Objects.hash(messageId, direction, payload, citrusMessageId, headersId, scenarioExecutionId, createdDate, lastModifiedDate, distinct);
     }
 
     // prettier-ignore
@@ -190,6 +228,8 @@ public class MessageCriteria implements Serializable, Criteria {
             (direction != null ? "direction=" + direction + ", " : "") +
             (payload != null ? "payload=" + payload + ", " : "") +
             (citrusMessageId != null ? "citrusMessageId=" + citrusMessageId + ", " : "") +
+            (headersId != null ? "headersId=" + headersId + ", " : "") +
+            (scenarioExecutionId != null ? "scenarioExecutionId=" + scenarioExecutionId + ", " : "") +
             (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
             (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +

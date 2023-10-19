@@ -114,7 +114,7 @@ class MessageHeaderResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void beforeEachSetup() {
         messageHeader = createEntity(entityManager);
     }
 

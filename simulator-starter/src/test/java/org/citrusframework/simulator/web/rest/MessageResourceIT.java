@@ -3,6 +3,8 @@ package org.citrusframework.simulator.web.rest;
 import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.MessageHeader;
+import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +97,7 @@ class MessageResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void beforeEachSetup() {
         message = createEntity(entityManager);
     }
 
@@ -322,6 +324,50 @@ class MessageResourceIT {
 
         // Get all the messageList where citrusMessageId does not contain UPDATED_CITRUS_MESSAGE_ID
         defaultMessageShouldBeFound("citrusMessageId.doesNotContain=" + UPDATED_CITRUS_MESSAGE_ID);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessagesByHeadersIsEqualToSomething() throws Exception {
+        MessageHeader messageHeader;
+        if (TestUtil.findAll(entityManager, MessageHeader.class).isEmpty()) {
+            messageRepository.saveAndFlush(message);
+            messageHeader = MessageHeaderResourceIT.createEntity(entityManager);
+        } else {
+            messageHeader = TestUtil.findAll(entityManager, MessageHeader.class).get(0);
+        }
+        entityManager.persist(messageHeader);
+        entityManager.flush();
+        message.addHeader(messageHeader);
+        messageRepository.saveAndFlush(message);
+        Long headersId = messageHeader.getHeaderId();
+        // Get all the messageList where headers equals to headersId
+        defaultMessageShouldBeFound("headersId.equals=" + headersId);
+
+        // Get all the messageList where headers equals to (headersId + 1)
+        defaultMessageShouldNotBeFound("headersId.equals=" + (headersId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllMessagesByScenarioExecutionIsEqualToSomething() throws Exception {
+        ScenarioExecution scenarioExecution;
+        if (TestUtil.findAll(entityManager, ScenarioExecution.class).isEmpty()) {
+            messageRepository.saveAndFlush(message);
+            scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
+        } else {
+            scenarioExecution = TestUtil.findAll(entityManager, ScenarioExecution.class).get(0);
+        }
+        entityManager.persist(scenarioExecution);
+        entityManager.flush();
+        message.setScenarioExecution(scenarioExecution);
+        messageRepository.saveAndFlush(message);
+        Long scenarioExecutionId = scenarioExecution.getExecutionId();
+        // Get all the messageList where scenarioExecution equals to scenarioExecutionId
+        defaultMessageShouldBeFound("scenarioExecutionId.equals=" + scenarioExecutionId);
+
+        // Get all the messageList where scenarioExecution equals to (scenarioExecutionId + 1)
+        defaultMessageShouldNotBeFound("scenarioExecutionId.equals=" + (scenarioExecutionId + 1));
     }
 
     @Test

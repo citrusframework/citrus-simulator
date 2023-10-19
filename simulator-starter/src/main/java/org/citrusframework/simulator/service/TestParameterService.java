@@ -29,7 +29,7 @@ public interface TestParameterService {
     /**
      * Get the "id" testParameter.
      *
-     * @param id the id of the entity.
+     * @param testResultId the id of the entity.
      * @return the entity.
      */
     Optional<TestParameter> findOne(Long testResultId, String key);

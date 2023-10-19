@@ -15,6 +15,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./message-header/message-header.routes'),
       },
       {
+        path: 'scenario-execution',
+        data: { pageTitle: 'citrusSimulatorApp.scenarioExecution.home.title' },
+        loadChildren: () => import('./scenario-execution/scenario-execution.routes'),
+      },
+      {
         path: 'test-parameter',
         data: { pageTitle: 'citrusSimulatorApp.testParameter.home.title' },
         loadChildren: () => import('./test-parameter/test-parameter.routes'),

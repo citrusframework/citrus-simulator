@@ -16,9 +16,9 @@
       "errorMessage": "Error Message",
       "failureStack": "Failure Stack",
       "failureType": "Failure Type",
+      "testParameter": "Test Parameter",
       "createdDate": "Created Date",
-      "lastModifiedDate": "Last Modified Date",
-      "testParameter": "Test Parameter"
+      "lastModifiedDate": "Last Modified Date"
     }
   }
 }

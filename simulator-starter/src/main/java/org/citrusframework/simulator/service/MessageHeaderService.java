@@ -19,14 +19,6 @@ public interface MessageHeaderService {
     MessageHeader save(MessageHeader messageHeader);
 
     /**
-     * Updates a messageHeader.
-     *
-     * @param messageHeader the entity to update.
-     * @return the persisted entity.
-     */
-    MessageHeader update(MessageHeader messageHeader);
-
-    /**
      * Get all the messageHeaders.
      *
      * @param pageable the pagination information.
@@ -45,15 +37,8 @@ public interface MessageHeaderService {
     /**
      * Get the "id" messageHeader.
      *
-     * @param id the id of the entity.
+     * @param headerId the id of the entity.
      * @return the entity.
      */
-    Optional<MessageHeader> findOne(Long id);
-
-    /**
-     * Delete the "id" messageHeader.
-     *
-     * @param id the id of the entity.
-     */
-    void delete(Long id);
+    Optional<MessageHeader> findOne(Long headerId);
 }

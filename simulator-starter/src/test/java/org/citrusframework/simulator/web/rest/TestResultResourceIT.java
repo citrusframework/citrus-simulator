@@ -92,7 +92,7 @@ class TestResultResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void beforeEachSetup() {
         testResult = createEntity(entityManager);
     }
 

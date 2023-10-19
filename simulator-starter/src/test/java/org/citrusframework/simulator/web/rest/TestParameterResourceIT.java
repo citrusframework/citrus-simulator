@@ -89,7 +89,7 @@ class TestParameterResourceIT {
     }
 
     @BeforeEach
-    public void initTest() {
+    void beforeEachSetup() {
         testParameter = createEntity(entityManager);
     }
 

@@ -11,14 +11,14 @@ const messageHeaderRoute: Routes = [
     component: MessageHeaderComponent,
     data: {
       defaultSort: 'headerId,' + ASC,
-    }
+    },
   },
   {
     path: ':headerId/view',
     component: MessageHeaderDetailComponent,
     resolve: {
       messageHeader: MessageHeaderResolve,
-    }
+    },
   },
 ];
 

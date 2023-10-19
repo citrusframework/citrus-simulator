@@ -32,7 +32,23 @@
   "name": "Message",
   "pagination": "pagination",
   "readOnly": true,
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityName": "messageHeader",
+      "otherEntityRelationshipName": "message",
+      "relationshipName": "headers",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "scenarioName",
+      "otherEntityName": "scenarioExecution",
+      "relationshipName": "scenarioExecution",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": ["required"]
+    }
+  ],
   "searchEngine": "no",
   "service": "serviceImpl"
 }
