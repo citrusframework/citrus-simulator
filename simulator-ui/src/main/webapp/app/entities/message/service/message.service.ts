@@ -11,8 +11,6 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { IMessage, NewMessage } from '../message.model';
 
-export type PartialUpdateMessage = Partial<IMessage> & Pick<IMessage, 'messageId'>;
-
 type RestOf<T extends IMessage | NewMessage> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
   createdDate?: string | null;
   lastModifiedDate?: string | null;

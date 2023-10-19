@@ -1,7 +1,5 @@
 package org.citrusframework.simulator.service;
 
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Root;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.Message_;
 import org.citrusframework.simulator.repository.MessageRepository;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Service for executing complex queries for {@link Message} entities in the database.

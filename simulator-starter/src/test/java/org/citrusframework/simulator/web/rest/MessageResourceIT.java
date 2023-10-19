@@ -68,7 +68,7 @@ class MessageResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Message createEntity(EntityManager em) {
+    public static Message createEntity(EntityManager entityManager) {
         Message message = Message.builder()
             .direction(DEFAULT_DIRECTION)
             .payload(DEFAULT_PAYLOAD)
@@ -85,7 +85,7 @@ class MessageResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Message createUpdatedEntity(EntityManager em) {
+    public static Message createUpdatedEntity(EntityManager entityManager) {
         Message message = Message.builder()
             .direction(UPDATED_DIRECTION)
             .payload(UPDATED_PAYLOAD)
@@ -145,16 +145,16 @@ class MessageResourceIT {
         // Initialize the database
         messageRepository.saveAndFlush(message);
 
-        Long id = message.getMessageId();
+        Long messageId = message.getMessageId();
 
-        defaultMessageShouldBeFound("messageId.equals=" + id);
-        defaultMessageShouldNotBeFound("messageId.notEquals=" + id);
+        defaultMessageShouldBeFound("messageId.equals=" + messageId);
+        defaultMessageShouldNotBeFound("messageId.notEquals=" + messageId);
 
-        defaultMessageShouldBeFound("messageId.greaterThanOrEqual=" + id);
-        defaultMessageShouldNotBeFound("messageId.greaterThan=" + id);
+        defaultMessageShouldBeFound("messageId.greaterThanOrEqual=" + messageId);
+        defaultMessageShouldNotBeFound("messageId.greaterThan=" + messageId);
 
-        defaultMessageShouldBeFound("messageId.lessThanOrEqual=" + id);
-        defaultMessageShouldNotBeFound("messageId.lessThan=" + id);
+        defaultMessageShouldBeFound("messageId.lessThanOrEqual=" + messageId);
+        defaultMessageShouldNotBeFound("messageId.lessThan=" + messageId);
     }
 
     @Test

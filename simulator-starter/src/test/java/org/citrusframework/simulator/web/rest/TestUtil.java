@@ -20,17 +20,17 @@ public class TestUtil {
     /**
      * Executes a query on the EntityManager finding all stored objects.
      *
-     * @param <T>   The type of objects to be searched
-     * @param em    The instance of the EntityManager
-     * @param clazz The class type to be searched
+     * @param <T>           The type of objects to be searched
+     * @param entityManager The instance of the EntityManager
+     * @param clazz         The class type to be searched
      * @return A list of all found objects
      */
-    public static <T> List<T> findAll(EntityManager em, Class<T> clazz) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+    public static <T> List<T> findAll(EntityManager entityManager, Class<T> clazz) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(clazz);
         Root<T> rootEntry = cq.from(clazz);
         CriteriaQuery<T> all = cq.select(rootEntry);
-        TypedQuery<T> allQuery = em.createQuery(all);
+        TypedQuery<T> allQuery = entityManager.createQuery(all);
         return allQuery.getResultList();
     }
 

@@ -196,10 +196,6 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
 
         private final Message message = new Message();
 
-        public Message build() {
-            return message;
-        }
-
         @Override
         protected Message getEntity() {
             return message;

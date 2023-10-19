@@ -69,5 +69,9 @@ public abstract class AbstractAuditingEntity<T, I> implements Serializable {
         }
 
         protected abstract E getEntity();
+
+        public E build() {
+            return getEntity();
+        }
     }
 }

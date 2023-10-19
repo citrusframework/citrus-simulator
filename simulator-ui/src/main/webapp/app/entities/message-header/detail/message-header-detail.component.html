@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="messageHeader">
+      <h2 data-cy="messageHeaderDetailsHeading">
+        <span jhiTranslate="citrusSimulatorApp.messageHeader.detail.title">Message Header</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.id">ID</span></dt>
+        <dd>
+          <span>{{ messageHeader.headerId }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.name">Name</span></dt>
+        <dd>
+          <span>{{ messageHeader.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.value">Value</span></dt>
+        <dd>
+          <span>{{ messageHeader.value }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.message">Message</span></dt>
+        <dd>
+          <div *ngIf="messageHeader.message">
+            <a [routerLink]="['/message', messageHeader.message.messageId, 'view']">{{ messageHeader.message.citrusMessageId }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>
