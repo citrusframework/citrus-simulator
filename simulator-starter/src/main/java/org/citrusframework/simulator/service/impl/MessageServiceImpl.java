@@ -34,12 +34,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message update(Message message) {
-        log.debug("Request to update Message : {}", message);
-        return messageRepository.save(message);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Page<Message> findAll(Pageable pageable) {
         log.debug("Request to get all Messages");
@@ -48,14 +42,15 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Message> findOne(Long id) {
-        log.debug("Request to get Message : {}", id);
-        return messageRepository.findById(id);
+    public Page<Message> findAllWithEagerRelationships(Pageable pageable) {
+        log.debug("Request to get all Messages with eager relationships");
+        return messageRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
-    public void delete(Long id) {
-        log.debug("Request to delete Message : {}", id);
-        messageRepository.deleteById(id);
+    @Transactional(readOnly = true)
+    public Optional<Message> findOne(Long messageId) {
+        log.debug("Request to get Message : {}", messageId);
+        return messageRepository.findOneWithEagerRelationships(messageId);
     }
 }

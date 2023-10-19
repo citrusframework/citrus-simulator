@@ -1,0 +1,18 @@
+{
+  "citrusSimulatorApp": {
+    "messageHeader": {
+      "home": {
+        "title": "Message Headers",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Message Headers found"
+      },
+      "detail": {
+        "title": "Message Header"
+      },
+      "id": "ID",
+      "name": "Name",
+      "value": "Value",
+      "message": "Message"
+    }
+  }
+}

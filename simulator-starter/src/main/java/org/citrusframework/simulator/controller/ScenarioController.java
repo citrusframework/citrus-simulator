@@ -19,7 +19,7 @@ package org.citrusframework.simulator.controller;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.service.ScenarioExecutionService;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,12 +37,12 @@ import java.util.List;
 @RequestMapping("api/scenario")
 public class ScenarioController {
 
-    private final ScenarioExecutionService scenarioExecutionService;
+    private final ScenarioExecutorService scenarioExecutorService;
     private final ScenarioLookupService scenarioLookupService;
     private final List<Scenario> scenarios;
 
-    public ScenarioController(ScenarioExecutionService scenarioExecutionService, ScenarioLookupService scenarioLookupService) {
-        this.scenarioExecutionService = scenarioExecutionService;
+    public ScenarioController(ScenarioExecutorService scenarioExecutorService, ScenarioLookupService scenarioLookupService) {
+        this.scenarioExecutorService = scenarioExecutorService;
         this.scenarioLookupService = scenarioLookupService;
         this.scenarios = getScenarioList(scenarioLookupService);
     }
@@ -93,7 +93,7 @@ public class ScenarioController {
     public Long launchScenario(
         @PathVariable("name") String name,
         @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
-        return scenarioExecutionService.run(name, scenarioParameters);
+        return scenarioExecutorService.run(name, scenarioParameters);
     }
 
     public record Scenario(String name, ScenarioController.Scenario.ScenarioType type) {

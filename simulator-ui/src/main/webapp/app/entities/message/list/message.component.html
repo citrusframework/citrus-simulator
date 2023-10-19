@@ -48,6 +48,12 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
+          <th scope="col" jhiSortBy="scenarioExecution.id">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.message.scenarioExecution">Scenario Execution</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="createdDate">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span>
@@ -71,10 +77,30 @@
           <td>{{ message.direction }}</td>
           <td>{{ message.payload }}</td>
           <td>{{ message.citrusMessageId }}</td>
+          <td>
+            <div *ngIf="message.scenarioExecutionId">
+              <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']">{{ message.scenarioName }}</a>
+            </div>
+          </td>
           <td>{{ message.createdDate | formatMediumDatetime }}</td>
           <td>{{ message.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
             <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/message-header']"
+                [queryParams]="{ 'filter[messageId.in]': message.messageId }"
+                class="btn btn-info btn-sm"
+                data-cy="filterOtherEntityButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
+                  >Show Message Header</span
+                >
+              </button>
               <button
                 type="submit"
                 [routerLink]="['/message', message.messageId, 'view']"

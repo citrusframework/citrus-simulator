@@ -57,12 +57,12 @@ class TestResultServiceImplTest {
     @Test
     void testFindAll() {
         Pageable pageable = mock(Pageable.class);
-        Page<TestResult> page = mock(Page.class);
-        doReturn(page).when(testResultRepository).findAll(pageable);
+        Page<TestResult> mockPage = mock(Page.class);
+        doReturn(mockPage).when(testResultRepository).findAll(pageable);
 
         Page<TestResult> result = fixture.findAll(pageable);
 
-        assertEquals(page, result);
+        assertEquals(mockPage, result);
     }
 
     @Test

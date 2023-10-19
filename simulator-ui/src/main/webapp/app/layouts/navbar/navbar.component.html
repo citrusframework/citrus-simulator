@@ -69,13 +69,13 @@
             <li>
               <a
                 class="dropdown-item"
-                routerLink="/test-parameter"
+                routerLink="/scenario-execution"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
-                <span jhiTranslate="global.menu.entities.testParameter">Test Parameter</span>
+                <span jhiTranslate="global.menu.entities.scenarioExecution">Scenario Execution</span>
               </a>
             </li>
             <li>
@@ -88,6 +88,18 @@
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.testResult">Test Result</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/test-parameter"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.entities.testParameter">Test Parameter</span>
               </a>
             </li>
             <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->

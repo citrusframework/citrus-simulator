@@ -19,14 +19,6 @@ public interface MessageService {
     Message save(Message message);
 
     /**
-     * Updates a message.
-     *
-     * @param message the entity to update.
-     * @return the persisted entity.
-     */
-    Message update(Message message);
-
-    /**
      * Get all the messages.
      *
      * @param pageable the pagination information.
@@ -35,17 +27,18 @@ public interface MessageService {
     Page<Message> findAll(Pageable pageable);
 
     /**
-     * Get the "id" message.
+     * Get all the messages with eager load of many-to-many relationships.
      *
-     * @param id the id of the entity.
-     * @return the entity.
+     * @param pageable the pagination information.
+     * @return the list of entities.
      */
-    Optional<Message> findOne(Long id);
+    Page<Message> findAllWithEagerRelationships(Pageable pageable);
 
     /**
-     * Delete the "id" message.
+     * Get the "id" message.
      *
-     * @param id the id of the entity.
+     * @param messageId the id of the entity.
+     * @return the entity.
      */
-    void delete(Long id);
+    Optional<Message> findOne(Long messageId);
 }

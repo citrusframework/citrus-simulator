@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -81,9 +83,13 @@ public class ScenarioExecution implements Serializable {
     private List<ScenarioAction> scenarioActions = new ArrayList<>();
 
     @OrderBy("messageId ASC")
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "headers", "scenarioExecution" }, allowSetters = true)
     private List<Message> scenarioMessages = new ArrayList<>();
+
+    public static ScenarioExecutionBuilder builder() {
+        return new ScenarioExecutionBuilder();
+    }
 
     public Long getExecutionId() {
         return executionId;
@@ -220,6 +226,43 @@ public class ScenarioExecution implements Serializable {
     public static class ErrorMessageTruncationException extends Exception {
         public ErrorMessageTruncationException(String errorMessage, Exception exception) {
             super(errorMessage, exception);
+        }
+    }
+
+    public static class ScenarioExecutionBuilder {
+
+        private final ScenarioExecution scenarioExecution = new ScenarioExecution();
+
+        private ScenarioExecutionBuilder(){
+            // Static access through entity
+        }
+
+        public ScenarioExecution build(){
+            return scenarioExecution;
+        }
+
+        public ScenarioExecutionBuilder startDate(Instant startDate) {
+            scenarioExecution.setStartDate(startDate);
+            return this;
+        }
+        public ScenarioExecutionBuilder endDate(Instant endDate) {
+            scenarioExecution.setEndDate(endDate);
+            return this;
+        }
+
+        public ScenarioExecutionBuilder scenarioName(String scenarioName) {
+            scenarioExecution.setScenarioName(scenarioName);
+            return this;
+        }
+
+        public ScenarioExecutionBuilder status(Status status) {
+            scenarioExecution.setStatus(status);
+            return this;
+        }
+
+        public ScenarioExecutionBuilder errorMessage(String errorMessage) throws ErrorMessageTruncationException {
+scenarioExecution.setErrorMessage(errorMessage);
+            return this;
         }
     }
 }

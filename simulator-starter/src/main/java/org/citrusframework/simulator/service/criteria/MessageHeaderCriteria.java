@@ -9,8 +9,8 @@ import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.MessageHeader} entity. This class is used
- * in {@link org.citrusframework.simulator.web.rest.MessageHeaderResource} to receive all the possible filtering options from
- * the Http GET request parameters.
+ * in {@link org.citrusframework.simulator.web.rest.MessageHeaderResource} to receive all the possible filtering options
+ * from the Http GET request parameters.
  * <p>
  * For example the following could be a valid request:
  * {@code /message-headers?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
@@ -54,7 +54,7 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         return headerId;
     }
 
-    public LongFilter id() {
+    public LongFilter headerId() {
         if (headerId == null) {
             headerId = new LongFilter();
         }

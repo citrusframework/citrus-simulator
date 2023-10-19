@@ -18,6 +18,7 @@ package org.citrusframework.simulator.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -134,6 +135,10 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     public static class MessageHeaderBuilder extends AuditingEntityBuilder<MessageHeaderBuilder, MessageHeader, Long> {
 
         private final MessageHeader messageHeader = new MessageHeader();
+
+        private MessageHeaderBuilder() {
+            // Static access through entity
+        }
 
         public MessageHeaderBuilder name(String name) {
             messageHeader.setName(name);

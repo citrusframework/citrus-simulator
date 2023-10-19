@@ -1,7 +1,10 @@
 package org.citrusframework.simulator.service;
 
+import jakarta.persistence.criteria.JoinType;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.MessageHeader_;
 import org.citrusframework.simulator.model.Message_;
+import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.citrusframework.simulator.service.criteria.MessageCriteria;
 import org.slf4j.Logger;
@@ -86,6 +89,24 @@ public class MessageQueryService extends QueryService<Message> {
             }
             if (criteria.getLastModifiedDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getLastModifiedDate(), Message_.lastModifiedDate));
+            }
+            if (criteria.getHeadersId() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getHeadersId(),
+                            root -> root.join(Message_.headers, JoinType.LEFT).get(MessageHeader_.headerId)
+                        )
+                    );
+            }
+            if (criteria.getScenarioExecutionId() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getScenarioExecutionId(),
+                            root -> root.join(Message_.scenarioExecution, JoinType.LEFT).get(ScenarioExecution_.executionId)
+                        )
+                    );
             }
         }
         return specification;

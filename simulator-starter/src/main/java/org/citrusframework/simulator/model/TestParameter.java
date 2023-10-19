@@ -196,6 +196,10 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
         private final TestParameter testParameter = new TestParameter();
 
+        private TestParameterBuilder(){
+            // Static access through entity
+        }
+
         public TestParameterBuilder key(String key) {
             if (Objects.isNull(testParameter.testParameterId)) {
                 testParameter.testParameterId = new TestParameterId();

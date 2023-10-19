@@ -1,0 +1,126 @@
+<div>
+  <h2 id="page-heading" data-cy="ScenarioExecutionHeading">
+    <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh list</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <jhi-filter [filters]="filters"></jhi-filter>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="scenarioExecutions?.length === 0">
+    <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.notFound">No Scenario Executions found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="scenarioExecutions && scenarioExecutions.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="executionId">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="startDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="endDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="scenarioName">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="errorMessage">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.errorMessage">Error Message</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let scenarioExecution of scenarioExecutions; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']">{{ scenarioExecution.executionId }}</a>
+          </td>
+          <td>{{ scenarioExecution.startDate | formatMediumDatetime }}</td>
+          <td>{{ scenarioExecution.endDate | formatMediumDatetime }}</td>
+          <td>{{ scenarioExecution.scenarioName }}</td>
+          <td>{{ scenarioExecution.status }}</td>
+          <td>{{ scenarioExecution.errorMessage }}</td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/message']"
+                [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
+                class="btn btn-info btn-sm"
+                data-cy="filterOtherEntityButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenarioExecution.scenarioMessages' | translate) }"
+                  >Show Message</span
+                >
+              </button>
+              <button
+                type="submit"
+                [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="scenarioExecutions && scenarioExecutions.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

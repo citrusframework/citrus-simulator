@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="scenarioExecution">
+      <h2 data-cy="scenarioExecutionDetailsHeading">
+        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.detail.title">Scenario Execution</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.executionId }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.startDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.endDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.scenarioName }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.errorMessage">Error Message</span></dt>
+        <dd>
+          <span>{{ scenarioExecution.errorMessage }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>

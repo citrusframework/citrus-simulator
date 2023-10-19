@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +29,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
@@ -67,10 +69,11 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     private String citrusMessageId;
 
     @OrderBy("name ASC")
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "message" }, allowSetters = true)
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Collection<MessageHeader> headers = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 
@@ -195,6 +198,10 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     public static class MessageBuilder extends AuditingEntityBuilder<MessageBuilder, Message, Long> {
 
         private final Message message = new Message();
+
+        private MessageBuilder() {
+            // Static access through entity
+        }
 
         @Override
         protected Message getEntity() {

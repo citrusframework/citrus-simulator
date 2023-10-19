@@ -34,32 +34,22 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     }
 
     @Override
-    public MessageHeader update(MessageHeader messageHeader) {
-        log.debug("Request to update MessageHeader : {}", messageHeader);
-        return messageHeaderRepository.save(messageHeader);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Page<MessageHeader> findAll(Pageable pageable) {
         log.debug("Request to get all MessageHeaders");
         return messageHeaderRepository.findAll(pageable);
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public Page<MessageHeader> findAllWithEagerRelationships(Pageable pageable) {
         return messageHeaderRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<MessageHeader> findOne(Long id) {
-        log.debug("Request to get MessageHeader : {}", id);
-        return messageHeaderRepository.findOneWithEagerRelationships(id);
-    }
-
-    @Override
-    public void delete(Long id) {
-        log.debug("Request to delete MessageHeader : {}", id);
-        messageHeaderRepository.deleteById(id);
+    public Optional<MessageHeader> findOne(Long headerId) {
+        log.debug("Request to get MessageHeader : {}", headerId);
+        return messageHeaderRepository.findOneWithEagerRelationships(headerId);
     }
 }

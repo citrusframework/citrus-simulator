@@ -24,6 +24,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -85,7 +86,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Error message
      */
-    @Column(updatable = false)
+    @Size(max = 1000)
+    @Column(length = 1000, updatable = false)
     private String errorMessage;
 
     /**
@@ -232,6 +234,10 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     public static class TestResultBuilder extends AuditingEntityBuilder<TestResultBuilder, TestResult, Long> {
 
         private final TestResult testResult = new TestResult();
+
+        private TestResultBuilder(){
+            // Static access through entity
+        }
 
         public TestResultBuilder id(Long id) {
             testResult.id = id;
