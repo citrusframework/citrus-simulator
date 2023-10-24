@@ -4,10 +4,12 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { IMessageHeader } from '../message-header.model';
 import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../message-header.test-samples';
 
-import { MessageHeaderService } from './message-header.service';
+import { MessageHeaderService, RestMessageHeader } from './message-header.service';
 
-const requireRestSample: IMessageHeader = {
+const requireRestSample: RestMessageHeader = {
   ...sampleWithRequiredData,
+  createdDate: sampleWithRequiredData.createdDate?.toJSON(),
+  lastModifiedDate: sampleWithRequiredData.lastModifiedDate?.toJSON(),
 };
 
 describe('MessageHeader Service', () => {

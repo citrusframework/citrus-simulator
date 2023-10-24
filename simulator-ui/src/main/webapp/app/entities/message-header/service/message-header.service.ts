@@ -1,11 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
-import { isPresent } from 'app/core/util/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import dayjs from 'dayjs/esm';
+
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { IMessageHeader } from '../message-header.model';
+import { isPresent } from 'app/core/util/operators';
+
+import { IMessageHeader, NewMessageHeader } from '../message-header.model';
+
+type RestOf<T extends IMessageHeader | NewMessageHeader> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
+  createdDate?: string | null;
+  lastModifiedDate?: string | null;
+};
+
+export type RestMessageHeader = RestOf<IMessageHeader>;
 
 export type EntityResponseType = HttpResponse<IMessageHeader>;
 export type EntityArrayResponseType = HttpResponse<IMessageHeader[]>;
@@ -20,12 +32,16 @@ export class MessageHeaderService {
   ) {}
 
   find(headerId: number): Observable<EntityResponseType> {
-    return this.http.get<IMessageHeader>(`${this.resourceUrl}/${headerId}`, { observe: 'response' });
+    return this.http
+      .get<RestMessageHeader>(`${this.resourceUrl}/${headerId}`, { observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http.get<IMessageHeader[]>(this.resourceUrl, { params: options, observe: 'response' });
+    return this.http
+      .get<RestMessageHeader[]>(this.resourceUrl, { params: options, observe: 'response' })
+      .pipe(map(res => this.convertResponseArrayFromServer(res)));
   }
 
   getMessageHeaderIdentifier(messageHeader: Pick<IMessageHeader, 'headerId'>): number {
@@ -56,5 +72,25 @@ export class MessageHeaderService {
       return [...messageHeadersToAdd, ...messageHeaderCollection];
     }
     return messageHeaderCollection;
+  }
+
+  protected convertDateFromServer(restMessageHeader: RestMessageHeader): IMessageHeader {
+    return {
+      ...restMessageHeader,
+      createdDate: restMessageHeader.createdDate ? dayjs(restMessageHeader.createdDate) : undefined,
+      lastModifiedDate: restMessageHeader.lastModifiedDate ? dayjs(restMessageHeader.lastModifiedDate) : undefined,
+    };
+  }
+
+  protected convertResponseFromServer(res: HttpResponse<RestMessageHeader>): HttpResponse<IMessageHeader> {
+    return res.clone({
+      body: res.body ? this.convertDateFromServer(res.body) : null,
+    });
+  }
+
+  protected convertResponseArrayFromServer(res: HttpResponse<RestMessageHeader[]>): HttpResponse<IMessageHeader[]> {
+    return res.clone({
+      body: res.body ? res.body.map(item => this.convertDateFromServer(item)) : null,
+    });
   }
 }

@@ -48,6 +48,18 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
+          <th scope="col" jhiSortBy="createdDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.messageHeader.createdDate">Created Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="lastModifiedDate">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.messageHeader.lastModifiedDate">Last Modified Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -63,6 +75,8 @@
               <a [routerLink]="['/message', messageHeader.message.messageId, 'view']">{{ messageHeader.message.citrusMessageId }}</a>
             </div>
           </td>
+          <td>{{ messageHeader.createdDate | formatMediumDatetime }}</td>
+          <td>{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
             <div class="btn-group">
               <button

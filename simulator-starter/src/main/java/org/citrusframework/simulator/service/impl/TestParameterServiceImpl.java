@@ -47,7 +47,7 @@ public class TestParameterServiceImpl implements TestParameterService {
     @Transactional(readOnly = true)
     public Optional<TestParameter> findOne(Long testResultId, String key) {
         logger.debug("Request to get TestParameter '{}' of TestResult : {}", key, testResultId);
-return        testResultService.findOne(testResultId)
+        return testResultService.findOne(testResultId)
             .flatMap(testResult -> testParameterRepository.findById(new TestParameter.TestParameterId(key, testResult)));
     }
 }

@@ -1,5 +1,6 @@
 package org.citrusframework.simulator.service.criteria;
 
+import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
@@ -31,6 +32,10 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
 
     private StringFilter value;
 
+    private InstantFilter createdDate;
+
+    private InstantFilter lastModifiedDate;
+
     private LongFilter messageId;
 
     private Boolean distinct;
@@ -41,6 +46,8 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         this.headerId = other.headerId == null ? null : other.headerId.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.value = other.value == null ? null : other.value.copy();
+        this.createdDate = other.createdDate == null ? null : other.createdDate.copy();
+        this.lastModifiedDate = other.lastModifiedDate == null ? null : other.lastModifiedDate.copy();
         this.messageId = other.messageId == null ? null : other.messageId.copy();
         this.distinct = other.distinct;
     }
@@ -95,6 +102,36 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         this.value = value;
     }
 
+    public InstantFilter getCreatedDate() {
+        return createdDate;
+    }
+
+    public InstantFilter createdDate() {
+        if (createdDate == null) {
+            createdDate = new InstantFilter();
+        }
+        return createdDate;
+    }
+
+    public void setCreatedDate(InstantFilter createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public InstantFilter getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public InstantFilter lastModifiedDate() {
+        if (lastModifiedDate == null) {
+            lastModifiedDate = new InstantFilter();
+        }
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(InstantFilter lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public LongFilter getMessageId() {
         return messageId;
     }
@@ -131,6 +168,8 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
             Objects.equals(headerId, that.headerId) &&
             Objects.equals(name, that.name) &&
             Objects.equals(value, that.value) &&
+            Objects.equals(createdDate, that.createdDate) &&
+            Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
             Objects.equals(messageId, that.messageId) &&
             Objects.equals(distinct, that.distinct)
         );
@@ -138,7 +177,7 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(headerId, name, value, messageId, distinct);
+        return Objects.hash(headerId, name, value, createdDate, lastModifiedDate, messageId, distinct);
     }
 
     // prettier-ignore
@@ -148,6 +187,8 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
             (headerId != null ? "id=" + headerId + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (value != null ? "value=" + value + ", " : "") +
+            (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
+            (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
             (messageId != null ? "messageId=" + messageId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";

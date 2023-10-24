@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -80,7 +81,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Optional test parameters
      */
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "testResult")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "testResult")
+    @JsonIgnoreProperties(value = { "testResult" }, allowSetters = true)
     private final Set<TestParameter> testParameters = new HashSet<>();
 
     /**
@@ -198,14 +200,15 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     @Override
     public String toString() {
         return "TestResult{" +
-            "id='" + getId() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", status='" + getStatus() + "'" +
+            "id=" + getId() +
+            ", status=" + getStatus() +
             ", testName='" + getTestName() + "'" +
             ", className='" + getClassName() + "'" +
             ", errorMessage='" + getErrorMessage() + "'" +
             ", failureStack='" + getFailureStack() + "'" +
             ", failureType='" + getFailureType() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
             "}";
     }
 
@@ -244,8 +247,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
             return this;
         }
 
-        public TestResultBuilder status(Integer status) {
-            testResult.status = status;
+        public TestResultBuilder status(Status status) {
+            testResult.status = status.id;
             return this;
         }
 

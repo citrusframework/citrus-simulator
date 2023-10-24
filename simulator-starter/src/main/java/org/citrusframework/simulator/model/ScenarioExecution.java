@@ -28,6 +28,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import org.springframework.util.StringUtils;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -35,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.springframework.util.StringUtils;
 
 /**
  * JPA entity for representing a scenario execution
@@ -75,7 +75,7 @@ public class ScenarioExecution implements Serializable {
 
     @OrderBy("name ASC")
     @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "scenarioExecution" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"scenarioExecution"}, allowSetters = true)
     private List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
     @OrderBy("actionId ASC")
@@ -83,8 +83,8 @@ public class ScenarioExecution implements Serializable {
     private List<ScenarioAction> scenarioActions = new ArrayList<>();
 
     @OrderBy("messageId ASC")
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "headers", "scenarioExecution" }, allowSetters = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
     private List<Message> scenarioMessages = new ArrayList<>();
 
     public static ScenarioExecutionBuilder builder() {
@@ -133,7 +133,7 @@ public class ScenarioExecution implements Serializable {
 
     public void setErrorMessage(String errorMessage) throws ErrorMessageTruncationException {
         this.errorMessage = errorMessage;
-        if(StringUtils.hasLength(this.errorMessage)) {
+        if (StringUtils.hasLength(this.errorMessage)) {
             try {
                 int size = getClass().getDeclaredField("errorMessage").getAnnotation(Column.class).length();
                 int inLength = this.errorMessage.length();
@@ -192,13 +192,13 @@ public class ScenarioExecution implements Serializable {
     @Override
     public String toString() {
         return "ScenarioExecution{" +
-                "executionId='" + getExecutionId() + "'" +
-                ", startDate='" + getStartDate() + "'" +
-                ", endDate='" + getEndDate() + "'" +
-                ", scenarioName='" + getScenarioName() + "'" +
-                ", status='" + getStatus() + "'" +
-                ", errorMessage='" + getErrorMessage() + "'" +
-                "}";
+            "executionId='" + getExecutionId() + "'" +
+            ", startDate='" + getStartDate() + "'" +
+            ", endDate='" + getEndDate() + "'" +
+            ", scenarioName='" + getScenarioName() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", errorMessage='" + getErrorMessage() + "'" +
+            "}";
     }
 
     public enum Status {
@@ -233,11 +233,11 @@ public class ScenarioExecution implements Serializable {
 
         private final ScenarioExecution scenarioExecution = new ScenarioExecution();
 
-        private ScenarioExecutionBuilder(){
+        private ScenarioExecutionBuilder() {
             // Static access through entity
         }
 
-        public ScenarioExecution build(){
+        public ScenarioExecution build() {
             return scenarioExecution;
         }
 
@@ -245,6 +245,7 @@ public class ScenarioExecution implements Serializable {
             scenarioExecution.setStartDate(startDate);
             return this;
         }
+
         public ScenarioExecutionBuilder endDate(Instant endDate) {
             scenarioExecution.setEndDate(endDate);
             return this;
@@ -261,7 +262,7 @@ public class ScenarioExecution implements Serializable {
         }
 
         public ScenarioExecutionBuilder errorMessage(String errorMessage) throws ErrorMessageTruncationException {
-scenarioExecution.setErrorMessage(errorMessage);
+            scenarioExecution.setErrorMessage(errorMessage);
             return this;
         }
     }

@@ -45,21 +45,9 @@ class MessageServiceImplTest {
         Pageable pageable = Pageable.unpaged();
         Page<Message> mockPage = mock(Page.class);
 
-        when(messageRepositoryMock.findAll(pageable)).thenReturn(mockPage);
-
-        Page<Message> result = fixture.findAll(pageable);
-
-        assertEquals(mockPage, result);
-    }
-
-    @Test
-    void testFindAllWithEagerRelationships() {
-        Pageable pageable = Pageable.unpaged();
-        Page<Message> mockPage = mock(Page.class);
-
         when(messageRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(mockPage);
 
-        Page<Message> result = fixture.findAllWithEagerRelationships(pageable);
+        Page<Message> result = fixture.findAll(pageable);
 
         assertEquals(mockPage, result);
     }

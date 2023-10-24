@@ -27,14 +27,6 @@ public interface MessageService {
     Page<Message> findAll(Pageable pageable);
 
     /**
-     * Get all the messages with eager load of many-to-many relationships.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<Message> findAllWithEagerRelationships(Pageable pageable);
-
-    /**
      * Get the "id" message.
      *
      * @param messageId the id of the entity.

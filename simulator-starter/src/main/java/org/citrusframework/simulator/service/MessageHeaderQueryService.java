@@ -36,6 +36,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
     /**
      * Return a {@link List} of {@link MessageHeader} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
@@ -48,19 +49,22 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
     /**
      * Return a {@link Page} of {@link MessageHeader} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
+     * @param page     The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
     public Page<MessageHeader> findByCriteria(MessageHeaderCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<MessageHeader> specification = createSpecification(criteria);
-        return messageHeaderRepository.findAll(specification, page);
+        return messageHeaderRepository.findAll(specification, page)
+            .map(MessageHeaderService::restrictToDtoProperties);
     }
 
     /**
      * Return the number of matching entities in the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the number of matching entities.
      */
@@ -73,6 +77,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
     /**
      * Function to convert {@link MessageHeaderCriteria} to a {@link Specification}
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
@@ -91,6 +96,12 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
             }
             if (criteria.getValue() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getValue(), MessageHeader_.value));
+            }
+            if (criteria.getCreatedDate() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getCreatedDate(), MessageHeader_.createdDate));
+            }
+            if (criteria.getLastModifiedDate() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getLastModifiedDate(), MessageHeader_.lastModifiedDate));
             }
             if (criteria.getMessageId() != null) {
                 specification =

@@ -45,8 +45,7 @@
       "otherEntityName": "scenarioExecution",
       "relationshipName": "scenarioExecution",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipValidateRules": ["required"]
+      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no",

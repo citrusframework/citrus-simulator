@@ -70,10 +70,10 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
 
     @OrderBy("name ASC")
     @JsonIgnoreProperties(value = { "message" }, allowSetters = true)
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<MessageHeader> headers = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 
@@ -93,24 +93,12 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return Direction.fromId(direction);
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction.id;
-    }
-
     public String getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
     public String getCitrusMessageId() {
         return citrusMessageId;
-    }
-
-    public void setCitrusMessageId(String citrusMessageId) {
-        this.citrusMessageId = citrusMessageId;
     }
 
     public void addHeader(MessageHeader messageHeader) {
@@ -208,18 +196,23 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
             return message;
         }
 
+        public MessageBuilder messageId(Long messageId) {
+            message.messageId = messageId;
+            return this;
+        }
+
         public MessageBuilder direction(Direction direction) {
-            message.setDirection(direction);
+            message.direction = direction.getId();
             return this;
         }
 
         public MessageBuilder payload(String payload) {
-            message.setPayload(payload);
+            message.payload = payload;
             return this;
         }
 
         public MessageBuilder citrusMessageId(String citrusMessageId) {
-            message.setCitrusMessageId(citrusMessageId);
+            message.citrusMessageId = citrusMessageId;
             return this;
         }
 
