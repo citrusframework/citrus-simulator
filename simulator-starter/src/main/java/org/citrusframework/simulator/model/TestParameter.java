@@ -26,6 +26,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -63,6 +64,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
     @Column(name = "parameter_value", nullable = false, updatable = false)
     private String value;
 
+    @NotNull
     @ManyToOne
     @MapsId("testResultId")
     @JoinColumn(name = "test_result_id", nullable = false)
@@ -130,7 +132,9 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
     public String toString() {
         return "TestParameter{" +
             "key='" + getKey() + "'" +
-            "value='" + getValue() + "'" +
+            ", value='" + getValue() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
             "}";
     }
 

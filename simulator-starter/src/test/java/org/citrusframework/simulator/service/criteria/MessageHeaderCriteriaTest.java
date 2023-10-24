@@ -1,5 +1,6 @@
 package org.citrusframework.simulator.service.criteria;
 
+import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,6 +73,32 @@ class MessageHeaderCriteriaTest {
         LongFilter mockMessageIdFilter = mock(LongFilter.class);
         fixture.setMessageId(mockMessageIdFilter);
         assertSame(mockMessageIdFilter, fixture.messageId());
+    }
+
+    @Test
+    void testCreatedDate() {
+        assertNull(fixture.getCreatedDate());
+
+        InstantFilter createdDateFilter = fixture.createdDate();
+        assertNotNull(createdDateFilter);
+        assertSame(createdDateFilter, fixture.getCreatedDate());
+
+        InstantFilter mockCreatedDateFilter = mock(InstantFilter.class);
+        fixture.setCreatedDate(mockCreatedDateFilter);
+        assertSame(mockCreatedDateFilter, fixture.createdDate());
+    }
+
+    @Test
+    void testLastModifiedDate() {
+        assertNull(fixture.getLastModifiedDate());
+
+        InstantFilter lastModifiedDateFilter = fixture.lastModifiedDate();
+        assertNotNull(lastModifiedDateFilter);
+        assertSame(lastModifiedDateFilter, fixture.getLastModifiedDate());
+
+        InstantFilter mockLastModifiedDateFilter = mock(InstantFilter.class);
+        fixture.setLastModifiedDate(mockLastModifiedDateFilter);
+        assertSame(mockLastModifiedDateFilter, fixture.lastModifiedDate());
     }
 
     @Test

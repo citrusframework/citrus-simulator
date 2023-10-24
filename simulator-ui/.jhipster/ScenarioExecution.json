@@ -38,8 +38,7 @@
       "otherEntityRelationshipName": "scenarioExecution",
       "relationshipName": "scenarioMessages",
       "relationshipSide": "left",
-      "relationshipType": "one-to-many",
-      "relationshipValidateRules": ["required"]
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no",

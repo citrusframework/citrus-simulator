@@ -31,11 +31,11 @@ class TestResultRepositoryIT {
                 TestResult.builder()
                     .testName("Test-1")
                     .className(getClass().getSimpleName())
-                    .status(TestResult.Status.SUCCESS.getId()).build(),
+                    .status(TestResult.Status.SUCCESS).build(),
                 TestResult.builder()
                     .testName("Test-2")
                     .className(getClass().getSimpleName())
-                    .status(TestResult.Status.FAILURE.getId()).build()
+                    .status(TestResult.Status.FAILURE).build()
             )
         );
     }

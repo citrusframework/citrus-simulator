@@ -28,7 +28,16 @@
   "name": "TestParameter",
   "pagination": "pagination",
   "readOnly": true,
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "testResult",
+      "relationshipName": "testResult",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": ["required"]
+    }
+  ],
   "searchEngine": "no",
   "service": "serviceImpl"
 }

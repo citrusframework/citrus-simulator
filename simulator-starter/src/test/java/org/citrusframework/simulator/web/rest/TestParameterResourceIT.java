@@ -18,7 +18,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.citrusframework.simulator.web.rest.TestUtil.findAll;
 import static org.citrusframework.simulator.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,22 +73,47 @@ class TestParameterResourceIT {
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
             .build();
-
+        // Add required entity
         TestResult testResult;
-        if (findAll(entityManager, TestResult.class).isEmpty()) {
+        if (TestUtil.findAll(entityManager, TestResult.class).isEmpty()) {
             testResult = TestResultResourceIT.createEntity(entityManager);
             entityManager.persist(testResult);
             entityManager.flush();
         } else {
-            testResult = findAll(entityManager, TestResult.class).get(0);
+            testResult = TestUtil.findAll(entityManager, TestResult.class).get(0);
         }
         testParameter.setTestResult(testResult);
+        return testParameter;
+    }
 
+    /**
+     * Create an updated entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static TestParameter createUpdatedEntity(EntityManager entityManager) {
+        TestParameter testParameter = TestParameter.builder()
+            .key(UPDATED_KEY)
+            .value(UPDATED_VALUE)
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE)
+            .build();
+        // Add required entity
+        TestResult testResult;
+        if (TestUtil.findAll(entityManager, TestResult.class).isEmpty()) {
+            testResult = TestResultResourceIT.createUpdatedEntity(entityManager);
+            entityManager.persist(testResult);
+            entityManager.flush();
+        } else {
+            testResult = TestUtil.findAll(entityManager, TestResult.class).get(0);
+        }
+        testParameter.setTestResult(testResult);
         return testParameter;
     }
 
     @BeforeEach
-    void beforeEachSetup() {
+    public void initTest() {
         testParameter = createEntity(entityManager);
     }
 
@@ -101,7 +125,7 @@ class TestParameterResourceIT {
 
         // Get all the testParameterList
         restTestParameterMockMvc
-            .perform(get(ENTITY_API_URL + "?createDate=id,desc"))
+            .perform(get(ENTITY_API_URL + "?sort=createdDate,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].key").value(hasItem(DEFAULT_KEY)))
@@ -466,7 +490,7 @@ class TestParameterResourceIT {
      */
     private void defaultTestParameterShouldBeFound(String filter) throws Exception {
         restTestParameterMockMvc
-            .perform(get(ENTITY_API_URL + "?createDate=id,desc&" + filter))
+            .perform(get(ENTITY_API_URL + "?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].key").value(hasItem(DEFAULT_KEY)))
@@ -476,7 +500,7 @@ class TestParameterResourceIT {
 
         // Check, that the count call also returns 1
         restTestParameterMockMvc
-            .perform(get(ENTITY_API_URL + "/count?createDate=id,desc&" + filter))
+            .perform(get(ENTITY_API_URL + "/count?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("1"));
@@ -487,7 +511,7 @@ class TestParameterResourceIT {
      */
     private void defaultTestParameterShouldNotBeFound(String filter) throws Exception {
         restTestParameterMockMvc
-            .perform(get(ENTITY_API_URL + "?createDate=id,desc&" + filter))
+            .perform(get(ENTITY_API_URL + "?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
@@ -495,7 +519,7 @@ class TestParameterResourceIT {
 
         // Check, that the count call also returns 0
         restTestParameterMockMvc
-            .perform(get(ENTITY_API_URL + "/count?createDate=id,desc&" + filter))
+            .perform(get(ENTITY_API_URL + "/count?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().string("0"));
@@ -505,6 +529,6 @@ class TestParameterResourceIT {
     @Transactional
     void getNonExistingTestParameter() throws Exception {
         // Get the testParameter
-        restTestParameterMockMvc.perform(get(ENTITY_API_URL_ID, testParameter.getTestResult().getId(), Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restTestParameterMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE, "non-existing-key")).andExpect(status().isNotFound());
     }
 }

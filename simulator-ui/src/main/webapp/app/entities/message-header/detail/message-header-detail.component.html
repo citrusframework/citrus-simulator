@@ -30,6 +30,14 @@
             <a [routerLink]="['/message', messageHeader.message.messageId, 'view']">{{ messageHeader.message.citrusMessageId }}</a>
           </div>
         </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.createdDate">Created Date</span></dt>
+        <dd>
+          <span>{{ messageHeader.createdDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.lastModifiedDate">Last Modified Date</span></dt>
+        <dd>
+          <span>{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</span>
+        </dd>
       </dl>
 
       <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

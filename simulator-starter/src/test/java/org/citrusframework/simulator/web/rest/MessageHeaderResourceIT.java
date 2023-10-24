@@ -19,8 +19,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
+import static org.citrusframework.simulator.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
@@ -37,13 +42,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-class MessageHeaderResourceIT {
+public class MessageHeaderResourceIT {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
     private static final String DEFAULT_VALUE = "AAAAAAAAAA";
     private static final String UPDATED_VALUE = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
+
+    private static final ZonedDateTime DEFAULT_LAST_MODIFIED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_LAST_MODIFIED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_LAST_MODIFIED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String ENTITY_API_URL = "/api/message-headers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -67,7 +80,7 @@ class MessageHeaderResourceIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -75,6 +88,8 @@ class MessageHeaderResourceIT {
         MessageHeader messageHeader = MessageHeader.builder()
             .name(DEFAULT_NAME)
             .value(DEFAULT_VALUE)
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
             .build();
         // Add required entity
         Message message;
@@ -91,23 +106,25 @@ class MessageHeaderResourceIT {
 
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static MessageHeader createUpdatedEntity(EntityManager entityManager) {
+    public static MessageHeader createUpdatedEntity(EntityManager em) {
         MessageHeader messageHeader = MessageHeader.builder()
             .name(UPDATED_NAME)
             .value(UPDATED_VALUE)
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE)
             .build();
         // Add required entity
         Message message;
-        if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
-            message = MessageResourceIT.createUpdatedEntity(entityManager);
-            entityManager.persist(message);
-            entityManager.flush();
+        if (TestUtil.findAll(em, Message.class).isEmpty()) {
+            message = MessageResourceIT.createUpdatedEntity(em);
+            em.persist(message);
+            em.flush();
         } else {
-            message = TestUtil.findAll(entityManager, Message.class).get(0);
+            message = TestUtil.findAll(em, Message.class).get(0);
         }
         messageHeader.setMessage(message);
         return messageHeader;
@@ -131,24 +148,9 @@ class MessageHeaderResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].headerId").value(hasItem(messageHeader.getHeaderId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)));
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    void getAllMessageHeadersWithEagerRelationshipsIsEnabled() throws Exception {
-        when(messageHeaderServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restMessageHeaderMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
-
-        verify(messageHeaderServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    void getAllMessageHeadersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(messageHeaderServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restMessageHeaderMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
-        verify(messageHeaderRepositoryMock, times(1)).findAll(any(Pageable.class));
+            .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
     }
 
     @Test
@@ -164,7 +166,9 @@ class MessageHeaderResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.headerId").value(messageHeader.getHeaderId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-            .andExpect(jsonPath("$.value").value(DEFAULT_VALUE));
+            .andExpect(jsonPath("$.value").value(DEFAULT_VALUE))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.lastModifiedDate").value(sameInstant(DEFAULT_LAST_MODIFIED_DATE)));
     }
 
     @Test
@@ -317,6 +321,188 @@ class MessageHeaderResourceIT {
 
     @Test
     @Transactional
+    void getAllMessageHeadersByCreatedDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate equals to DEFAULT_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.equals=" + DEFAULT_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate equals to UPDATED_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.equals=" + UPDATED_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate in DEFAULT_CREATED_DATE or UPDATED_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.in=" + DEFAULT_CREATED_DATE + "," + UPDATED_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate equals to UPDATED_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.in=" + UPDATED_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate is not null
+        defaultMessageHeaderShouldBeFound("createdDate.specified=true");
+
+        // Get all the messageHeaderList where createdDate is null
+        defaultMessageHeaderShouldNotBeFound("createdDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate is greater than or equal to DEFAULT_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.greaterThanOrEqual=" + DEFAULT_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate is greater than or equal to UPDATED_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.greaterThanOrEqual=" + UPDATED_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate is less than or equal to DEFAULT_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.lessThanOrEqual=" + DEFAULT_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate is less than or equal to SMALLER_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.lessThanOrEqual=" + SMALLER_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsLessThanSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate is less than DEFAULT_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.lessThan=" + DEFAULT_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate is less than UPDATED_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.lessThan=" + UPDATED_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByCreatedDateIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where createdDate is greater than DEFAULT_CREATED_DATE
+        defaultMessageHeaderShouldNotBeFound("createdDate.greaterThan=" + DEFAULT_CREATED_DATE);
+
+        // Get all the messageHeaderList where createdDate is greater than SMALLER_CREATED_DATE
+        defaultMessageHeaderShouldBeFound("createdDate.greaterThan=" + SMALLER_CREATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate equals to DEFAULT_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.equals=" + DEFAULT_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate equals to UPDATED_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.equals=" + UPDATED_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate in DEFAULT_LAST_MODIFIED_DATE or UPDATED_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.in=" + DEFAULT_LAST_MODIFIED_DATE + "," + UPDATED_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate equals to UPDATED_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.in=" + UPDATED_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate is not null
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.specified=true");
+
+        // Get all the messageHeaderList where lastModifiedDate is null
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate is greater than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.greaterThanOrEqual=" + DEFAULT_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate is greater than or equal to UPDATED_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.greaterThanOrEqual=" + UPDATED_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate is less than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.lessThanOrEqual=" + DEFAULT_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate is less than or equal to SMALLER_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.lessThanOrEqual=" + SMALLER_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsLessThanSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate is less than DEFAULT_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.lessThan=" + DEFAULT_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate is less than UPDATED_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.lessThan=" + UPDATED_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllMessageHeadersByLastModifiedDateIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        messageHeaderRepository.saveAndFlush(messageHeader);
+
+        // Get all the messageHeaderList where lastModifiedDate is greater than DEFAULT_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldNotBeFound("lastModifiedDate.greaterThan=" + DEFAULT_LAST_MODIFIED_DATE);
+
+        // Get all the messageHeaderList where lastModifiedDate is greater than SMALLER_LAST_MODIFIED_DATE
+        defaultMessageHeaderShouldBeFound("lastModifiedDate.greaterThan=" + SMALLER_LAST_MODIFIED_DATE);
+    }
+
+    @Test
+    @Transactional
     void getAllMessageHeadersByMessageIsEqualToSomething() throws Exception {
         Message message;
         if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
@@ -347,7 +533,9 @@ class MessageHeaderResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].headerId").value(hasItem(messageHeader.getHeaderId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)));
+            .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
 
         // Check, that the count call also returns 1
         restMessageHeaderMockMvc

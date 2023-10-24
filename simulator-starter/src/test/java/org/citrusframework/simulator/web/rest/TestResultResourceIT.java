@@ -80,7 +80,7 @@ class TestResultResourceIT {
      */
     public static TestResult createEntity(EntityManager entityManager) {
         return TestResult.builder()
-            .status(DEFAULT_STATUS.getId())
+            .status(DEFAULT_STATUS)
             .testName(DEFAULT_TEST_NAME)
             .className(DEFAULT_CLASS_NAME)
             .errorMessage(DEFAULT_ERROR_MESSAGE)
@@ -88,6 +88,25 @@ class TestResultResourceIT {
             .failureType(DEFAULT_FAILURE_TYPE)
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
+            .build();
+    }
+
+    /**
+     * Create an updated entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static TestResult createUpdatedEntity(EntityManager entityManager) {
+        return TestResult.builder()
+            .status(UPDATED_STATUS)
+            .testName(UPDATED_TEST_NAME)
+            .className(UPDATED_CLASS_NAME)
+            .errorMessage(UPDATED_ERROR_MESSAGE)
+            .failureStack(UPDATED_FAILURE_STACK)
+            .failureType(UPDATED_FAILURE_TYPE)
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE)
             .build();
     }
 

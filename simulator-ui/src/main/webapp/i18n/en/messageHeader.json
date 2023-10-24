@@ -12,6 +12,8 @@
       "id": "ID",
       "name": "Name",
       "value": "Value",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date",
       "message": "Message"
     }
   }

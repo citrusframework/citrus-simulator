@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @IntegrationTest
 @AutoConfigureMockMvc
-class MessageResourceIT {
+public class MessageResourceIT {
 
     private static final Message.Direction DEFAULT_DIRECTION = Message.Direction.INBOUND; // Integer value: 1
     private static final Message.Direction UPDATED_DIRECTION = Message.Direction.OUTBOUND; // Integer value: 2
