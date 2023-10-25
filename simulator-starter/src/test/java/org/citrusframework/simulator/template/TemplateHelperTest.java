@@ -1,9 +1,9 @@
 package org.citrusframework.simulator.template;
 
+import org.citrusframework.spi.Resource;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.core.io.Resource;
 
 import java.util.stream.Stream;
 

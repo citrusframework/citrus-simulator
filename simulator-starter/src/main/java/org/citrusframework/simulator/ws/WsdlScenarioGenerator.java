@@ -10,6 +10,8 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.spi.CitrusResourceWrapper;
+import org.citrusframework.spi.Resource;
 import org.citrusframework.xml.schema.locator.JarWSDLLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -42,18 +43,21 @@ import java.util.List;
 public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
     /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(WsdlScenarioGenerator.class);
+
+    /**
      * Optional WSDL file location system property for auto generated scenarios
      */
     private static final String SIMULATOR_WSDL_LOCATION_PROPERTY = "citrus.simulator.ws.wsdl.location";
     private static final String SIMULATOR_WSDL_LOCATION_ENV = "CITRUS_SIMULATOR_WS_WSDL_LOCATION";
-    /**
-     * Logger
-     */
-    private static final Logger log = LoggerFactory.getLogger(WsdlScenarioGenerator.class);
+
     /**
      * Target wsdl to generate scenarios from
      */
     private final Resource wsdlResource;
+
     /**
      * Naming strategy for generated scenarios
      */
@@ -63,7 +67,8 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
      * Default constructor.
      */
     public WsdlScenarioGenerator(Environment environment) {
-        wsdlResource = new PathMatchingResourcePatternResolver().getResource(environment.getProperty(SIMULATOR_WSDL_LOCATION_PROPERTY, environment.getProperty(SIMULATOR_WSDL_LOCATION_ENV, "")));
+        org.springframework.core.io.Resource springResource = new PathMatchingResourcePatternResolver().getResource(environment.getProperty(SIMULATOR_WSDL_LOCATION_PROPERTY, environment.getProperty(SIMULATOR_WSDL_LOCATION_ENV, "")));
+        wsdlResource = new CitrusResourceWrapper(springResource);
     }
 
     /**
@@ -115,7 +120,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                 };
 
                 if (beanFactory instanceof BeanDefinitionRegistry) {
-                    log.info("Register auto generated scenario as bean definition: " + scenarioName);
+                    logger.info("Register auto generated scenario as bean definition: " + scenarioName);
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(WsdlOperationScenario.class)
                         .addConstructorArgValue(operation)
                         .addPropertyValue("soapAction", soapAction)
@@ -132,7 +137,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
 
                     ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(scenarioName, beanDefinitionBuilder.getBeanDefinition());
                 } else {
-                    log.info("Register auto generated scenario as singleton: " + scenarioName);
+                    logger.info("Register auto generated scenario as singleton: " + scenarioName);
                     WsdlOperationScenario scenario = createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
                     beanFactory.registerSingleton(scenarioName, scenario);
                 }
@@ -214,8 +219,6 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             }
 
             return definition;
-        } catch (IOException e) {
-            throw new CitrusRuntimeException("Failed to read wsdl file resource", e);
         } catch (WSDLException e) {
             throw new CitrusRuntimeException("Failed to create wsdl schema instance", e);
         }
@@ -232,7 +235,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             return XmlObject.Factory.parse(wsdlResource.getInputStream(), (new XmlOptions()).setLoadLineNumbers().setLoadMessageDigest().setCompileDownloadUrls());
         } catch (XmlException e) {
             for (Object error : e.getErrors()) {
-                log.error(((XmlError) error).getLine() + String.valueOf(error));
+                logger.error(((XmlError) error).getLine() + String.valueOf(error));
             }
             throw new SimulatorException("WSDL could not be parsed", e);
         } catch (Exception e) {
@@ -267,7 +270,7 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
             schemaTypeSystem = XmlBeans.compileXsd(xsd, XmlBeans.getContextTypeLoader(), new XmlOptions());
         } catch (XmlException e) {
             for (Object error : e.getErrors()) {
-                log.error("Line " + ((XmlError) error).getLine() + ": " + error);
+                logger.error("Line " + ((XmlError) error).getLine() + ": " + error);
             }
             throw new SimulatorException("Failed to compile XSD schema", e);
         } catch (Exception e) {
@@ -379,5 +382,4 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
         OPERATION,
         SOAP_ACTION
     }
-
 }

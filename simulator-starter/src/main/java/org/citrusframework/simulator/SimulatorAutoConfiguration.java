@@ -31,6 +31,7 @@ import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.repository.RepositoryConfig;
 import org.citrusframework.simulator.scenario.ScenarioBeanNameGenerator;
+import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +76,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @ConditionalOnProperty(prefix = "citrus.simulator", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorAutoConfiguration {
 
-    /** Logger */
-    private static Logger log = LoggerFactory.getLogger(SimulatorAutoConfiguration.class);
+    /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorAutoConfiguration.class);
 
     /** Application version */
     private static String version;
@@ -91,7 +94,7 @@ public class SimulatorAutoConfiguration {
             versionProperties.load(in);
             version = versionProperties.get("app.version").toString();
         } catch (IOException e) {
-            log.warn("Unable to read application version information", e);
+            logger.warn("Unable to read application version information", e);
             version = "";
         }
     }
@@ -143,7 +146,7 @@ public class SimulatorAutoConfiguration {
 
         Resource mappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundJsonDictionary());
         if (mappingFile.exists()) {
-            inboundJsonDataDictionary.setMappingFile(mappingFile);
+            inboundJsonDataDictionary.setMappingFile(new CitrusResourceWrapper(mappingFile));
         }
 
         return inboundJsonDataDictionary;
@@ -159,7 +162,7 @@ public class SimulatorAutoConfiguration {
 
         Resource mappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getOutboundJsonDictionary());
         if (mappingFile.exists()) {
-            outboundJsonDataDictionary.setMappingFile(mappingFile);
+            outboundJsonDataDictionary.setMappingFile(new CitrusResourceWrapper(mappingFile));
         }
 
         return outboundJsonDataDictionary;

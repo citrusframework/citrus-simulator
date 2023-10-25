@@ -23,6 +23,7 @@ import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.message.MessageType;
 import org.citrusframework.simulator.sample.Simulator;
+import org.citrusframework.spi.Resources;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +31,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -92,7 +92,7 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                 .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource("templates/pet.json")));
+                .body(new Resources.ClasspathResource("templates/pet.json")));
 
         $(http().client(petstoreClient)
                 .receive()
@@ -127,7 +127,7 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                 .response(HttpStatus.OK)
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource("templates/pet-control.json")));
+                .body(new Resources.ClasspathResource("templates/pet-control.json")));
     }
 
     @CitrusTest
@@ -143,7 +143,7 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                 .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource("templates/pet.json")));
+                .body(new Resources.ClasspathResource("templates/pet.json")));
 
         $(http().client(petstoreClient)
                 .receive()
@@ -205,7 +205,7 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
                 .message()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource("templates/order.json")));
+                .body(new Resources.ClasspathResource("templates/order.json")));
 
         $(http().client(petstoreClient)
                 .receive()

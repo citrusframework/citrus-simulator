@@ -1,5 +1,6 @@
 package org.citrusframework.simulator.ws;
 
+import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.stream.Stream;
 
@@ -71,7 +71,7 @@ class WsdlScenarioGeneratorTest {
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new WsdlScenarioGenerator(new ClassPathResource("schema/TestService.wsdl"));
+        fixture = new WsdlScenarioGenerator(new Resources.ClasspathResource("schema/TestService.wsdl"));
     }
 
     @MethodSource
