@@ -19,6 +19,7 @@ package org.citrusframework.simulator.sample;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.message.Message;
+import org.citrusframework.spi.Resources;
 import org.citrusframework.ws.message.SoapFault;
 import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
@@ -26,7 +27,6 @@ import org.citrusframework.simulator.ws.WsdlScenarioGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Christoph Deppisch
@@ -58,7 +58,7 @@ public class Simulator extends SimulatorWebServiceAdapter {
 
     @Bean
     public static WsdlScenarioGenerator scenarioGenerator() {
-        WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new ClassPathResource("xsd/Hello.wsdl"));
+        WsdlScenarioGenerator generator = new WsdlScenarioGenerator(new Resources.ClasspathResource("xsd/Hello.wsdl"));
         return generator;
     }
 }

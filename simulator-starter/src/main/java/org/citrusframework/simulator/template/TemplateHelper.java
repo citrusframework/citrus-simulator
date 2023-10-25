@@ -1,10 +1,9 @@
 package org.citrusframework.simulator.template;
 
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.spi.Resource;
+import org.citrusframework.spi.Resources;
 import org.citrusframework.util.FileUtils;
-import lombok.Getter;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -14,11 +13,15 @@ import java.nio.charset.StandardCharsets;
 /**
  * Helper class for loading templates from the classpath, in particular XML and JSON templates.
  */
-@Getter
 public class TemplateHelper {
 
     private final String basePath;
     private final Charset charset;
+
+    private TemplateHelper(String basePath, Charset charset) {
+        this.basePath = adaptBasePath(basePath);
+        this.charset = charset;
+    }
 
     /**
      * Creates a new {@link TemplateHelper}
@@ -41,9 +44,8 @@ public class TemplateHelper {
         return instance(basePath, StandardCharsets.UTF_8);
     }
 
-    private TemplateHelper(String basePath, Charset charset) {
-        this.basePath = adaptBasePath(basePath);
-        this.charset = charset;
+    private static String adaptBasePath(String basePath) {
+        return StringUtils.endsWithIgnoreCase(basePath, "/") ? basePath : basePath + "/";
     }
 
     /**
@@ -96,10 +98,14 @@ public class TemplateHelper {
         if (StringUtils.hasLength(resourceExtension) && !StringUtils.startsWithIgnoreCase(resourceExtension, ".")) {
             adaptedFileExtension = "." + resourceExtension;
         }
-        return new ClassPathResource(basePath + resourcePath + adaptedFileExtension);
+        return new Resources.ClasspathResource(basePath + resourcePath + adaptedFileExtension);
     }
 
-    private static String adaptBasePath(String basePath) {
-        return StringUtils.endsWithIgnoreCase(basePath, "/") ? basePath : basePath + "/";
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public Charset getCharset() {
+        return charset;
     }
 }

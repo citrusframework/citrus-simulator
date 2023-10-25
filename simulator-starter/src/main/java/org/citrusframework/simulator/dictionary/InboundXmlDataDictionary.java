@@ -1,9 +1,14 @@
 package org.citrusframework.simulator.dictionary;
 
+import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
+
 import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.variable.dictionary.xml.XpathMappingDataDictionary;
 import org.citrusframework.xml.xpath.XPathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -20,6 +25,8 @@ import java.util.Map;
  */
 public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
 
+    private static final Logger logger = LoggerFactory.getLogger(InboundXmlDataDictionary.class);
+
     /**
      * Default constructor setting default mappings and mappings file.
      */
@@ -29,8 +36,16 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
 
         Resource inboundMappingFile = new PathMatchingResourcePatternResolver().getResource(simulatorConfiguration.getInboundXmlDictionary());
         if (inboundMappingFile.exists()) {
-            mappingFile = inboundMappingFile;
+            mappingFile = new CitrusResourceWrapper(inboundMappingFile);
         }
+    }
+
+    @Override
+    public void initialize() {
+        loadXMLMappingFile(logger, mappingFile, mappings);
+
+        mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
+        mappings.put("//@*", "@ignore@");
     }
 
     @Override
@@ -53,6 +68,7 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
 
     /**
      * Checks if given node set contains node.
+     *
      * @param findings
      * @param node
      * @return
@@ -65,13 +81,5 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
         }
 
         return false;
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-
-        mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
-        mappings.put("//@*", "@ignore@");
     }
 }

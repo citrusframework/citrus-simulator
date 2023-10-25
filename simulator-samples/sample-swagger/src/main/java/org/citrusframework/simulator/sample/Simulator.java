@@ -27,10 +27,10 @@ import org.citrusframework.simulator.http.HttpRequestPathScenarioMapper;
 import org.citrusframework.simulator.http.HttpScenarioGenerator;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
+import org.citrusframework.spi.Resources;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -66,7 +66,7 @@ public class Simulator extends SimulatorRestAdapter {
 
     @Bean
     public static HttpScenarioGenerator scenarioGenerator() {
-        HttpScenarioGenerator generator = new HttpScenarioGenerator(new ClassPathResource("swagger/petstore-api.json"));
+        HttpScenarioGenerator generator = new HttpScenarioGenerator(new Resources.ClasspathResource("swagger/petstore-api.json"));
         generator.setContextPath("/petstore");
         return generator;
     }

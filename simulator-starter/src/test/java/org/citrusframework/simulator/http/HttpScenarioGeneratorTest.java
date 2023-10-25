@@ -1,6 +1,7 @@
 package org.citrusframework.simulator.http;
 
 import io.swagger.models.Operation;
+import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +37,7 @@ class HttpScenarioGeneratorTest {
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new HttpScenarioGenerator(new ClassPathResource("swagger/swagger-api.json"));
+        fixture = new HttpScenarioGenerator(new Resources.ClasspathResource("swagger/swagger-api.json"));
     }
 
     @Test
