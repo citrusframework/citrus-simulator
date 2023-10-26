@@ -9,6 +9,7 @@
         "main": "Entities",
         "message": "Message",
         "messageHeader": "Message Header",
+        "scenarioAction": "Scenario Action",
         "scenarioExecution": "Scenario Execution",
         "testParameter": "Test Parameter",
         "testResult": "Test Result",

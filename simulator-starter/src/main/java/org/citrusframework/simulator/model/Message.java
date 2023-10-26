@@ -115,6 +115,10 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return headers;
     }
 
+    public ScenarioExecution getScenarioExecution() {
+        return scenarioExecution;
+    }
+
     public void setScenarioExecution(ScenarioExecution scenarioExecution) {
         this.scenarioExecution = scenarioExecution;
     }

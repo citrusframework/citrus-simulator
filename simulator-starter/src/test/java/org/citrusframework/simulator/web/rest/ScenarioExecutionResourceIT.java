@@ -3,6 +3,7 @@ package org.citrusframework.simulator.web.rest;
 import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ public class ScenarioExecutionResourceIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -77,7 +78,7 @@ public class ScenarioExecutionResourceIT {
 
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -420,6 +421,28 @@ public class ScenarioExecutionResourceIT {
 
         // Get all the scenarioExecutionList where scenarioMessages equals to (scenarioMessagesId + 1)
         defaultScenarioExecutionShouldNotBeFound("scenarioMessagesId.equals=" + (scenarioMessagesId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllScenarioExecutionsByScenarioActionIsEqualToSomething() throws Exception {
+        ScenarioAction scenarioAction;
+        if (TestUtil.findAll(entityManager, ScenarioAction.class).isEmpty()) {
+            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+            scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
+        } else {
+            scenarioAction = TestUtil.findAll(entityManager, ScenarioAction.class).get(0);
+        }
+        entityManager.persist(scenarioAction);
+        entityManager.flush();
+        scenarioExecution.addScenarioAction(scenarioAction);
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+        Long scenarioActionId = scenarioAction.getActionId();
+        // Get all the scenarioExecutionList where scenarioAction equals to scenarioActionId
+        defaultScenarioExecutionShouldBeFound("scenarioActionsId.equals=" + scenarioActionId);
+
+        // Get all the scenarioExecutionList where scenarioAction equals to (scenarioActionId + 1)
+        defaultScenarioExecutionShouldNotBeFound("scenarioActionsId.equals=" + (scenarioActionId + 1));
     }
 
     /**

@@ -1,0 +1,19 @@
+{
+  "citrusSimulatorApp": {
+    "scenarioAction": {
+      "home": {
+        "title": "Scenario Actions",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Scenario Actions found"
+      },
+      "detail": {
+        "title": "Scenario Action"
+      },
+      "id": "ID",
+      "name": "Name",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "scenarioExecution": "Scenario Execution"
+    }
+  }
+}

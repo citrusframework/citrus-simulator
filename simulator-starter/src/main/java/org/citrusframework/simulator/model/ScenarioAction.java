@@ -24,6 +24,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
+import org.citrusframework.simulator.service.ScenarioActionQueryService;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -54,6 +56,10 @@ public class ScenarioAction implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
     private ScenarioExecution scenarioExecution;
+
+    public static ScenarioActionBuilder builder(){
+        return new ScenarioActionBuilder();
+    }
 
     public Long getActionId() {
         return actionId;
@@ -99,5 +105,29 @@ public class ScenarioAction implements Serializable {
                 ", startDate='" + getStartDate() + "'" +
                 ", endDate='" + getEndDate() + "'" +
                 "}";
+    }
+
+    public static class ScenarioActionBuilder {
+
+        private final ScenarioAction scenarioAction = new ScenarioAction();
+
+        public ScenarioActionBuilder name(String name) {
+            scenarioAction.name = name;
+            return this;
+        }
+
+        public ScenarioActionBuilder startDate(Instant startDate) {
+            scenarioAction.startDate = startDate;
+            return this;
+        }
+
+        public ScenarioActionBuilder endDate(Instant endDate) {
+            scenarioAction.endDate = endDate;
+            return this;
+        }
+
+        public ScenarioAction build(){
+            return scenarioAction;
+        }
     }
 }

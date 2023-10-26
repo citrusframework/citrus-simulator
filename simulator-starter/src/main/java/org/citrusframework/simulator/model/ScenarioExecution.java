@@ -67,7 +67,7 @@ public class ScenarioExecution implements Serializable {
      * Actual status as a numerical representation of {@link Status}
      */
     @Column(nullable = false)
-    private Integer status;
+    private Integer status = Status.UNKNOWN.getId();
 
     @Size(max = 1000)
     @Column(length = 1000)

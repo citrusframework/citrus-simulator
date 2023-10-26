@@ -15,6 +15,7 @@
       "status": "Status",
       "scenarioName": "Scenario Name",
       "errorMessage": "Error Message",
+      "scenarioActions": "Scenario Actions",
       "scenarioMessages": "Scenario Messages"
     }
   }

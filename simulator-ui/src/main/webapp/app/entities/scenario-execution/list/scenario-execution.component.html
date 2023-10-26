@@ -77,6 +77,21 @@
             <div class="btn-group">
               <button
                 type="submit"
+                [routerLink]="['/scenario-action']"
+                [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
+                class="btn btn-info btn-sm"
+                data-cy="filterOtherEntityButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenarioExecution.scenarioActions' | translate) }"
+                  >Show Actions</span
+                >
+              </button>
+              <button
+                type="submit"
                 [routerLink]="['/message']"
                 [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
                 class="btn btn-info btn-sm"
@@ -87,7 +102,7 @@
                   class="d-none d-md-inline"
                   jhiTranslate="entity.action.show"
                   [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenarioExecution.scenarioMessages' | translate) }"
-                  >Show Message</span
+                  >Show Messages</span
                 >
               </button>
               <button

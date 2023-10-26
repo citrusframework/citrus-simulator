@@ -59,13 +59,13 @@ class MessageHeaderServiceImplTest {
     @Test
     void testFindAll() {
         Pageable pageable = Pageable.unpaged();
-        Page<MessageHeader> mockPage = new PageImpl<>(List.of(messageHeaderWithMessage));
+        Page<MessageHeader> page = new PageImpl<>(List.of(messageHeaderWithMessage));
 
-        when(messageHeaderRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(mockPage);
+        when(messageHeaderRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(page);
 
         Page<MessageHeader> result = fixture.findAll(pageable);
 
-        assertEquals(mockPage, result);
+        assertEquals(page, result);
 
         verifyDtoPreparations();
     }

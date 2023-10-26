@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional(readOnly = true)
     public Page<Message> findAll(Pageable pageable) {
-        log.debug("Request to get all Messages");
+        log.debug("Request to get all Messages with eager relationships");
         return messageRepository.findAllWithEagerRelationships(pageable);
     }
 

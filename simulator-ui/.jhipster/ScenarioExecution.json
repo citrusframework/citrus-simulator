@@ -39,6 +39,13 @@
       "relationshipName": "scenarioMessages",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "scenarioAction",
+      "otherEntityRelationshipName": "scenarioExecution",
+      "relationshipName": "scenarioAction",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no",
