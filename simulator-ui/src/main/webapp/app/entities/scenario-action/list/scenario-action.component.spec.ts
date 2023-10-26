@@ -5,36 +5,36 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
-import { ScenarioExecutionService } from '../service/scenario-execution.service';
+import { ScenarioActionService } from '../service/scenario-action.service';
 
-import { ScenarioExecutionComponent } from './scenario-execution.component';
+import { ScenarioActionComponent } from './scenario-action.component';
 import SpyInstance = jest.SpyInstance;
 
-describe('ScenarioExecution Management Component', () => {
-  let comp: ScenarioExecutionComponent;
-  let fixture: ComponentFixture<ScenarioExecutionComponent>;
-  let service: ScenarioExecutionService;
+describe('ScenarioAction Management Component', () => {
+  let comp: ScenarioActionComponent;
+  let fixture: ComponentFixture<ScenarioActionComponent>;
+  let service: ScenarioActionService;
   let routerNavigateSpy: SpyInstance<Promise<boolean>>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
+        RouterTestingModule.withRoutes([{ path: 'scenario-action', component: ScenarioActionComponent }]),
         HttpClientTestingModule,
-        ScenarioExecutionComponent,
+        ScenarioActionComponent,
       ],
       providers: [
         {
           provide: ActivatedRoute,
           useValue: {
             data: of({
-              defaultSort: 'executionId,asc',
+              defaultSort: 'actionId,asc',
             }),
             queryParamMap: of(
               jest.requireActual('@angular/router').convertToParamMap({
                 page: '1',
                 size: '1',
-                sort: 'executionId,desc',
+                sort: 'actionId,desc',
                 'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
               }),
             ),
@@ -43,19 +43,19 @@ describe('ScenarioExecution Management Component', () => {
         },
       ],
     })
-      .overrideTemplate(ScenarioExecutionComponent, '')
+      .overrideTemplate(ScenarioActionComponent, '')
       .compileComponents();
 
-    fixture = TestBed.createComponent(ScenarioExecutionComponent);
+    fixture = TestBed.createComponent(ScenarioActionComponent);
     comp = fixture.componentInstance;
-    service = TestBed.inject(ScenarioExecutionService);
+    service = TestBed.inject(ScenarioActionService);
     routerNavigateSpy = jest.spyOn(comp.router, 'navigate');
 
     const headers = new HttpHeaders();
     jest.spyOn(service, 'query').mockReturnValue(
       of(
         new HttpResponse({
-          body: [{ executionId: 123 }],
+          body: [{ actionId: 123 }],
           headers,
         }),
       ),
@@ -68,16 +68,16 @@ describe('ScenarioExecution Management Component', () => {
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(comp.scenarioExecutions?.[0]).toEqual(expect.objectContaining({ executionId: 123 }));
+    expect(comp.scenarioActions?.[0]).toEqual(expect.objectContaining({ actionId: 123 }));
   });
 
   describe('trackId', () => {
-    it('Should forward to scenarioExecutionService', () => {
-      const entity = { executionId: 123 };
-      jest.spyOn(service, 'getScenarioExecutionIdentifier');
-      const executionId = comp.trackId(0, entity);
-      expect(service.getScenarioExecutionIdentifier).toHaveBeenCalledWith(entity);
-      expect(executionId).toBe(entity.executionId);
+    it('Should forward to scenarioActionService', () => {
+      const entity = { actionId: 123 };
+      jest.spyOn(service, 'getScenarioActionIdentifier');
+      const actionId = comp.trackId(0, entity);
+      expect(service.getScenarioActionIdentifier).toHaveBeenCalledWith(entity);
+      expect(actionId).toBe(entity.actionId);
     });
   });
 
@@ -94,7 +94,7 @@ describe('ScenarioExecution Management Component', () => {
     comp.ngOnInit();
 
     // THEN
-    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['executionId,desc'] }));
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['actionId,desc'] }));
   });
 
   it('should calculate the sort attribute for a non-id attribute', () => {

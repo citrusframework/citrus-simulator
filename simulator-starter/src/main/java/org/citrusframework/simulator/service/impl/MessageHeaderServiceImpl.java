@@ -36,7 +36,7 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     @Override
     @Transactional(readOnly = true)
     public Page<MessageHeader> findAll(Pageable pageable) {
-        log.debug("Request to get all MessageHeaders");
+        log.debug("Request to get all MessageHeaders with eager relationships");
         return messageHeaderRepository.findAllWithEagerRelationships(pageable)
             .map(MessageHeaderService::restrictToDtoProperties);
     }

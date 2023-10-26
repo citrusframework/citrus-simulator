@@ -39,11 +39,14 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private StringFilter errorMessage;
 
+    private LongFilter scenarioActionsId;
+
     private LongFilter scenarioMessagesId;
 
     private Boolean distinct;
 
-    public ScenarioExecutionCriteria() {}
+    public ScenarioExecutionCriteria() {
+    }
 
     public ScenarioExecutionCriteria(ScenarioExecutionCriteria other) {
         this.executionId = other.executionId == null ? null : other.executionId.copy();
@@ -52,6 +55,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.scenarioName = other.scenarioName == null ? null : other.scenarioName.copy();
         this.status = other.status == null ? null : other.status.copy();
         this.errorMessage = other.errorMessage == null ? null : other.errorMessage.copy();
+        this.scenarioActionsId = other.scenarioActionsId == null ? null : other.scenarioActionsId.copy();
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
         this.distinct = other.distinct;
     }
@@ -151,6 +155,21 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.errorMessage = errorMessage;
     }
 
+    public LongFilter getScenarioActionsId() {
+        return scenarioActionsId;
+    }
+
+    public LongFilter scenarioActionsId() {
+        if (scenarioActionsId == null) {
+            scenarioActionsId = new LongFilter();
+        }
+        return scenarioActionsId;
+    }
+
+    public void setScenarioActionsId(LongFilter scenarioActionsId) {
+        this.scenarioActionsId = scenarioActionsId;
+    }
+
     public LongFilter getScenarioMessagesId() {
         return scenarioMessagesId;
     }
@@ -185,19 +204,20 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         final ScenarioExecutionCriteria that = (ScenarioExecutionCriteria) o;
         return (
             Objects.equals(executionId, that.executionId) &&
-            Objects.equals(startDate, that.startDate) &&
-            Objects.equals(endDate, that.endDate) &&
-            Objects.equals(scenarioName, that.scenarioName) &&
-            Objects.equals(status, that.status) &&
-            Objects.equals(errorMessage, that.errorMessage) &&
-            Objects.equals(scenarioMessagesId, that.scenarioMessagesId) &&
-            Objects.equals(distinct, that.distinct)
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(endDate, that.endDate) &&
+                Objects.equals(scenarioName, that.scenarioName) &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(errorMessage, that.errorMessage) &&
+                Objects.equals(scenarioActionsId, that.scenarioActionsId) &&
+                Objects.equals(scenarioMessagesId, that.scenarioMessagesId) &&
+                Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioMessagesId, distinct);
+        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, distinct);
     }
 
     // prettier-ignore
@@ -210,6 +230,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             (scenarioName != null ? "scenarioName=" + scenarioName + ", " : "") +
             (status != null ? "status=" + status + ", " : "") +
             (errorMessage != null ? "errorMessage=" + errorMessage + ", " : "") +
+            (scenarioActionsId != null ? "scenarioMessagesId=" + scenarioActionsId + ", " : "") +
             (scenarioMessagesId != null ? "scenarioMessagesId=" + scenarioMessagesId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";

@@ -5,16 +5,12 @@ import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.repository.MessageHeaderRepository;
-import org.citrusframework.simulator.service.MessageHeaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +19,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 
 import static org.citrusframework.simulator.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -63,12 +54,6 @@ public class MessageHeaderResourceIT {
 
     @Autowired
     private MessageHeaderRepository messageHeaderRepository;
-
-    @Mock
-    private MessageHeaderRepository messageHeaderRepositoryMock;
-
-    @Mock
-    private MessageHeaderService messageHeaderServiceMock;
 
     @Autowired
     private EntityManager entityManager;
