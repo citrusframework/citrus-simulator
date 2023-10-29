@@ -37,8 +37,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * JPA entity for representing inbound and outbound messages
@@ -72,7 +74,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     @OrderBy("name ASC")
     @JsonIgnoreProperties(value = { "message" }, allowSetters = true)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Collection<MessageHeader> headers = new ArrayList<>();
+    private final Set<MessageHeader> headers = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
@@ -102,6 +104,10 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return citrusMessageId;
     }
 
+    public Set<MessageHeader> getHeaders() {
+        return headers;
+    }
+
     public void addHeader(MessageHeader messageHeader) {
         headers.add(messageHeader);
         messageHeader.setMessage(this);
@@ -110,10 +116,6 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     public void removeHeader(MessageHeader messageHeader) {
         headers.remove(messageHeader);
         messageHeader.setMessage(null);
-    }
-
-    public Collection<MessageHeader> getHeaders() {
-        return headers;
     }
 
     public ScenarioExecution getScenarioExecution() {

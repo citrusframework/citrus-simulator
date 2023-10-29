@@ -188,7 +188,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.scenarioMessagesId = scenarioMessagesId;
     }
 
- public LongFilter getScenarioParametersId() {
+    public LongFilter getScenarioParametersId() {
         return scenarioParametersId;
     }
 

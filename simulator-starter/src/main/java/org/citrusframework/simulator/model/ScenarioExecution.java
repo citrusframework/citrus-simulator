@@ -37,7 +37,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * JPA entity for representing a scenario execution
@@ -76,18 +78,18 @@ public class ScenarioExecution implements Serializable {
     private String errorMessage;
 
     @OrderBy("name ASC")
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"scenarioExecution"}, allowSetters = true)
-    private List<ScenarioParameter> scenarioParameters = new ArrayList<>();
+    private final Set<ScenarioParameter> scenarioParameters = new HashSet<>();
 
     @OrderBy("actionId ASC")
-    @OneToMany(mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ScenarioAction> scenarioActions = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<ScenarioAction> scenarioActions = new HashSet<>();
 
     @OrderBy("messageId ASC")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
-    private List<Message> scenarioMessages = new ArrayList<>();
+    private final Set<Message> scenarioMessages = new HashSet<>();
 
     public static ScenarioExecutionBuilder builder() {
         return new ScenarioExecutionBuilder();
@@ -149,7 +151,7 @@ public class ScenarioExecution implements Serializable {
         }
     }
 
-    public Collection<ScenarioParameter> getScenarioParameters() {
+    public Set<ScenarioParameter> getScenarioParameters() {
         return scenarioParameters;
     }
 
@@ -163,7 +165,7 @@ public class ScenarioExecution implements Serializable {
         scenarioParameter.setScenarioExecution(null);
     }
 
-    public Collection<ScenarioAction> getScenarioActions() {
+    public Set<ScenarioAction> getScenarioActions() {
         return scenarioActions;
     }
 
@@ -177,7 +179,7 @@ public class ScenarioExecution implements Serializable {
         scenarioAction.setScenarioExecution(null);
     }
 
-    public Collection<Message> getScenarioMessages() {
+    public Set<Message> getScenarioMessages() {
         return scenarioMessages;
     }
 
