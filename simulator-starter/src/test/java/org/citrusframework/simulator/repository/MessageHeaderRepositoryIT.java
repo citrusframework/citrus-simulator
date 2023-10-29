@@ -28,6 +28,10 @@ class MessageHeaderRepositoryIT {
 
     private MessageHeader messageHeader;
 
+    private static void verifyRelationships(MessageHeader messageHeaders) {
+        assertNotNull(messageHeaders.getMessage());
+    }
+
     @BeforeEach
     void beforeEachSetup() {
         messageHeader = createEntity(entityManager);
@@ -52,9 +56,5 @@ class MessageHeaderRepositoryIT {
         verifyRelationships(messageHeaders.get());
 
         assertFalse(messageHeaderRepository.findOneWithToOneRelationships(Long.MAX_VALUE).isPresent());
-    }
-
-    private static void verifyRelationships(MessageHeader messageHeaders) {
-        assertNotNull(messageHeaders.getMessage());
     }
 }

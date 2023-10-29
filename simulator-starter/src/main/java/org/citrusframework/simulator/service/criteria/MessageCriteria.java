@@ -224,7 +224,7 @@ public class MessageCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "MessageCriteria{" +
-            (messageId != null ? "id=" + messageId + ", " : "") +
+            (messageId != null ? "messageId=" + messageId + ", " : "") +
             (direction != null ? "direction=" + direction + ", " : "") +
             (payload != null ? "payload=" + payload + ", " : "") +
             (citrusMessageId != null ? "citrusMessageId=" + citrusMessageId + ", " : "") +

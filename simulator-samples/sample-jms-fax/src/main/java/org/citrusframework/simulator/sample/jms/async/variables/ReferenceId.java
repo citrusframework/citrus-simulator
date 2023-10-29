@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.sample.jms.async.variables;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class ReferenceId {
     }
 
     public ScenarioParameter asScenarioParameter() {
-        return new ScenarioParameterBuilder()
+        return ScenarioParameter.builder()
                 .name(REFERENCE_ID_VAR)
                 .label("Reference Id")
                 .required()

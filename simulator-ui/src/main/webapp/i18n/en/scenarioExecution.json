@@ -16,7 +16,8 @@
       "scenarioName": "Scenario Name",
       "errorMessage": "Error Message",
       "scenarioActions": "Scenario Actions",
-      "scenarioMessages": "Scenario Messages"
+      "scenarioMessages": "Scenario Messages",
+      "scenarioParameters": "Scenario Parameters"
     }
   }
 }

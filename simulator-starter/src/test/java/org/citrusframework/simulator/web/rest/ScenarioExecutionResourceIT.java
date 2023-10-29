@@ -32,9 +32,11 @@ public class ScenarioExecutionResourceIT {
 
     private static final Instant DEFAULT_START_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_START_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant SMALLER_START_DATE = Instant.ofEpochMilli(-1L);
 
     private static final Instant DEFAULT_END_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_END_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant SMALLER_END_DATE = Instant.ofEpochMilli(-1L);
 
     private static final String DEFAULT_SCENARIO_NAME = "AAAAAAAAAA";
     private static final String UPDATED_SCENARIO_NAME = "BBBBBBBBBB";
@@ -195,6 +197,32 @@ public class ScenarioExecutionResourceIT {
 
     @Test
     @Transactional
+    void getAllTestParametersByCreatedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+
+        // Get all the testParameterList where startDate is greater than or equal to DEFAULT_CREATED_DATE
+        defaultScenarioExecutionShouldBeFound("startDate.greaterThanOrEqual=" + DEFAULT_START_DATE);
+
+        // Get all the testParameterList where startDate is greater than or equal to UPDATED_CREATED_DATE
+        defaultScenarioExecutionShouldNotBeFound("startDate.greaterThanOrEqual=" + UPDATED_START_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByCreatedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+
+        // Get all the testParameterList where startDate is less than or equal to DEFAULT_CREATED_DATE
+        defaultScenarioExecutionShouldBeFound("startDate.lessThanOrEqual=" + DEFAULT_START_DATE);
+
+        // Get all the testParameterList where startDate is less than or equal to SMALLER_CREATED_DATE
+        defaultScenarioExecutionShouldNotBeFound("startDate.lessThanOrEqual=" + SMALLER_START_DATE);
+    }
+
+    @Test
+    @Transactional
     void getAllScenarioExecutionsByEndDateIsEqualToSomething() throws Exception {
         // Initialize the database
         scenarioExecutionRepository.saveAndFlush(scenarioExecution);
@@ -230,6 +258,32 @@ public class ScenarioExecutionResourceIT {
 
         // Get all the scenarioExecutionList where endDate is null
         defaultScenarioExecutionShouldNotBeFound("endDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByLastModifiedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+
+        // Get all the testParameterList where endDate is greater than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultScenarioExecutionShouldBeFound("endDate.greaterThanOrEqual=" + DEFAULT_END_DATE);
+
+        // Get all the testParameterList where endDate is greater than or equal to UPDATED_LAST_MODIFIED_DATE
+        defaultScenarioExecutionShouldNotBeFound("endDate.greaterThanOrEqual=" + UPDATED_END_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByLastModifiedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+
+        // Get all the testParameterList where endDate is less than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultScenarioExecutionShouldBeFound("endDate.lessThanOrEqual=" + DEFAULT_END_DATE);
+
+        // Get all the testParameterList where endDate is less than or equal to SMALLER_LAST_MODIFIED_DATE
+        defaultScenarioExecutionShouldNotBeFound("endDate.lessThanOrEqual=" + SMALLER_END_DATE);
     }
 
     @Test

@@ -44,21 +44,21 @@ class HttpRequestPathScenarioMapperTest {
         Operation operation = Mockito.mock(Operation.class);
 
         fixture.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos", RequestMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foos", RequestMethod.POST, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foo/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/foo/detail", RequestMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bars", RequestMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bar/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
-                                                        new HttpOperationScenario("/issues/bar/detail", RequestMethod.GET, operation, Collections.emptyMap())));
+            new HttpOperationScenario("/issues/foos", RequestMethod.POST, operation, Collections.emptyMap()),
+            new HttpOperationScenario("/issues/foo/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
+            new HttpOperationScenario("/issues/foo/detail", RequestMethod.GET, operation, Collections.emptyMap()),
+            new HttpOperationScenario("/issues/bars", RequestMethod.GET, operation, Collections.emptyMap()),
+            new HttpOperationScenario("/issues/bar/{id}", RequestMethod.GET, operation, Collections.emptyMap()),
+            new HttpOperationScenario("/issues/bar/detail", RequestMethod.GET, operation, Collections.emptyMap())));
 
         when(operation.getOperationId())
-                .thenReturn("fooListScenario")
-                .thenReturn("fooListPostScenario")
-                .thenReturn("barListScenario")
-                .thenReturn("fooScenario")
-                .thenReturn("barScenario")
-                .thenReturn("fooDetailScenario")
-                .thenReturn("barDetailScenario");
+            .thenReturn("fooListScenario")
+            .thenReturn("fooListPostScenario")
+            .thenReturn("barListScenario")
+            .thenReturn("fooScenario")
+            .thenReturn("barScenario")
+            .thenReturn("fooDetailScenario")
+            .thenReturn("barDetailScenario");
 
         assertEquals(fixture.getMappingKey(new HttpMessage().method(HttpMethod.GET)), "default");
         assertEquals(fixture.getMappingKey(new HttpMessage().method(HttpMethod.POST)), "default");

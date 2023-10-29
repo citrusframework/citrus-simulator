@@ -43,6 +43,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private LongFilter scenarioMessagesId;
 
+    private LongFilter scenarioParametersId;
+
     private Boolean distinct;
 
     public ScenarioExecutionCriteria() {
@@ -57,6 +59,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.errorMessage = other.errorMessage == null ? null : other.errorMessage.copy();
         this.scenarioActionsId = other.scenarioActionsId == null ? null : other.scenarioActionsId.copy();
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
+        this.scenarioParametersId = other.scenarioParametersId == null ? null : other.scenarioParametersId.copy();
         this.distinct = other.distinct;
     }
 
@@ -185,6 +188,21 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.scenarioMessagesId = scenarioMessagesId;
     }
 
+ public LongFilter getScenarioParametersId() {
+        return scenarioParametersId;
+    }
+
+    public LongFilter scenarioParametersId() {
+        if (scenarioParametersId == null) {
+            scenarioParametersId = new LongFilter();
+        }
+        return scenarioParametersId;
+    }
+
+    public void setScenarioParametersId(LongFilter scenarioParametersId) {
+        this.scenarioParametersId = scenarioParametersId;
+    }
+
     public Boolean getDistinct() {
         return distinct;
     }
@@ -211,27 +229,29 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
                 Objects.equals(errorMessage, that.errorMessage) &&
                 Objects.equals(scenarioActionsId, that.scenarioActionsId) &&
                 Objects.equals(scenarioMessagesId, that.scenarioMessagesId) &&
+                Objects.equals(scenarioParametersId, that.scenarioParametersId) &&
                 Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, distinct);
+        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, scenarioParametersId, distinct);
     }
 
     // prettier-ignore
     @Override
     public String toString() {
         return "ScenarioExecutionCriteria{" +
-            (executionId != null ? "id=" + executionId + ", " : "") +
+            (executionId != null ? "executionId=" + executionId + ", " : "") +
             (startDate != null ? "startDate=" + startDate + ", " : "") +
             (endDate != null ? "endDate=" + endDate + ", " : "") +
             (scenarioName != null ? "scenarioName=" + scenarioName + ", " : "") +
             (status != null ? "status=" + status + ", " : "") +
             (errorMessage != null ? "errorMessage=" + errorMessage + ", " : "") +
-            (scenarioActionsId != null ? "scenarioMessagesId=" + scenarioActionsId + ", " : "") +
+            (scenarioActionsId != null ? "scenarioActionsId=" + scenarioActionsId + ", " : "") +
             (scenarioMessagesId != null ? "scenarioMessagesId=" + scenarioMessagesId + ", " : "") +
+            (scenarioMessagesId != null ? "scenarioParametersId=" + scenarioParametersId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

@@ -25,14 +25,19 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./scenario-action/scenario-action.routes'),
       },
       {
-        path: 'test-parameter',
-        data: { pageTitle: 'citrusSimulatorApp.testParameter.home.title' },
-        loadChildren: () => import('./test-parameter/test-parameter.routes'),
+        path: 'scenario-parameter',
+        data: { pageTitle: 'citrusSimulatorApp.scenarioParameter.home.title' },
+        loadChildren: () => import('./scenario-parameter/scenario-parameter.routes'),
       },
       {
         path: 'test-result',
         data: { pageTitle: 'citrusSimulatorApp.testResult.home.title' },
         loadChildren: () => import('./test-result/test-result.routes'),
+      },
+      {
+        path: 'test-parameter',
+        data: { pageTitle: 'citrusSimulatorApp.testParameter.home.title' },
+        loadChildren: () => import('./test-parameter/test-parameter.routes'),
       },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),

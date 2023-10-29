@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.sample.jms.async.variables;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
 
 /**
@@ -37,7 +36,7 @@ public class Status {
     }
 
     public ScenarioParameter asScenarioParameter() {
-        ScenarioParameterBuilder statusParameterBuilder = new ScenarioParameterBuilder()
+        ScenarioParameter.ScenarioParameterBuilder statusParameterBuilder = ScenarioParameter.builder()
                 .name(Variables.STATUS_VAR)
                 .label("Fax Status")
                 .required()
@@ -47,6 +46,7 @@ public class Status {
         for (FaxStatusEnumType value : FaxStatusEnumType.values()) {
             statusParameterBuilder.addOption(value.value(), value.value());
         }
+
         return statusParameterBuilder.build();
     }
 

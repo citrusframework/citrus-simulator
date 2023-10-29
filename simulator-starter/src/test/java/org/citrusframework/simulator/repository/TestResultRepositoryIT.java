@@ -25,7 +25,7 @@ class TestResultRepositoryIT {
     private List<TestResult> testResults;
 
     @BeforeEach
-    void beforeEachSetup(){
+    void beforeEachSetup() {
         testResults = testResultRepository.saveAll(
             List.of(
                 TestResult.builder()
@@ -39,9 +39,10 @@ class TestResultRepositoryIT {
             )
         );
     }
+
     @Test
     @Transactional
-    void countByStatus(){
+    void countByStatus() {
         TestResultByStatus testResultByStatus = testResultRepository.countByStatus();
 
         assertEquals(2, testResultByStatus.total());
@@ -50,7 +51,7 @@ class TestResultRepositoryIT {
     }
 
     @AfterEach
-    void afterEachTeardown(){
+    void afterEachTeardown() {
         testResultRepository.deleteAll(testResults);
     }
 }

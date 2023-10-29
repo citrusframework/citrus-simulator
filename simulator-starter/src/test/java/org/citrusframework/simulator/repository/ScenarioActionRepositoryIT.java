@@ -30,9 +30,14 @@ class ScenarioActionRepositoryIT {
 
     private ScenarioAction scenarioAction;
 
+    private static void verifyRelationships(ScenarioAction scenarioAction) {
+        assertNotNull(scenarioAction.getScenarioExecution());
+    }
+
     @BeforeEach
     void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
         scenarioAction = createEntity(entityManager);
+
         ScenarioExecution scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
         entityManager.persist(scenarioExecution);
         scenarioAction.setScenarioExecution(scenarioExecution);
@@ -58,9 +63,5 @@ class ScenarioActionRepositoryIT {
         verifyRelationships(scenarioActions.get());
 
         assertFalse(scenarioActionRepository.findOneWithToOneRelationships(Long.MAX_VALUE).isPresent());
-    }
-
-    private static void verifyRelationships(ScenarioAction scenarioAction) {
-        assertNotNull(scenarioAction.getScenarioExecution());
     }
 }

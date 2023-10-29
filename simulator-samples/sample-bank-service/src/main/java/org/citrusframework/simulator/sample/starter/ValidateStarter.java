@@ -16,12 +16,8 @@
 
 package org.citrusframework.simulator.sample.starter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.sample.model.QueryParameter;
 import org.citrusframework.simulator.sample.model.Variable;
 import org.citrusframework.simulator.sample.scenario.ValidateIban;
@@ -31,6 +27,9 @@ import org.citrusframework.simulator.scenario.Starter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
@@ -76,7 +75,7 @@ public class ValidateStarter extends AbstractScenarioStarter {
         List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
         // iban (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.IBAN.name())
                 .label("IBAN")
                 .required()

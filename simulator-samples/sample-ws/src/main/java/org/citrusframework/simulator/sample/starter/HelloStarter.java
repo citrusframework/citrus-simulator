@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
@@ -45,7 +44,7 @@ public class HelloStarter extends AbstractScenarioStarter {
         List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // title (dropdown)
-        scenarioParameter.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(ScenarioParameter.builder()
                 .name("title")
                 .label("Title")
                 .required()
@@ -57,7 +56,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // firstname (text box)
-        scenarioParameter.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(ScenarioParameter.builder()
                 .name("firstname")
                 .label("First Name")
                 .required()
@@ -66,7 +65,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // lastname (text box)
-        scenarioParameter.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(ScenarioParameter.builder()
                 .name("lastname")
                 .label("Last Name")
                 .required()
@@ -76,7 +75,7 @@ public class HelloStarter extends AbstractScenarioStarter {
 
 
         // greeting (text area)
-        scenarioParameter.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(ScenarioParameter.builder()
                 .name("greeting")
                 .label("Greeting")
                 .required()

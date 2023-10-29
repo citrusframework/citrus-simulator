@@ -165,7 +165,7 @@ public class ScenarioActionCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "ScenarioActionCriteria{" +
-            (actionId != null ? "id=" + actionId + ", " : "") +
+            (actionId != null ? "actionId=" + actionId + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (startDate != null ? "startDate=" + startDate + ", " : "") +
             (endDate != null ? "endDate=" + endDate + ", " : "") +

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
@@ -50,7 +49,7 @@ public class GoodByeStarter extends AbstractScenarioStarter {
         List<ScenarioParameter> scenarioParameter = new ArrayList<>();
 
         // greeting (text area)
-        scenarioParameter.add(new ScenarioParameterBuilder()
+        scenarioParameter.add(ScenarioParameter.builder()
                 .name("payload")
                 .label("Payload")
                 .required()

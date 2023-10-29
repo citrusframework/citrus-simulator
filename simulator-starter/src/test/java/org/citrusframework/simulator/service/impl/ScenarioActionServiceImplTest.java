@@ -1,6 +1,5 @@
 package org.citrusframework.simulator.service.impl;
 
-import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.repository.ScenarioActionRepository;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,6 +69,7 @@ class ScenarioActionServiceImplTest {
 
         verifyDtoPreparations();
     }
+
     @Test
     void testFindOne() {
         Long scenarioActionId = 1L;

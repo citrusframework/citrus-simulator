@@ -27,6 +27,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.util.StringUtils;
 
@@ -66,6 +67,7 @@ public class ScenarioExecution implements Serializable {
     /**
      * Actual status as a numerical representation of {@link Status}
      */
+    @NotNull
     @Column(nullable = false)
     private Integer status = Status.UNKNOWN.getId();
 

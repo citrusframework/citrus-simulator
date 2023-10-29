@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -37,9 +39,11 @@ public class ScenarioActionResourceIT {
 
     private static final Instant DEFAULT_START_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_START_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime SMALLER_START_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final Instant DEFAULT_END_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_END_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime SMALLER_END_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     private static final String ENTITY_API_URL = "/api/scenario-actions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -57,7 +61,7 @@ public class ScenarioActionResourceIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -71,7 +75,7 @@ public class ScenarioActionResourceIT {
 
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -246,6 +250,32 @@ public class ScenarioActionResourceIT {
 
     @Test
     @Transactional
+    void getAllTestParametersByCreatedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioActionRepository.saveAndFlush(scenarioAction);
+
+        // Get all the testParameterList where startDate is greater than or equal to DEFAULT_CREATED_DATE
+        defaultScenarioActionShouldBeFound("startDate.greaterThanOrEqual=" + DEFAULT_START_DATE);
+
+        // Get all the testParameterList where startDate is greater than or equal to UPDATED_CREATED_DATE
+        defaultScenarioActionShouldNotBeFound("startDate.greaterThanOrEqual=" + UPDATED_START_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByCreatedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioActionRepository.saveAndFlush(scenarioAction);
+
+        // Get all the testParameterList where startDate is less than or equal to DEFAULT_CREATED_DATE
+        defaultScenarioActionShouldBeFound("startDate.lessThanOrEqual=" + DEFAULT_START_DATE);
+
+        // Get all the testParameterList where startDate is less than or equal to SMALLER_CREATED_DATE
+        defaultScenarioActionShouldNotBeFound("startDate.lessThanOrEqual=" + SMALLER_START_DATE);
+    }
+
+    @Test
+    @Transactional
     void getAllScenarioActionsByEndDateIsEqualToSomething() throws Exception {
         // Initialize the database
         scenarioActionRepository.saveAndFlush(scenarioAction);
@@ -281,6 +311,32 @@ public class ScenarioActionResourceIT {
 
         // Get all the scenarioActionList where endDate is null
         defaultScenarioActionShouldNotBeFound("endDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByLastModifiedDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioActionRepository.saveAndFlush(scenarioAction);
+
+        // Get all the testParameterList where endDate is greater than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultScenarioActionShouldBeFound("endDate.greaterThanOrEqual=" + DEFAULT_END_DATE);
+
+        // Get all the testParameterList where endDate is greater than or equal to UPDATED_LAST_MODIFIED_DATE
+        defaultScenarioActionShouldNotBeFound("endDate.greaterThanOrEqual=" + UPDATED_END_DATE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTestParametersByLastModifiedDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        scenarioActionRepository.saveAndFlush(scenarioAction);
+
+        // Get all the testParameterList where endDate is less than or equal to DEFAULT_LAST_MODIFIED_DATE
+        defaultScenarioActionShouldBeFound("endDate.lessThanOrEqual=" + DEFAULT_END_DATE);
+
+        // Get all the testParameterList where endDate is less than or equal to SMALLER_LAST_MODIFIED_DATE
+        defaultScenarioActionShouldNotBeFound("endDate.lessThanOrEqual=" + SMALLER_END_DATE);
     }
 
     @Test

@@ -43,7 +43,11 @@ class WsdlScenarioGeneratorTest {
         "  <v1:flag>true</v1:flag>%n" +
         "  <v1:restricted>stringstri</v1:restricted>%n" +
         "</v1:TestResponse>");
-
+    @Mock
+    private ConfigurableListableBeanFactory beanFactoryMock;
+    @Mock
+    private DefaultListableBeanFactory beanRegistryMock;
+    private WsdlScenarioGenerator fixture;
 
     static Stream<Arguments> testGenerateScenarios() {
         return data();
@@ -60,14 +64,6 @@ class WsdlScenarioGeneratorTest {
             Arguments.of("/TestService/test", WsdlScenarioGenerator.WsdlScenarioNamingStrategy.SOAP_ACTION, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT)
         );
     }
-
-    @Mock
-    private ConfigurableListableBeanFactory beanFactoryMock;
-
-    @Mock
-    private DefaultListableBeanFactory beanRegistryMock;
-
-    private WsdlScenarioGenerator fixture;
 
     @BeforeEach
     void beforeEachSetup() {

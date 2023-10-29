@@ -80,7 +80,7 @@ class HttpRequestAnnotationScenarioMapperTest {
     }
 
     @Scenario("IssueScenario")
-    @RequestMapping(value = "/issues/{name}", method = { RequestMethod.GET, RequestMethod.DELETE })
+    @RequestMapping(value = "/issues/{name}", method = {RequestMethod.GET, RequestMethod.DELETE})
     private static class IssueScenario extends AbstractSimulatorScenario {
     }
 
