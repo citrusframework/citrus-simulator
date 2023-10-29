@@ -26,8 +26,11 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,15 +55,17 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     /**
      * Actual control type as a numerical representation of {@link ControlType}
      */
+    @NotNull
     @Column(nullable = false, updatable = false)
-    private Integer controlType;
+    private Integer controlType = ControlType.UNKNOWN.getId();
 
     @Lob
+    @NotEmpty
     @Column(columnDefinition = "CLOB", name = "parameter_value", nullable = false, updatable = false)
     private String value;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 
     private boolean required;
@@ -68,7 +73,11 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     private String label;
 
     @Transient
-    private List<ScenarioParameterOption> options;
+    private List<ScenarioParameterOption> options = new ArrayList<>();
+
+    public static ScenarioParameterBuilder builder() {
+        return new ScenarioParameterBuilder();
+    }
 
     public Long getParameterId() {
         return parameterId;
@@ -133,14 +142,15 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     @Override
     public String toString() {
         return "ScenarioParameter{" +
-                ", parameterId='" + getParameterId() + "'" +
-                ", createdDate='" + getCreatedDate() + "'" +
-                ", name='" + getName() + "'" + "'" +
-                ", controlType='" + getControlType() + "'" +
-                ", value='" + getValue() + "'" +
-                ", required='" + isRequired() + "'" +
-                ", label='" + getLabel() + "'" +
-                "}";
+            ", parameterId='" + getParameterId() + "'" +
+            ", name='" + getName() + "'" + "'" +
+            ", controlType='" + getControlType() + "'" +
+            ", value='" + getValue() + "'" +
+            ", required='" + isRequired() + "'" +
+            ", label='" + getLabel() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
+            "}";
     }
 
     public enum ControlType {
@@ -162,6 +172,66 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
                 .filter(controlType -> controlType.id == id)
                 .findFirst()
                 .orElse(ControlType.UNKNOWN);
+        }
+    }
+
+    public static class ScenarioParameterBuilder extends AuditingEntityBuilder<ScenarioParameterBuilder, ScenarioParameter, Long> {
+
+        private final ScenarioParameter scenarioParameter = new ScenarioParameter();
+
+        @Override
+        protected ScenarioParameter getEntity() {
+            return scenarioParameter;
+        }
+
+        public ScenarioParameterBuilder name(String name) {
+            scenarioParameter.name = name;
+            return this;
+        }
+
+        public ScenarioParameterBuilder controlType(ControlType controlType) {
+            scenarioParameter.controlType = controlType.getId();
+            return this;
+        }
+
+        public ScenarioParameterBuilder textbox() {
+            scenarioParameter.controlType = ScenarioParameter.ControlType.TEXTBOX.getId();
+            return this;
+        }
+
+        public ScenarioParameterBuilder textarea() {
+            scenarioParameter.controlType = ScenarioParameter.ControlType.TEXTAREA.getId();
+            return this;
+        }
+
+        public ScenarioParameterBuilder dropdown() {
+            scenarioParameter.controlType = ScenarioParameter.ControlType.DROPDOWN.getId();
+            return this;
+        }
+
+        public ScenarioParameterBuilder value(String value) {
+            scenarioParameter.value = value;
+            return this;
+        }
+
+        public ScenarioParameterBuilder required() {
+            scenarioParameter.required = true;
+            return this;
+        }
+
+        public ScenarioParameterBuilder optional() {
+            scenarioParameter.required = false;
+            return this;
+        }
+
+        public ScenarioParameterBuilder label(String label) {
+            scenarioParameter.label = label;
+            return this;
+        }
+
+        public ScenarioParameterBuilder addOption(String key, String value) {
+            scenarioParameter.options.add(new ScenarioParameterOption(key, value));
+            return this;
         }
     }
 }

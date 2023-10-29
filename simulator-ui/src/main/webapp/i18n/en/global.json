@@ -11,6 +11,7 @@
         "messageHeader": "Message Header",
         "scenarioAction": "Scenario Action",
         "scenarioExecution": "Scenario Execution",
+        "scenarioParameter": "Scenario Parameter",
         "testParameter": "Test Parameter",
         "testResult": "Test Result",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"

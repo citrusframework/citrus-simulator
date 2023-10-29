@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Spring Data JPA repository for the MessageHeader entity.
+ * Spring Data JPA repository for the {@link MessageHeader} entity.
  */
 @Repository
 public interface MessageHeaderRepository extends JpaRepository<MessageHeader, Long>, JpaSpecificationExecutor<MessageHeader> {

@@ -184,7 +184,7 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
     @Override
     public String toString() {
         return "MessageHeaderCriteria{" +
-            (headerId != null ? "id=" + headerId + ", " : "") +
+            (headerId != null ? "headerId=" + headerId + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (value != null ? "value=" + value + ", " : "") +
             (createdDate != null ? "createdDate=" + createdDate + ", " : "") +

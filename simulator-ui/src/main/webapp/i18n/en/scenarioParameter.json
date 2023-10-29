@@ -1,0 +1,19 @@
+{
+  "citrusSimulatorApp": {
+    "scenarioParameter": {
+      "home": {
+        "title": "Scenario Parameters",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Scenario Parameters found"
+      },
+      "detail": {
+        "title": "Scenario Parameter"
+      },
+      "id": "ID",
+      "name": "Name",
+      "controlType": "Control Type",
+      "value": "Value",
+      "scenarioExecution": "Scenario Execution"
+    }
+  }
+}

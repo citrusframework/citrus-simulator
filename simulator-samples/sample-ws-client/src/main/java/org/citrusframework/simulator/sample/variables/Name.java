@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.sample.variables;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class Name {
     }
 
     public ScenarioParameter asScenarioParameter() {
-        return new ScenarioParameterBuilder()
+        return ScenarioParameter.builder()
                 .name(NAME_VAR)
                 .label("Enter your name")
                 .required()

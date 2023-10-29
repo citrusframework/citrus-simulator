@@ -23,11 +23,11 @@ import static org.mockito.Mockito.when;
 class InboundXmlDataDictionaryTest {
 
     private static final String MESSAGE_INPUT = String.format("<v1:TestRequest xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"false\" id=\"100\" name=\"string\">%n" +
-            "  <v1:name>string</v1:name>%n" +
-            "  <v1:id>100</v1:id>%n" +
-            "  <v1:flag>true</v1:flag>%n" +
-            "  <v1:restricted>stringstri</v1:restricted>%n" +
-            "</v1:TestRequest>");
+        "  <v1:name>string</v1:name>%n" +
+        "  <v1:id>100</v1:id>%n" +
+        "  <v1:flag>true</v1:flag>%n" +
+        "  <v1:restricted>stringstri</v1:restricted>%n" +
+        "</v1:TestRequest>");
 
     @Mock
     private TestContext testContextMock;
@@ -50,11 +50,11 @@ class InboundXmlDataDictionaryTest {
         Message translated = fixture.transform(request, testContextMock);
 
         assertEquals(translated.getPayload(String.class), String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                "<v1:TestRequest xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"@ignore@\" id=\"@ignore@\" name=\"@ignore@\">%n" +
-                "    <v1:name>@ignore@</v1:name>%n" +
-                "    <v1:id>@ignore@</v1:id>%n" +
-                "    <v1:flag>@ignore@</v1:flag>%n" +
-                "    <v1:restricted>@ignore@</v1:restricted>%n" +
-                "</v1:TestRequest>%n").replace("\r",""));
+            "<v1:TestRequest xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"@ignore@\" id=\"@ignore@\" name=\"@ignore@\">%n" +
+            "    <v1:name>@ignore@</v1:name>%n" +
+            "    <v1:id>@ignore@</v1:id>%n" +
+            "    <v1:flag>@ignore@</v1:flag>%n" +
+            "    <v1:restricted>@ignore@</v1:restricted>%n" +
+            "</v1:TestRequest>%n").replace("\r", ""));
     }
 }

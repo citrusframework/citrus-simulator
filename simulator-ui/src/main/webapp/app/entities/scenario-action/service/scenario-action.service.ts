@@ -11,18 +11,12 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { IScenarioAction, NewScenarioAction } from '../scenario-action.model';
 
-export type PartialUpdateScenarioAction = Partial<IScenarioAction> & Pick<IScenarioAction, 'actionId'>;
-
 type RestOf<T extends IScenarioAction | NewScenarioAction> = Omit<T, 'startDate' | 'endDate'> & {
   startDate?: string | null;
   endDate?: string | null;
 };
 
 export type RestScenarioAction = RestOf<IScenarioAction>;
-
-export type NewRestScenarioAction = RestOf<NewScenarioAction>;
-
-export type PartialUpdateRestScenarioAction = RestOf<PartialUpdateScenarioAction>;
 
 export type EntityResponseType = HttpResponse<IScenarioAction>;
 export type EntityArrayResponseType = HttpResponse<IScenarioAction[]>;
@@ -79,9 +73,7 @@ export class ScenarioActionService {
     return scenarioActionCollection;
   }
 
-  protected convertDateFromClient<T extends IScenarioAction | NewScenarioAction | PartialUpdateScenarioAction>(
-    scenarioAction: T,
-  ): RestOf<T> {
+  protected convertDateFromClient<T extends IScenarioAction | NewScenarioAction>(scenarioAction: T): RestOf<T> {
     return {
       ...scenarioAction,
       startDate: scenarioAction.startDate?.toJSON() ?? null,

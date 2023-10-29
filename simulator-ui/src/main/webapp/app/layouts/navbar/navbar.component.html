@@ -93,6 +93,18 @@
             <li>
               <a
                 class="dropdown-item"
+                routerLink="/scenario-parameter"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.entities.scenarioParameter">Scenario Parameter</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
                 routerLink="/test-result"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"

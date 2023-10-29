@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.sample.model.QueryParameter;
 import org.citrusframework.simulator.sample.model.Variable;
 import org.citrusframework.simulator.sample.scenario.CalculateIban;
@@ -79,7 +78,7 @@ public class CalculateStarter extends AbstractScenarioStarter {
         List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
         // bank account (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.ACCOUNT.name())
                 .label("Bank Account")
                 .required()
@@ -88,7 +87,7 @@ public class CalculateStarter extends AbstractScenarioStarter {
                 .build());
 
         // sort code (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.SORT_CODE.name())
                 .label("Sort Code")
                 .required()

@@ -2,10 +2,10 @@ package org.citrusframework.simulator.service;
 
 import jakarta.persistence.criteria.JoinType;
 import org.citrusframework.simulator.model.Message_;
-import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioAction_;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioExecution_;
+import org.citrusframework.simulator.model.ScenarioParameter_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.slf4j.Logger;
@@ -122,6 +122,15 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                         buildSpecification(
                             criteria.getScenarioMessagesId(),
                             root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.messageId)
+                        )
+                    );
+            }
+            if (criteria.getScenarioParametersId() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getScenarioParametersId(),
+                            root -> root.join(ScenarioExecution_.scenarioParameters, JoinType.LEFT).get(ScenarioParameter_.parameterId)
                         )
                     );
             }

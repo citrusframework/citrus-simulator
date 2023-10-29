@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.citrusframework.simulator.model.ScenarioParameter;
-import org.citrusframework.simulator.model.ScenarioParameterBuilder;
 import org.citrusframework.simulator.scenario.AbstractScenarioStarter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.Starter;
@@ -49,7 +48,7 @@ public class HelloStarter extends AbstractScenarioStarter {
         List<ScenarioParameter> scenarioParameters = new ArrayList<>();
 
         // name (text box)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameters.add(ScenarioParameter.builder()
                 .name("greeting")
                 .label("Greeting Text")
                 .required()
@@ -58,7 +57,7 @@ public class HelloStarter extends AbstractScenarioStarter {
                 .build());
 
         // greeting (text area)
-        scenarioParameters.add(new ScenarioParameterBuilder()
+        scenarioParameters.add(ScenarioParameter.builder()
                 .name("payload")
                 .label("Payload")
                 .required()

@@ -34,6 +34,13 @@
   "readOnly": true,
   "relationships": [
     {
+      "otherEntityName": "scenarioAction",
+      "otherEntityRelationshipName": "scenarioExecution",
+      "relationshipName": "scenarioActions",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
       "otherEntityName": "message",
       "otherEntityRelationshipName": "scenarioExecution",
       "relationshipName": "scenarioMessages",
@@ -41,9 +48,9 @@
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "scenarioAction",
+      "otherEntityName": "scenarioParameter",
       "otherEntityRelationshipName": "scenarioExecution",
-      "relationshipName": "scenarioAction",
+      "relationshipName": "scenarioParameters",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     }

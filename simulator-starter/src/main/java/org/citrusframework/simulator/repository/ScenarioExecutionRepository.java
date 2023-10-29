@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the ScenarioExecution entity.
+ * Spring Data JPA repository for the {@link ScenarioExecution} entity.
  */
 @Repository
 public interface ScenarioExecutionRepository extends JpaRepository<ScenarioExecution, Long>, JpaSpecificationExecutor<ScenarioExecution> {}

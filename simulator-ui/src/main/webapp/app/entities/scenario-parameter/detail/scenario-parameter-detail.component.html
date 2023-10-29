@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="scenarioParameter">
+      <h2 data-cy="scenarioParameterDetailsHeading">
+        <span jhiTranslate="citrusSimulatorApp.scenarioParameter.detail.title">Scenario Parameter</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.parameterId }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.controlType }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.value }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.createdDate">Created Date</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.createdDate }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.lastModifiedDate">Last Modified Date</span></dt>
+        <dd>
+          <span>{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.scenarioExecution">Scenario Execution</span></dt>
+        <dd>
+          <div *ngIf="scenarioParameter.scenarioExecution">
+            <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
+              scenarioParameter.scenarioExecution.scenarioName
+            }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>

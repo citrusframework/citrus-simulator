@@ -57,6 +57,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     /**
      * Actual direction as a numerical representation of {@link Direction}
      */
+    @NotNull
     @Column(nullable = false, updatable = false)
     private Integer direction = Direction.UNKNOWN.getId();
 

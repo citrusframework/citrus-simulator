@@ -107,6 +107,21 @@
               </button>
               <button
                 type="submit"
+                [routerLink]="['/scenario-parameter']"
+                [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
+                class="btn btn-info btn-sm"
+                data-cy="filterOtherEntityButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenarioExecution.scenarioParameters' | translate) }"
+                  >Show Parameters</span
+                >
+              </button>
+              <button
+                type="submit"
                 [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']"
                 class="btn btn-info btn-sm"
                 data-cy="entityDetailsButton"

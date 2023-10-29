@@ -30,6 +30,11 @@ class MessageRepositoryIT {
 
     private Message message;
 
+    private static void verifyRelationships(Message messages) {
+        assertNotNull(messages.getScenarioExecutionId());
+        assertNotNull(messages.getScenarioName());
+    }
+
     @BeforeEach
     void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
         message = MessageResourceIT.createEntity(entityManager);
@@ -59,10 +64,5 @@ class MessageRepositoryIT {
         verifyRelationships(messages.get());
 
         assertFalse(messageRepository.findOneWithToOneRelationships(Long.MAX_VALUE).isPresent());
-    }
-
-    private static void verifyRelationships(Message messages) {
-        assertNotNull(messages.getScenarioExecutionId());
-        assertNotNull(messages.getScenarioName());
     }
 }

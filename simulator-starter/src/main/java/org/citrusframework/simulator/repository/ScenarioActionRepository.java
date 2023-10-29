@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Spring Data JPA repository for the ScenarioAction entity.
+ * Spring Data JPA repository for the {@link ScenarioAction} entity.
  */
 @Repository
 public interface ScenarioActionRepository extends JpaRepository<ScenarioAction, Long>, JpaSpecificationExecutor<ScenarioAction> {
@@ -21,22 +21,11 @@ public interface ScenarioActionRepository extends JpaRepository<ScenarioAction, 
         return this.findOneWithToOneRelationships(id);
     }
 
-    default List<ScenarioAction> findAllWithEagerRelationships() {
-        return this.findAllWithToOneRelationships();
-    }
-
-    default Page<ScenarioAction> findAllWithEagerRelationships(Pageable pageable) {
-        return this.findAllWithToOneRelationships(pageable);
-    }
-
     @Query(
         value = "select scenarioAction from ScenarioAction scenarioAction left join fetch scenarioAction.scenarioExecution",
         countQuery = "select count(scenarioAction) from ScenarioAction scenarioAction"
     )
     Page<ScenarioAction> findAllWithToOneRelationships(Pageable pageable);
-
-    @Query("select scenarioAction from ScenarioAction scenarioAction left join fetch scenarioAction.scenarioExecution")
-    List<ScenarioAction> findAllWithToOneRelationships();
 
     @Query(
         "select scenarioAction from ScenarioAction scenarioAction left join fetch scenarioAction.scenarioExecution where scenarioAction.actionId =:actionId"

@@ -28,15 +28,6 @@ class TemplateHelperTest {
         );
     }
 
-    @MethodSource
-    @ParameterizedTest
-    void getFileResource(String basePath, String fileName, String fileExtension, boolean shouldExist) {
-        final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
-        final Resource fileResource = testling.getFileResource(fileName, fileExtension);
-
-        assertEquals(shouldExist, fileResource.exists());
-    }
-
     static Stream<Arguments> getXmlMessageTemplate() {
         return Stream.of(
             Arguments.of("", "test.xml", null),
@@ -49,18 +40,6 @@ class TemplateHelperTest {
         );
     }
 
-    @MethodSource
-    @ParameterizedTest
-    void getXmlMessageTemplate(String basePath, String fileName, String expectedContent) {
-        final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
-        try {
-            final String content = testling.getXmlMessageTemplate(fileName);
-            assertTrue(content.contains(expectedContent));
-        } catch (Exception e) {
-            assertNull(expectedContent);
-        }
-    }
-
     static Stream<Arguments> getJsonMessageTemplate() {
         return Stream.of(
             Arguments.of("", "test.json", null),
@@ -71,6 +50,27 @@ class TemplateHelperTest {
             Arguments.of("/template/json/", "test", CONTENT),
             Arguments.of("/template/json/", "aaaa", null)
         );
+    }
+
+    @MethodSource
+    @ParameterizedTest
+    void getFileResource(String basePath, String fileName, String fileExtension, boolean shouldExist) {
+        final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
+        final Resource fileResource = testling.getFileResource(fileName, fileExtension);
+
+        assertEquals(shouldExist, fileResource.exists());
+    }
+
+    @MethodSource
+    @ParameterizedTest
+    void getXmlMessageTemplate(String basePath, String fileName, String expectedContent) {
+        final TemplateHelper testling = TemplateHelper.instance(basePath, UTF_8);
+        try {
+            final String content = testling.getXmlMessageTemplate(fileName);
+            assertTrue(content.contains(expectedContent));
+        } catch (Exception e) {
+            assertNull(expectedContent);
+        }
     }
 
     @MethodSource
