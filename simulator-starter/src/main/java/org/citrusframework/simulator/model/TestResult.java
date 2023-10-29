@@ -160,6 +160,11 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         testParameters.add(testParameter);
     }
 
+    public void removeTestParameter(TestParameter testParameter) {
+        testParameters.remove(testParameter);
+        testParameter.setTestResult(null);
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }

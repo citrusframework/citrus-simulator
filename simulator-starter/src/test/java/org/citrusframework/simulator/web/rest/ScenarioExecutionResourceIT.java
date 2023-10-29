@@ -5,6 +5,7 @@ import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -457,6 +458,28 @@ public class ScenarioExecutionResourceIT {
 
     @Test
     @Transactional
+    void getAllScenarioExecutionsByScenarioActionIsEqualToSomething() throws Exception {
+        ScenarioAction scenarioAction;
+        if (TestUtil.findAll(entityManager, ScenarioAction.class).isEmpty()) {
+            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+            scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
+        } else {
+            scenarioAction = TestUtil.findAll(entityManager, ScenarioAction.class).get(0);
+        }
+        entityManager.persist(scenarioAction);
+        entityManager.flush();
+        scenarioExecution.addScenarioAction(scenarioAction);
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+        Long scenarioActionId = scenarioAction.getActionId();
+        // Get all the scenarioExecutionList where scenarioAction equals to scenarioActionId
+        defaultScenarioExecutionShouldBeFound("scenarioActionsId.equals=" + scenarioActionId);
+
+        // Get all the scenarioExecutionList where scenarioAction equals to (scenarioActionId + 1)
+        defaultScenarioExecutionShouldNotBeFound("scenarioActionsId.equals=" + (scenarioActionId + 1));
+    }
+
+    @Test
+    @Transactional
     void getAllScenarioExecutionsByScenarioMessagesIsEqualToSomething() throws Exception {
         Message scenarioMessages;
         if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
@@ -479,24 +502,24 @@ public class ScenarioExecutionResourceIT {
 
     @Test
     @Transactional
-    void getAllScenarioExecutionsByScenarioActionIsEqualToSomething() throws Exception {
-        ScenarioAction scenarioAction;
-        if (TestUtil.findAll(entityManager, ScenarioAction.class).isEmpty()) {
+    void getAllScenarioExecutionsByScenarioParametersIsEqualToSomething() throws Exception {
+        ScenarioParameter scenarioParameters;
+        if (TestUtil.findAll(entityManager, ScenarioParameter.class).isEmpty()) {
             scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-            scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
+            scenarioParameters = ScenarioParameterResourceIT.createEntity(entityManager);
         } else {
-            scenarioAction = TestUtil.findAll(entityManager, ScenarioAction.class).get(0);
+            scenarioParameters = TestUtil.findAll(entityManager, ScenarioParameter.class).get(0);
         }
-        entityManager.persist(scenarioAction);
+        entityManager.persist(scenarioParameters);
         entityManager.flush();
-        scenarioExecution.addScenarioAction(scenarioAction);
+        scenarioExecution.addScenarioParameter(scenarioParameters);
         scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-        Long scenarioActionId = scenarioAction.getActionId();
-        // Get all the scenarioExecutionList where scenarioAction equals to scenarioActionId
-        defaultScenarioExecutionShouldBeFound("scenarioActionsId.equals=" + scenarioActionId);
+        Long scenarioParametersId = scenarioParameters.getParameterId();
+        // Get all the scenarioExecutionList where scenarioParameters equals to scenarioParametersId
+        defaultScenarioExecutionShouldBeFound("scenarioParametersId.equals=" + scenarioParametersId);
 
-        // Get all the scenarioExecutionList where scenarioAction equals to (scenarioActionId + 1)
-        defaultScenarioExecutionShouldNotBeFound("scenarioActionsId.equals=" + (scenarioActionId + 1));
+        // Get all the scenarioExecutionList where scenarioParameters equals to (scenarioParametersId + 1)
+        defaultScenarioExecutionShouldNotBeFound("scenarioParametersId.equals=" + (scenarioParametersId + 1));
     }
 
     /**
