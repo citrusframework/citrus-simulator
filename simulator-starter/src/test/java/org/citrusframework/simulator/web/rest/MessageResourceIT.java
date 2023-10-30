@@ -60,7 +60,7 @@ public class MessageResourceIT {
     private EntityManager entityManager;
 
     @Autowired
-    private MockMvc restMessageMockMvc;
+    private MockMvc mockMvc;
 
     private Message message;
 
@@ -108,7 +108,7 @@ public class MessageResourceIT {
         messageRepository.saveAndFlush(message);
 
         // Get all the messageList
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=messageId,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -127,7 +127,7 @@ public class MessageResourceIT {
         messageRepository.saveAndFlush(message);
 
         // Get the message
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL_ID, message.getMessageId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -556,7 +556,7 @@ public class MessageResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultMessageShouldBeFound(String filter) throws Exception {
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=messageId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -568,7 +568,7 @@ public class MessageResourceIT {
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
 
         // Check, that the count call also returns 1
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=messageId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -579,7 +579,7 @@ public class MessageResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultMessageShouldNotBeFound(String filter) throws Exception {
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=messageId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -587,7 +587,7 @@ public class MessageResourceIT {
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restMessageMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=messageId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -598,6 +598,6 @@ public class MessageResourceIT {
     @Transactional
     void getNonExistingMessage() throws Exception {
         // Get the message
-        restMessageMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        mockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 }

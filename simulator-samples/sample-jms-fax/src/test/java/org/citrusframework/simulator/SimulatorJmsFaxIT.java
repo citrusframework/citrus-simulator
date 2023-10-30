@@ -69,6 +69,7 @@ import static org.citrusframework.jms.actions.PurgeJmsQueuesAction.Builder.purge
 @Test
 @ContextConfiguration(classes = SimulatorJmsFaxIT.EndpointConfig.class)
 public class SimulatorJmsFaxIT extends TestNGCitrusSpringSupport {
+
     private final PayloadHelper payloadHelper = new PayloadHelper();
 
     @Autowired
@@ -227,7 +228,7 @@ public class SimulatorJmsFaxIT extends TestNGCitrusSpringSupport {
         $(http()
             .client(restEndpoint)
             .send()
-            .post("/api/scenario/launch/UpdateFaxStatus")
+            .post("/api/scenarios/UpdateFaxStatus/launch")
             .message()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(asJson(referenceId.asScenarioParameter(),

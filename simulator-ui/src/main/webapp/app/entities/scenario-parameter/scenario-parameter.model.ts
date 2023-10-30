@@ -3,7 +3,7 @@ import { IScenarioExecution } from 'app/entities/scenario-execution/scenario-exe
 
 export interface IScenarioParameter {
   parameterId: number;
-  name?: string | null;
+  name?: 'UNKNOWN' | 'TEXTBOX' | 'TEXTAREA' | 'DROPDOWN' | null;
   controlType?: number | null;
   value?: string | null;
   createdDate?: number | null;

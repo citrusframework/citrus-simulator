@@ -25,6 +25,11 @@ import NavbarComponent from './layouts/navbar/navbar.component';
           path: '',
           loadChildren: () => import(`./entities/entity-routing.module`).then(({ EntityRoutingModule }) => EntityRoutingModule),
         },
+        {
+          path: 'scenario',
+          data: { pageTitle: 'citrusSimulatorApp.scenario.home.title' },
+          loadChildren: () => import(`./scenario/scenario.routes`),
+        },
         ...errorRoute,
       ],
       { enableTracing: DEBUG_INFO_ENABLED, bindToComponentInputs: true },

@@ -4,7 +4,7 @@ import { IScenarioParameter, NewScenarioParameter } from './scenario-parameter.m
 
 export const sampleWithRequiredData: IScenarioParameter = {
   parameterId: 13246,
-  name: 'separately',
+  name: 'TEXTBOX',
   controlType: 26023,
   value: 'underexpose since commerce',
   createdDate: 21593,
@@ -13,7 +13,7 @@ export const sampleWithRequiredData: IScenarioParameter = {
 
 export const sampleWithPartialData: IScenarioParameter = {
   parameterId: 25616,
-  name: 'jellyfish adolescent on',
+  name: 'TEXTAREA',
   controlType: 3663,
   value: 'outside hastily',
   createdDate: 26077,
@@ -22,7 +22,7 @@ export const sampleWithPartialData: IScenarioParameter = {
 
 export const sampleWithFullData: IScenarioParameter = {
   parameterId: 16729,
-  name: 'cytokine',
+  name: 'DROPDOWN',
   controlType: 21298,
   value: 'coarse',
   createdDate: 9490,
@@ -30,7 +30,7 @@ export const sampleWithFullData: IScenarioParameter = {
 };
 
 export const sampleWithNewData: NewScenarioParameter = {
-  name: 'who',
+  name: 'UNKNOWN',
   controlType: 24095,
   value: 'whoa',
   createdDate: 11500,

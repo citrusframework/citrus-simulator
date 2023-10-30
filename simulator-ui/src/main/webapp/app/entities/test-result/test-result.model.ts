@@ -2,7 +2,7 @@ import dayjs from 'dayjs/esm';
 
 export interface ITestResult {
   id: number;
-  status?: number | null;
+  status?: 'UNKNOWN' | 'SUCCESS' | 'FAILURE' | 'SKIP' | null;
   testName?: string | null;
   className?: string | null;
   errorMessage?: string | null;

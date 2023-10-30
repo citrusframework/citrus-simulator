@@ -1,0 +1,23 @@
+{
+  "citrusSimulatorApp": {
+    "scenario": {
+      "home": {
+        "title": "Scenarios",
+        "refreshListLabel": "Refresh list",
+        "notFound": "No Scenarios found"
+      },
+      "detail": {
+        "title": "Scenario"
+      },
+      "id": "ID",
+      "name": "Name",
+      "type": "Type",
+      "scenarioParameters": "Scenario Parameters",
+      "action": {
+        "launch": "Launch",
+        "launchFailed": "Failed to launch Scenario!",
+        "launchedSuccessfully": "Scenario successfully launched: <a href=\"/scenario-execution?filter[executionId.in]={{scenarioExecutionId}}\">View Execution</a>."
+      }
+    }
+  }
+}

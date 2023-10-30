@@ -4,7 +4,7 @@ import { ITestResult, NewTestResult } from './test-result.model';
 
 export const sampleWithRequiredData: ITestResult = {
   id: 22758,
-  status: 18375,
+  status: 'SUCCESS',
   testName: 'breadcrumb',
   className: 'newspaper',
   createdDate: dayjs('2023-09-26T09:11'),
@@ -13,7 +13,7 @@ export const sampleWithRequiredData: ITestResult = {
 
 export const sampleWithPartialData: ITestResult = {
   id: 1008,
-  status: 25893,
+  status: 'FAILURE',
   testName: 'zowie',
   className: 'regarding openly',
   errorMessage: 'toward',
@@ -24,7 +24,7 @@ export const sampleWithPartialData: ITestResult = {
 
 export const sampleWithFullData: ITestResult = {
   id: 11970,
-  status: 5871,
+  status: 'SKIP',
   testName: 'peruse probable display',
   className: 'dining',
   errorMessage: 'reproachfully better what',
@@ -35,7 +35,7 @@ export const sampleWithFullData: ITestResult = {
 };
 
 export const sampleWithNewData: NewTestResult = {
-  status: 22262,
+  status: 'UNKNOWN',
   testName: 'um finally',
   className: 'supporter vastly',
   createdDate: dayjs('2023-09-25T22:19'),

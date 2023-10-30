@@ -1,100 +1,60 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.citrusframework.simulator.service;
 
+import java.util.Collection;
+import java.util.Set;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioStarter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.Starter;
-import org.citrusframework.simulator.scenario.Scenario;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
-import jakarta.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * Service for looking-up and accessing {@link Scenario}s and
- * {@link Starter}s
+ * Service for looking-up and accessing {@link Scenario}'s and {@link Starter}'s.
  */
-@Service
-public class ScenarioLookupService {
-    private static final Logger LOG = LoggerFactory.getLogger(ScenarioLookupService.class);
-
-    private final ApplicationContext applicationContext;
+public interface ScenarioLookupService {
 
     /**
-     * List of available scenario starters
+     * Reloads the {@link SimulatorScenario} and {@link ScenarioStarter} from the current
+     * {@link ApplicationContext}
      */
-    private Map<String, ScenarioStarter> scenarioStarters;
-
-    /**
-     * List of available scenarios
-     */
-    private Map<String, SimulatorScenario> scenarios;
-
-    public ScenarioLookupService(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @PostConstruct
-    private void init() {
-        scenarios = getSimulatorScenarios(applicationContext);
-        LOG.info(String.format("Scenarios found: %s", Arrays.toString(scenarios.keySet().toArray())));
-
-        scenarioStarters = getScenarioStarters(applicationContext);
-        LOG.info(String.format("Starters found: %s", Arrays.toString(scenarioStarters.keySet().toArray())));
-    }
-
-    /**
-     * Returns the list of parameters that the scenario can be passed when started
-     *
-     * @param scenarioName
-     * @return
-     */
-    public Collection<ScenarioParameter> lookupScenarioParameters(String scenarioName) {
-        if (scenarioStarters.containsKey(scenarioName)) {
-            return scenarioStarters.get(scenarioName).getScenarioParameters();
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns a list containing the names of all starters
-     *
-     * @return all starter names
-     */
-    public Collection<String> getStarterNames() {
-        return scenarioStarters.keySet().stream()
-                .sorted()
-                .toList();
-    }
+    void evictAndReloadScenarioCache();
 
     /**
      * Returns a list containing the names of all scenarios.
      *
      * @return all scenario names
      */
-    public Collection<String> getScenarioNames() {
-        return scenarios.keySet().stream()
-                .sorted()
-                .toList();
-    }
+    Set<String> getScenarioNames();
 
-    private static Map<String, SimulatorScenario> getSimulatorScenarios(ApplicationContext context) {
-        return context.getBeansOfType(SimulatorScenario.class).entrySet().stream()
-                .filter(map -> !map.getValue().getClass().isAnnotationPresent(Starter.class))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    /**
+     * Returns a list containing the names of all starters
+     *
+     * @return all starter names
+     */
+    Set<String> getStarterNames();
 
-    }
-
-    private static Map<String, ScenarioStarter> getScenarioStarters(ApplicationContext context) {
-        return context.getBeansOfType(ScenarioStarter.class).entrySet().stream()
-                .filter(map -> map.getValue().getClass().isAnnotationPresent(Starter.class))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
+    /**
+     * Returns the list of parameters that the scenario can be passed when started
+     *
+     * @param scenarioName the name of the {@link ScenarioStarter}
+     * @return the {@link ScenarioParameter}'s of the {@link ScenarioStarter}
+     */
+    Collection<ScenarioParameter> lookupScenarioParameters(String scenarioName);
 }

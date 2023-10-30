@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="name && type">
+      <h2 data-cy="scenarioDetailsHeading"><span jhiTranslate="citrusSimulatorApp.scenario.detail.title">Scenario</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="citrusSimulatorApp.scenario.name">Name</span></dt>
+        <dd>
+          <span>{{ name }}</span>
+        </dd>
+        <dt><span jhiTranslate="citrusSimulatorApp.scenario.type">Type</span></dt>
+        <dd>
+          <span>{{ type }}</span>
+        </dd>
+      </dl>
+
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="controlType">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="value">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="entityTable">
+            <td>{{ scenarioParameter.name }}</td>
+            <td>{{ scenarioParameter.controlType }}</td>
+            <td>{{ scenarioParameter.value }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+    </div>
+  </div>
+</div>

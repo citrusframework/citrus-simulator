@@ -58,7 +58,7 @@ public class ScenarioExecutionResourceIT {
     private EntityManager entityManager;
 
     @Autowired
-    private MockMvc restScenarioExecutionMockMvc;
+    private MockMvc mockMvc;
 
     private ScenarioExecution scenarioExecution;
 
@@ -108,7 +108,7 @@ public class ScenarioExecutionResourceIT {
         scenarioExecutionRepository.saveAndFlush(scenarioExecution);
 
         // Get all the scenarioExecutionList
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=executionId,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -127,7 +127,7 @@ public class ScenarioExecutionResourceIT {
         scenarioExecutionRepository.saveAndFlush(scenarioExecution);
 
         // Get the scenarioExecution
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL_ID, scenarioExecution.getExecutionId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -526,7 +526,7 @@ public class ScenarioExecutionResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultScenarioExecutionShouldBeFound(String filter) throws Exception {
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=executionId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -538,7 +538,7 @@ public class ScenarioExecutionResourceIT {
             .andExpect(jsonPath("$.[*].errorMessage").value(hasItem(DEFAULT_ERROR_MESSAGE)));
 
         // Check, that the count call also returns 1
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=executionId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -549,7 +549,7 @@ public class ScenarioExecutionResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultScenarioExecutionShouldNotBeFound(String filter) throws Exception {
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=executionId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -557,7 +557,7 @@ public class ScenarioExecutionResourceIT {
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restScenarioExecutionMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=executionId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -568,6 +568,6 @@ public class ScenarioExecutionResourceIT {
     @Transactional
     void getNonExistingScenarioExecution() throws Exception {
         // Get the scenarioExecution
-        restScenarioExecutionMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        mockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 }
