@@ -1,0 +1,85 @@
+<div>
+  <h2 id="page-heading" data-cy="ScenarioHeading">
+    <span jhiTranslate="citrusSimulatorApp.scenario.home.title">Scenarios</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="citrusSimulatorApp.scenario.home.refreshListLabel">Refresh list</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0">
+    <span jhiTranslate="citrusSimulatorApp.scenario.home.notFound">No Scenarios found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="scenarios && scenarios.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="name">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenario.name">Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="type">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenario.type">Type</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let scenario of scenarios; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/scenario', scenario.name, scenario.type, 'view']">{{ scenario.name }}</a>
+          </td>
+          <td>{{ scenario.type }}</td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button type="submit" class="btn btn-info btn-sm" data-cy="scenarioLaunchButton" (click)="launch(scenario)">
+                <fa-icon icon="play"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenario.action.launch">Launch</span>
+              </button>
+              <button
+                type="submit"
+                [routerLink]="['/scenario', scenario.name, scenario.type, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="scenarios && scenarios.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

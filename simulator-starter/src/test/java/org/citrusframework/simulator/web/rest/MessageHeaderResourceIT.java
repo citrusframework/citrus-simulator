@@ -59,7 +59,7 @@ public class MessageHeaderResourceIT {
     private EntityManager entityManager;
 
     @Autowired
-    private MockMvc restMessageHeaderMockMvc;
+    private MockMvc mockMvc;
 
     private MessageHeader messageHeader;
 
@@ -127,7 +127,7 @@ public class MessageHeaderResourceIT {
         messageHeaderRepository.saveAndFlush(messageHeader);
 
         // Get all the messageHeaderList
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=headerId,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -145,7 +145,7 @@ public class MessageHeaderResourceIT {
         messageHeaderRepository.saveAndFlush(messageHeader);
 
         // Get the messageHeader
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL_ID, messageHeader.getHeaderId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -512,7 +512,7 @@ public class MessageHeaderResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultMessageHeaderShouldBeFound(String filter) throws Exception {
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=headerId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -523,7 +523,7 @@ public class MessageHeaderResourceIT {
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
 
         // Check, that the count call also returns 1
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=headerId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -534,7 +534,7 @@ public class MessageHeaderResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultMessageHeaderShouldNotBeFound(String filter) throws Exception {
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=headerId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -542,7 +542,7 @@ public class MessageHeaderResourceIT {
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restMessageHeaderMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=headerId,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -553,6 +553,6 @@ public class MessageHeaderResourceIT {
     @Transactional
     void getNonExistingMessageHeader() throws Exception {
         // Get the messageHeader
-        restMessageHeaderMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        mockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 }

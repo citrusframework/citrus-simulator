@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
@@ -45,6 +45,7 @@ export class MessageComponent implements OnInit {
   page = 1;
 
   constructor(
+    private ngZone: NgZone,
     protected messageService: MessageService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
@@ -135,10 +136,12 @@ export class MessageComponent implements OnInit {
       queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
     });
 
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
-    });
+    this.ngZone.run(() =>
+      this.router.navigate(['./'], {
+        relativeTo: this.activatedRoute,
+        queryParams: queryParamsObj,
+      }),
+    );
   }
 
   protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {

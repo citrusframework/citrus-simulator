@@ -55,8 +55,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 @Configuration
 @ComponentScan(basePackages = {
-        // TODO: Remove when scenario controller has been migrated
-        "org.citrusframework.simulator.controller",
         "org.citrusframework.simulator.web.rest",
         "org.citrusframework.simulator.listener",
         "org.citrusframework.simulator.service",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
-import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,29 +55,6 @@ public class ActivityService {
     public ActivityService(ScenarioExecutionRepository scenarioExecutionRepository, MessageService messageService) {
         this.scenarioExecutionRepository = scenarioExecutionRepository;
         this.messageService = messageService;
-    }
-
-    /**
-     * Creates a new {@link ScenarioExecution}, persisting it within the database.
-     *
-     * @param scenarioName       the name of the scenario
-     * @param scenarioParameters the scenario's start parameters
-     * @return the new {@link ScenarioExecution}
-     */
-    public ScenarioExecution createExecutionScenario(String scenarioName, Collection<ScenarioParameter> scenarioParameters) {
-        ScenarioExecution scenarioExecution = new ScenarioExecution();
-        scenarioExecution.setScenarioName(scenarioName);
-        scenarioExecution.setStartDate(timeProvider.getTimeNow());
-        scenarioExecution.setStatus(ScenarioExecution.Status.RUNNING);
-
-        if (scenarioParameters != null) {
-            for (ScenarioParameter tp : scenarioParameters) {
-                scenarioExecution.addScenarioParameter(tp);
-            }
-        }
-
-        scenarioExecution = scenarioExecutionRepository.save(scenarioExecution);
-        return scenarioExecution;
     }
 
     public void completeScenarioExecutionSuccess(TestCase testCase) {

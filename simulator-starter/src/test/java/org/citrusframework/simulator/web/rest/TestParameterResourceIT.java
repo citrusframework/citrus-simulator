@@ -56,7 +56,7 @@ class TestParameterResourceIT {
     private EntityManager entityManager;
 
     @Autowired
-    private MockMvc restTestParameterMockMvc;
+    private MockMvc mockMvc;
 
     private TestParameter testParameter;
 
@@ -124,7 +124,7 @@ class TestParameterResourceIT {
         testParameterRepository.saveAndFlush(testParameter);
 
         // Get all the testParameterList
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=createdDate,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -141,7 +141,7 @@ class TestParameterResourceIT {
         testParameterRepository.saveAndFlush(testParameter);
 
         // Get the testParameter
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL_ID, testParameter.getTestResult().getId(), testParameter.getKey()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -489,7 +489,7 @@ class TestParameterResourceIT {
      * Executes the search, and checks that the default entity is returned.
      */
     private void defaultTestParameterShouldBeFound(String filter) throws Exception {
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -499,7 +499,7 @@ class TestParameterResourceIT {
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
 
         // Check, that the count call also returns 1
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -510,7 +510,7 @@ class TestParameterResourceIT {
      * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultTestParameterShouldNotBeFound(String filter) throws Exception {
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -518,7 +518,7 @@ class TestParameterResourceIT {
             .andExpect(jsonPath("$").isEmpty());
 
         // Check, that the count call also returns 0
-        restTestParameterMockMvc
+        mockMvc
             .perform(get(ENTITY_API_URL + "/count?sort=createdDate,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -529,6 +529,6 @@ class TestParameterResourceIT {
     @Transactional
     void getNonExistingTestParameter() throws Exception {
         // Get the testParameter
-        restTestParameterMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE, "non-existing-key")).andExpect(status().isNotFound());
+        mockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE, "non-existing-key")).andExpect(status().isNotFound());
     }
 }

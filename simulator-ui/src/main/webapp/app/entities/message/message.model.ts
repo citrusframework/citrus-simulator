@@ -4,7 +4,7 @@ import { IScenarioExecution } from 'app/entities/scenario-execution/scenario-exe
 
 export interface IMessage {
   messageId: number;
-  direction?: number | null;
+  direction?: 'UNKNOWN' | 'INBOUND' | 'OUTBOUND' | null;
   payload?: string | null;
   citrusMessageId?: string | null;
   scenarioExecutionId?: number | null;

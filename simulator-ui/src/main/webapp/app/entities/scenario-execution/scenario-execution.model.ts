@@ -5,7 +5,7 @@ export interface IScenarioExecution {
   startDate?: dayjs.Dayjs | null;
   endDate?: dayjs.Dayjs | null;
   scenarioName?: string | null;
-  status?: number | null;
+  status?: 'UNKNOWN' | 'RUNNING' | 'SUCCESS' | 'FAILED' | null;
   errorMessage?: string | null;
 }
 

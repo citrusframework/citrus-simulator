@@ -16,7 +16,7 @@
       "errorMessage": "Error Message",
       "failureStack": "Failure Stack",
       "failureType": "Failure Type",
-      "testParameter": "Test Parameter",
+      "testParameter": "Test Parameters",
       "createdDate": "Created Date",
       "lastModifiedDate": "Last Modified Date"
     }

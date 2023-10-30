@@ -1,0 +1,32 @@
+{
+  "changelogDate": "20231026180542",
+  "dto": "no",
+  "entityTableName": "scenario",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Scenario",
+  "pagination": "pagination",
+  "readOnly": true,
+  "relationships": [
+    {
+      "otherEntityName": "scenarioParameter",
+      "otherEntityRelationshipName": "scenario",
+      "relationshipName": "scenarioParameters",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

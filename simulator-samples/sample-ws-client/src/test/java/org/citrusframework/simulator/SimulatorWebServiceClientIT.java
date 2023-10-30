@@ -73,7 +73,7 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
         $(http()
             .client(restEndpoint)
             .send()
-            .post("/api/scenario/launch/HelloStarter")
+            .post("/api/scenarios/HelloStarter/launch")
             .message()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(asJson(name.asScenarioParameter())));
