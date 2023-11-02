@@ -73,7 +73,7 @@ targetCompatibility = 17
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.citrusframework:citrus-simulator-starter:1.2-SNAPSHOT")
+    implementation("org.citrusframework:citrus-spring-boot-simulator:3.0.0")
     testImplementation("junit:junit")
 }
 ```
@@ -119,7 +119,7 @@ When choosing Maven as build tool the pom file is a normal Spring Boot project w
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-simulator-starter</artifactId>
+      <artifactId>citrus-spring-boot-simulator</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
   </dependencies>
