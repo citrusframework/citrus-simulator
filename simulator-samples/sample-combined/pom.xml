@@ -34,7 +34,7 @@
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-simulator-starter</artifactId>
+      <artifactId>citrus-spring-boot-simulator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.citrusframework</groupId>

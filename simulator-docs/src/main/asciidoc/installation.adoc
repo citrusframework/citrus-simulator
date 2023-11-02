@@ -161,7 +161,7 @@ Below is a sample `pom.xml` for a Maven project configured as a Spring Boot appl
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-spring-boot-starter-simulator</artifactId>
+      <artifactId>citrus-spring-boot-simulator</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
     <!-- Other dependencies -->
