@@ -27,8 +27,7 @@ public class SimulatorUiConfigurationProperties {
 
     public static class Security {
 
-        private static final String DEFAULT_CONTENT_SECURITY_POLICY = "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:";
-
+        private static final String DEFAULT_CONTENT_SECURITY_POLICY = "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:";
         private String contentSecurityPolicy = DEFAULT_CONTENT_SECURITY_POLICY;
 
         public String getContentSecurityPolicy() {
