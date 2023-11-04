@@ -30,7 +30,7 @@ import jakarta.annotation.PostConstruct;
 public class SimulatorConfigurationProperties implements EnvironmentAware {
 
     /** Logger */
-    private static Logger log = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
 
     /**
      * System property constants and environment variable names. Post construct callback reads these values and overwrites
@@ -56,8 +56,6 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY";
     private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary";
     private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY";
-    private static final String SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_PROPERTY = "citrus.simulator.filter.start.day.shift";
-    private static final String SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_ENV = "CITRUS_SIMULATOR_FILTER_START_DAY_SHIFT";
 
     /**
      * Global option to enable/disable simulator support, default is true.
@@ -67,7 +65,7 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     /**
      * Template path relative to the project root. Used in scenario starters in order to load file content when configuring starter parameters.
      */
-    private String templatePath = "com/consol/citrus/simulator/templates";
+    private String templatePath = "org/citrusframework/simulator/templates";
 
     /**
      * Default test scenario name that applies in case no other scenario could be mapped within scenario mapper.
@@ -115,13 +113,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
      */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
-    /**
-     * Default shift in days for the start day of filtering. By default the filter starts at the beginning of the current day.
-     */
-    private int filterStartDayShift = 0;
-
      /**
-     * The Spring application context environment auto injected by environment aware mechanism.
+     * The Spring application context environment auto-injected by environment aware mechanism.
      */
     private Environment env;
 
@@ -137,9 +130,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         outboundXmlDictionary = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
         inboundJsonDictionary = env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
         outboundJsonDictionary = env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV, outboundJsonDictionary));
-        filterStartDayShift =  Integer.parseInt(env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_PROPERTY, env.getProperty(SIMULATOR_DEFAULT_FILTER_START_DAY_SHIFT_ENV, Integer.toString(filterStartDayShift))));
 
-        log.info("Using the simulator configuration: {}", this.toString());
+        logger.info("Using the simulator configuration: {}", this.toString());
     }
 
     /**
@@ -337,24 +329,6 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
         this.outboundJsonDictionary = outboundJsonDictionary;
     }
 
-    /**
-     * Gets the filterStartDayShift
-     *
-     * @return
-     */
-    public int getFilterStartDayShift() {
-        return filterStartDayShift;
-    }
-
-    /**
-     * Sets the filterStartDayShift
-     *
-     * @param filterStartDayShift
-     */
-    public void setFilterStartDayShift(int filterStartDayShift) {
-        this.filterStartDayShift = filterStartDayShift;
-    }
-
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
@@ -369,7 +343,6 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
                 ", outboundXmlDictionary=" + outboundXmlDictionary +
                 ", inboundJsonDictionary=" + inboundJsonDictionary +
                 ", outboundJsonDictionary=" + outboundJsonDictionary +
-                ", filterStartDayShift=" + filterStartDayShift +
                 '}';
     }
 
