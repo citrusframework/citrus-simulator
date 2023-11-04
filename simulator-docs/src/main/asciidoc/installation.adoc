@@ -1,15 +1,15 @@
-[[installation]]
+[installation]
 = Installation
 
-The Citrus simulator is a web application that uses Spring boot and Angular2. The simulator is able to run as Java application on your local machine
-or as container/pod in Docker, Kubernetes or Openshift.
+The Citrus simulator is a web application that leverages https://projects.spring.io/spring-boot/[Spring Boot^] and https://angular.io/[Angular^].
+It can be run as a Java application on your local machine or as a container/pod in Docker, Kubernetes, or OpenShift.
 
-You can use any build system you like when building the simulator application. Here we show how to setup everything using link:http://gradle.org/[Gradle] and link:https://maven.apache.org/[Maven].
+While any build system can be used to build the simulator, we will illustrate how to set up the project using https://gradle.org/[Gradle] and https://maven.apache.org/[Maven].
 
-[[gradle]]
+[[gradle-build]]
 == Build with Gradle
 
-Gradle uses groovy build scripts that we have to add first when starting a new simulator project.
+Gradle uses Groovy-based build scripts which we need to add when starting a new simulator project.
 
 [source,groovy]
 ----
@@ -18,7 +18,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:3.1.5")
     }
 }
 
@@ -30,29 +30,32 @@ apply plugin: 'org.springframework.boot'
 jar {
     group = "org.citrusframework.simulator"
     baseName = 'citrus-simulator-sample'
-    version =  '1.0.0'
+    version = '1.0.0'
 }
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.citrusframework:citrus-simulator-starter:1.0.0")
+    implementation("org.citrusframework:citrus-spring-boot-simulator:3.0.0")
     testImplementation("junit:junit")
 }
 ----
 
-The above build script will setup the Spring Boot dependencies for you. In addition to that we add the basic `citrus-simulator-starter` dependency. That's it for the Gradle build.
-We are ready to build and run the simulator now.
+The above build script will set up the necessary Spring Boot dependencies and include the basic `citrus-spring-boot-simulator` dependency.
+With the Gradle build complete, we're now ready to build and run the simulator.
 
-Before we do that let's add a basic Spring Boot main class to our project.
+[[first-scenario]]
+=== Writing your first Scenario
 
-.src/main/java/com/consol/citrus/simulator/Simulator.java
+Let's add a basic Spring Boot main class to our project next.
+
+.src/main/java/org/citrusframework/simulator/Simulator.java
 [source,java]
 ----
 package org.citrusframework.simulator;
@@ -69,16 +72,16 @@ public class Simulator {
 }
 ----
 
-Also we add an default scenario that is executed for incoming requests.
+Additionally, we'll implement a default scenario that will be triggered by incoming requests.
 
 .DefaultScenario.java
 [source,java]
 ----
 package org.citrusframework.simulator;
 
-import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.simulator.scenario.*;
 import org.springframework.http.HttpStatus;
+import org.citrusframework.http.message.HttpMessage;
 
 @Scenario("DEFAULT_SCENARIO")
 public class DefaultScenario extends AbstractSimulatorScenario {
@@ -94,9 +97,9 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 }
 ----
 
-The default scenario responds with `Http 200 OK`.
+This default scenario will respond with an `Http 200 OK`.
 
-You can now build and run the simulator application with:
+To build and run the simulator application, use the following commands:
 
 .Gradle build
 [source,bash]
@@ -104,22 +107,22 @@ You can now build and run the simulator application with:
 ./gradlew build bootRun
 ----
 
-You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
-you can open your browser and point to link:http://localhost:8080[http://localhost:8080]. You will see the very basic simulator user interface. For a more detailed user interface please
-follow link:#user-interface[chapter user-interface].
+Upon execution, the application should start up and the console will display log output detailing the process.
+The web server should be active within seconds.
+After the application is running, open your browser and go to http://localhost:8080[http://localhost:8080] to see the basic simulator user interface.
+For a more detailed interface, please consult the <<user-interface,chapter on the user interface>>.
 
-The REST default scenario that we have added is accessible using link:http://localhost:8080/services/rest/[http://localhost:8080/services/rest/]. You will see the default output `Welcome to the Citrus simulator`
-coming from default scenario execution.
+The REST default scenario that we've included is reachable at http://localhost:8080/services/rest/[http://localhost:8080/services/rest/], where you'll encounter the default message `Welcome to the Citrus simulator`.
 
-That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
+You are now prepared to utilize the Citrus simulator.
+The next steps involve comprehending the <<concepts,concepts>> and crafting some <<scenarios,simulator scenarios>>.
 
-[[maven]]
+[[maven-build]]
 == Build with Maven
 
-You can use the simulator in your Maven project. Maven will automatically download all required dependencies and project artifacts for you. The simulator is then executable
-as a web archive representing the the latest simulator distribution.
+Using Maven, you can easily incorporate the simulator into your project. Maven automatically manages the download of all necessary dependencies and project artifacts. Once configured, the simulator can be executed using Spring's embedded web servers.
 
-See the following sample Maven project POM file that defines the project sources as Spring boot application.
+Below is a sample `pom.xml` for a Maven project configured as a Spring Boot application.
 
 [source,xml]
 ----
@@ -131,15 +134,15 @@ See the following sample Maven project POM file that defines the project sources
 
   <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator-sample</artifactId>
-  <name>${project.artifactId}</name>
   <version>1.0.0</version>
+  <name>${project.artifactId}</name>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.simulator.version>2.2.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>3.1.2</spring.boot.version>
+    <citrus.simulator.version>3.0.0</citrus.simulator.version>
+    <spring.boot.version>3.1.5</spring.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -158,150 +161,214 @@ See the following sample Maven project POM file that defines the project sources
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-simulator-starter</artifactId>
+      <artifactId>citrus-spring-boot-starter-simulator</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
+    <!-- Other dependencies -->
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
           <source>${java.version}</source>
           <target>${java.version}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <fork>true</fork>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>
 ----
 
-The above Maven pom file will setup the Spring Boot dependencies for you. In addition to that we add the basic `citrus-simulator-starter` dependency. We are now finished with the build setup and
-we are ready to build and run the simulator.
+The `pom.xml` file above sets up the Spring Boot application and includes the Citrus Simulator dependency. With this setup complete, the simulator is ready to be built and run.
 
-Before we do that let's add a basic Spring Boot main class to our project.
+That's it, you're read to write your <<first-scenario,first Scenario>>.
 
-.src/main/java/com/consol/citrus/simulator/Simulator.java
-[source,java]
-----
-package org.citrusframework.simulator;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Simulator {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Simulator.class, args);
-    }
-}
-----
-
-Also we add an default scenario that is executed for incoming requests.
-
-.DefaultScenario.java
-[source,java]
-----
-package org.citrusframework.simulator;
-
-import org.citrusframework.http.message.HttpMessage;
-import org.citrusframework.simulator.scenario.*;
-import org.springframework.http.HttpStatus;
-
-@Scenario("DEFAULT_SCENARIO")
-public class DefaultScenario extends AbstractSimulatorScenario {
-
-    @Override
-    public void run(ScenarioDesigner designer) {
-        designer.echo("Default scenario executed!");
-
-        designer.send()
-                .message(new HttpMessage("Welcome to the Citrus simulator")
-                .status(HttpStatus.OK));
-    }
-}
-----
-
-The default scenario responds with `Http 200 OK`.
-
-You can now build and run the simulator with Maven from a command line. Use following commands:
+To build and run the simulator with Maven, execute the following commands from the command line:
 
 .Maven build
 [source,bash]
 ----
-mvn clean install spring-boot:run
+mvn clean install
+mvn spring-boot:run
 ----
 
-You will see the application starting up. Usually you will see some console log output. The web server should start within seconds. Once the application is up and running
-you can open your browser and point to link:http://localhost:8080[http://localhost:8080]. You will see the very basic simulator user interface. For a more detailed user interface please
-follow link:#user-interface[chapter user-interface].
+Upon execution, the application should start up and the console will display log output detailing the process.
+The web server should be active within seconds.
+After the application is running, open your browser and go to http://localhost:8080[http://localhost:8080] to see the basic simulator user interface.
+For a more detailed interface, please consult the <<user-interface,chapter on the user interface>>.
 
-The REST default scenario that we have added is accessible using link:http://localhost:8080/services/rest/[http://localhost:8080/services/rest/]. You will see the default output `Welcome to the Citrus simulator`
-coming from default scenario execution.
+The REST default scenario that we've included is reachable at http://localhost:8080/services/rest/[http://localhost:8080/services/rest/], where you'll encounter the default message `Welcome to the Citrus simulator`.
 
-That's it you are ready to use the Citrus simulator now. Next thing would be to understand the link:#concepts[concepts] and create some link:#scenarios[simulator scenarios].
+You are now prepared to utilize the Citrus simulator.
+The next steps involve comprehending the <<concepts,concepts>> and crafting some <<scenarios,simulator scenarios>>.
 
 [[maven-archetype]]
-== Maven archetypes
+== Maven Archetypes
 
-The easiest way to get started with a new simulator project is to use a Maven archetype that creates a new project for you.
+Maven archetypes are templates that can quickly set up a new project structure for you.
+When starting a new Citrus Simulator project, using a Maven archetype can save you time and effort.
+
+To generate a new project using the Citrus Simulator archetype, run the following command in your terminal:
 
 [source,bash]
 ----
-mvn archetype:generate -B -DarchetypeGroupId=org.citrusframework.archetypes \
-                            -DarchetypeArtifactId=citrus-simulator-archetype-rest \
-                            -DarchetypeVersion=${citrus.simulator.version} \
-                            -DgroupId=org.citrusframework.simulator \
-                            -DartifactId=citrus-simulator-rest \
-                            -Dversion=1.0.0
+mvn archetype:generate -B \
+  -DarchetypeGroupId=org.citrusframework.archetypes \
+  -DarchetypeArtifactId=citrus-simulator-archetype-rest \
+  -DarchetypeVersion=3.0.0 \  <1>
+  -DgroupId=org.citrusframework.simulator \
+  -DartifactId=citrus-simulator-rest \
+  -Dversion=1.0.0
 ----
 
-If you execute the command above the Maven archetype generator will ask you some questions about versions and project names. Once you have completed the generation
-you get a new Maven project that is ready to use. The project is created in a new folder on your machine. Switch to that folder and continue to build the project.
+<1> Replace `3.0.0` with the version of Citrus Simulator you wish to use.
 
-There are different simulator archetypes available. Please pick the most convenient archetype according to your project purpose.
+The `-B` flag indicates batch mode, which makes the command non-interactive.
+If you omit this, Maven will interactively ask you for any required values not provided as `-D` options.
 
-.Maven archetypes
+Upon executing the command, Maven will generate a new project based on the specified archetype.
+This project will be placed in a new directory corresponding to the `artifactId` you provided.
+Change into this directory to proceed with building your new simulator project.
+
+Citrus provides various archetypes for different types of simulators, each tailored to a specific protocol or data format:
+
+.Maven Archetypes
 [horizontal]
-citrus-simulator-archetype-rest:: Http REST simulator sample
-citrus-simulator-archetype-ws:: SOAP web service simulator sample
-citrus-simulator-archetype-jms:: JMS simulator sample
-citrus-simulator-archetype-mail:: Mail simulator sample
-citrus-simulator-archetype-swagger:: Auto generate simulator from Swagger Open API specification (_experimental_)
-citrus-simulator-archetype-wsdl:: Auto generate simulator from SOAP WSDL specification (_experimental_)
+`citrus-simulator-archetype-rest`:: Initializes a sample HTTP REST simulator.
+`citrus-simulator-archetype-ws`:: Sets up a SOAP web service simulator sample.
+`citrus-simulator-archetype-jms`:: Creates a JMS simulator sample.
+`citrus-simulator-archetype-mail`:: Generates a mail simulator sample.
+`citrus-simulator-archetype-swagger`:: (_Experimental_) Auto-generates a simulator from a Swagger OpenAPI specification.
+`citrus-simulator-archetype-wsdl`:: (_Experimental_) Auto-generates a simulator from a SOAP WSDL specification.
+
+Choose the archetype that best matches the needs of your project.
 
 [[development]]
 == Development
 
-Once the project build and sources are setup you can start to code some simulator scenarios. The project is a normal Java project that you can work with in your
-favorite Java IDE. Build tools like Maven and Gradle compile and package the simulator to an executable artifact. Usually this is a Spring boot web archive.
+With the project's build and source code established, you can begin coding your simulator scenarios.
+This project is a standard Java application, which you can develop within your preferred Java IDE.
+Tools like Maven or Gradle are used to compile and package your simulator into an executable artifact, typically a Spring Boot executable jar.
 
-The simulator web application should start within seconds. Once the application is up and running on your local machine
-you can open your browser and point to link:http://localhost:8080[http://localhost:8080].
+To optimize your development process, consider using Spring Boot DevTools.
+This library provides additional development-time features that can greatly enhance your productivity:
 
-Now everything is set up and you can start to create some simulator scenarios.
+- *Automatic restart*: Any changes to your code trigger a quick application restart, making it faster to see the changes in action without manually restarting the server.
+- *LiveReload*: Spring Boot DevTools includes a LiveReload server that can automatically trigger a browser refresh when a resource is changed.
+- *Property defaults*: DevTools sets sensible development-time property defaults, reducing the need for manual configuration.
+- *Remote development*: It is possible to remotely debug Spring applications.
 
-That's it you are ready to use the Citrus simulator.
+To use DevTools, include the following dependency in your build configuration:
+
+.Maven Dependency for Spring Boot DevTools
+[source,xml]
+----
+<dependencies>
+    <!-- Other dependencies... -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <scope>runtime</scope>
+        <optional>true</optional>
+    </dependency>
+</dependencies>
+----
+
+With Spring Boot DevTools included, every time you compile your code, the application will restart, recognizing your changes immediately.
+This makes the development loop much faster and feedback-oriented.
+
+Ensure that your IDE is configured to build the project automatically on each save.
+If you're using an IDE like Eclipse or IntelliJ IDEA, they have built-in support for automatic compilation which integrates seamlessly with DevTools.
+
+Remember to disable the DevTools in production environments, as its features are only beneficial in a development setting and may have performance implications for production deployments.
+
+With your development environment optimized, you can now focus on adding functionality and creating comprehensive simulation scenarios for thorough testing and robust service emulation.
+
+[[docker-build]]
+== Building a Docker Container
+
+Containerizing your Spring Boot application using Docker simplifies deployment and ensures consistency across different environments.
+There is lots of documentation about this process available online.
+It's best to consider multiple sources, especially for a production build!
+To get started, here's how to package your Citrus Simulator into a Docker container.
+
+[[dockerfile]]
+=== Creating a Dockerfile
+
+The first step in containerizing your application is to create a `Dockerfile`.
+This text document contains all the commands a user could call on the command line to assemble an image.
+Below is a simple `Dockerfile` to get you started:
+
+.Dockerfile
+[source,dockerfile]
+----
+# Start with a base image containing Java runtime
+FROM openjdk:17-jdk-slim as build
+
+# The application's jar file
+ARG JAR_FILE=target/*.jar
+
+# Add the application's jar to the container
+COPY ${JAR_FILE} app.jar
+
+# Run the jar file
+ENTRYPOINT ["java","-jar","/app.jar"]
+----
+
+This `Dockerfile` starts with a lightweight JDK 17 image, copies your application's JAR file into the image, and sets the entry point to run the JAR file.
+
+[[building-docker-image]]
+=== Building the Docker Image
+
+After creating your `Dockerfile`, use the Docker CLI to build the image:
+
+[source,bash]
+----
+docker build -t citrus-simulator .
+----
+
+The `-t` flag tags your Docker image, so it's easier to find later.
+The `.` at the end of the command tells Docker to look for the `Dockerfile` in the current directory.
+
+[[running-docker-image]]
+=== Running the Docker Container
+
+Once the image is built, you can run it as a container:
+
+[source,bash]
+----
+docker run -p 8080:8080 citrus-simulator
+----
+
+The `-p` flag publishes a container's port to the host.
+This command maps the application's port 8080 to the same port on the host machine, so you can access the application through `http://localhost:8080`.
+
+=== Best Practices
+
+1. *Multi-stage Builds*: For a more efficient build process, especially if you need to build the JAR file within Docker, consider using a multi-stage Dockerfile.
+2. *Avoid running as root*: For security reasons, it's best practice to not run the application as the root user. You can create a user within your Dockerfile and run the application as this user.
+3. *Configuration*: Externalize your configuration. For instance, you can use environment variables to configure your application for different environments.
+4. *Health checks*: Implement health checks in your application and add a `HEALTHCHECK` instruction to your Dockerfile.
+5. *Logs*: Make sure your application logs to the console so that Docker can capture the logs.
+
+By following these steps and best practices, you will have a Docker container for your Citrus Simulator that can be deployed to any environment that supports Docker.
