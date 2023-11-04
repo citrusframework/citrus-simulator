@@ -1,53 +1,56 @@
-[[introduction]]
+[Introduction]
 = Introduction
 
-This is a standalone simulator for different messaging transports such as Http REST, SOAP WebService,
-JMS, RMI, mail messaging and more.
+The Citrus Framework Simulator is a comprehensive tool that allows for the simulation of various messaging transports including HTTP REST, SOAP WebService, JMS, RMI, mail messaging, and more.
+This simulator stands out with its robust server APIs that interact with client requests, delivering predefined messages tailored to specific scenarios.
+The power of the simulator’s response logic cannot be overstated; it is designed to emulate any server interface effortlessly.
 
-The simulator provides server APIs for clients and responds with predefined messages according to
-defined scenarios. The simulator response logic is very powerful and enables us to simulate any kind of server interface.
+[[citrus-spring-boot-simulator]]
+== Citrus Spring-Boot Simulator
 
-The simulator uses link:https://projects.spring.io/spring-boot/[Spring Boot] in combination with the test framework link:https://www.citrusframework.org[Citrus]. You can
-code simulator scenarios in Java or XML. Each scenario execution on the simulator is stored to an internal database and can be reviewed via web UI in the browser.
-
-Feedback and contributions are highly appreciated!
+Utilizing the synergy of https://projects.spring.io/spring-boot/[Spring Boot^] and the https://citrusframework.org[Citrus^] testing framework, the `citrus-spring-boot-simulator` empowers you to craft your simulator scenarios using either Java or XML.
+Each interaction with the simulator is logged in an internal database, accessible for review through the REST API or the web UI.
+We welcome your feedback and contributions with great appreciation!
 
 [[project-status]]
-== Project status
+== Project Status
 
-*NOTE:* _This project is considered stable but still under construction!_
+We are proud to announce that the simulator application is stable and reliable for general use.
+However, it is important to note that certain experimental features are included as part of our commitment to innovation.
+These features are introduced with "feature flags" and are still in the developmental phase:
 
-The simulator application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet. Please see the following experimental
-features.
+.Experimental Features
+*WSDL Generated Scenarios*: Automatically create simulator scenarios from a WSDL file.
+*Swagger Generated Scenarios*: Automatically create simulator scenarios from a Swagger API file.
+*Combined Simulator*: Operate multiple message transports within a single simulator instance.
 
-.Experimental features
-[horizontal]
-WSDL generated scenarios:: Auto generate simulator scenarios from WSDL file
-Swagger generated scenarios:: Auto generate simulator scenarios from Swagger API file
-Combined simulator:: Use multiple message transports in one simulator instance
+These features are evolving, and with the valuable insights we receive from our community, we are optimistic that they will achieve stability in due course.
 
-Following from that we have to deal with some limitations and trade offs until the project emerges (hopefully with the help of the community, keeping our fingers crossed!).
-However the simulator is usable and all main features are considered to be stable.
-
-[[project-prerequisites]]
+[[prerequisites]]
 == Prerequisites
 
-You may want to check the following prerequisites for using the simulator application.
+Before embarking on your journey with the simulator application, ensure you meet the following prerequisites:
 
-[[limitations-java-8]]
-=== Java 8
+[[limitations-java-17]]
+=== Java 17
 
-The simulator is a Java application coded in Java 8. Following from that you need at least Java 8 to run it as a Spring Boot web application.
-Please make sure that you have Java development kit installed and set up. You can verify this with this command in a new terminal window.
+The simulator is built with Java 17 and is compatible with versions up to Java 21.
+As such, Java 17 or later must be installed on your machine.
+Confirm that your Java Development Kit (JDK) is properly installed and configured with the following command in a new terminal window:
 
 [source,bash]
 ----
 java -version
 ----
 
-[[limitations-browser]]
-=== Browser
+[[browser-compatibility]]
+=== Browser Compatibility
 
-The simulator provides a small web user interface when started. You can access this web UI with your browser. As we are in an early state in this project we do not
-invest much time in full cross-browser compatibility. We use Chrome and Firefox during development. So the simulator application is most likely to be 100% working
-on these two browsers. Of course other browsers might work without any limitations, too.
+The simulator boasts a compact web interface that springs to life upon startup.
+You can access it on the root URL of your simulator application.
+
+The `citrus-simulator-ui` module enriches this experience further with a sophisticated https://angular.io/[Angular^]-based application.
+This UI is best accessed through a web browser .
+It’s important to note that we do not perform cross-browser testing during our pipeline.
+Thus, we cannot guarantee compatibility in all browsers.
+Development and testing are primarily done on Chrome and Firefox, which are likely to yield the best experience.
