@@ -1,39 +1,35 @@
 [[concepts]]
 = Concepts
 
-The Citrus simulator's primary focus is to provide a simple means to simulate one or more endpoints (HTTP, JMS, SMTP, etc). Once the simulator is up and running it waits for an incoming request (JSON, SOAP, XML, etc) to arrive on any of its configured endpoints and reacts accordingly. The simulator examines the incoming request and determines which link:#scenarios[simulator scenario] should be executed for handling the request. Typically the selected scenario creates a response message to send back to the calling client.
+The Citrus simulator's primary focus is to provide a simple means to simulate one or more endpoints (HTTP, JMS, SMTP, etc).
+Once the simulator is up and running, it waits for an incoming request (JSON, SOAP, XML, etc.) to arrive at any of its configured endpoints and reacts accordingly.
+The simulator examines the incoming request and determines which link:#scenarios[simulator scenario] should be executed for handling the request.
+Typically, the selected scenario creates a response message to send back to the calling client.
 
-A link:#scenario-mapper[scenario mapper] is used to help the simulator determine the correct scenario to be executed. Different scenario mappers are supported that use the request header data or payload data to determine the appropriate scenario to run.
+A link:#scenario-mapper[scenario mapper] is used to help the simulator determine the correct scenario to be executed.
+Different scenario mappers are supported that use the request header data or payload data to determine the appropriate scenario to run.
 
-A link:#scenarios[simulator scenario] is capable of handling one or more request messages. When executed it receives the request and can return an appropriate response message to the calling client.
-By defining multiple simulator scenarios the citrus simulator is able to respond to different requests accordingly.
+A link:#scenarios[simulator scenario] is capable of handling one or more request messages.
+When executed, it receives the request and can return an appropriate response message to the calling client.
+By defining multiple simulator scenarios, the Citrus simulator is able to respond to different requests accordingly.
 
-A simulator scenario is composed of one or more actions. For the most trivial scenarios there is generally an action for receiving a request and an action for sending a response.
-Because the Citrus simulator has access to the underlying Citrus framework functionality you can access a wide range of actions that are available within the Citrus framework and use these when configuring a scenario.
+A simulator scenario is composed of one or more actions.
+For the most trivial scenarios, there is generally an action for receiving a request and an action for sending a response.
+Because the Citrus simulator has access to the underlying Citrus framework functionality, you can access a wide range of actions that are available within the Citrus framework and use these when configuring a scenario.
 
-To keep an eye on what the simulator is doing, what requests were received or sent or what scenarios were executed a link:#user-interface[user interface] is provided. In addition to seeing what is going on it is also possible to trigger scenarios manually.
+To keep an eye on what the simulator is doing, what requests were received or sent, or what scenarios were executed, a <<user-interface,user interface>> is provided.
+In addition to seeing what is going on, it is also possible to trigger scenarios manually.
 
 [[concept-simulator-application]]
-== Simulator application
+== Simulator Application
 
-The simulator is a usual Spring boot application. This means we have a main class that loads the Spring boot application.
+The simulator is a standard Spring Boot application.
+This means we have a main class that loads the Spring Boot application.
+If you haven't set one up already, see how to get started with <<gradle-build,Gradle>> or <<maven-build,Maven>>.
 
-[source,java]
-----
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Simulator {
-    public static void main(String[] args) {
-        SpringApplication.run(Simulator.class, args);
-    }
-}
-----
-
-This class is the main entrance for all configuration and customization statements. As we have added the *citrus-simulator-starter* as dependency in our project
-auto configuration is enabled for the simulator application. By default REST support is enabled with all configuration needed. You can enable/disable the message transport
-support for different technologies via application properties.
+This class is the main entrance for all configuration and customization statements.
+By default, REST support is enabled with all configuration needed.
+You can enable or disable the message transport support for different technologies via application properties.
 
 .application.properties
 [source,properties]
@@ -45,23 +41,24 @@ citrus.simulator.ws.client.enabled=true
 citrus.simulator.endpoint.enabled=true
 ----
 
-When enabled the simulator auto configuration for this specific message transport is activated and all required beans and configuration is loaded at startup.
+When enabled, the simulator's autoconfiguration for this specific message transport is activated, and all required beans and configuration are loaded at startup.
 
 .Simulator support
 [horizontal]
-citrus.simulator.rest.enabled:: Enables link:#rest-support[Http REST support]
-citrus.simulator.ws.enabled:: Enables link:#ws-support[SOAP web services support]
-citrus.simulator.ws.client.enabled:: Enables link:#ws-support[SOAP web services support]
-citrus.simulator.jms.enabled:: Enables link:#jms-support[JMS support]
-citrus.simulator.endpoint.enabled:: Enables generic link:#endpoint-component-support[endpoint component support]
+`citrus.simulator.rest.enabled`:: Enables <<rest,Http REST support>>
+`citrus.simulator.ws.enabled`:: Enables <<web-service,WS support>>
+`citrus.simulator.ws.client.enabled`:: Enables <<samples-soap,SOAP web services client support>>
+`citrus.simulator.jms.enabled`:: Enables <<jms,JMS support>>
+`citrus.simulator.endpoint.enabled`:: Enables generic <<endpoint,endpoint component support>>
 
-You can also combine message transports on the simulator application although this feature is of experimental nature up to now.
+You can also combine message transports in the simulator application, although this feature is of experimental nature up to now.
 
 [[concept-simulator-properties]]
-== Simulator properties
+== Simulator Properties
 
-The simulator is capable of loading configuration from system properties, environment variables and property files. First of all the default Spring boot properties configuration mechanism
-is supported. Following from that you can add properties to the `application.properties` file in your project resources in order to adjust simulator behavior.
+The simulator is capable of loading configuration from system properties, environment variables, and property files.
+First, the default Spring Boot properties configuration mechanism is supported.
+Following from that, you can add properties to the `application.properties` file in your project resources to adjust simulator behavior.
 
 [source,properties]
 ----
@@ -70,89 +67,91 @@ citrus.simulator.defaultTimeout=10000
 citrus.simulator.templatePath=com/company/simulator/templates
 ----
 
-The available simulator properties are grouped in following configuration classes:
+The available simulator properties are grouped into the following configuration classes:
 
 [horizontal]
-org.citrusframework.simulator.config.SimulatorConfigurationProperties:: prefix=*citrus.simulator*
-org.citrusframework.simulator.http.SimulatorRestConfigurationProperties:: prefix=*citrus.simulator.rest*
-org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties:: prefix=*citrus.simulator.ws*
-org.citrusframework.simulator.ws.SimulatorWebServiceClientConfigurationProperties:: prefix=*citrus.simulator.ws.client*
-org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties:: prefix=*citrus.simulator.jms*
+`org.citrusframework.simulator.config.SimulatorConfigurationProperties`:: `prefix=*citrus.simulator*`
+`org.citrusframework.simulator.http.SimulatorRestConfigurationProperties`:: `prefix=*citrus.simulator.rest*`
+`org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties`:: `prefix=*citrus.simulator.ws*`
+`org.citrusframework.simulator.ws.SimulatorWebServiceClientConfigurationProperties`:: `prefix=*citrus.simulator.ws.client*`
+`org.citrusframework.simulator.jms.SimulatorJmsConfigurationProperties`:: `prefix=*citrus.simulator.jms*`
 
-There are several properties that you can use in order to customize the simulator behavior. These
-properties are:
+There are several properties that you can use to customize the simulator behavior, such as:
 
-.Spring boot application properties
+.Spring Boot application properties
 [horizontal]
-citrus.simulator.templatePath:: Default path to message payload template files.
-citrus.simulator.defaultScenario:: Default scenario name.
-citrus.simulator.defaultTimeout:: Timeout when waiting for inbound messages.
-citrus.simulator.templateValidation:: Enable/disable schema validation.
-citrus.simulator.exceptionDelay:: Default delay in milliseconds to wait after uncategorized exceptions.
-citrus.simulator.executor.threads:: The number of threads available for parallel scenario execution.
-citrus.simulator.rest.urlMapping:: Handler adapter url mapping for inbound requests
-citrus.simulator.ws.servletMapping:: Message dispatcher servlet mapping for inbound SOAP requests
-citrus.simulator.jms.inboundDestination:: JMS destination name to consume inbound messages from
-citrus.simulator.jms.replyDestination:: JMS destination name to publish reply messages to
+`citrus.simulator.templatePath`:: Default path to message payload template files.
+`citrus.simulator.defaultScenario`:: Default scenario name.
+`citrus.simulator.defaultTimeout`:: Timeout when waiting for inbound messages.
+`citrus.simulator.templateValidation`:: Enable/disable schema validation.
+`citrus.simulator.exceptionDelay`:: Default delay in milliseconds to wait after uncategorized exceptions.
+`citrus.simulator.executor.threads`:: The number of threads available for parallel scenario execution.
+`citrus.simulator.rest.urlMapping`:: Handler adapter URL mapping for inbound requests.
+`citrus.simulator.ws.servletMapping`:: Message dispatcher servlet mapping for inbound SOAP requests.
+`citrus.simulator.jms.inboundDestination`:: JMS destination name to consume inbound messages from.
+`citrus.simulator.jms.replyDestination`:: JMS destination name to publish reply messages to.
 
-Please refer to the respective configuration property classes to see what property settings are supported.
+Please refer to the respective configuration property classes to see in detail what property settings are supported.
 
 [[concept-simulator-system-properties]]
-=== System properties
+=== System Properties
 
-In addition to that default Spring boot property replacement the simulator also supports system property and environment variables. The properties are:
+In addition to the default Spring Boot property replacement, the simulator also supports system properties and environment variables.
+The properties include:
 
 .System property names
 [horizontal]
-citrus.simulator.configuration.class:: Java configuration class that is automatically loaded. (default is org.citrusframework.simulator.SimulatorConfig)
-citrus.simulator.template.path:: Default path to message payload template files.
-citrus.simulator.default.scenario:: Default scenario name.
-citrus.simulator.default.timeout:: Timeout when waiting for inbound messages.
-citrus.simulator.template.validation:: Enable/disable schema validation.
-citrus.simulator.exception.delay:: Default delay in milliseconds to wait after uncategorized exceptions.
-citrus.simulator.executor.threads:: The number of threads available for parallel scenario execution.
-citrus.simulator.rest.url.mapping:: Handler adapter url mapping for inbound requests
-citrus.simulator.ws.servlet.mapping:: Message dispatcher servlet mapping for inbound SOAP requests
-citrus.simulator.jms.inbound.destination:: JMS destination name to consume inbound messages from
-citrus.simulator.jms.reply.destination:: JMS destination name to publish outbound messages to
+`citrus.simulator.configuration.class`:: Java configuration class that is automatically loaded (default is org.citrusframework.simulator.SimulatorConfig).
+`citrus.simulator.template.path`:: Default path to message payload template files.
+`citrus.simulator.default.scenario`:: Default scenario name.
+`citrus.simulator.default.timeout`:: Timeout when waiting for inbound messages.
+`citrus.simulator.template.validation`:: Enable/disable schema validation.
+`citrus.simulator.exception.delay`:: Default delay in milliseconds to wait after uncategorized exceptions.
+`citrus.simulator.executor.threads`:: The number of threads available for parallel scenario execution.
+`citrus.simulator.rest.url.mapping`:: Handler adapter URL mapping for inbound requests.
+`citrus.simulator.ws.servlet.mapping`:: Message dispatcher servlet mapping for inbound SOAP requests.
+`citrus.simulator.jms.inbound.destination`:: JMS destination name to consume inbound messages from.
+`citrus.simulator.jms.reply.destination`:: JMS destination name to publish outbound messages to.
 
-You can set these properties as system properties when starting the Spring boot web application or you can add the properties to the default
-Spring Boot application properties file *application.properties* that is located as resource file in your project.
+You can set these properties as system properties when starting the Spring Boot application, or you can add the properties to the default
+Spring Boot application properties file, `application.properties`, located as a resource file in your project.
 
-The simulator will automatically load these properties during startup and honor this configuration.
+The simulator will automatically load these properties during startup and respect this configuration.
 
 [[concept-simulator-environment-variables]]
-=== Environment variables
+=== Environment Variables
 
-Same settings that are editable via system properties are also accessible via environment variables. This is extremely helpful when running the simulator in a containerized
-infrastructure such as Docker or Kubernetes.
+The same settings that are editable via system properties are also accessible via environment variables.
+This is extremely helpful when running the simulator in containerized infrastructure such as Docker or Kubernetes.
 
 .Environment settings
 [horizontal]
-CITRUS_SIMULATOR_CONFIGURATION_CLASS:: Java configuration class that is automatically loaded. (default is org.citrusframework.simulator.SimulatorConfig)
-CITRUS_SIMULATOR_TEMPLATE_PATH:: Default path to message payload template files.
-CITRUS_SIMULATOR_DEFAULT_SCENARIO:: Default scenario name.
-CITRUS_SIMULATOR_DEFAULT_TIMEOUT:: Timeout when waiting for inbound messages.
-CITRUS_SIMULATOR_TEMPLATE_VALIDATION:: Enable/disable schema validation.
-CITRUS_SIMULATOR_EXCEPTION_DELAY:: Default delay in milliseconds to wait after uncategorized exceptions.
-CITRUS_SIMULATOR_EXECUTOR_THREADS:: The number of threads available for parallel scenario execution.
-CITRUS_SIMULATOR_REST_URL_MAPPING:: Handler adapter url mapping for inbound requests
-CITRUS_SIMULATOR_WS_SERVLET_MAPPING:: Message dispatcher servlet mapping for inbound SOAP requests
-CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION:: JMS destination name to consume inbound messages from
-CITRUS_SIMULATOR_JMS_REPLY_DESTINATION:: JMS destination name to publish outbound messages to
+`CITRUS_SIMULATOR_CONFIGURATION_CLASS`:: Java configuration class that is automatically loaded (default is org.citrusframework.simulator.SimulatorConfig).
+`CITRUS_SIMULATOR_TEMPLATE_PATH`:: Default path to message payload template files.
+`CITRUS_SIMULATOR_DEFAULT_SCENARIO`:: Default scenario name.
+`CITRUS_SIMULATOR_DEFAULT_TIMEOUT`:: Timeout when waiting for inbound messages.
+`CITRUS_SIMULATOR_TEMPLATE_VALIDATION`:: Enable/disable schema validation.
+`CITRUS_SIMULATOR_EXCEPTION_DELAY`:: Default delay in milliseconds to wait after uncategorized exceptions.
+`CITRUS_SIMULATOR_EXECUTOR_THREADS`:: The number of threads available for parallel scenario execution.
+`CITRUS_SIMULATOR_REST_URL_MAPPING`:: Handler adapter URL mapping for inbound requests.
+`CITRUS_SIMULATOR_WS_SERVLET_MAPPING`:: Message dispatcher servlet mapping for inbound SOAP requests.
+`CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION`:: JMS destination name to consume inbound messages from.
+`CITRUS_SIMULATOR_JMS_REPLY_DESTINATION`:: JMS destination name to publish outbound messages to.
 
-In case these environment variables are present on your local system the simulator will automatically load these settings during startup and honor the configuration.
+If these environment variables are present on your local system, the simulator will automatically load these settings during startup and honor the configuration.
 
 [[concept-simulator-spring-configuration]]
-== Spring bean configuration
+== Spring Bean Configuration
 
-Citrus works with the Spring framework and the simulator is a Spring boot application. Therefore the configuration is done by adding and overwriting Spring beans in
-the application context. The simulator automatically loads Spring beans defined in following locations:
+Citrus operates within the Spring framework ecosystem, and the simulator is constructed as a Spring Boot application.
+Consequently, configuration is primarily conducted through the addition and customization of Spring beans within the application context.
+The simulator automatically loads Spring beans defined in the following locations:
 
-* *META-INF/citrus-simulator.xml* Xml Spring bean configuration file.
-* *org.citrusframework.simulator.SimulatorConfig* Java configuration class. You can customize this class by defining the property *citrus.simulator.configuration.class*
+* *META-INF/citrus-simulator.xml* — An XML Spring bean configuration file.
+* *org.citrusframework.simulator.SimulatorConfig* — A Java configuration class. You can tailor this class to your needs by specifying the property *citrus.simulator.configuration.class*.
 
-All beans defined in there get automatically loaded to the simulator Spring application context.
+All beans delineated within these files are seamlessly integrated into the simulator's Spring application context upon loading. This process ensures that all necessary configurations are applied to facilitate the desired behavior of the simulator.
+Furthermore, customizations and additional beans can be added to adapt to more complex scenarios or to extend the simulator's capabilities beyond its default configuration set.
 
 include::scenario-mapper.adoc[]
 include::scenarios.adoc[]
