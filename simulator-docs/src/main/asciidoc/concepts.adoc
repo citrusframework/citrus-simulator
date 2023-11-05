@@ -153,6 +153,7 @@ The simulator automatically loads Spring beans defined in the following location
 All beans delineated within these files are seamlessly integrated into the simulator's Spring application context upon loading. This process ensures that all necessary configurations are applied to facilitate the desired behavior of the simulator.
 Furthermore, customizations and additional beans can be added to adapt to more complex scenarios or to extend the simulator's capabilities beyond its default configuration set.
 
+include::rest-api.adoc[]
 include::scenario-mapper.adoc[]
 include::scenarios.adoc[]
 include::intermediate-messages.adoc[]

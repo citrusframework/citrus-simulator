@@ -1,0 +1,117 @@
+[[rest-api]]
+== REST API
+
+The simulator offers a comprehensive REST API for interacting with system entities.
+The following resources are available:
+
+* `/api/messages`
+* `/api/message-headers`
+* `/api/scenario-actions`
+* `/api/scenario-executions`
+* `/api/scenario-parameters`
+* `/api/test-parameters`
+* `/api/test-results`
+
+For each listed resource, the following operations are supported:
+
+* Listing all entries with a `GET` request to the root URI.
+** Pagination and filtering are supported.
+* Counting all entries with a `GET /count` endpoint.
+* Retrieving a single resource using the `GET /{id}` endpoint.
+
+All REST resources adhere to this pattern, with exceptions noted in subsequent sections.
+
+[[receive-single-test-result]]
+=== Receive SINGLE Test-Parameter
+
+A `TestParameter` is uniquely identified by a composite key, consisting of the `TestResult` ID and the `TestParameter` key.
+To retrieve a single `TestParameter`, use the `GET /{testResultId}/{key}` endpoint.
+
+[[scenario-resource]]
+=== Scenario Resource
+
+The `Scenario` resource is an exception to the standard pattern.
+The `GET /` endpoint returns a list of scenarios with their unique names and types, indicating whether it's a `SimulatorScenario` (`MESSAGE_TRIGGERED`) or a `ScenarioStarter` (`STARTER`).
+This resource supports pagination but not filtering.
+
+This resource does not have a single resource endpoint, as scenarios are identified by name, which provides sufficient detail.
+However, you can view a scenario's parameters with the `GET /{scenarioName}/parameters` endpoint or launch scenarios with the `POST /{scenarioName}/launch` endpoint, which accepts an array of parameters in the request body.
+
+[[rest-api-pagination]]
+=== Pagination
+
+All `GET` endpoints retrieving lists of resources support pagination.
+This allows clients to request subsets of records for easier navigation and processing.
+
+.Query Parameters
+* `page`: Page index, starting at 0.
+* `size`: Number of records per page.
+* `sort`: Sorting criteria in the format `property,(asc|desc)`.
+
+.Request Example
+To retrieve the first page with 10 records sorted by `id` in ascending order:
+
+----
+GET http://localhost:9000/api/{resource}?page=0&size=10&sort=id,asc
+----
+
+Replace `{resource}` with the appropriate resource name, see <<rest-api,REST API>>.
+
+.Paginated Response Structure
+Responses include pagination metadata in the HTTP `Link` header, in addition to the response body.
+For example:
+
+* First page: `<http://localhost:9000/api/{resource}?page=0&size=10&sort=id,asc>; rel="first"`
+* Last page: `<http://localhost:9000/api/{resource}?page=9&size=10&sort=id,asc>; rel="last"`
+
+[[rest-api-filtering]]
+=== Filtering
+
+All `GET` endpoints retrieving lists of resources support attribute-based filtering.
+This allows for refined searches based on the attributes of the REST resource.
+
+Let's consider a simplified version of the link:https://github.com/citrusframework/citrus-simulator/blob/main/simulator-starter/src/main/java/org/citrusframework/simulator/model/ScenarioExecution.java[`ScenarioExecution` entity] as an example:
+
+[source,java]
+----
+@Entity
+public class ScenarioExecution implements Serializable {
+
+    private Long executionId;
+    private Integer status = Status.UNKNOWN.getId();
+    private final Set<ScenarioAction> scenarioActions = new HashSet<>();
+}
+----
+
+To filter all successful executions, you can use the following query parameter: `?status=2`.
+To retrieve a single execution by its ID: `?executionId=1234`.
+
+Filtering across relationships is also possible.
+For instance, to find all executions associated with a specific action, the query parameter would be: `?scenarioActionsId.in=1234`.
+
+For more advanced filtering options, please refer to the link:https://github.com/citrusframework/citrus-simulator/tree/main/simulator-starter/src/main/java/org/citrusframework/simulator/service/criteria[criteria documentation].
+
+.Range Filter
+Numerical and date-related values support the following filters:
+
+* `?fieldName=42` or `?fieldName.equals=42` for exact matches.
+* `?fieldName.notEquals=42` for exclusion.
+* `?fieldName.specified=true` to find records where `fieldName` is not null.
+* `?fieldName.in=43,42` for inclusion in a list.
+* `?fieldName.notIn=43,42` for exclusion from a list.
+* `?fieldName.greaterThan=41` for values greater than the specified number.
+* `?fieldName.lessThan=44` for values less than the specified number.
+* `?fieldName.greaterThanOrEqual=42` for values greater or equal to the specified number.
+* `?fieldName.lessThanOrEqual=44` for values less or equal to the specified number.
+
+.String Filter
+String attributes support the following filters:
+
+* `?fieldName=something` or `?fieldName.equals=something` for exact matches.
+* `?fieldName.notEquals=something` for exclusion.
+* `?fieldName.in=something,other` for inclusion in a list.
+* `?fieldName.notIn=something,other` for exclusion from a list.
+* `?fieldName.contains=thing` for substring matches.
+* `?fieldName.doesNotContain=thing` for exclusion of substring matches.
+
+Remember to URL-encode query parameters to ensure proper handling of special characters and spaces.
