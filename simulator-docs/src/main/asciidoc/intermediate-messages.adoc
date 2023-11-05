@@ -1,14 +1,16 @@
 [[intermediate-messages]]
 == Intermediate Messages
 
-The simulator starts a new scenario instance for each incoming request based on the defined scenario mapping. Sometimes a running scenario instance needs to receive another
-incoming request. The simulator has to handle things in a different way then because the incoming request should not trigger an new scenario instance but forward that request to the running
-scenario.
+The simulator starts a new <<scenarios,scenario>> instance for each incoming request based on the defined <<scenario-mapper,scenario mapping>>.
+Sometimes a running scenario instance needs to receive another incoming request.
+In such cases, the simulator handles the process differently, as the incoming request should not trigger a new scenario instance but should be forwarded to the running scenario.
 
-This mechanism is called intermediate message handling in scenarios. The scenario can activate the message correlation for a certain request. The simulator will always check all running scenarios
-for matching intermediate message correlations before starting a new scenario. This mechanism enables us to receive further incoming request within the same scenario instance.
+This process is referred to as intermediate message handling within scenarios.
+A scenario can activate message correlation for specific requests.
+Before initiating a new scenario, the simulator always checks all running scenarios for matches with intermediate message correlations.
+This allows us to receive additional incoming requests within the same scenario instance.
 
-Let us clarify this with a simple example.
+To explain this concept, consider the following simple example.
 
 [source,java]
 ----
@@ -44,10 +46,11 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 }
 ----
 
-The scenario above starts a new correlation on the header entry *"X-CorrelationId"* and the variable value *${correlationId}* that has been extracted from first request message. Now the scenario is able to receive
-further incoming request messages with the correlation identifier. This makes sure that no other running scenario is catching this message before. The scenario is provided with that specific message first.
+In the scenario above, a new correlation starts on the header entry `X-CorrelationId` and the variable value `${correlationId}` extracted from the first request.
+This allows the scenario to receive further incoming request messages with the correlation identifier, ensuring it receives the specific message first, before any other running scenarios.
 
-This is how a scenario instance is able to receive more than one single incoming request. The message correlation is able to run on header values as well as based on XPath expressions evaluated within the message payload.
+This mechanism enables a scenario instance to handle more than one incoming request.
+Message correlation can be based on header values or XPath expressions evaluated within the message payload.
 
 [source,java]
 ----
@@ -72,7 +75,7 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
             .payload(
                     getPayloadHelper().generateFaxStatusMessage("${referenceId}",
                             FaxStatusEnumType.QUEUED,
-                            "The fax message has been queued and will be send shortly"),
+                            "The fax message has been queued and will be sent shortly"),
                     getPayloadHelper().getMarshaller()
             );
 
@@ -93,7 +96,8 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
 }
 ----
 
-The sample above uses XPath expressions to start a new correlation within the scenario. This makes sure that the second incoming request *CancelFaxMessage* is forwarded to this very same scenario.
+The above example uses XPath expressions to establish a new correlation within the scenario.
+This ensures that the second incoming request `CancelFaxMessage` is directed to the same scenario instance.
 
-With intermediate message handling we are able to create more complex scenarios that require multiple request/response messages. The message correlation makes sure that the
-needed requests are handled within the same scenarion and other parallel running scenarios are not affected.
+Intermediate message handling enables the creation of complex scenarios that involve multiple request-response interactions.
+Message correlation ensures that the relevant requests are processed within the same scenario, without interference from other concurrent scenarios.
