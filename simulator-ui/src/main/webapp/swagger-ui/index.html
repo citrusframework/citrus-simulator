@@ -45,12 +45,7 @@
         let urls;
 
         if (!urls || urls.length === 0) {
-          const response = await axios.get('/api/manage/jhiopenapigroups', axiosConfig);
-          if (Array.isArray(response.data)) {
-            urls = response.data.map(({ group, description }) => ({ name: description, url: `${serverBaseUri}${baseUrl}/${group}` }));
-          } else {
-            urls = [{ name: 'default', url: `${serverBaseUri}${baseUrl}` }];
-          }
+          urls = [{ name: 'default', url: `${serverBaseUri}${baseUrl}` }];
         }
         console.log(`Swagger urls`, urls);
 
