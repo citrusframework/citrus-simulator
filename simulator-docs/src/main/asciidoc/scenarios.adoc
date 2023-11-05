@@ -1,31 +1,28 @@
 [[scenarios]]
-== Simulator scenarios
+== Simulator Scenarios
 
-The simulator provides the response generating logic by defining one to many scenarios that get executed based on the incoming request. The different scenarios on the simulator
-describe different response messages and stand for individual simulation logic. Each scenario is capable of receiving and validating the incoming request message. Based on that the scenario
-is in charge of constructing a proper response message.
-
-First of all the scenario gets a name under which mapping strategies can identify the scenario. This name is very important when it comes to mapping incoming requests to scenarios. Besides that
-the scenario is a normal Java class that implements following interface _SimulatorScenario_
+Simulator scenarios are defined to generate responses for incoming requests, with each scenario corresponding to distinct logic and messages.
+A scenario first assigns a name for identification by mapping strategies.
+It is represented by a Java class implementing the `SimulatorScenario` interface.
 
 [source,java]
 ----
 package org.citrusframework.simulator.scenario;
 
 public interface SimulatorScenario {
-    ScenarioEndpoint getScenarioEndpoint();
 
-    default void run(ScenarioDesigner designer) {}
+    ScenarioEndpoint getScenarioEndpoint();
 
     default void run(ScenarioRunner runner) {}
 }
+
 ----
 
-The simulator scenario provides access to the endpoint that has been invoked to start this scenario. In the scenario logic you can receive that request message using this endpoint. Also you can send back a
-response using this scenario endpoint. The scenario logic goes to one of the default run methods depending on what designer or runner Java DSL API you want to use. Fortunately there is an abstract default
-implementation `org.citrusframework.simulator.scenario.AbstractSimulatorScenario` that you can inherit from.
+Scenarios grant access to the invoked endpoint and allow message transactions through it.
+Default run methods determine the logic execution pathway, depending on the desired Java DSL API.
+Inheriting from `org.citrusframework.simulator.scenario.AbstractSimulatorScenario` is typical for simplifying scenario creation.
 
-So a typical simulator scenario can look like the following code sample.
+Consider the example below for a standard scenario.
 
 [source,java]
 ----
@@ -49,11 +46,11 @@ public class HelloScenario extends AbstractSimulatorScenario {
 }
 ----
 
-As you can see we extend from *AbstractSimulatorScenario*. We just add receive and send logic for generating the response message in the designer run method. The scenario above is annotated with *@Scenario*
-for defining a scenario name. There is one single *configure* method to be implemented. We can use Citrus Java DSL methods in the method body in order to receive the incoming request and send back a proper response message.
-Of course we can use the full Citrus power here in order to construct different message payloads such as XML, JSON, PLAINTEXT and so on.
+By extending `AbstractSimulatorScenario`, we insert receive and send logic into the run method.
+The `@Scenario` annotation defines the scenario name.
+Citrus Java DSL methods facilitate message handling in the implementation.
 
-So we could also extract dynamic values from the request in order to reuse those in our response message:
+Dynamic value extraction from requests for use in responses is also supported:
 
 [source,java]
 ----
@@ -78,10 +75,12 @@ public class HelloScenario extends AbstractSimulatorScenario {
 }
 ----
 
-In the receive operation the user name value is extracted to a test variable *${userName}*. In the response we are able to use this variable in order to greet the user by name. This way
-we can use the Citrus test power for generating dynamic response messages. Of course this mechanism works for XML, Json and Plaintext payloads.
+The `${userName}` variable is derived from the request and used to personalize the response.
+This approach leverages Citrus's capability to create dynamic responses.
+Both XML, JSON, and Plaintext payload types are supported by this dynamic mechanism.
 
-Now you are ready to write different scenarios that generate different response messages for the calling client. Just remember the scenarios do get unique names that match a value that is evaluated through the scenario mapper. With this
-mechanism we are able to code different simulator scenarios for different incoming request messages. Also with the Citrus send and receive operations we are able to handle messages of different transport types.
+Writing various scenarios enables the generation of diverse responses, with unique scenario names linked to values determined by the scenario mapper.
+This setup allows for the creation of scenarios specific to incoming request messages.
+Additionally, Citrus's send and receive operations handle messages across different transport types.
 
-Read more about special message transport support in chapters link:#rest[rest-support], link:#web-service[web-service-support], link:#jms[jms-support], link:#endpoint[endpoint-support].
+For more information on message transport support, see the chapters <<rest-config,REST configuration>>, <<web-service-config,WS configuration>>, <<jms-config,JMS configuration>> and <<endpoint-config,endpoint configuration>>.
