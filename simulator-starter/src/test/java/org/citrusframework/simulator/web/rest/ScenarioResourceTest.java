@@ -33,7 +33,7 @@ class ScenarioResourceTest {
     }
 
     @Test
-    void evictAndReloadScenarioCache() {
+    void evictAndReloadScenarioCacheIsIdempotent() {
         Set<String> mockScenarioNames = Set.of("Scenario2", "Scenario1");
         Set<String> mockStarterNames = Set.of("Starter2", "Starter1");
 
@@ -41,7 +41,14 @@ class ScenarioResourceTest {
         doReturn(mockStarterNames).when(scenarioLookupServiceMock).getStarterNames();
 
         fixture.evictAndReloadScenarioCache(new ScenariosReloadedEvent(scenarioLookupServiceMock));
+        verifyEvictAndReloadCache();
 
+        // Check that the cache is really evicted and reloaded, not appended
+        fixture.evictAndReloadScenarioCache(new ScenariosReloadedEvent(scenarioLookupServiceMock));
+        verifyEvictAndReloadCache();
+    }
+
+    private void verifyEvictAndReloadCache() {
         assertThat((List<Scenario>) ReflectionTestUtils.getField(fixture, "scenarioCache"))
             .hasSize(4)
             .extracting("name")

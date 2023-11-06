@@ -32,7 +32,11 @@ public interface ScenarioLookupService {
 
     /**
      * Reloads the {@link SimulatorScenario} and {@link ScenarioStarter} from the current
-     * {@link ApplicationContext}
+     * {@link ApplicationContext}.
+     * <p>
+     * Note that this method is expected to publish a
+     * {@link org.citrusframework.simulator.events.ScenariosReloadedEvent} to the
+     * {@link ApplicationContext} after successful reload.
      */
     void evictAndReloadScenarioCache();
 

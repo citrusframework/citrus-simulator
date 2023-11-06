@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -45,7 +43,6 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
     private static final Logger logger = LoggerFactory.getLogger(ScenarioLookupServiceImpl.class);
 
     private final ApplicationContext applicationContext;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * List of available scenarios
@@ -58,9 +55,8 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
     private Map<String, ScenarioStarter> scenarioStarters;
 
 
-    public ScenarioLookupServiceImpl(ApplicationContext applicationContext, ApplicationEventPublisher applicationEventPublisher) {
+    public ScenarioLookupServiceImpl(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     private static Map<String, SimulatorScenario> getSimulatorScenarios(ApplicationContext context) {
@@ -88,14 +84,14 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
      * Reloads the {@link SimulatorScenario} and {@link ScenarioStarter} from the current {@link ApplicationContext}
      */
     @Override
-    public void evictAndReloadScenarioCache() {
+    public synchronized void evictAndReloadScenarioCache() {
         scenarios = getSimulatorScenarios(applicationContext);
         logger.debug("Scenarios found: {}", getScenarioNames());
 
         scenarioStarters = getScenarioStarters(applicationContext);
         logger.debug("Starters found: {}", getStarterNames());
 
-        applicationEventPublisher.publishEvent(new ScenariosReloadedEvent(this));
+        applicationContext.publishEvent(new ScenariosReloadedEvent(this));
     }
 
     /**

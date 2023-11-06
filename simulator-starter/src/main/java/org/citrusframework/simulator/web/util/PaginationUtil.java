@@ -16,15 +16,13 @@
 
 package org.citrusframework.simulator.web.util;
 
-import java.util.Collection;
+import java.text.MessageFormat;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.text.MessageFormat;
 
 
 /**
@@ -39,6 +37,10 @@ public interface PaginationUtil {
      String HEADER_LINK_FORMAT = "<{0}>; rel=\"{1}\"";
 
      static <T> Page<T> createPage(List<T> objects, Pageable pageable) {
+         if (pageable.isUnpaged()) {
+             return new PageImpl<>(objects);
+         }
+
          int start = (int) pageable.getOffset();
          int end = Math.min((start + pageable.getPageSize()), objects.size());
 

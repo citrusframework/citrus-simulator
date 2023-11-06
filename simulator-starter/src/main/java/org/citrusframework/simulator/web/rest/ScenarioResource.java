@@ -72,6 +72,8 @@ public class ScenarioResource {
         logger.debug("Scenarios found: {}", scenarioNames);
         logger.debug("Starters found: {}", scenarioStarterNames);
 
+        scenarioCache.clear();
+
         scenarioNames.forEach(name -> scenarioCache.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
         scenarioStarterNames.forEach(name -> scenarioCache.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
 
