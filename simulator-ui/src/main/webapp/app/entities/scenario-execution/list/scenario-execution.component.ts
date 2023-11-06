@@ -17,7 +17,7 @@ import { IScenarioExecution } from '../scenario-execution.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-execution',
+  selector: 'app-scenario-execution',
   templateUrl: './scenario-execution.component.html',
   imports: [
     RouterModule,

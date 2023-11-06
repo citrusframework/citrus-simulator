@@ -17,7 +17,7 @@ import { IMessage } from '../message.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-message',
+  selector: 'app-message',
   templateUrl: './message.component.html',
   imports: [
     RouterModule,

@@ -7,7 +7,7 @@ import { IScenarioParameter } from '../scenario-parameter.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-parameter-detail',
+  selector: 'app-scenario-parameter-detail',
   templateUrl: './scenario-parameter-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

@@ -10,9 +10,9 @@
     </div>
   </h2>
 
-  <jhi-alert-error></jhi-alert-error>
+  <app-alert-error></app-alert-error>
 
-  <jhi-alert></jhi-alert>
+  <app-alert></app-alert>
 
   <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.scenario.home.notFound">No Scenarios found</span>
@@ -51,6 +51,21 @@
               </button>
               <button
                 type="submit"
+                [routerLink]="['/scenario-result']"
+                [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }"
+                class="btn btn-info btn-sm"
+                data-cy="scenarioExecutionsButton"
+              >
+                <fa-icon icon="square-poll-vertical"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
+                  >Show Scenario Executions</span
+                >
+              </button>
+              <button
+                type="submit"
                 [routerLink]="['/scenario', scenario.name, scenario.type, 'view']"
                 class="btn btn-info btn-sm"
                 data-cy="entityDetailsButton"
@@ -67,7 +82,7 @@
 
   <div *ngIf="scenarios && scenarios.length > 0">
     <div class="d-flex justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
     </div>
 
     <div class="d-flex justify-content-center">

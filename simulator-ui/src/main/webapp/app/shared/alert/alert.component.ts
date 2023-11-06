@@ -6,7 +6,7 @@ import { AlertService, Alert } from 'app/core/util/alert.service';
 
 @Component({
   standalone: true,
-  selector: 'jhi-alert',
+  selector: 'app-alert',
   templateUrl: './alert.component.html',
   imports: [CommonModule, NgbModule],
 })

@@ -17,7 +17,7 @@ import { ITestParameter } from '../test-parameter.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-test-parameter',
+  selector: 'app-test-parameter',
   templateUrl: './test-parameter.component.html',
   imports: [
     RouterModule,

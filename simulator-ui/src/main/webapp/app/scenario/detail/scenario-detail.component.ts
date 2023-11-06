@@ -8,7 +8,7 @@ import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'ap
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-detail',
+  selector: 'app-scenario-detail',
   templateUrl: './scenario-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

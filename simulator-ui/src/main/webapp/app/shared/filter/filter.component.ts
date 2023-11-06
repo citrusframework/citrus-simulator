@@ -5,7 +5,7 @@ import SharedModule from 'app/shared/shared.module';
 import { IFilterOptions } from './filter.model';
 
 @Component({
-  selector: 'jhi-filter',
+  selector: 'app-filter',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './filter.component.html',

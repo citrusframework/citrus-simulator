@@ -6,7 +6,7 @@ import TranslateDirective from '../language/translate.directive';
  */
 @Component({
   standalone: true,
-  selector: 'jhi-item-count',
+  selector: 'app-item-count',
   template: ` <div jhiTranslate="global.item-count" [translateValues]="{ first: first, second: second, total: total }"></div> `,
   imports: [TranslateDirective],
 })

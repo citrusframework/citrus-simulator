@@ -10,7 +10,7 @@ import TestResultSummaryComponent from './test-result-summary.component';
 
 @Component({
   standalone: true,
-  selector: 'jhi-home',
+  selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   imports: [RouterModule, SharedModule, TestResultSummaryComponent],

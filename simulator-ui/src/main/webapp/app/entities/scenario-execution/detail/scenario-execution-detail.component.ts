@@ -7,7 +7,7 @@ import { IScenarioExecution } from '../scenario-execution.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-execution-detail',
+  selector: 'app-scenario-execution-detail',
   templateUrl: './scenario-execution-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

@@ -17,7 +17,7 @@ import { IScenarioParameter } from '../scenario-parameter.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-parameter',
+  selector: 'app-scenario-parameter',
   templateUrl: './scenario-parameter.component.html',
   imports: [
     RouterModule,

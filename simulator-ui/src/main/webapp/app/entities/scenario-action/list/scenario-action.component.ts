@@ -17,7 +17,7 @@ import { IScenarioAction } from '../scenario-action.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario-action',
+  selector: 'app-scenario-action',
   templateUrl: './scenario-action.component.html',
   imports: [
     RouterModule,
