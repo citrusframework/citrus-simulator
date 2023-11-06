@@ -137,6 +137,34 @@
             <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
           </ul>
         </li>
+        <li
+          ngbDropdown
+          class="nav-item dropdown pointer"
+          display="dynamic"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="resources-menu" data-cy="entity">
+            <span>
+              <fa-icon icon="circle-info"></fa-icon>
+              <span jhiTranslate="global.menu.resources.main">Resources</span>
+            </span>
+          </a>
+          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+            <li>
+              <a class="dropdown-item" href="http://citrusframework.org/citrus-simulator/" target="_blank">
+                <fa-icon icon="book" [fixedWidth]="true"></fa-icon>
+                <span jhiTranslate="global.menu.resources.documentation">Documentation</span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/swagger-ui/index.html">
+                <div class="img-svg img-svg-openapi svg-inline--fa"></div>
+                <span jhiTranslate="global.menu.resources.swagger">Swagger UI</span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">
           <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="languagesnavBarDropdown">
             <span>

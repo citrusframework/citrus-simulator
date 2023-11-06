@@ -18,6 +18,7 @@ Navbar
 
 .navbar {
   padding: 0.2rem 1rem;
+
   .dropdown-item.active,
   .dropdown-item.active:focus,
   .dropdown-item.active:hover {
@@ -33,6 +34,25 @@ Navbar
       color: $navbar-dark-hover-color;
     }
   }
+}
+
+.img-svg {
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  height: 1em;
+  width: 1em;
+
+  background-color: $navbar-dark-color;
+
+  :hover > & {
+    background-color: $navbar-dark-hover-color;
+  }
+}
+
+.img-svg-openapi {
+  -webkit-mask: url('../../../content/images/openapi.svg') no-repeat center / contain;
+  mask: url('../../../content/images/openapi.svg') no-repeat center / contain;
 }
 
 /* ==========================================================================
