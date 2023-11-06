@@ -1,6 +1,7 @@
 package org.citrusframework.simulator.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,18 +41,14 @@ class ScenarioLookupServiceImplTest {
     @Mock
     private ApplicationContext applicationContextMock;
 
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisherMock;
-
     private ScenarioLookupServiceImpl fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new ScenarioLookupServiceImpl(applicationContextMock,
-            applicationEventPublisherMock);
+        fixture = new ScenarioLookupServiceImpl(applicationContextMock);
     }
 
-    static Stream<Arguments> evictAndReloadScenarioCache() {
+    static Stream<Arguments> evictAndReloadScenarioCacheIsIdempotent() {
         return Stream.of(
             Arguments.of(
                 (Consumer<ScenarioLookupServiceImpl>) ScenarioLookupServiceImpl::afterPropertiesSet),
@@ -63,7 +59,7 @@ class ScenarioLookupServiceImplTest {
 
     @MethodSource
     @ParameterizedTest
-    void evictAndReloadScenarioCache(Consumer<ScenarioLookupServiceImpl> invocation) {
+    void evictAndReloadScenarioCacheIsIdempotent(Consumer<ScenarioLookupServiceImpl> invocation) {
         final String testSimulatorScenario = "testSimulatorScenario";
         Map<String, SimulatorScenario> contextSimulatorScenarios = Map.of(testSimulatorScenario, new TestSimulatorScenario(), "invalidTestSimulatorScenario", new InvalidTestSimulatorScenario());
         doReturn(contextSimulatorScenarios).when(applicationContextMock).getBeansOfType(SimulatorScenario.class);
@@ -73,7 +69,16 @@ class ScenarioLookupServiceImplTest {
         doReturn(contextScenarioStarters).when(applicationContextMock).getBeansOfType(ScenarioStarter.class);
 
         invocation.accept(fixture);
+        verifyScenariosHaveBeenReloadedFromApplicationContext(testSimulatorScenario, testScenarioStarter);
 
+        clearInvocations(applicationContextMock);
+
+        // Check that the cache is really evicted and reloaded, not appended
+        invocation.accept(fixture);
+        verifyScenariosHaveBeenReloadedFromApplicationContext(testSimulatorScenario, testScenarioStarter);
+    }
+
+    private void verifyScenariosHaveBeenReloadedFromApplicationContext(String testSimulatorScenario, String testScenarioStarter) {
         Map<String, SimulatorScenario> simulatorScenarios = (Map<String, SimulatorScenario>) ReflectionTestUtils.getField(fixture, "scenarios");
         assertThat(simulatorScenarios).hasSize(1);
 
@@ -81,7 +86,7 @@ class ScenarioLookupServiceImplTest {
         assertThat(scenarioStarters).hasSize(1);
 
         ArgumentCaptor<ScenariosReloadedEvent> scenariosReloadedEventArgumentCaptor = ArgumentCaptor.forClass(ScenariosReloadedEvent.class);
-        verify(applicationEventPublisherMock).publishEvent(scenariosReloadedEventArgumentCaptor.capture());
+        verify(applicationContextMock).publishEvent(scenariosReloadedEventArgumentCaptor.capture());
 
         ScenariosReloadedEvent scenariosReloadedEvent = scenariosReloadedEventArgumentCaptor.getValue();
         assertThat(scenariosReloadedEvent.getScenarioNames()).containsExactly(testSimulatorScenario);
