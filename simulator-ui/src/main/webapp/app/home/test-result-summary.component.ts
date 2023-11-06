@@ -16,8 +16,8 @@ import SharedModule from 'app/shared/shared.module';
 export default class TestResultSummaryComponent implements OnInit {
   testResults: TestResultsByStatus | null = null;
 
-  successfulPercentage = 0;
-  failedPercentage = 0;
+  successfulPercentage = '0';
+  failedPercentage = '0';
 
   statusSuccess = STATUS_SUCCESS;
   statusFailed = STATUS_FAILED;
@@ -36,9 +36,14 @@ export default class TestResultSummaryComponent implements OnInit {
         this.testResults = testResults;
 
         if (testResults.total > 0) {
-          this.successfulPercentage = (testResults.successful / testResults.total) * 100;
-          this.failedPercentage = (testResults.failed / testResults.total) * 100;
+          this.successfulPercentage = this.toFixedDecimalIfNotMatching((testResults.successful / testResults.total) * 100);
+          this.failedPercentage = this.toFixedDecimalIfNotMatching((testResults.failed / testResults.total) * 100);
         }
       });
+  }
+
+  private toFixedDecimalIfNotMatching(percentage: number): string {
+    const fixed = percentage.toFixed(2);
+    return fixed.endsWith('.00') ? fixed.slice(0, fixed.length - 3) : fixed;
   }
 }

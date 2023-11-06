@@ -38,7 +38,26 @@ describe('TestResultSummaryComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should correctly calculate percentages', fakeAsync(() => {
+    it('should correctly calculate fixed percentages', fakeAsync(() => {
+      const mockData = new HttpResponse({
+        body: {
+          total: 3,
+          successful: 2,
+          failed: 1,
+        },
+      });
+
+      testResultService.countByStatus.mockReturnValue(of(mockData));
+
+      component.ngOnInit();
+      tick();
+
+      expect(component.testResults).toEqual(mockData.body);
+      expect(component.successfulPercentage).toEqual('66.67');
+      expect(component.failedPercentage).toEqual('33.33');
+    }));
+
+    it('should return even numbers with even results', fakeAsync(() => {
       const mockData = new HttpResponse({
         body: {
           total: 2,
@@ -53,8 +72,8 @@ describe('TestResultSummaryComponent', () => {
       tick();
 
       expect(component.testResults).toEqual(mockData.body);
-      expect(component.successfulPercentage).toEqual(50);
-      expect(component.failedPercentage).toEqual(50);
+      expect(component.successfulPercentage).toEqual('50');
+      expect(component.failedPercentage).toEqual('50');
     }));
 
     it('default to a zero-result', fakeAsync(() => {
@@ -70,8 +89,9 @@ describe('TestResultSummaryComponent', () => {
         successful: 0,
         failed: 0,
       });
-      expect(component.successfulPercentage).toEqual(0);
-      expect(component.failedPercentage).toEqual(0);
+
+      expect(component.successfulPercentage).toEqual('0');
+      expect(component.failedPercentage).toEqual('0');
     }));
   });
 });
