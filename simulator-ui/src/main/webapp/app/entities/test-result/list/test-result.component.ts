@@ -17,7 +17,7 @@ import { ITestResult } from '../test-result.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-test-result',
+  selector: 'app-test-result',
   templateUrl: './test-result.component.html',
   imports: [
     RouterModule,

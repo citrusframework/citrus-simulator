@@ -16,6 +16,11 @@
         "testResult": "Test Result",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
+      "resources": {
+        "main": "Resources",
+        "documentation": "Documentation",
+        "swagger": "Swagger UI"
+      },
       "language": "Language"
     },
     "field": {
@@ -36,6 +41,7 @@
       "back": "Back",
       "cancel": "Cancel",
       "delete": "Delete",
+      "details": "Details",
       "edit": "Edit",
       "open": "Open",
       "save": "Save",

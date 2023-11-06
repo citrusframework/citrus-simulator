@@ -8,12 +8,13 @@ import { VERSION } from 'app/app.constants';
 import { LANGUAGES } from 'app/config/language.constants';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
+
 import ActiveMenuDirective from './active-menu.directive';
 import NavbarItem from './navbar-item.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-navbar',
+  selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   imports: [RouterModule, SharedModule, ActiveMenuDirective],
@@ -22,7 +23,6 @@ export default class NavbarComponent implements OnInit {
   inProduction?: boolean;
   isNavbarCollapsed = true;
   languages = LANGUAGES;
-  openAPIEnabled?: boolean;
   version = '';
   entitiesNavbarItems: NavbarItem[] = [];
 
@@ -41,7 +41,6 @@ export default class NavbarComponent implements OnInit {
     this.entitiesNavbarItems = EntityNavbarItems;
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
-      this.openAPIEnabled = profileInfo.openAPIEnabled;
     });
   }
 

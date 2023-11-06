@@ -7,26 +7,74 @@
   <div class="row" *ngIf="testResults?.total !== 0; else infoNoSimulationsRanYet">
     <div class="col-md-3">
       <ngb-alert type="info" [dismissible]="false">
-        <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
-        <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
+            <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button type="submit" [routerLink]="['/scenario-result']" class="btn btn-info btn-sm" data-cy="scenarioExecutionsButton">
+              <fa-icon icon="square-poll-vertical"></fa-icon>
+              <span
+                class="d-none d-md-inline"
+                jhiTranslate="entity.action.show"
+                [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
+                >Show Scenario Executions</span
+              >
+            </button>
+          </div>
+        </div>
       </ngb-alert>
     </div>
 
     <div class="col-md-3">
       <ngb-alert type="success" [dismissible]="false">
-        <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
-        <h5>
-          {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
-        </h5>
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
+            <h5>
+              {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
+            </h5>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button
+              type="submit"
+              [routerLink]="['/scenario-result']"
+              [queryParams]="{ 'filter[status.equals]': statusSuccess.id }"
+              class="btn btn-success btn-sm"
+              data-cy="scenarioExecutionsButton"
+            >
+              <fa-icon icon="square-poll-vertical"></fa-icon>
+              <!--          <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>-->
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Successful</span>
+            </button>
+          </div>
+        </div>
       </ngb-alert>
     </div>
 
     <div class="col-md-3">
       <ngb-alert type="danger" [dismissible]="false">
-        <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
-        <h5>
-          {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
-        </h5>
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
+            <h5>
+              {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
+            </h5>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button
+              type="submit"
+              [routerLink]="['/scenario-result']"
+              [queryParams]="{ 'filter[status.equals]': statusFailed.id }"
+              class="btn btn-danger btn-sm"
+              data-cy="scenarioExecutionsButton"
+            >
+              <fa-icon icon="square-poll-vertical"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
+            </button>
+          </div>
+        </div>
       </ngb-alert>
     </div>
   </div>

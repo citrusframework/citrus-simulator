@@ -30,6 +30,11 @@ import NavbarComponent from './layouts/navbar/navbar.component';
           data: { pageTitle: 'citrusSimulatorApp.scenario.home.title' },
           loadChildren: () => import(`./scenario/scenario.routes`),
         },
+        {
+          path: 'scenario-result',
+          data: { pageTitle: 'citrusSimulatorApp.scenarioExecution.home.title' },
+          loadChildren: () => import(`./scenario-result/scenario-result.routes`),
+        },
         ...errorRoute,
       ],
       { enableTracing: DEBUG_INFO_ENABLED, bindToComponentInputs: true },

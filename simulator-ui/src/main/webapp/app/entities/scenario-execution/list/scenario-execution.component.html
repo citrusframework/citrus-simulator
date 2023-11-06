@@ -10,11 +10,11 @@
     </div>
   </h2>
 
-  <jhi-alert-error></jhi-alert-error>
+  <app-alert-error></app-alert-error>
 
-  <jhi-alert></jhi-alert>
+  <app-alert></app-alert>
 
-  <jhi-filter [filters]="filters"></jhi-filter>
+  <app-filter [filters]="filters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="scenarioExecutions?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.notFound">No Scenario Executions found</span>
@@ -138,7 +138,7 @@
 
   <div *ngIf="scenarioExecutions && scenarioExecutions.length > 0">
     <div class="d-flex justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
     </div>
 
     <div class="d-flex justify-content-center">

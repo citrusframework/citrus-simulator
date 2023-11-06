@@ -17,7 +17,7 @@ import { IMessageHeader } from '../message-header.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-message-header',
+  selector: 'app-message-header',
   templateUrl: './message-header.component.html',
   imports: [
     RouterModule,

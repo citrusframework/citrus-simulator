@@ -11,7 +11,7 @@ import { AlertError } from './alert-error.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-alert-error',
+  selector: 'app-alert-error',
   templateUrl: './alert-error.component.html',
   imports: [CommonModule, NgbModule],
 })

@@ -7,7 +7,7 @@ import { IMessageHeader } from '../message-header.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-message-header-detail',
+  selector: 'app-message-header-detail',
   templateUrl: './message-header-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

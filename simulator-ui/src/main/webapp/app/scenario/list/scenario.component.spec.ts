@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+
 import { ScenarioService } from '../service/scenario.service';
 
 import { ScenarioComponent } from './scenario.component';
@@ -125,6 +127,6 @@ describe('Scenario Management Component', () => {
     comp.ngOnInit();
 
     // THEN
-    expect(service.query).toHaveBeenLastCalledWith({ page: 0, size: 20, sort: ['id,desc'] });
+    expect(service.query).toHaveBeenLastCalledWith({ page: 0, size: ITEMS_PER_PAGE, sort: ['id,desc'] });
   });
 });

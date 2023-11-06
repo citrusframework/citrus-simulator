@@ -21,7 +21,7 @@ import { filter, map } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  selector: 'jhi-scenario',
+  selector: 'app-scenario',
   templateUrl: './scenario.component.html',
   imports: [
     RouterModule,

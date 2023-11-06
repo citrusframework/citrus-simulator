@@ -7,7 +7,7 @@ import { ITestParameter } from '../test-parameter.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-test-parameter-detail',
+  selector: 'app-test-parameter-detail',
   templateUrl: './test-parameter-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

@@ -10,11 +10,11 @@
     </div>
   </h2>
 
-  <jhi-alert-error></jhi-alert-error>
+  <app-alert-error></app-alert-error>
 
-  <jhi-alert></jhi-alert>
+  <app-alert></app-alert>
 
-  <jhi-filter [filters]="filters"></jhi-filter>
+  <app-filter [filters]="filters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="testParameters?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
@@ -86,7 +86,7 @@
 
   <div *ngIf="testParameters && testParameters.length > 0">
     <div class="d-flex justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
     </div>
 
     <div class="d-flex justify-content-center">

@@ -7,7 +7,7 @@ import { ITestResult } from '../test-result.model';
 
 @Component({
   standalone: true,
-  selector: 'jhi-test-result-detail',
+  selector: 'app-test-result-detail',
   templateUrl: './test-result-detail.component.html',
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })

@@ -6,7 +6,7 @@ import SharedModule from 'app/shared/shared.module';
 
 @Component({
   standalone: true,
-  selector: 'jhi-footer',
+  selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   imports: [SharedModule],
