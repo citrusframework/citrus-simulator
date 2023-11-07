@@ -2,10 +2,12 @@ package org.citrusframework.simulator.ui.config;
 
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServlet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
-import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -22,10 +24,6 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Configuration
 public class SecurityConfiguration {
 
@@ -33,20 +31,16 @@ public class SecurityConfiguration {
 
     private final @Nullable SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
     private final @Nullable SimulatorRestAdapter simulatorRestAdapter;
-    private final @Nullable SimulatorWebServiceConfigurationProperties simulatorWebServiceConfigurationProperties;
     private final @Nullable ServletRegistrationBean<? extends HttpServlet> simulatorServletRegistrationBean;
 
     public SecurityConfiguration(
         SimulatorUiConfigurationProperties simulatorUiConfigurationProperties,
         @Autowired(required = false) @Nullable SimulatorRestConfigurationProperties simulatorRestConfigurationProperties,
         @Autowired(required = false) @Nullable SimulatorRestAdapter simulatorRestAdapter,
-        @Autowired(required = false) @Nullable SimulatorWebServiceConfigurationProperties simulatorWebServiceConfigurationProperties,
         @Autowired(required = false) @Nullable @Qualifier("simulatorServletRegistrationBean") ServletRegistrationBean<? extends HttpServlet> simulatorServletRegistrationBean) {
         this.simulatorUiConfigurationProperties = simulatorUiConfigurationProperties;
-
         this.simulatorRestConfigurationProperties = simulatorRestConfigurationProperties;
         this.simulatorRestAdapter = simulatorRestAdapter;
-        this.simulatorWebServiceConfigurationProperties = simulatorWebServiceConfigurationProperties;
         this.simulatorServletRegistrationBean = simulatorServletRegistrationBean;
     }
 
@@ -97,9 +91,11 @@ public class SecurityConfiguration {
         List<RequestMatcher> requestMatchers = new ArrayList<>();
 
         if (!Objects.isNull(simulatorRestConfigurationProperties) && !Objects.isNull(simulatorRestAdapter)) {
-            requestMatchers.add(mvc.pattern(simulatorRestAdapter.urlMapping(simulatorRestConfigurationProperties)));
+            simulatorRestAdapter.urlMappings(simulatorRestConfigurationProperties)
+                .forEach(urlMapping -> requestMatchers.add(mvc.pattern(urlMapping)));
         } else if (!Objects.isNull(simulatorRestConfigurationProperties)) {
-            requestMatchers.add(mvc.pattern(simulatorRestConfigurationProperties.getUrlMapping()));
+            simulatorRestConfigurationProperties.getUrlMappings()
+                .forEach(urlMapping -> requestMatchers.add(mvc.pattern(urlMapping)));
         }
         if (!Objects.isNull(simulatorServletRegistrationBean) && simulatorServletRegistrationBean.isEnabled()) {
             simulatorServletRegistrationBean.getUrlMappings().forEach(urlMapping -> addPathWithinApplicationAwareServletMatchers(mvc, urlMapping, requestMatchers));

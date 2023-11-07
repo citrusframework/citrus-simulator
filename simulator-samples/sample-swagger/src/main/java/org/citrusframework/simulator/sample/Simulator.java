@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.sample;
 
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.http.message.HttpMessage;
@@ -50,8 +51,8 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Override
-    public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-        return "/petstore/v2/**";
+    public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return List.of("/petstore/v2/**");
     }
 
     @Override

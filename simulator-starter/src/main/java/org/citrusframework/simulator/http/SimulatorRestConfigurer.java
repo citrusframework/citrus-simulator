@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.http;
 
+import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import org.citrusframework.simulator.config.SimulatorConfigurer;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -37,5 +39,6 @@ public interface SimulatorRestConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration);
+    @NotNull
+    List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration);
 }
