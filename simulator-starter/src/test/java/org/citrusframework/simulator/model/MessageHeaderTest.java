@@ -8,7 +8,7 @@ class MessageHeaderTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        EntityUtils.equalsVerifier(MessageHeader.class);
+        EntityTestUtils.equalsVerifier(MessageHeader.class);
 
         MessageHeader messageHeader1 = new MessageHeader();
         messageHeader1.setHeaderId(1L);

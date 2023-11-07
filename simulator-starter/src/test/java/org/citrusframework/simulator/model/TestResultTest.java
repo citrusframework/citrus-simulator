@@ -8,7 +8,7 @@ class TestResultTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        EntityUtils.equalsVerifier(TestResult.class);
+        EntityTestUtils.equalsVerifier(TestResult.class);
 
         TestResult testResult1 = new TestResult();
         testResult1.setId(1L);

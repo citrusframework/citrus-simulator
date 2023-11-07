@@ -123,7 +123,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         className = testResult.getClassName();
         testResult.getParameters().forEach((key, value) -> testParameters.add(new TestParameter(key, value.toString(), this)));
         // NOte that the cause will be dropped: testResult.getCause()
-        errorMessage = testResult.getErrorMessage();
+        errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", testResult.getErrorMessage());
         failureStack = testResult.getFailureStack();
         failureType = testResult.getFailureType();
     }
@@ -268,7 +268,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         }
 
         public TestResultBuilder errorMessage(String errorMessage) {
-            testResult.errorMessage = errorMessage;
+            testResult.errorMessage = EntityUtils.truncateToColumnSize(TestResult.class, "errorMessage", errorMessage);
             return this;
         }
 

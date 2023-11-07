@@ -2,9 +2,9 @@ package org.citrusframework.simulator.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EntityUtils {
+class EntityTestUtils {
 
-    private EntityUtils() {
+    private EntityTestUtils() {
         // Static utility class
     }
 

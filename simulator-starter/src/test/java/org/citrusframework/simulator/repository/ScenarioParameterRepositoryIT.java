@@ -35,7 +35,7 @@ class ScenarioParameterRepositoryIT {
     }
 
     @BeforeEach
-    void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
+    void beforeEachSetup() {
         scenarioParameter = createEntity(entityManager);
 
         ScenarioExecution scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);

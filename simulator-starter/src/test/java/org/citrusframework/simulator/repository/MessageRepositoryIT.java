@@ -36,7 +36,7 @@ class MessageRepositoryIT {
     }
 
     @BeforeEach
-    void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
+    void beforeEachSetup() {
         message = MessageResourceIT.createEntity(entityManager);
 
         ScenarioExecution scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
