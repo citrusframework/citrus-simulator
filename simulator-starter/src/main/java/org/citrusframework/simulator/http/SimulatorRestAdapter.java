@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.http;
 
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.interceptor.LoggingHandlerInterceptor;
@@ -39,8 +40,8 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
     }
 
     @Override
-    public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-        return simulatorRestConfiguration.getUrlMapping();
+    public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return simulatorRestConfiguration.getUrlMappings();
     }
 
     @Override
