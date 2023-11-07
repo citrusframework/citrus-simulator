@@ -17,6 +17,14 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -28,15 +36,6 @@ import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service for persisting and retrieving {@link ScenarioExecution} data.
@@ -115,7 +114,7 @@ public class ActivityService {
             try (StringWriter stringWriter = new StringWriter(); PrintWriter printWriter = new PrintWriter(stringWriter)) {
                 cause.printStackTrace(printWriter);
                 scenarioExecution.setErrorMessage(stringWriter.toString());
-            } catch (IOException | ScenarioExecution.ErrorMessageTruncationException e) {
+            } catch (IOException e) {
                 logger.warn("Failed to write error message to scenario execution!", e);
             }
         }

@@ -9,7 +9,7 @@ class TestParameterTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        EntityUtils.equalsVerifier(TestParameter.class);
+        EntityTestUtils.equalsVerifier(TestParameter.class);
         TestParameter testParameter1 = new TestParameter("key", "", TestResult.builder().id(1L).build());
 
         TestParameter testParameter2 = new TestParameter(testParameter1.getKey(), testParameter1.getValue(), testParameter1.getTestResult());

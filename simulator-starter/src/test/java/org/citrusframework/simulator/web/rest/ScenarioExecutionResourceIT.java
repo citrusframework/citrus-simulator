@@ -68,7 +68,7 @@ public class ScenarioExecutionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static ScenarioExecution createEntity(EntityManager entityManager) throws ScenarioExecution.ErrorMessageTruncationException {
+    public static ScenarioExecution createEntity(EntityManager entityManager) {
         ScenarioExecution scenarioExecution = ScenarioExecution.builder()
             .startDate(DEFAULT_START_DATE)
             .endDate(DEFAULT_END_DATE)
@@ -85,7 +85,7 @@ public class ScenarioExecutionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static ScenarioExecution createUpdatedEntity(EntityManager entityManager) throws ScenarioExecution.ErrorMessageTruncationException {
+    public static ScenarioExecution createUpdatedEntity(EntityManager entityManager) {
         ScenarioExecution scenarioExecution = ScenarioExecution.builder()
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
@@ -97,7 +97,7 @@ public class ScenarioExecutionResourceIT {
     }
 
     @BeforeEach
-    void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
+    void beforeEachSetup()  {
         scenarioExecution = createEntity(entityManager);
     }
 

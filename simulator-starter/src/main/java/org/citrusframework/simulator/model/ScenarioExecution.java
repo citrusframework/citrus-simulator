@@ -29,16 +29,11 @@ import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.util.StringUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -135,20 +130,8 @@ public class ScenarioExecution implements Serializable {
         return errorMessage;
     }
 
-    public void setErrorMessage(String errorMessage) throws ErrorMessageTruncationException {
-        this.errorMessage = errorMessage;
-        if (StringUtils.hasLength(this.errorMessage)) {
-            try {
-                int size = getClass().getDeclaredField("errorMessage").getAnnotation(Column.class).length();
-                int inLength = this.errorMessage.length();
-                if (inLength > size) {
-                    this.errorMessage = this.errorMessage.substring(0, size);
-                }
-            } catch (SecurityException | NoSuchFieldException ex) {
-                throw new ErrorMessageTruncationException(
-                    String.format("Error truncating error message '%s'!", errorMessage), ex);
-            }
-        }
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", errorMessage);
     }
 
     public Set<ScenarioParameter> getScenarioParameters() {
@@ -227,12 +210,6 @@ public class ScenarioExecution implements Serializable {
         }
     }
 
-    public static class ErrorMessageTruncationException extends Exception {
-        public ErrorMessageTruncationException(String errorMessage, Exception exception) {
-            super(errorMessage, exception);
-        }
-    }
-
     public static class ScenarioExecutionBuilder {
 
         private final ScenarioExecution scenarioExecution = new ScenarioExecution();
@@ -265,7 +242,7 @@ public class ScenarioExecution implements Serializable {
             return this;
         }
 
-        public ScenarioExecutionBuilder errorMessage(String errorMessage) throws ErrorMessageTruncationException {
+        public ScenarioExecutionBuilder errorMessage(String errorMessage) {
             scenarioExecution.setErrorMessage(errorMessage);
             return this;
         }

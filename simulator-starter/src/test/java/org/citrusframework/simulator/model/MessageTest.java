@@ -8,7 +8,7 @@ class MessageTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        EntityUtils.equalsVerifier(Message.class);
+        EntityTestUtils.equalsVerifier(Message.class);
 
         Message message1 = new Message();
         message1.setMessageId(1L);

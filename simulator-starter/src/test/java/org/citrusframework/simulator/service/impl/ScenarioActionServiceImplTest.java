@@ -34,7 +34,7 @@ class ScenarioActionServiceImplTest {
     private ScenarioActionServiceImpl fixture;
 
     @BeforeEach
-    void beforeEachSetup() throws ScenarioExecution.ErrorMessageTruncationException {
+    void beforeEachSetup()  {
         ScenarioAction scenarioAction = new ScenarioAction();
         ScenarioExecution scenarioExecution = ScenarioExecution.builder()
             .startDate(Instant.now())
