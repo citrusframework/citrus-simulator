@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.citrusframework.simulator.http;
 
 import jakarta.annotation.PostConstruct;
@@ -32,7 +33,7 @@ import org.springframework.core.env.Environment;
 public class SimulatorRestConfigurationProperties implements EnvironmentAware {
 
     /** Logger */
-    private static final Logger log = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
 
     /**
      * System property constants and environment variable names. Post construct callback reads these values and overwrites
@@ -65,7 +66,7 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
             urlMappings = List.of(urlMapping.split(","));
         }
 
-        log.info("Using the simulator configuration: {}", this);
+        logger.info("Using the simulator configuration: {}", this);
     }
 
     /**
@@ -102,7 +103,7 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
      * @param urlMappings
      */
     public void setUrlMappings(List<String> urlMappings) {
-        this.urlMappings = urlMappings != null? Collections.unmodifiableList(urlMappings) : Collections.emptyList();
+        this.urlMappings = urlMappings != null ? Collections.unmodifiableList(urlMappings) : Collections.emptyList();
     }
 
     @Override

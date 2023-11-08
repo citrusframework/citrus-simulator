@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.citrusframework.simulator.ui.config;
 
 import org.citrusframework.simulator.ui.IntegrationTest;
@@ -26,5 +27,4 @@ class SecurityConfigurationWithoutAdaptersIT extends AbstractSecurityConfigurati
     protected String getContext() {
         return "simulator";
     }
-
 }

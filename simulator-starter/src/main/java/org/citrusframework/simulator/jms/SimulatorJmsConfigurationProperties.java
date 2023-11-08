@@ -15,7 +15,7 @@ import jakarta.annotation.PostConstruct;
 public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
 
     /** Logger */
-    private static Logger log = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
 
     /**
      * System property constants and environment variable names. Post construct callback reads these values and overwrites
@@ -75,7 +75,7 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
         useSoap = Boolean.parseBoolean(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
         pubSubDomain = Boolean.parseBoolean(env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_PROPERTY, env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_ENV, String.valueOf(pubSubDomain))));
 
-        log.info("Using the simulator configuration: {}", this.toString());
+        logger.info("Using the simulator configuration: {}", this.toString());
     }
 
     /**

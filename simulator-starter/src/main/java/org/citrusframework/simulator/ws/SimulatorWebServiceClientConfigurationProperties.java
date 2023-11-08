@@ -32,7 +32,7 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
     /**
      * Logger
      */
-    private static Logger log = LoggerFactory.getLogger(SimulatorWebServiceClientConfigurationProperties.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorWebServiceClientConfigurationProperties.class);
 
     /**
      * System property constants and environment variable names. Post construct callback reads these values and overwrites
@@ -62,7 +62,7 @@ public class SimulatorWebServiceClientConfigurationProperties implements Environ
                 env.getProperty(SIMULATOR_WSCLIENT_REQUEST_URL_ENV, requestUrl)
         );
 
-        log.info("Using the simulator configuration: {}", this.toString());
+        logger.info("Using the simulator configuration: {}", this.toString());
     }
 
     /**

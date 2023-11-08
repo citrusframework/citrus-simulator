@@ -5,12 +5,12 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -26,7 +26,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SpaWebFilterTest {
 
-    @Mock(name = "simulatorRestRequestMatcher")
+    private static final String H2_CONSOLE_PATH = "/h2-console";
+
+    @Mock
     private RequestMatcher simulatorRestRequestMatcherMock;
 
     @Mock
@@ -41,13 +43,13 @@ class SpaWebFilterTest {
     @Mock
     private RequestDispatcher requestDispatcherMock;
 
-    @InjectMocks
     private SpaWebFilter fixture;
 
     public static Stream<Arguments> shouldNotForwardPathToIndexHtml() {
         return Stream.of(
             Arguments.of("/api", ""),
             Arguments.of("/api/somepath", ""),
+            Arguments.of(H2_CONSOLE_PATH, ""),
             Arguments.of("/v3/api-docs", ""),
             Arguments.of("/v3/api-docs/somepath", ""),
             Arguments.of("/some/absolute/path.", ""),
@@ -59,6 +61,11 @@ class SpaWebFilterTest {
             Arguments.of("/server-1/some/absolute/path.", "/server-1"),
             Arguments.of("/server-1path/without/leading/slash", "/server-1")
         );
+    }
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new SpaWebFilter(H2_CONSOLE_PATH, simulatorRestRequestMatcherMock);
     }
 
     @MethodSource
