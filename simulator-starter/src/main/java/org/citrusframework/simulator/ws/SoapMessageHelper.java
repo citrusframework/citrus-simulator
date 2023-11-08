@@ -45,7 +45,7 @@ public class SoapMessageHelper {
     /**
      * Logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(SoapMessageHelper.class);
 
     @Autowired
     private SoapMessageFactory soapMessageFactory;
@@ -92,7 +92,7 @@ public class SoapMessageHelper {
         try {
             String payload = message.getPayload().toString();
 
-            LOG.info("Creating SOAP message from payload: " + payload);
+            logger.info("Creating SOAP message from payload: " + payload);
 
             WebServiceMessage soapMessage = soapMessageFactory.createWebServiceMessage();
             transformerFactory.newTransformer().transform(

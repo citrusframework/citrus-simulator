@@ -42,7 +42,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
-    private final Logger log = LoggerFactory.getLogger(MessageHeaderQueryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageHeaderQueryService.class);
 
     private final MessageHeaderRepository messageHeaderRepository;
 
@@ -58,7 +58,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
      */
     @Transactional(readOnly = true)
     public List<MessageHeader> findByCriteria(MessageHeaderCriteria criteria) {
-        log.debug("find by criteria : {}", criteria);
+        logger.debug("find by criteria : {}", criteria);
         final Specification<MessageHeader> specification = createSpecification(criteria);
         return messageHeaderRepository.findAll(specification);
     }
@@ -72,7 +72,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
      */
     @Transactional(readOnly = true)
     public Page<MessageHeader> findByCriteria(MessageHeaderCriteria criteria, Pageable page) {
-        log.debug("find by criteria : {}, page: {}", criteria, page);
+        logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<MessageHeader> specification = createSpecification(criteria);
         return messageHeaderRepository.findAll(specification, page)
             .map(MessageHeaderService::restrictToDtoProperties);
@@ -86,7 +86,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
      */
     @Transactional(readOnly = true)
     public long countByCriteria(MessageHeaderCriteria criteria) {
-        log.debug("count by criteria : {}", criteria);
+        logger.debug("count by criteria : {}", criteria);
         final Specification<MessageHeader> specification = createSpecification(criteria);
         return messageHeaderRepository.count(specification);
     }

@@ -35,7 +35,7 @@ import java.util.Optional;
 @Transactional
 public class MessageServiceImpl implements MessageService {
 
-    private final Logger log = LoggerFactory.getLogger(MessageServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     private final MessageRepository messageRepository;
 
@@ -45,21 +45,21 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message save(Message message) {
-        log.debug("Request to save Message : {}", message);
+        logger.debug("Request to save Message : {}", message);
         return messageRepository.save(message);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<Message> findAll(Pageable pageable) {
-        log.debug("Request to get all Messages with eager relationships");
+        logger.debug("Request to get all Messages with eager relationships");
         return messageRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Message> findOne(Long messageId) {
-        log.debug("Request to get Message : {}", messageId);
+        logger.debug("Request to get Message : {}", messageId);
         return messageRepository.findOneWithEagerRelationships(messageId);
     }
 }

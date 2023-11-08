@@ -42,7 +42,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TestParameterQueryService extends QueryService<TestParameter> {
 
-    private final Logger log = LoggerFactory.getLogger(TestParameterQueryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestParameterQueryService.class);
 
     private final TestParameterRepository testParameterRepository;
 
@@ -59,7 +59,7 @@ public class TestParameterQueryService extends QueryService<TestParameter> {
      */
     @Transactional(readOnly = true)
     public Page<TestParameter> findByCriteria(TestParameterCriteria criteria, Pageable page) {
-        log.debug("find by criteria : {}, page: {}", criteria, page);
+        logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<TestParameter> specification = createSpecification(criteria);
         return testParameterRepository.findAll(specification, page);
     }
@@ -72,7 +72,7 @@ public class TestParameterQueryService extends QueryService<TestParameter> {
      */
     @Transactional(readOnly = true)
     public long countByCriteria(TestParameterCriteria criteria) {
-        log.debug("count by criteria : {}", criteria);
+        logger.debug("count by criteria : {}", criteria);
         final Specification<TestParameter> specification = createSpecification(criteria);
         return testParameterRepository.count(specification);
     }

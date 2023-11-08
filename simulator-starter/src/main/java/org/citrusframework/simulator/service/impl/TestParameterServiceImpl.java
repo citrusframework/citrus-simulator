@@ -36,7 +36,7 @@ import java.util.Optional;
 @Transactional
 public class TestParameterServiceImpl implements TestParameterService {
 
-    private final Logger logger = LoggerFactory.getLogger(TestParameterServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestParameterServiceImpl.class);
 
     private final TestResultService testResultService;
     private final TestParameterRepository testParameterRepository;

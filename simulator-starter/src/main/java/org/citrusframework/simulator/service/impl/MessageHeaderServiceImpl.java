@@ -35,7 +35,7 @@ import java.util.Optional;
 @Transactional
 public class MessageHeaderServiceImpl implements MessageHeaderService {
 
-    private final Logger log = LoggerFactory.getLogger(MessageHeaderServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageHeaderServiceImpl.class);
 
     private final MessageHeaderRepository messageHeaderRepository;
 
@@ -45,14 +45,14 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
 
     @Override
     public MessageHeader save(MessageHeader messageHeader) {
-        log.debug("Request to save MessageHeader : {}", messageHeader);
+        logger.debug("Request to save MessageHeader : {}", messageHeader);
         return messageHeaderRepository.save(messageHeader);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<MessageHeader> findAll(Pageable pageable) {
-        log.debug("Request to get all MessageHeaders with eager relationships");
+        logger.debug("Request to get all MessageHeaders with eager relationships");
         return messageHeaderRepository.findAllWithEagerRelationships(pageable)
             .map(MessageHeaderService::restrictToDtoProperties);
     }
@@ -60,7 +60,7 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     @Override
     @Transactional(readOnly = true)
     public Optional<MessageHeader> findOne(Long headerId) {
-        log.debug("Request to get MessageHeader : {}", headerId);
+        logger.debug("Request to get MessageHeader : {}", headerId);
         return messageHeaderRepository.findOneWithEagerRelationships(headerId)
             .map(MessageHeaderService::restrictToDtoProperties);
     }

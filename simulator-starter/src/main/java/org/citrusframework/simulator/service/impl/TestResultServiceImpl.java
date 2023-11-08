@@ -36,7 +36,7 @@ import java.util.Optional;
 @Transactional
 public class TestResultServiceImpl implements TestResultService {
 
-    private final Logger logger = LoggerFactory.getLogger(TestResultServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestResultServiceImpl.class);
 
     private final TestResultRepository testResultRepository;
 

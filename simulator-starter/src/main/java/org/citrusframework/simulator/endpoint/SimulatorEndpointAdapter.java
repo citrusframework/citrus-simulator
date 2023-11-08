@@ -42,7 +42,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter implements ApplicationContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
     @Autowired
     private CorrelationHandlerRegistry handlerRegistry;
@@ -77,7 +77,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
                     return null;
                 }
             } catch (TimeoutException e) {
-                LOG.warn(String.format("No response for scenario '%s'", handler.getScenarioEndpoint().getName()));
+                logger.warn(String.format("No response for scenario '%s'", handler.getScenarioEndpoint().getName()));
                 return null;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -99,7 +99,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         } else {
             scenarioName = configuration.getDefaultScenario();
-            LOG.info("Unable to find scenario for mapping '{}' - " +
+            logger.info("Unable to find scenario for mapping '{}' - " +
                     "using default scenario '{}'", mappingName, scenarioName);
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         }
@@ -115,7 +115,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
                 return null;
             }
         } catch (TimeoutException e) {
-            LOG.warn(String.format("No response for scenario '%s'", scenarioName));
+            logger.warn(String.format("No response for scenario '%s'", scenarioName));
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

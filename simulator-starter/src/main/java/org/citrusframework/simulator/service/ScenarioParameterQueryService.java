@@ -42,7 +42,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ScenarioParameterQueryService extends QueryService<ScenarioParameter> {
 
-    private final Logger log = LoggerFactory.getLogger(ScenarioParameterQueryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioParameterQueryService.class);
 
     private final ScenarioParameterRepository scenarioParameterRepository;
 
@@ -57,7 +57,7 @@ public class ScenarioParameterQueryService extends QueryService<ScenarioParamete
      */
     @Transactional(readOnly = true)
     public List<ScenarioParameter> findByCriteria(ScenarioParameterCriteria criteria) {
-        log.debug("find by criteria : {}", criteria);
+        logger.debug("find by criteria : {}", criteria);
         final Specification<ScenarioParameter> specification = createSpecification(criteria);
         return scenarioParameterRepository.findAll(specification);
     }
@@ -70,7 +70,7 @@ public class ScenarioParameterQueryService extends QueryService<ScenarioParamete
      */
     @Transactional(readOnly = true)
     public Page<ScenarioParameter> findByCriteria(ScenarioParameterCriteria criteria, Pageable page) {
-        log.debug("find by criteria : {}, page: {}", criteria, page);
+        logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<ScenarioParameter> specification = createSpecification(criteria);
         return scenarioParameterRepository.findAll(specification, page);
     }
@@ -82,7 +82,7 @@ public class ScenarioParameterQueryService extends QueryService<ScenarioParamete
      */
     @Transactional(readOnly = true)
     public long countByCriteria(ScenarioParameterCriteria criteria) {
-        log.debug("count by criteria : {}", criteria);
+        logger.debug("count by criteria : {}", criteria);
         final Specification<ScenarioParameter> specification = createSpecification(criteria);
         return scenarioParameterRepository.count(specification);
     }

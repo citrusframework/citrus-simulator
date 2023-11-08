@@ -35,8 +35,11 @@ import org.springframework.util.StringUtils;
  * message.
  */
 public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
-    private static final Logger LOG = LoggerFactory.getLogger(ContentBasedJsonPathScenarioMapper.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ContentBasedJsonPathScenarioMapper.class);
+
     private final List<JsonPayloadMappingKeyExtractor> keyExtractors = new ArrayList<>();
+
     private Predicate<String> mappingKeyFilter = StringUtils::hasLength;
 
     /**
@@ -99,13 +102,13 @@ public class ContentBasedJsonPathScenarioMapper implements ScenarioMapper {
     private Optional<String> lookupScenarioName(Message request, JsonPayloadMappingKeyExtractor keyExtractor) {
         try {
             final String mappingKey = keyExtractor.getMappingKey(request);
-            LOG.debug("Scenario-name lookup returned: {}", mappingKey);
+            logger.debug("Scenario-name lookup returned: {}", mappingKey);
             return Optional.of(mappingKey);
         } catch (RuntimeException e) {
-            LOG.trace("Scenario-name lookup failed", e);
+            logger.trace("Scenario-name lookup failed", e);
         }
 
-        LOG.debug("Scenario-name lookup returned: <no-match>");
+        logger.debug("Scenario-name lookup returned: <no-match>");
         return Optional.empty();
     }
 }
