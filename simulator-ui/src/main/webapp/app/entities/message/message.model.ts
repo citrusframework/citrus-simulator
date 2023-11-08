@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { IScenarioExecution } from 'app/entities/scenario-execution/scenario-execution.model';
+import { IMessageHeader } from 'app/entities/message-header/message-header.model';
 
 export interface IMessage {
   messageId: number;
@@ -11,6 +11,7 @@ export interface IMessage {
   scenarioName?: string | null;
   createdDate?: dayjs.Dayjs | null;
   lastModifiedDate?: dayjs.Dayjs | null;
+  headers?: IMessageHeader[] | null;
 }
 
 export type NewMessage = Omit<IMessage, 'messageId'> & { messageId: null };

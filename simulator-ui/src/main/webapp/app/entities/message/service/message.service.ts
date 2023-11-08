@@ -6,9 +6,11 @@ import { map } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
-import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { isPresent } from 'app/core/util/operators';
+import { MessageHeaderService, RestMessageHeader } from 'app/entities/message-header/service/message-header.service';
+
 import { IMessage, NewMessage } from '../message.model';
 
 type RestOf<T extends IMessage | NewMessage> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
@@ -28,6 +30,7 @@ export class MessageService {
   constructor(
     protected http: HttpClient,
     protected applicationConfigService: ApplicationConfigService,
+    private messageHeaderService: MessageHeaderService,
   ) {}
 
   find(messageId: number): Observable<EntityResponseType> {
@@ -76,6 +79,9 @@ export class MessageService {
       ...restMessage,
       createdDate: restMessage.createdDate ? dayjs(restMessage.createdDate) : undefined,
       lastModifiedDate: restMessage.lastModifiedDate ? dayjs(restMessage.lastModifiedDate) : undefined,
+      headers: restMessage.headers
+        ? restMessage.headers.map(messageHeader => messageHeader as RestMessageHeader).map(this.messageHeaderService.convertDateFromServer)
+        : undefined,
     };
   }
 

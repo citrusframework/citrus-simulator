@@ -74,7 +74,7 @@ export class MessageHeaderService {
     return messageHeaderCollection;
   }
 
-  protected convertDateFromServer(restMessageHeader: RestMessageHeader): IMessageHeader {
+  convertDateFromServer(restMessageHeader: RestMessageHeader): IMessageHeader {
     return {
       ...restMessageHeader,
       createdDate: restMessageHeader.createdDate ? dayjs(restMessageHeader.createdDate) : undefined,

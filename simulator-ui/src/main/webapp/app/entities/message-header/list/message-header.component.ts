@@ -1,36 +1,26 @@
-import { Component, NgZone, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
-import SharedModule from 'app/shared/shared.module';
-import { SortDirective, SortByDirective } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
-import { FormsModule } from '@angular/forms';
-
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import SharedModule from 'app/shared/shared.module';
 import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
+import { ItemCountComponent } from 'app/shared/pagination';
+
 import { EntityArrayResponseType, MessageHeaderService } from '../service/message-header.service';
 import { IMessageHeader } from '../message-header.model';
+
+import MessageHeaderTableComponent, { MessageHeaderSort } from './message-header-table.component';
 
 @Component({
   standalone: true,
   selector: 'app-message-header',
   templateUrl: './message-header.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    FilterComponent,
-    ItemCountComponent,
-  ],
+  imports: [FormsModule, SharedModule, FilterComponent, ItemCountComponent, MessageHeaderTableComponent],
 })
 export class MessageHeaderComponent implements OnInit {
   messageHeaders?: IMessageHeader[];
@@ -38,6 +28,7 @@ export class MessageHeaderComponent implements OnInit {
 
   predicate = 'headerId';
   ascending = true;
+
   filters: IFilterOptions = new FilterOptions();
 
   itemsPerPage = ITEMS_PER_PAGE;
@@ -50,8 +41,6 @@ export class MessageHeaderComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     public router: Router,
   ) {}
-
-  trackId = (_index: number, item: IMessageHeader): number => this.messageHeaderService.getMessageHeaderIdentifier(item);
 
   ngOnInit(): void {
     this.load();
@@ -67,8 +56,11 @@ export class MessageHeaderComponent implements OnInit {
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.handleNavigation(this.page, this.predicate, this.ascending, this.filters.filterOptions);
+  navigateToWithComponentValues({ predicate, ascending }: MessageHeaderSort): void {
+    this.predicate = predicate;
+    this.ascending = ascending;
+
+    this.handleNavigation(this.page, predicate, ascending, this.filters.filterOptions);
   }
 
   navigateToPage(page = this.page): void {
