@@ -42,6 +42,12 @@
         </dd>
       </dl>
 
+      <h3 data-cy="messageDetailsHeading"><span jhiTranslate="citrusSimulatorApp.messageHeader.home.title">Message Headers</span></h3>
+
+      <hr />
+
+      <app-message-header-table [messageHeaders]="message.headers ?? []" [fullDetails]="false" predicate="name"></app-message-header-table>
+
       <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>

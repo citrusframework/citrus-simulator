@@ -86,7 +86,11 @@
           <td>
             <a [routerLink]="['/test-result', testResult.id, 'view']">{{ testResult.id }}</a>
           </td>
-          <td>{{ testResult.status }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: testResult.status ?? 'UNKNOWN' })">{{
+              testResult.status
+            }}</span>
+          </td>
           <td>{{ testResult.testName }}</td>
           <td>{{ testResult.className }}</td>
           <td>{{ testResult.errorMessage }}</td>

@@ -13,7 +13,7 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import { EntityArrayResponseType, ScenarioExecutionService } from '../service/scenario-execution.service';
-import { IScenarioExecution } from '../scenario-execution.model';
+import { IScenarioExecution, IScenarioExecutionStatus } from '../scenario-execution.model';
 
 @Component({
   standalone: true,
@@ -149,6 +149,17 @@ export class ScenarioExecutionComponent implements OnInit {
       return [];
     } else {
       return [predicate + ',' + ascendingQueryParam];
+    }
+  }
+
+  protected getStatusBadgeClass(status: IScenarioExecutionStatus): string {
+    switch (status.name) {
+      case 'FAILED':
+        return 'bg-danger';
+      case 'SUCCESS':
+        return 'bg-success';
+      default:
+        return 'bg-info';
     }
   }
 }

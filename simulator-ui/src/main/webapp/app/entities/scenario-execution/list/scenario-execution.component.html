@@ -30,6 +30,12 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
+          <th scope="col" jhiSortBy="scenarioName">
+            <div class="d-flex">
+              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col" jhiSortBy="startDate">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span>
@@ -39,12 +45,6 @@
           <th scope="col" jhiSortBy="endDate">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="scenarioName">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span>
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
@@ -68,10 +68,14 @@
           <td>
             <a [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']">{{ scenarioExecution.executionId }}</a>
           </td>
+          <td>{{ scenarioExecution.scenarioName }}</td>
           <td>{{ scenarioExecution.startDate | formatMediumDatetime }}</td>
           <td>{{ scenarioExecution.endDate | formatMediumDatetime }}</td>
-          <td>{{ scenarioExecution.scenarioName }}</td>
-          <td>{{ scenarioExecution.status }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: scenarioExecution.status ?? 'UNKNOWN' })">{{
+              scenarioExecution.status
+            }}</span>
+          </td>
           <td>{{ scenarioExecution.errorMessage }}</td>
           <td class="text-end">
             <div class="btn-group">
