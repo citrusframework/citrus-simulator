@@ -35,7 +35,7 @@ import java.util.Optional;
 @Transactional
 public class ScenarioActionServiceImpl implements ScenarioActionService {
 
-    private final Logger log = LoggerFactory.getLogger(ScenarioActionServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioActionServiceImpl.class);
 
     private final ScenarioActionRepository scenarioActionRepository;
 
@@ -45,14 +45,14 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
 
     @Override
     public ScenarioAction save(ScenarioAction scenarioAction) {
-        log.debug("Request to save ScenarioAction : {}", scenarioAction);
+        logger.debug("Request to save ScenarioAction : {}", scenarioAction);
         return scenarioActionRepository.save(scenarioAction);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ScenarioAction> findAll(Pageable pageable) {
-        log.debug("Request to get all ScenarioActions with eager relationships");
+        logger.debug("Request to get all ScenarioActions with eager relationships");
         return scenarioActionRepository.findAll(pageable)
             .map(ScenarioActionService::restrictToDtoProperties);
     }
@@ -60,7 +60,7 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioAction> findOne(Long id) {
-        log.debug("Request to get ScenarioAction : {}", id);
+        logger.debug("Request to get ScenarioAction : {}", id);
         return scenarioActionRepository.findOneWithEagerRelationships(id)
             .map(ScenarioActionService::restrictToDtoProperties);
     }

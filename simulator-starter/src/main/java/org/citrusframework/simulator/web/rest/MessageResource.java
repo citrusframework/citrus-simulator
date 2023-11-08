@@ -44,7 +44,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class MessageResource {
 
-    private final Logger log = LoggerFactory.getLogger(MessageResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageResource.class);
 
     private final MessageService messageService;
 
@@ -67,7 +67,7 @@ public class MessageResource {
         MessageCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        log.debug("REST request to get Messages by criteria: {}", criteria);
+        logger.debug("REST request to get Messages by criteria: {}", criteria);
 
         Page<Message> page = messageQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -82,7 +82,7 @@ public class MessageResource {
      */
     @GetMapping("/messages/count")
     public ResponseEntity<Long> countMessages(MessageCriteria criteria) {
-        log.debug("REST request to count Messages by criteria: {}", criteria);
+        logger.debug("REST request to count Messages by criteria: {}", criteria);
         return ResponseEntity.ok().body(messageQueryService.countByCriteria(criteria));
     }
 
@@ -94,7 +94,7 @@ public class MessageResource {
      */
     @GetMapping("/messages/{id}")
     public ResponseEntity<Message> getMessage(@PathVariable Long id) {
-        log.debug("REST request to get Message : {}", id);
+        logger.debug("REST request to get Message : {}", id);
         Optional<Message> message = messageService.findOne(id);
         return ResponseUtil.wrapOrNotFound(message);
     }

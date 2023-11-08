@@ -30,8 +30,11 @@ import org.springframework.context.ApplicationContext;
  * @author Christoph Deppisch
  */
 public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(XPathPayloadCorrelationHandler.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(XPathPayloadCorrelationHandler.class);
+
     private final XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
+
     private final String value;
 
     /**
@@ -53,10 +56,10 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
         try {
             isIntermediateMessage = xPathPayloadMappingKeyExtractor.extractMappingKey(message).equals(context.replaceDynamicContentInString(value));
         } catch (RuntimeException e) {
-            LOG.debug("Error checking whether message({}) is an intermediate message: {}", message.getId(), e.getMessage());
+            logger.debug("Error checking whether message({}) is an intermediate message: {}", message.getId(), e.getMessage());
             isIntermediateMessage = false;
         }
-        LOG.debug("Intermediate message({}): {}", message.getId(), isIntermediateMessage);
+        logger.debug("Intermediate message({}): {}", message.getId(), isIntermediateMessage);
         return isIntermediateMessage;
     }
 
@@ -65,16 +68,16 @@ public class XPathPayloadCorrelationHandler extends AbstractCorrelationHandler {
         String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, NamespaceContextBuilder.class);
         if (beanNames.length > 0) {
             if (beanNames.length > 1) {
-                LOG.warn("Expected to find 1 beans of type {} but found {} instead: {}",
+                logger.warn("Expected to find 1 beans of type {} but found {} instead: {}",
                         NamespaceContextBuilder.class.getCanonicalName(),
                         beanNames.length,
                         beanNames
                 );
             }
-            LOG.debug("Using NamespaceContextBuilder - {}", beanNames[0]);
+            logger.debug("Using NamespaceContextBuilder - {}", beanNames[0]);
             namespaceContextBuilder = applicationContext.getBean(beanNames[0], NamespaceContextBuilder.class);
         } else {
-            LOG.debug("Using NamespaceContextBuilder - default");
+            logger.debug("Using NamespaceContextBuilder - default");
             namespaceContextBuilder = new NamespaceContextBuilder();
         }
 

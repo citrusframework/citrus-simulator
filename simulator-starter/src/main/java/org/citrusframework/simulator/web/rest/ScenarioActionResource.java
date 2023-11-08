@@ -44,7 +44,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ScenarioActionResource {
 
-    private final Logger log = LoggerFactory.getLogger(ScenarioActionResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioActionResource.class);
 
     private final ScenarioActionService scenarioActionService;
 
@@ -67,7 +67,7 @@ public class ScenarioActionResource {
         ScenarioActionCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        log.debug("REST request to get ScenarioActions by criteria: {}", criteria);
+        logger.debug("REST request to get ScenarioActions by criteria: {}", criteria);
 
         Page<ScenarioAction> page = scenarioActionQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -82,7 +82,7 @@ public class ScenarioActionResource {
      */
     @GetMapping("/scenario-actions/count")
     public ResponseEntity<Long> countScenarioActions(ScenarioActionCriteria criteria) {
-        log.debug("REST request to count ScenarioActions by criteria: {}", criteria);
+        logger.debug("REST request to count ScenarioActions by criteria: {}", criteria);
         return ResponseEntity.ok().body(scenarioActionQueryService.countByCriteria(criteria));
     }
 
@@ -94,7 +94,7 @@ public class ScenarioActionResource {
      */
     @GetMapping("/scenario-actions/{id}")
     public ResponseEntity<ScenarioAction> getScenarioAction(@PathVariable Long id) {
-        log.debug("REST request to get ScenarioAction : {}", id);
+        logger.debug("REST request to get ScenarioAction : {}", id);
         Optional<ScenarioAction> scenarioAction = scenarioActionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(scenarioAction);
     }

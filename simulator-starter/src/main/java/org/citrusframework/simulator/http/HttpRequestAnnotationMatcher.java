@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HttpRequestAnnotationMatcher {
 
     /** Logger */
-    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestAnnotationMatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestAnnotationMatcher.class);
 
     /** Request path matcher */
     private PathMatcher pathMatcher = new AntPathMatcher();
@@ -71,17 +71,17 @@ public class HttpRequestAnnotationMatcher {
         if (supportedRequestPaths.length > 0) {
             for (String supportedRequestPath : supportedRequestPaths) {
                 if (exactMatch ? supportedRequestPath.equals(requestPath) : pathMatcher.match(supportedRequestPath, requestPath)) {
-                    LOG.debug("Request path {} supported. Path found in the list of supported request paths: {}",
+                    logger.debug("Request path {} supported. Path found in the list of supported request paths: {}",
                             requestPath, supportedRequestPaths);
                     return true;
                 }
             }
-            LOG.debug("Request path {} not supported. Path not found in the list of supported request paths: {}",
+            logger.debug("Request path {} not supported. Path not found in the list of supported request paths: {}",
                     requestPath, supportedRequestPaths);
             return false;
         }
 
-        LOG.debug("Request path {} supported. All request paths are supported", requestPath);
+        logger.debug("Request path {} supported. All request paths are supported", requestPath);
         return true;
     }
 
@@ -99,17 +99,17 @@ public class HttpRequestAnnotationMatcher {
         if (requestMethods.length > 0) {
             for (RequestMethod method : requestMethods) {
                 if (method.name().equals(actualRequestMethod)) {
-                    LOG.debug("Request method {} supported. Found in the list of supported request methods: {}",
+                    logger.debug("Request method {} supported. Found in the list of supported request methods: {}",
                             actualRequestMethod, requestMethods);
                     return true;
                 }
             }
-            LOG.debug("Request method {} not supported. No contained in the list of supported request methods: {}",
+            logger.debug("Request method {} not supported. No contained in the list of supported request methods: {}",
                     actualRequestMethod, requestMethods);
             return false;
         }
 
-        LOG.debug("Request method {} supported. All request methods are supported", actualRequestMethod);
+        logger.debug("Request method {} supported. All request methods are supported", actualRequestMethod);
         return true;
     }
 
@@ -135,10 +135,10 @@ public class HttpRequestAnnotationMatcher {
 
         final List<String> invalidQueryParams = getInvalidQueryParams(requestQueryParams, annotatedQueryParams);
         if (!invalidQueryParams.isEmpty()) {
-            LOG.debug("Request query parameters '{}' do not match the supported query parameters: {} (invalid: {})",
+            logger.debug("Request query parameters '{}' do not match the supported query parameters: {} (invalid: {})",
                     requestQueryParams, annotatedQueryParams, invalidQueryParams);
         } else {
-            LOG.debug("Request query parameters '{}' match the supported query parameters: {}",
+            logger.debug("Request query parameters '{}' match the supported query parameters: {}",
                     requestQueryParams, annotatedQueryParams);
         }
         return invalidQueryParams.isEmpty();

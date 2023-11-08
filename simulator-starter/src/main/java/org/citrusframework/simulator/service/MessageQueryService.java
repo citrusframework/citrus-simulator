@@ -43,7 +43,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MessageQueryService extends QueryService<Message> {
 
-    private final Logger log = LoggerFactory.getLogger(MessageQueryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageQueryService.class);
 
     private final MessageRepository messageRepository;
 
@@ -59,7 +59,7 @@ public class MessageQueryService extends QueryService<Message> {
      */
     @Transactional(readOnly = true)
     public Page<Message> findByCriteria(MessageCriteria criteria, Pageable page) {
-        log.debug("find by criteria : {}, page: {}", criteria, page);
+        logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Message> specification = createSpecification(criteria);
         return messageRepository.findAll(specification, page);
     }
@@ -71,7 +71,7 @@ public class MessageQueryService extends QueryService<Message> {
      */
     @Transactional(readOnly = true)
     public long countByCriteria(MessageCriteria criteria) {
-        log.debug("count by criteria : {}", criteria);
+        logger.debug("count by criteria : {}", criteria);
         final Specification<Message> specification = createSpecification(criteria);
         return messageRepository.count(specification);
     }

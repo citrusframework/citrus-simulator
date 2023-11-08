@@ -42,7 +42,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TestResultQueryService extends QueryService<TestResult> {
 
-    private final Logger logger = LoggerFactory.getLogger(TestResultQueryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestResultQueryService.class);
 
     private final TestResultRepository testResultRepository;
 

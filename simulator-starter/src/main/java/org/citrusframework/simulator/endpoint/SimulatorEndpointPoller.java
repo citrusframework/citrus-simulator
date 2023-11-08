@@ -50,7 +50,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
 
     @Autowired
     private TestContextFactory testContextFactory;
@@ -92,7 +92,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
 
     @Override
     public void run() {
-        LOG.info("Simulator endpoint waiting for requests on endpoint '{}'", inboundEndpoint.getName());
+        logger.info("Simulator endpoint waiting for requests on endpoint '{}'", inboundEndpoint.getName());
 
         long delay = 0L;
         while (running.getNow(true)) {
@@ -103,7 +103,7 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                             continue;
                         }
                     } catch (TimeoutException e) {
-                        LOG.info("Continue simulator endpoint polling after uncategorized exception");
+                        logger.info("Continue simulator endpoint polling after uncategorized exception");
                     } finally {
                         delay = 0;
                     }
@@ -112,13 +112,13 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
                 TestContext context = testContextFactory.getObject();
                 Message message = inboundEndpoint.createConsumer().receive(context, inboundEndpoint.getEndpointConfiguration().getTimeout());
                 if (message != null) {
-                    LOG.debug("Processing inbound message '{}'", message.getId());
+                    logger.debug("Processing inbound message '{}'", message.getId());
                     Message response = endpointAdapter.handleMessage(processRequestMessage(message));
 
                     if (response != null) {
                         Producer producer = inboundEndpoint.createProducer();
                         if (producer instanceof ReplyProducer) {
-                            LOG.debug("Sending response message for inbound message '{}'", message.getId());
+                            logger.debug("Sending response message for inbound message '{}'", message.getId());
                             producer.send(processResponseMessage(response), context);
                         }
                     }
@@ -126,15 +126,15 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
             } catch (ActionTimeoutException e) {
                 // ignore timeout and continue listening for request messages.
             } catch (SimulatorException | CitrusRuntimeException e) {
-                LOG.error("Failed to process message: {}", e.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(e.getMessage(), e);
+                logger.error("Failed to process message: {}", e.getMessage());
+                if (logger.isDebugEnabled()) {
+                    logger.debug(e.getMessage(), e);
                 }
             } catch (Exception e) {
                 delay = exceptionDelay;
-                LOG.error("Unexpected error while processing: {}", e.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(e.getMessage(), e);
+                logger.error("Unexpected error while processing: {}", e.getMessage());
+                if (logger.isDebugEnabled()) {
+                    logger.debug(e.getMessage(), e);
                 }
             }
         }
@@ -174,15 +174,15 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
      * Stop runnable execution.
      */
     public void stop() {
-        LOG.info("Simulator endpoint poller terminating ...");
+        logger.info("Simulator endpoint poller terminating ...");
 
         running.complete(false);
 
         try {
             taskExecutor.awaitTermination(exceptionDelay, TimeUnit.MILLISECONDS);
-            LOG.info("Simulator endpoint poller termination complete");
+            logger.info("Simulator endpoint poller termination complete");
         } catch (InterruptedException e) {
-            LOG.error("Error while waiting termination of endpoint poller", e);
+            logger.error("Error while waiting termination of endpoint poller", e);
             Thread.currentThread().interrupt();
             throw new SimulatorException(e);
         } finally {

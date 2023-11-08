@@ -44,7 +44,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ScenarioParameterResource {
 
-    private final Logger log = LoggerFactory.getLogger(ScenarioParameterResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioParameterResource.class);
 
     private final ScenarioParameterService scenarioParameterService;
 
@@ -70,7 +70,7 @@ public class ScenarioParameterResource {
         ScenarioParameterCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        log.debug("REST request to get ScenarioParameters by criteria: {}", criteria);
+        logger.debug("REST request to get ScenarioParameters by criteria: {}", criteria);
 
         Page<ScenarioParameter> page = scenarioParameterQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -85,7 +85,7 @@ public class ScenarioParameterResource {
      */
     @GetMapping("/scenario-parameters/count")
     public ResponseEntity<Long> countScenarioParameters(ScenarioParameterCriteria criteria) {
-        log.debug("REST request to count ScenarioParameters by criteria: {}", criteria);
+        logger.debug("REST request to count ScenarioParameters by criteria: {}", criteria);
         return ResponseEntity.ok().body(scenarioParameterQueryService.countByCriteria(criteria));
     }
 
@@ -97,7 +97,7 @@ public class ScenarioParameterResource {
      */
     @GetMapping("/scenario-parameters/{id}")
     public ResponseEntity<ScenarioParameter> getScenarioParameter(@PathVariable Long id) {
-        log.debug("REST request to get ScenarioParameter : {}", id);
+        logger.debug("REST request to get ScenarioParameter : {}", id);
         Optional<ScenarioParameter> scenarioParameter = scenarioParameterService.findOne(id);
         return ResponseUtil.wrapOrNotFound(scenarioParameter);
     }

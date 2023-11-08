@@ -45,7 +45,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class TestResultResource {
 
-    private final Logger logger = LoggerFactory.getLogger(TestResultResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestResultResource.class);
 
     private final TestResultService testResultService;
 

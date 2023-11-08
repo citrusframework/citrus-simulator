@@ -34,7 +34,7 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class SimulatorMessageListener implements MessageListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimulatorMessageListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatorMessageListener.class);
 
     @Autowired
     private MessageListeners messageListeners;
@@ -47,12 +47,12 @@ public class SimulatorMessageListener implements MessageListener {
     @Override
     public void onInboundMessage(Message message, TestContext context) {
         String payload = message.getPayload(String.class);
-        LOG.debug("received: {}", payload);
+        logger.debug("received: {}", payload);
     }
 
     @Override
     public void onOutboundMessage(Message message, TestContext context) {
         String payload = message.getPayload(String.class);
-        LOG.debug("sent: {}", payload);
+        logger.debug("sent: {}", payload);
     }
 }
