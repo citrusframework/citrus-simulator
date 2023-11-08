@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.citrusframework.simulator.ui.config;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+package org.citrusframework.simulator.ui.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,10 +28,29 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 abstract class AbstractSecurityConfigurationIT {
 
     @Autowired
     SecurityFilterChain filterChain;
+
+    static Stream<Arguments> testRequest() {
+        return Stream.of(
+            Arguments.of("Rest servlet", "/%context%/rest/my-rest-service", "/%context%/rest/my-rest-service", null, false),
+            Arguments.of("Classic servlet", "/%context%/rest/my-rest-service", "/%context%", "/rest/my-rest-service", false),
+            Arguments.of("Rest servlet with forward", "/service/rest/my-rest-service", "/service/rest/my-rest-service", null, true),
+            Arguments.of("Classic servlet with forward", "/service/rest/my-rest-service", "/service", "/rest/my-rest-service", true));
+    }
 
     @ParameterizedTest
     @MethodSource
@@ -59,9 +69,9 @@ abstract class AbstractSecurityConfigurationIT {
         doReturn(Collections.enumeration(List.of())).when(requestMock).getAttributeNames();
 
         HttpServletResponse responseMock = mock(HttpServletResponse.class);
-        FilterChain filterChainMock  = mock(FilterChain.class);
+        FilterChain filterChainMock = mock(FilterChain.class);
 
-        spaWebFilter.doFilter(requestMock, responseMock , filterChainMock);
+        spaWebFilter.doFilter(requestMock, responseMock, filterChainMock);
 
         if (forward) {
             verify(requestDispatcherMock, times(1)).forward(any(), any());
@@ -70,17 +80,7 @@ abstract class AbstractSecurityConfigurationIT {
             verify(requestDispatcherMock, times(0)).forward(any(), any());
             verify(filterChainMock).doFilter(any(), any());
         }
-
     }
 
     protected abstract String getContext();
-
-    static Stream<Arguments> testRequest() {
-        return Stream.of(
-            Arguments.of("Rest servlet", "/%context%/rest/my-rest-service", "/%context%/rest/my-rest-service", null, false),
-            Arguments.of("Classic servlet", "/%context%/rest/my-rest-service", "/%context%", "/rest/my-rest-service", false),
-            Arguments.of("Rest servlet with forward", "/service/rest/my-rest-service", "/service/rest/my-rest-service", null, true),
-            Arguments.of("Classic servlet with forward", "/service/rest/my-rest-service", "/service", "/rest/my-rest-service", true));
-    }
-
 }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.citrusframework.simulator.ui.config;
 
-import java.util.List;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
 import org.citrusframework.simulator.ui.IntegrationTest;
@@ -23,19 +23,22 @@ import org.citrusframework.simulator.ui.config.SecurityConfigurationWithAdapters
 import org.citrusframework.simulator.ui.test.TestApplication;
 import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
+
 /**
  * @author Thorsten Schlathoelter
  */
-@IntegrationTest
-@SpringBootTest(classes = {TestApplication.class, AdapterConfiguration.class}, properties = {
-    "with-adapters=true"})
+@Isolated
 @DirtiesContext
+@IntegrationTest
+@SpringBootTest(classes = {TestApplication.class, AdapterConfiguration.class}, properties = {"with-adapters=true"})
 class SecurityConfigurationWithAdaptersIT extends AbstractSecurityConfigurationIT {
 
     @Override
@@ -51,8 +54,7 @@ class SecurityConfigurationWithAdaptersIT extends AbstractSecurityConfigurationI
         public SimulatorRestAdapter simulatorRestAdapter() {
             return new SimulatorRestAdapter() {
                 @Override
-                public List<String> urlMappings(
-                    SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+                public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
                     return List.of("/modified-simulator/rest/**");
                 }
             };
@@ -62,8 +64,7 @@ class SecurityConfigurationWithAdaptersIT extends AbstractSecurityConfigurationI
         @ConditionalOnProperty(name = "with-adapters", havingValue = "true")
         public SimulatorWebServiceAdapter simulatorWebServiceAdapter() {
             return new SimulatorWebServiceAdapter() {
-                public String servletMapping(
-                    SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+                public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
                     return "/modified-simulator/ws/*";
                 }
             };
