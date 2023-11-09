@@ -213,6 +213,16 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
             return this;
         }
 
+        public TestParameterBuilder testResult(TestResult testResult) {
+            if (Objects.isNull(testParameter.testParameterId)) {
+                testParameter.testParameterId = new TestParameterId();
+            }
+
+            testParameter.testResult = testResult;
+            testParameter.testParameterId.testResultId = testResult.getId();
+            return this;
+        }
+
         public TestParameterBuilder value(String value) {
             testParameter.value = value;
             return this;
