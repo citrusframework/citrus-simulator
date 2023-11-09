@@ -28,10 +28,12 @@ import java.io.IOException;
 
 public class SpaWebFilter extends OncePerRequestFilter {
 
+    private final String actuatorPath;
     private final String h2ConsolePath;
     private final RequestMatcher simulationEndpointsRequestMatcher;
 
-    public SpaWebFilter(String h2ConsolePath, RequestMatcher simulationEndpointsRequestMatcher) {
+    public SpaWebFilter(String actuatorPath, String h2ConsolePath, RequestMatcher simulationEndpointsRequestMatcher) {
+        this.actuatorPath = actuatorPath;
         this.h2ConsolePath = h2ConsolePath;
         this.simulationEndpointsRequestMatcher = simulationEndpointsRequestMatcher;
     }
@@ -45,6 +47,7 @@ public class SpaWebFilter extends OncePerRequestFilter {
         String path = request.getRequestURI().substring(request.getContextPath().length());
         if (!path.startsWith("/api")
             && !path.startsWith("/v3/api-docs")
+            && !path.startsWith(actuatorPath)
             && !path.startsWith(h2ConsolePath)
             && !path.contains(".")
             && !simulationEndpointsRequestMatcher.matches(request)
