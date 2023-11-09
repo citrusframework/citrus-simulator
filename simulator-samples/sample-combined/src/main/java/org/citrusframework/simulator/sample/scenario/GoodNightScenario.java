@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/services/rest/simulator/goodnight", method = RequestMethod.POST)
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
-    private static final String HTTP_CORRELATION_ID = "x-correlationid";
+    public static final String HTTP_CORRELATION_ID_HEADER = "x-correlationid";
     private static final String JMS_CORRELATION_ID = "x_correlationid";
 
     @Override
@@ -42,9 +42,9 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
                             "Go to sleep!" +
                         "</GoodNight>"), "Message body validation failed!");
 
-                if (message.getHeader(HTTP_CORRELATION_ID) != null) {
-                    context.setVariable("correlationIdHeader", HTTP_CORRELATION_ID);
-                    context.setVariable("correlationId", message.getHeader(HTTP_CORRELATION_ID));
+                if (message.getHeader(HTTP_CORRELATION_ID_HEADER) != null) {
+                    context.setVariable("correlationIdHeader", HTTP_CORRELATION_ID_HEADER);
+                    context.setVariable("correlationId", message.getHeader(HTTP_CORRELATION_ID_HEADER));
                 } else if (message.getHeader(JMS_CORRELATION_ID) != null) {
                     context.setVariable("correlationIdHeader", JMS_CORRELATION_ID);
                     context.setVariable("correlationId", message.getHeader(JMS_CORRELATION_ID));

@@ -24,9 +24,11 @@ import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.web.SecurityFilterChain;
@@ -116,9 +118,17 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authz ->
                 authz
                     .anyRequest().permitAll()
-            );
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .logout(AbstractHttpConfigurer::disable);
 
         return http.build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.websecurity", name = "debug", havingValue = "true")
+    public WebSecurityCustomizer debuggingWebSecurityCustomizer() {
+        return web -> web.debug(true);
     }
 
     private RequestMatcher getSimulationEndpointsRequestMatcher() {

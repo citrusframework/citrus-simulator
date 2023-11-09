@@ -16,10 +16,6 @@
 
 package org.citrusframework.simulator.ws;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
@@ -41,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.ws.config.annotation.WsConfigurationSupport;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
 import org.springframework.ws.server.endpoint.MessageEndpoint;
@@ -48,15 +45,19 @@ import org.springframework.ws.server.endpoint.adapter.MessageEndpointAdapter;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Christoph Deppisch
  */
 @Configuration
+@ConditionalOnWebApplication
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
-@Import(SimulatorWebServiceLoggingAutoConfiguration.class)
+@Import({SimulatorWebServiceLoggingAutoConfiguration.class})
 @EnableConfigurationProperties(SimulatorWebServiceConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.ws", value = "enabled", havingValue = "true")
-@ConditionalOnWebApplication
 public class SimulatorWebServiceAutoConfiguration {
 
     @Autowired(required = false)
@@ -126,6 +127,22 @@ public class SimulatorWebServiceAutoConfiguration {
         }
 
         return new EmptyResponseEndpointAdapter();
+    }
+
+    /**
+     * By registering an empty {@link WsConfigurationSupport} we make sure
+     * the {@link org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration} will be skipped. It
+     * is only conditionally enabled, based on the {@link WsConfigurationSupport} being present (disabled), or not
+     * (enabled).
+     *
+     * @return a default web service configuration support
+     *
+     * @see <a href="https://github.com/citrusframework/citrus-simulator/issues/210">Combined Sample of REST and WS</a>
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.webservices.autoconfiguration", value = "enabled", havingValue = "false", matchIfMissing = true)
+    public WsConfigurationSupport wsConfigurationSupport() {
+        return new WsConfigurationSupport();
     }
 
     @Bean

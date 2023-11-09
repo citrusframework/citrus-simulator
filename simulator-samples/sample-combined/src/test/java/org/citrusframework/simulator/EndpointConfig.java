@@ -1,7 +1,5 @@
 package org.citrusframework.simulator;
 
-import java.util.Collections;
-
 import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -12,19 +10,26 @@ import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
+import org.citrusframework.message.ErrorHandlingStrategy;
 import org.citrusframework.simulator.sample.Simulator;
+import org.citrusframework.ws.client.WebServiceClient;
+import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
 import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
+
+import java.util.Collections;
 
 /**
  * @author Christoph Deppisch
  */
 @Configuration
 public class EndpointConfig {
+
     @Bean
     public XsdSchemaRepository schemaRepository() {
         XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
@@ -33,10 +38,30 @@ public class EndpointConfig {
     }
 
     @Bean
-    public HttpClient simulatorClient() {
+    public HttpClient simulatorRESTClient() {
         return CitrusEndpoints.http().client()
                 .requestUrl(String.format("http://localhost:%s/services/rest/simulator", 8080))
                 .build();
+    }
+
+    @Bean
+    public WebServiceClient simulatorWSClient(LoggingClientInterceptor loggingClientInterceptor, SaajSoapMessageFactory messageFactory) {
+        return CitrusEndpoints.soap().client()
+            .defaultUri(String.format("http://localhost:%s/services/ws/simulator", 8080))
+            .interceptor(loggingClientInterceptor)
+            .messageFactory(messageFactory)
+            .faultStrategy(ErrorHandlingStrategy.PROPAGATE)
+            .build();
+    }
+
+    @Bean
+    public LoggingClientInterceptor loggingClientInterceptor() {
+        return new LoggingClientInterceptor();
+    }
+
+    @Bean
+    public SaajSoapMessageFactory messageFactory() {
+        return new SaajSoapMessageFactory();
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
