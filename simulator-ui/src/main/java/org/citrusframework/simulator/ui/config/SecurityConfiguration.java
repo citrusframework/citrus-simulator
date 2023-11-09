@@ -52,6 +52,8 @@ public class SecurityConfiguration {
     private final @Nullable SimulatorWebServiceAdapter simulatorWebServiceAdapter;
 
     private final String contentSecurityPolicy;
+
+    private final String actuatorPath;
     private final String h2ConsolePath;
 
     public SecurityConfiguration(
@@ -60,6 +62,7 @@ public class SecurityConfiguration {
         @Autowired(required = false) @Nullable SimulatorRestAdapter simulatorRestAdapter,
         @Autowired(required = false) @Nullable SimulatorWebServiceConfigurationProperties simulatorWebServiceConfigurationProperties,
         @Autowired(required = false) @Nullable SimulatorWebServiceAdapter simulatorWebServiceAdapter,
+        @Value("${management.endpoints.web.base-path:/api/manage}") String actuatorPath,
         @Value("${spring.h2.console.path:/h2-console}") String h2ConsolePath
     ) {
         this.simulatorRestConfigurationProperties = simulatorRestConfigurationProperties;
@@ -68,6 +71,8 @@ public class SecurityConfiguration {
         this.simulatorWebServiceAdapter = simulatorWebServiceAdapter;
 
         this.contentSecurityPolicy = simulatorUiConfigurationProperties.getSecurity().getContentSecurityPolicy();
+
+        this.actuatorPath = actuatorPath;
         this.h2ConsolePath = h2ConsolePath;
     }
 
@@ -103,7 +108,7 @@ public class SecurityConfiguration {
             // .ignoringRequestMatchers(simulationEndpointsRequestMatcher)
             .csrf(AbstractHttpConfigurer::disable)
 
-            .addFilterAfter(new SpaWebFilter(h2ConsolePath, simulationEndpointsRequestMatcher), BasicAuthenticationFilter.class)
+            .addFilterAfter(new SpaWebFilter(actuatorPath, h2ConsolePath, simulationEndpointsRequestMatcher), BasicAuthenticationFilter.class)
             .headers(headers ->
                 headers
                     .contentSecurityPolicy(contentSecurity -> contentSecurity.policyDirectives(contentSecurityPolicy))

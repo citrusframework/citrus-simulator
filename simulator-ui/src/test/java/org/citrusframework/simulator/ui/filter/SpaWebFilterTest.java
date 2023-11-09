@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SpaWebFilterTest {
 
+    private static final String ACTUATOR_PATH = "/api/manage";
     private static final String H2_CONSOLE_PATH = "/h2-console";
 
     @Mock
@@ -49,6 +50,7 @@ class SpaWebFilterTest {
         return Stream.of(
             Arguments.of("/api", ""),
             Arguments.of("/api/somepath", ""),
+            Arguments.of(ACTUATOR_PATH, ""),
             Arguments.of(H2_CONSOLE_PATH, ""),
             Arguments.of("/v3/api-docs", ""),
             Arguments.of("/v3/api-docs/somepath", ""),
@@ -65,7 +67,7 @@ class SpaWebFilterTest {
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new SpaWebFilter(H2_CONSOLE_PATH, simulatorRestRequestMatcherMock);
+        fixture = new SpaWebFilter(ACTUATOR_PATH, H2_CONSOLE_PATH, simulatorRestRequestMatcherMock);
     }
 
     @MethodSource
