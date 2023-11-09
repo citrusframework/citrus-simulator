@@ -101,13 +101,10 @@ public class ScenarioRunner implements GherkinTestActionRunner {
         return delegate.applyBehavior(behavior);
     }
 
-    /**
-     * Create test variable.
-     * @param name
-     * @param value
-     * @return
-     * @param <T>
-     */
+    public TestCaseRunner getTestCaseRunner() {
+        return delegate;
+    }
+
     public <T> T variable(String name, T value) {
         return delegate.variable(name, value);
     }

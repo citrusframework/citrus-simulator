@@ -56,15 +56,7 @@ public class ActivityService {
         this.messageService = messageService;
     }
 
-    public void completeScenarioExecutionSuccess(TestCase testCase) {
-        completeScenarioExecution(ScenarioExecution.Status.SUCCESS, testCase, null);
-    }
-
-    public void completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
-        completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
-    }
-
-    public ScenarioExecution getScenarioExecutionById(Long id) {
+    private ScenarioExecution getScenarioExecutionById(Long id) {
         return scenarioExecutionRepository.findById(id).orElseThrow(() -> new CitrusRuntimeException(String.format("Failed to find scenario execution for id %s", id)));
     }
 
@@ -103,21 +95,6 @@ public class ActivityService {
         );
         scenarioExecution.addScenarioMessage(message);
         return message;
-    }
-
-    private void completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, Throwable cause) {
-        ScenarioExecution scenarioExecution = lookupScenarioExecution(testCase);
-        scenarioExecution.setEndDate(timeProvider.getTimeNow());
-        scenarioExecution.setStatus(status);
-
-        if (cause != null) {
-            try (StringWriter stringWriter = new StringWriter(); PrintWriter printWriter = new PrintWriter(stringWriter)) {
-                cause.printStackTrace(printWriter);
-                scenarioExecution.setErrorMessage(stringWriter.toString());
-            } catch (IOException e) {
-                logger.warn("Failed to write error message to scenario execution!", e);
-            }
-        }
     }
 
     public void createTestAction(TestCase testCase, TestAction testAction) {

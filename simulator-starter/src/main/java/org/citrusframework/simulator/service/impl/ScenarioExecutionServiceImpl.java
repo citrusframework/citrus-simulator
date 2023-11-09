@@ -17,7 +17,14 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
+
+import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
@@ -71,6 +78,8 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
 
     @Override
     public ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters) {
+        logger.debug("Request to create and save ScenarioExecution : {}", scenarioName);
+
         ScenarioExecution scenarioExecution = new ScenarioExecution();
         scenarioExecution.setScenarioName(scenarioName);
         scenarioExecution.setStartDate(timeProvider.getTimeNow());
@@ -83,5 +92,47 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
         }
 
         return save(scenarioExecution);
+    }
+
+    @Override
+    public ScenarioExecution completeScenarioExecutionSuccess(TestCase testCase) {
+        logger.debug("Request to complete ScenarioExecution for successful TestCase : {}", testCase);
+        return completeScenarioExecution(ScenarioExecution.Status.SUCCESS, testCase, null);
+    }
+
+    @Override
+    public ScenarioExecution completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
+        logger.warn("Request to complete ScenarioExecution for failed TestCase : {}", testCase, cause);
+        return completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
+    }
+
+    private ScenarioExecution completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, @Nullable Throwable cause) {
+        return findOne(getScenarioExecutionId(testCase))
+            .map(scenarioExecution -> {
+                scenarioExecution.setEndDate(timeProvider.getTimeNow());
+                scenarioExecution.setStatus(status);
+
+                if (cause != null) {
+                    writeCauseToErrorMessage(cause, scenarioExecution);
+                }
+
+                return scenarioExecution;
+            })
+            .map(scenarioExecutionRepository::save)
+            .orElseThrow(() -> new CitrusRuntimeException(String.format("Error while completing ScenarioExecution for test %s", testCase.getName())));
+    }
+
+    private static void writeCauseToErrorMessage(Throwable cause, ScenarioExecution scenarioExecution) {
+        try (StringWriter stringWriter = new StringWriter(); PrintWriter printWriter = new PrintWriter(stringWriter)) {
+            cause.printStackTrace(printWriter);
+            scenarioExecution.setErrorMessage(stringWriter.toString());
+        } catch (IOException e) {
+            logger.warn("Failed to write error message to scenario execution!", e);
+        }
+    }
+
+    private long getScenarioExecutionId(TestCase testCase) {
+        logger.trace("Lookup '{}' in TestCaseParameters : {}", ScenarioExecution.EXECUTION_ID, testCase.getVariableDefinitions());
+        return Long.parseLong(testCase.getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID).toString());
     }
 }

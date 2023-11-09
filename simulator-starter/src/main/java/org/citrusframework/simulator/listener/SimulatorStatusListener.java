@@ -25,6 +25,7 @@ import org.citrusframework.common.Described;
 import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
 import org.citrusframework.simulator.service.ActivityService;
+import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.TestResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +55,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
      */
     private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
-    private final ActivityService executionService;
+    private final ActivityService activityService;
+    private final ScenarioExecutionService scenarioExecutionService;
 
     private final TestResultService testResultService;
 
-    public SimulatorStatusListener(ActivityService executionService, TestResultService testResultService) {
-        this.executionService = executionService;
+    public SimulatorStatusListener(ActivityService activityService, ScenarioExecutionService scenarioExecutionService, TestResultService testResultService) {
+        this.activityService = activityService;
+        this.scenarioExecutionService = scenarioExecutionService;
         this.testResultService = testResultService;
     }
 
@@ -87,7 +90,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         }
 
         testResultService.transformAndSave(result);
-        executionService.completeScenarioExecutionSuccess(test);
+        scenarioExecutionService.completeScenarioExecutionSuccess(test);
 
         logger.info(result.toString());
     }
@@ -102,7 +105,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         }
 
         testResultService.transformAndSave(result);
-        executionService.completeScenarioExecutionFailure(test, cause);
+        scenarioExecutionService.completeScenarioExecutionFailure(test, cause);
 
         logger.info(result.toString());
         logger.info(result.getFailureType());
@@ -118,14 +121,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
                         (testAction instanceof Described && StringUtils.hasText(((Described) testAction).getDescription()) ? ((Described) testAction).getDescription() : ""));
             }
 
-            executionService.createTestAction(testCase, testAction);
+            activityService.createTestAction(testCase, testAction);
         }
     }
 
     @Override
     public void onTestActionFinish(TestCase testCase, TestAction testAction) {
         if (!ignoreTestAction(testAction)) {
-            executionService.completeTestAction(testCase, testAction);
+            activityService.completeTestAction(testCase, testAction);
         }
     }
 
