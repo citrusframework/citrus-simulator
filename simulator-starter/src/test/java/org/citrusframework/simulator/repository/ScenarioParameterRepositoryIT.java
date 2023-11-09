@@ -26,7 +26,7 @@ class ScenarioParameterRepositoryIT {
     private EntityManager entityManager;
 
     @Autowired
-    ScenarioParameterRepository scenarioParameterRepository;
+    private ScenarioParameterRepository scenarioParameterRepository;
 
     private ScenarioParameter scenarioParameter;
 
