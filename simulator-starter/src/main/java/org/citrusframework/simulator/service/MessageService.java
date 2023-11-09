@@ -20,12 +20,14 @@ import org.citrusframework.simulator.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Service Interface for managing {@link Message}.
  */
 public interface MessageService {
+
     /**
      * Save a message.
      *
@@ -49,4 +51,18 @@ public interface MessageService {
      * @return the entity.
      */
     Optional<Message> findOne(Long messageId);
+
+    /**
+     * Persists the message along with the scenario execution details. With the help of the {@code citrusMessageId}
+     * a check is made to determine whether the message has already been persisted. If it has then there's nothing
+     * to be done and the persisted message is simply returned.
+     *
+     * @param scenarioExecutionId the scenario execution id
+     * @param direction           the direction of the message
+     * @param payload             the message content
+     * @param citrusMessageId     the internal citrus message id
+     * @param headers             the message headers
+     * @return the already or newly persisted message
+     */
+    Message attachMessageToScenarioExecutionAndSave(Long scenarioExecutionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers);
 }

@@ -1,7 +1,6 @@
 package org.citrusframework.simulator.repository;
 
 import org.citrusframework.simulator.model.ScenarioExecution;
-import org.citrusframework.simulator.model.TestResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

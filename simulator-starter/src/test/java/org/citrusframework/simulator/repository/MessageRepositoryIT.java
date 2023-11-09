@@ -13,8 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +30,7 @@ class MessageRepositoryIT {
     @Autowired
     private MessageRepository messageRepository;
 
+    private ScenarioExecution scenarioExecution;
     private Message message;
 
     private static void verifyRelationships(Message messages) {
@@ -37,13 +40,16 @@ class MessageRepositoryIT {
 
     @BeforeEach
     void beforeEachSetup() {
-        message = MessageResourceIT.createEntity(entityManager);
-
-        ScenarioExecution scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
+        scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
         entityManager.persist(scenarioExecution);
-        message.setScenarioExecution(scenarioExecution);
 
-        entityManager.persist(message);
+        message = createAndPersistMessageForScenarioExecution(MessageResourceIT.createEntity(entityManager), scenarioExecution);
+    }
+
+    private Message createAndPersistMessageForScenarioExecution(Message entity, ScenarioExecution scenarioExecution) {
+        entity.setScenarioExecution(scenarioExecution);
+        entityManager.persist(entity);
+        return entity;
     }
 
     @Test
@@ -64,5 +70,37 @@ class MessageRepositoryIT {
         verifyRelationships(messages.get());
 
         assertFalse(messageRepository.findOneWithToOneRelationships(Long.MAX_VALUE).isPresent());
+    }
+
+    @Test
+    @Transactional
+    void findAllForScenarioExecution() {
+        Message message2 = createAndPersistMessageForScenarioExecution(MessageResourceIT.createUpdatedEntity(entityManager), scenarioExecution);
+
+        verifyOnlyOneMessageFoundForScenarioExecution(message);
+        verifyOnlyOneMessageFoundForScenarioExecution(message2);
+    }
+
+    private void verifyOnlyOneMessageFoundForScenarioExecution(Message expectedMessage) {
+        List<Message> allForScenarioExecution = messageRepository.findAllForScenarioExecution(scenarioExecution.getExecutionId(), expectedMessage.getCitrusMessageId(), expectedMessage.getDirection());
+        assertThat(allForScenarioExecution)
+            .hasSize(1)
+            .containsExactly(expectedMessage);
+    }
+
+    @Test
+    @Transactional
+    void findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals() {
+        Message message2 = createAndPersistMessageForScenarioExecution(MessageResourceIT.createUpdatedEntity(entityManager), scenarioExecution);
+
+        verifyOnlyOneMessageFoundByIdentifier(message);
+        verifyOnlyOneMessageFoundByIdentifier(message2);
+    }
+
+    void verifyOnlyOneMessageFoundByIdentifier(Message expectedMessage) {
+        List<Message> allForScenarioExecution = messageRepository.findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(scenarioExecution.getExecutionId(), expectedMessage.getCitrusMessageId(), expectedMessage.getDirection().getId());
+        assertThat(allForScenarioExecution)
+            .hasSize(1)
+            .containsExactly(expectedMessage);
     }
 }

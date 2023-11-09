@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,10 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
     @Override
     @EntityGraph(attributePaths = {"headers", "scenarioExecution"})
     Page<Message> findAll(Specification<Message> spec, Pageable pageable);
+
+    default List<Message> findAllForScenarioExecution(Long scenarioExecutionId, String citrusMessageId, Message.Direction direction) {
+        return findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(scenarioExecutionId, citrusMessageId, direction.getId());
+    }
+
+    List<Message> findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(@Param("scenarioExecutionId") Long scenarioExecutionId, @Param("citrusMessageId") String citrusMessageId, @Param("direction") Integer direction);
 }

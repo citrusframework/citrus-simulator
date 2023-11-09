@@ -17,12 +17,6 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-
 import org.citrusframework.TestCase;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -35,9 +29,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 import org.springframework.util.CollectionUtils;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link ScenarioExecution}.

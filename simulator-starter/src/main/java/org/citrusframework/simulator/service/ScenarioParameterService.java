@@ -26,6 +26,7 @@ import java.util.Optional;
  * Service Interface for managing {@link ScenarioParameter}.
  */
 public interface ScenarioParameterService {
+
     /**
      * Save a scenarioParameter.
      *
