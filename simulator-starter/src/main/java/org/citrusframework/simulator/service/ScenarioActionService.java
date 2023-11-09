@@ -28,6 +28,7 @@ import java.util.Optional;
  * Service Interface for managing {@link ScenarioAction}.
  */
 public interface ScenarioActionService {
+
     /**
      * Save a scenarioAction.
      *

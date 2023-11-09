@@ -1,7 +1,5 @@
 package org.citrusframework.simulator.service.impl;
 
-// Import statements
-
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusContext;
 import org.citrusframework.TestCase;
@@ -77,7 +75,7 @@ class DefaultScenarioExecutorServiceImplTest {
     public void beforeEachSetup() {
         doReturn(1).when(propertiesMock).getExecutorThreads();
 
-        fixture = new DefaultScenarioExecutorServiceImpl(applicationContextMock, citrusMock, scenarioExecutionServiceMock,propertiesMock );
+        fixture = new DefaultScenarioExecutorServiceImpl(applicationContextMock, citrusMock, scenarioExecutionServiceMock, propertiesMock);
         ReflectionTestUtils.setField(fixture, "executorService", executorServiceMock, ExecutorService.class);
 
         scenarioEndpointMock = mock(ScenarioEndpoint.class);

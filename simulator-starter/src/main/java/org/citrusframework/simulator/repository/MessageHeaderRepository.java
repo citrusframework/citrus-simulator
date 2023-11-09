@@ -18,6 +18,7 @@ import java.util.Optional;
  */
 @Repository
 public interface MessageHeaderRepository extends JpaRepository<MessageHeader, Long>, JpaSpecificationExecutor<MessageHeader> {
+
     default Optional<MessageHeader> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
