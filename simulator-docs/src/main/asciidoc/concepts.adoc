@@ -36,9 +36,10 @@ You can enable or disable the message transport support for different technologi
 ----
 citrus.simulator.rest.enabled=true
 citrus.simulator.jms.enabled=true
-citrus.simulator.ws.enabled=true
+citrus.simulator.ws.default-support=true
 citrus.simulator.ws.client.enabled=true
 citrus.simulator.endpoint.enabled=true
+spring.webservices.autoconfiguration.enabled=false
 ----
 
 When enabled, the simulator's autoconfiguration for this specific message transport is activated, and all required beans and configuration are loaded at startup.
@@ -50,6 +51,7 @@ When enabled, the simulator's autoconfiguration for this specific message transp
 `citrus.simulator.ws.client.enabled`:: Enables <<samples-soap,SOAP web services client support>>
 `citrus.simulator.jms.enabled`:: Enables <<jms,JMS support>>
 `citrus.simulator.endpoint.enabled`:: Enables generic <<endpoint,endpoint component support>>
+`spring.webservices.autoconfiguration.enabled`:: Enables automatic Spring WS configuration.
 
 You can also combine message transports in the simulator application, although this feature is of experimental nature up to now.
 

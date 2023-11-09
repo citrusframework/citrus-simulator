@@ -20,12 +20,14 @@ import org.citrusframework.annotations.CitrusTest;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 import static org.citrusframework.actions.SleepAction.Builder.sleep;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
+import static org.citrusframework.simulator.sample.scenario.GoodNightScenario.HTTP_CORRELATION_ID_HEADER;
 
 /**
  * @author Christoph Deppisch
@@ -34,19 +36,19 @@ import static org.citrusframework.http.actions.HttpActionBuilder.http;
 @ContextConfiguration(classes = EndpointConfig.class)
 public class SimulatorRestIT extends TestNGCitrusSpringSupport {
 
-    public static final String HTTP_CORRELATION_ID = "x-correlationid";
     private final String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /** Test Http REST client */
     @Autowired
-    private HttpClient simulatorClient;
+    @Qualifier("simulatorRESTClient")
+    private HttpClient simulatorRESTClient;
 
     /**
      * Sends a hello request to server expecting positive response message.
      */
     @CitrusTest
     public void testHelloRequest() {
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post("hello")
                 .message()
@@ -54,7 +56,7 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
                             "Say Hello!" +
                          "</Hello>"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -68,7 +70,7 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testGoodByeRequest() {
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post("goodbye")
                 .message()
@@ -76,7 +78,7 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
                             "Say GoodBye!" +
                          "</GoodBye>"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -90,7 +92,7 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
      */
     @CitrusTest
     public void testDefaultRequest() {
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post()
                 .message()
@@ -98,7 +100,7 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
                             "Should trigger default scenario" +
                         "</Default>"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -112,16 +114,16 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     public void testInterveningRequest() {
         variable("correlationId", "citrus:randomNumber(10)");
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post("goodnight")
                 .message()
                 .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
                             "Go to sleep!" +
                         "</GoodNight>")
-                .header(HTTP_CORRELATION_ID, "${correlationId}"));
+                .header(HTTP_CORRELATION_ID_HEADER, "${correlationId}"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -129,26 +131,26 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
                             "Good Night!" +
                         "</GoodNightResponse>"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post()
                 .message()
                 .body("<InterveningRequest>In between!</InterveningRequest>"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
                 .body(defaultResponse));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .post()
                 .message()
                 .body("<InterveningRequest>In between!</InterveningRequest>")
-                .header(HTTP_CORRELATION_ID, "${correlationId}"));
+                .header(HTTP_CORRELATION_ID_HEADER, "${correlationId}"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -156,14 +158,14 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
 
         $(sleep().milliseconds(2000L));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .send()
                 .put("goodnight")
                 .message()
                 .body("<InterveningRequest>In between!</InterveningRequest>")
-                .header(HTTP_CORRELATION_ID, "${correlationId}"));
+                .header(HTTP_CORRELATION_ID_HEADER, "${correlationId}"));
 
-        $(http().client(simulatorClient)
+        $(http().client(simulatorRESTClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()

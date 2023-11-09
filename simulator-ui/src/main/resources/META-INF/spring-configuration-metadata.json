@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "spring.websecurity.debug",
+      "type": "java.lang.Boolean",
+      "description": "Enable Spring web security debugging output. **Careful** with using this in production!",
+      "sourceType": "org.citrusframework.simulator.ui.config.SecurityConfiguration"
+    },
+    {
+      "name": "spring.webservices.autoconfiguration.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Allows explicit enabling of Spring web services autoconfiguration. Disabled by default, because of constraints in combination with REST simulations.",
+      "sourceType": "org.citrusframework.simulator.ws.SimulatorWebServiceAutoConfiguration"
+    }
+  ]
+}

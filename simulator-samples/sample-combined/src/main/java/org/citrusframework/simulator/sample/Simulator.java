@@ -34,5 +34,4 @@ public class Simulator {
     public SimulatorJmsConfig simulatorJmsConfig() {
         return new SimulatorJmsConfig();
     }
-
 }

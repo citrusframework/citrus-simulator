@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Martin Maher
  */
 @Configuration
-@ConditionalOnClass({ LoggingEndpointInterceptor.class, LoggingClientInterceptor.class })
 @ConditionalOnWebApplication
+@ConditionalOnClass({ LoggingEndpointInterceptor.class, LoggingClientInterceptor.class })
 public class SimulatorWebServiceLoggingAutoConfiguration {
 
     @Autowired

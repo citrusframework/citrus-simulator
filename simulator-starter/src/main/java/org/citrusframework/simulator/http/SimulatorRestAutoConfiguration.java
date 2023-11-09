@@ -19,11 +19,6 @@ package org.citrusframework.simulator.http;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
@@ -56,6 +51,12 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Christoph Deppisch
  */
@@ -81,12 +82,13 @@ public class SimulatorRestAutoConfiguration {
     public FilterRegistrationBean<RequestCachingServletFilter> requestCachingFilter() {
         FilterRegistrationBean<RequestCachingServletFilter> filterRegistrationBean = new FilterRegistrationBean<>(new RequestCachingServletFilter());
 
-        List<String> urlMappings = getUrlMappings().stream().map(urlMapping -> {
-            if (urlMapping.endsWith("**")) {
-                return urlMapping.substring(0, urlMapping.length() - 1);
-            }
-            return urlMapping;
-        }).toList();
+        List<String> urlMappings = getUrlMappings().stream()
+            .map(urlMapping -> {
+                if (urlMapping.endsWith("**")) {
+                    return urlMapping.substring(0, urlMapping.length() - 1);
+                }
+                return urlMapping;
+            }).toList();
 
         filterRegistrationBean.setUrlPatterns(urlMappings);
 
@@ -94,27 +96,23 @@ public class SimulatorRestAutoConfiguration {
     }
 
     @Bean
-    public HandlerMapping simulatorRestHandlerMapping(ApplicationContext applicationContext,
-        MessageListeners messageListeners,
-        SimulatorMessageListener simulatorMessageListener) {
+    public HandlerMapping simulatorRestHandlerMapping(ApplicationContext applicationContext, MessageListeners messageListeners, SimulatorMessageListener simulatorMessageListener) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         handlerMapping.setAlwaysUseFullPath(true);
 
         Map<String, Object> mappings = new HashMap<>();
         HttpMessageController controller = createRestController(applicationContext);
-        getUrlMappings().forEach(urlMapping ->
-            mappings.put(urlMapping, controller));
+        getUrlMappings().forEach(urlMapping -> mappings.put(urlMapping, controller));
 
         handlerMapping.setUrlMap(mappings);
-        handlerMapping.setInterceptors((Object[])interceptors(messageListeners, simulatorMessageListener));
+        handlerMapping.setInterceptors((Object[]) interceptors(messageListeners, simulatorMessageListener));
 
         return handlerMapping;
     }
 
     @Bean
-    public HandlerAdapter simulatorRestHandlerAdapter(final ApplicationContext applicationContext,
-        RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
+    public HandlerAdapter simulatorRestHandlerAdapter(final ApplicationContext applicationContext, RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
         final RequestMappingHandlerMapping handlerMapping = getRequestMappingHandlerMapping(applicationContext);
 
         requestMappingHandlerAdapter.getMessageConverters().add(0, new SimulatorHttpMessageConverter());
@@ -122,6 +120,7 @@ public class SimulatorRestAutoConfiguration {
         requestMappingHandlerAdapter.setCacheSeconds(0);
 
         return new SimpleControllerHandlerAdapter() {
+
             @Override
             public boolean supports(Object handler) {
                 return handler instanceof HttpMessageController;
@@ -136,6 +135,7 @@ public class SimulatorRestAutoConfiguration {
 
     private RequestMappingHandlerMapping getRequestMappingHandlerMapping(ApplicationContext applicationContext) {
         final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
+
             @Override
             protected void initHandlerMethods() {
                 detectHandlerMethods(createRestController(applicationContext));
@@ -150,6 +150,7 @@ public class SimulatorRestAutoConfiguration {
 
         handlerMapping.setApplicationContext(applicationContext);
         handlerMapping.afterPropertiesSet();
+
         return handlerMapping;
     }
 
@@ -232,8 +233,7 @@ public class SimulatorRestAutoConfiguration {
      *
      * @return
      */
-    protected HandlerInterceptor[] interceptors(MessageListeners messageListeners,
-        SimulatorMessageListener simulatorMessageListener) {
+    protected HandlerInterceptor[] interceptors(MessageListeners messageListeners, SimulatorMessageListener simulatorMessageListener) {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
         if (configurer != null) {
             Collections.addAll(interceptors, configurer.interceptors());
@@ -242,5 +242,4 @@ public class SimulatorRestAutoConfiguration {
         interceptors.add(httpInterceptor(messageListeners, simulatorMessageListener));
         return interceptors.toArray(new HandlerInterceptor[0]);
     }
-
 }

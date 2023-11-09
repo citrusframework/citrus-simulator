@@ -16,9 +16,15 @@
 
 package org.citrusframework.simulator.sample.scenario;
 
+import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXParseException;
+
+import java.util.Objects;
 
 /**
  * @author Christoph Deppisch
@@ -26,12 +32,44 @@ import org.citrusframework.simulator.scenario.ScenarioRunner;
 @Scenario("Default")
 public class DefaultScenario extends AbstractSimulatorScenario {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultScenario.class);
+
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.$(scenario.receive());
+        boolean isSoap = false;
+        try {
+            scenario.$(scenario.receive());
+        } catch (TestCaseFailedException e) {
+            if (getRootCause(e) instanceof SAXParseException saxParseException) {
+                logger.warn("Default Scenario request parsing failed, assuming unmatched SOAP request!", e);
+                scenario.$(
+                    scenario.soap()
+                        .sendFault()
+                        .message()
+                        .faultActor("SERVER")
+                        .faultCode("{http://localhost:8080/HelloService/v1}CITRUS:SIM-1100")
+                        .faultString("No matching scenario found")
+                );
+                isSoap = true;
+            }
+        }
 
-        scenario.$(scenario.send()
-                .message()
-                .body("<DefaultResponse>This is a default response!</DefaultResponse>"));
+        if (!isSoap) {
+            scenario.$(
+                scenario.send()
+                    .message()
+                    .body("<DefaultResponse>This is a default response!</DefaultResponse>")
+            );
+        }
+    }
+
+    private Throwable getRootCause(Exception e) {
+        Throwable cause = e;
+
+        while (!Objects.isNull(cause.getCause())) {
+            cause = cause.getCause();
+        }
+
+        return cause;
     }
 }
