@@ -1,9 +1,12 @@
 package org.citrusframework.simulator.service.impl;
 
+import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,14 +18,20 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ScenarioExecutionServiceImplTest {
@@ -97,5 +106,74 @@ class ScenarioExecutionServiceImplTest {
         assertThat(result.getScenarioParameters())
             .hasSize(1)
             .containsExactly(scenarioParameter);
+    }
+
+    @Nested
+    class CompleteScenarioExecution {
+
+        private final Long scenarioExecutionId = 1234L;
+        private final Instant now = Instant.now();
+
+        @Mock
+        private TestCase testCaseMock;
+
+        @BeforeEach
+        void beforeEachSetup() {
+            Map<String, String> variableDefinitions = Map.of(ScenarioExecution.EXECUTION_ID, String.valueOf(scenarioExecutionId));
+            doReturn(variableDefinitions).when(testCaseMock).getVariableDefinitions();
+        }
+
+        @Test
+        void successful() {
+            preparePersistenceLayerMocks();
+
+            ScenarioExecution result = fixture.completeScenarioExecutionSuccess(testCaseMock);
+
+            assertEquals(ScenarioExecution.Status.SUCCESS, result.getStatus());
+            assertEquals(now, result.getEndDate());
+            assertNull(result.getErrorMessage());
+        }
+
+        @Test
+        void successfulWithNoScenarioExecutionFound() {
+            String testName = "testCase";
+            doReturn(testName).when(testCaseMock).getName();
+
+            doReturn(Optional.empty()).when(scenarioExecutionRepositoryMock).findById(scenarioExecutionId);
+
+            CitrusRuntimeException exception = assertThrows(CitrusRuntimeException.class, () -> fixture.completeScenarioExecutionSuccess(testCaseMock));
+            assertEquals(String.format("Error while completing ScenarioExecution for test %s", testName), exception.getMessage());
+        }
+
+        @Test
+        void failed() {
+            preparePersistenceLayerMocks();
+
+            Throwable cause = new RuntimeException("Failure cause");
+            ScenarioExecution result = fixture.completeScenarioExecutionFailure(testCaseMock, cause);
+
+            assertEquals(ScenarioExecution.Status.FAILED, result.getStatus());
+            assertEquals(now, result.getEndDate());
+            assertTrue(result.getErrorMessage().startsWith("java.lang.RuntimeException: Failure cause"), "Error message must contain cause!");
+
+            verify(scenarioExecutionRepositoryMock).save(result);
+        }
+
+        @Test
+        void failedWithNoScenarioExecutionFound() {
+            String testName = "testCase";
+            doReturn(testName).when(testCaseMock).getName();
+
+            doReturn(Optional.empty()).when(scenarioExecutionRepositoryMock).findById(scenarioExecutionId);
+
+            CitrusRuntimeException exception = assertThrows(CitrusRuntimeException.class, () -> fixture.completeScenarioExecutionFailure(testCaseMock, new RuntimeException("Failure cause")));
+            assertEquals(String.format("Error while completing ScenarioExecution for test %s", testName), exception.getMessage());
+        }
+
+        private void preparePersistenceLayerMocks() {
+            doReturn(Optional.of(sampleScenarioExecution)).when(scenarioExecutionRepositoryMock).findById(scenarioExecutionId);
+            doReturn(sampleScenarioExecution).when(scenarioExecutionRepositoryMock).save(sampleScenarioExecution);
+            doReturn(now).when(timeProviderMock).getTimeNow();
+        }
     }
 }

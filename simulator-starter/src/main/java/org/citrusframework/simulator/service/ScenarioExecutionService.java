@@ -17,12 +17,13 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
-import java.util.List;
+import org.citrusframework.TestCase;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -57,9 +58,26 @@ public interface ScenarioExecutionService {
     /**
      * Creates a new {@link ScenarioExecution}, persisting it within the database.
      *
-     * @param scenarioName       the name of the scenario
-     * @param scenarioParameters the scenario's start parameters
-     * @return the new {@link ScenarioExecution}
+     * @param scenarioName       the name of the scenario.
+     * @param scenarioParameters the scenario's start parameters.
+     * @return the new entity.
      */
     ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters);
+
+    /**
+     * Mark a {@link ScenarioExecution} as completed successfully.
+     *
+     * @param testCase the testcase identifying the entity.
+     * @return the updated entity.
+     */
+    ScenarioExecution completeScenarioExecutionSuccess(TestCase testCase);
+
+    /**
+     * Mark a {@link ScenarioExecution} as failed.
+     *
+     * @param testCase the testcase identifying the entity.
+     * @param cause    the reason the test case failed.
+     * @return the updated entity.
+     */
+    ScenarioExecution completeScenarioExecutionFailure(TestCase testCase, Throwable cause);
 }
