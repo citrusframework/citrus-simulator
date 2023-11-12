@@ -1,7 +1,5 @@
 package org.citrusframework.simulator.dictionary;
 
-import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
-
 import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.spi.CitrusResourceWrapper;
@@ -19,6 +17,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.xpath.XPathConstants;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
 
 /**
  * @author Christoph Deppisch

@@ -1,12 +1,5 @@
 package org.citrusframework.simulator.http;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.citrusframework.report.MessageListeners;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;
 import org.junit.jupiter.api.Test;
@@ -18,6 +11,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author Thorsten Schlathoelter

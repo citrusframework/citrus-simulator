@@ -16,9 +16,6 @@
 
 package org.citrusframework.simulator.http;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
@@ -28,6 +25,9 @@ import org.citrusframework.simulator.scenario.mapper.AbstractScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Scenario mapper supports path pattern matching on request path.

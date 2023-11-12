@@ -14,7 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author Christoph Deppisch
@@ -42,9 +43,9 @@ class InboundXmlDataDictionaryTest {
 
     @Test
     void testInboundDictionary() {
-        when(testContextMock.getTypeConverter()).thenReturn(SpringBeanTypeConverter.INSTANCE);
-        when(testContextMock.getNamespaceContextBuilder()).thenReturn(new NamespaceContextBuilder());
-        when(testContextMock.replaceDynamicContentInString(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
+        doReturn(SpringBeanTypeConverter.INSTANCE).when(testContextMock).getTypeConverter();
+        doReturn(new NamespaceContextBuilder()).when(testContextMock).getNamespaceContextBuilder();
+        doAnswer(invocation -> invocation.getArguments()[0]).when(testContextMock).replaceDynamicContentInString(anyString());
 
         Message request = new DefaultMessage(MESSAGE_INPUT);
         Message translated = fixture.transform(request, testContextMock);

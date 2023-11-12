@@ -16,11 +16,6 @@
 
 package org.citrusframework.simulator;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.Properties;
-
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusSpringContextProvider;
 import org.citrusframework.config.CitrusSpringConfig;
@@ -49,6 +44,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Properties;
 
 /**
  * @author Christoph Deppisch

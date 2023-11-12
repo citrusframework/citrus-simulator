@@ -17,12 +17,13 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
-import java.util.List;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+
+import java.util.List;
 
 /**
  * Service capable of executing test executables. The service takes care on setting up the

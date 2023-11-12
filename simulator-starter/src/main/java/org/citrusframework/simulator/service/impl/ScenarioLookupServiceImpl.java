@@ -16,11 +16,6 @@
 
 package org.citrusframework.simulator.service.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.Scenario;
@@ -33,6 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service for looking-up and accessing {@link Scenario}'s and {@link Starter}'s.

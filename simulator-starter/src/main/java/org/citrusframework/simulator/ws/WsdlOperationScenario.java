@@ -1,12 +1,12 @@
 package org.citrusframework.simulator.ws;
 
-import javax.wsdl.BindingOperation;
-
 import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
+
+import javax.wsdl.BindingOperation;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
 

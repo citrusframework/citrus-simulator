@@ -18,9 +18,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MessageHeaderServiceImplTest {
@@ -49,7 +49,7 @@ class MessageHeaderServiceImplTest {
     void testSave() {
         MessageHeader messageHeader = new MessageHeader();
 
-        when(messageHeaderRepositoryMock.save(messageHeader)).thenReturn(messageHeader);
+        doReturn(messageHeader).when(messageHeaderRepositoryMock).save(messageHeader);
 
         MessageHeader savedMessageHeader = fixture.save(messageHeader);
         assertEquals(messageHeader, savedMessageHeader);
@@ -60,7 +60,7 @@ class MessageHeaderServiceImplTest {
         Pageable pageable = Pageable.unpaged();
         Page<MessageHeader> page = new PageImpl<>(List.of(messageHeaderWithMessage));
 
-        when(messageHeaderRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(page);
+        doReturn(page).when(messageHeaderRepositoryMock).findAllWithEagerRelationships(pageable);
 
         Page<MessageHeader> result = fixture.findAll(pageable);
 
@@ -73,7 +73,7 @@ class MessageHeaderServiceImplTest {
     void testFindOne() {
         Long messageId = 1L;
 
-        when(messageHeaderRepositoryMock.findOneWithEagerRelationships(messageId)).thenReturn(Optional.of(messageHeaderWithMessage));
+        doReturn(Optional.of(messageHeaderWithMessage)).when(messageHeaderRepositoryMock).findOneWithEagerRelationships(messageId);
 
         Optional<MessageHeader> maybeMessageHeader = fixture.findOne(messageId);
 

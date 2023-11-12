@@ -31,7 +31,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceImplTest {
@@ -53,7 +52,7 @@ class MessageServiceImplTest {
     void testSave() {
         Message message = new Message();
 
-        when(messageRepositoryMock.save(message)).thenReturn(message);
+        doReturn(message).when(messageRepositoryMock).save(message);
 
         Message savedMessage = fixture.save(message);
         assertEquals(message, savedMessage);
@@ -64,7 +63,7 @@ class MessageServiceImplTest {
         Pageable pageable = Pageable.unpaged();
         Page<Message> mockPage = mock(Page.class);
 
-        when(messageRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(mockPage);
+        doReturn(mockPage).when(messageRepositoryMock).findAllWithEagerRelationships(pageable);
 
         Page<Message> result = fixture.findAll(pageable);
 
@@ -76,7 +75,7 @@ class MessageServiceImplTest {
         Long messageId = 1L;
         Message message = new Message();
 
-        when(messageRepositoryMock.findOneWithEagerRelationships(messageId)).thenReturn(Optional.of(message));
+        doReturn(Optional.of(message)).when(messageRepositoryMock).findOneWithEagerRelationships(messageId);
 
         Optional<Message> maybeMessage = fixture.findOne(messageId);
 
@@ -112,7 +111,7 @@ class MessageServiceImplTest {
             ScenarioExecution scenarioExecutionSpy = spy(new ScenarioExecution());
             doReturn(Optional.of(scenarioExecutionSpy))
                 .when(scenarioExecutionServiceMock)
-                .findOne(scenarioExecutionId);
+                .findOneLazy(scenarioExecutionId);
 
             Message result = fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, Collections.emptyMap());
 
@@ -136,7 +135,7 @@ class MessageServiceImplTest {
             // Explicit declaration of invocation, although this is not strictly necessary
             doReturn(Optional.empty())
                 .when(scenarioExecutionServiceMock)
-                .findOne(scenarioExecutionId);
+                .findOneLazy(scenarioExecutionId);
 
             Map<String, Object> headers = Collections.emptyMap();
             CitrusRuntimeException exception = assertThrows(

@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
 
 /**
  * @author Christoph Deppisch
@@ -40,7 +40,7 @@ class OutboundXmlDataDictionaryTest {
 
     @Test
     void testInboundDictionary() {
-        when(testContextMock.replaceDynamicContentInString(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
+        doAnswer(invocation -> invocation.getArguments()[0]).when(testContextMock).replaceDynamicContentInString(anyString());
 
         Message request = new DefaultMessage(MESSAGE_INPUT);
         Message translated = fixture.transform(request, testContextMock);

@@ -16,14 +16,13 @@
 
 package org.citrusframework.simulator.scenario;
 
+import jakarta.annotation.PostConstruct;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.template.TemplateHelper;
 import org.citrusframework.spi.Resource;
 import org.citrusframework.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * @author Christoph Deppisch

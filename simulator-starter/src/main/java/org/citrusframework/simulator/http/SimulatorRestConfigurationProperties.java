@@ -18,13 +18,14 @@ package org.citrusframework.simulator.http;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch

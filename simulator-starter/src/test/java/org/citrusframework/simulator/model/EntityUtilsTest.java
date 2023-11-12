@@ -1,11 +1,11 @@
 package org.citrusframework.simulator.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import jakarta.persistence.Column;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EntityUtilsTest {
 

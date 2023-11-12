@@ -59,7 +59,7 @@ public class ScenarioParameterServiceImpl implements ScenarioParameterService {
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioParameter> findOne(Long id) {
-        logger.debug("Request to get ScenarioParameter : {}", id);
+        logger.debug("Request to get ScenarioParameter with eager relationships: {}", id);
         return scenarioParameterRepository.findOneWithEagerRelationships(id);
     }
 

@@ -89,7 +89,7 @@ public class MessageServiceImpl implements MessageService {
         );
 
         scenarioExecutionService.save(
-            scenarioExecutionService.findOne(scenarioExecutionId)
+            scenarioExecutionService.findOneLazy(scenarioExecutionId)
                 .map(scenarioExecution -> {
                     scenarioExecution.addScenarioMessage(message);
                     return scenarioExecution;

@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,7 +37,7 @@ class HttpRequestPathScenarioMapperTest {
         fixture = new HttpRequestPathScenarioMapper();
         fixture.setConfiguration(simulatorConfigurationMock);
 
-        when(simulatorConfigurationMock.getDefaultScenario()).thenReturn("default");
+        doReturn("default").when(simulatorConfigurationMock).getDefaultScenario();
     }
 
     @Test
@@ -75,8 +76,10 @@ class HttpRequestPathScenarioMapperTest {
 
         fixture.setUseDefaultMapping(false);
 
-        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(new HttpMessage().method(HttpMethod.GET)));
-        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(new HttpMessage().method(HttpMethod.GET).path("/issues")));
-    }
+        HttpMessage httpGetMessage = new HttpMessage().method(HttpMethod.GET);
+        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(httpGetMessage));
 
+        HttpMessage httpGetIssuesMessage = new HttpMessage().method(HttpMethod.GET).path("/issues");
+        assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(httpGetIssuesMessage));
+    }
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
 class HttpRequestAnnotationMatcherTest {
 
@@ -214,9 +214,9 @@ class HttpRequestAnnotationMatcherTest {
 
     private static HttpMessage setupHttpMessage(String path, RequestMethod method, Map<String, Collection<String>> queryParams) {
         final HttpMessage httpMessage = Mockito.mock(HttpMessage.class);
-        when(httpMessage.getPath()).thenReturn(path);
-        when(httpMessage.getRequestMethod()).thenReturn(method);
-        when(httpMessage.getQueryParams()).thenReturn(queryParams);
+        doReturn(path).when(httpMessage).getPath();
+        doReturn(method).when(httpMessage).getRequestMethod();
+        doReturn(queryParams).when(httpMessage).getQueryParams();
         return httpMessage;
     }
 

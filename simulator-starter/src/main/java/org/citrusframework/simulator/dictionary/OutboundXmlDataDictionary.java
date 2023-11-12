@@ -1,7 +1,5 @@
 package org.citrusframework.simulator.dictionary;
 
-import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
-
 import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.spi.CitrusResourceWrapper;
@@ -12,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.w3c.dom.Node;
+
+import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
 
 /**
  * @author Christoph Deppisch

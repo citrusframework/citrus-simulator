@@ -18,11 +18,6 @@ package org.citrusframework.simulator.service.impl;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import jakarta.annotation.Nullable;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import org.citrusframework.Citrus;
 import org.citrusframework.annotations.CitrusAnnotations;
 import org.citrusframework.context.TestContext;
@@ -40,6 +35,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * {@inheritDoc}

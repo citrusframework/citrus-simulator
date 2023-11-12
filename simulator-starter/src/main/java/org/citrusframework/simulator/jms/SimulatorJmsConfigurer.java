@@ -16,9 +16,8 @@
 
 package org.citrusframework.simulator.jms;
 
-import org.citrusframework.simulator.config.SimulatorConfigurer;
-
 import jakarta.jms.ConnectionFactory;
+import org.citrusframework.simulator.config.SimulatorConfigurer;
 
 /**
  * Common JMS simulator configuration

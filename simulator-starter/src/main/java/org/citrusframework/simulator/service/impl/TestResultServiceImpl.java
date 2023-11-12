@@ -59,14 +59,14 @@ public class TestResultServiceImpl implements TestResultService {
     @Override
     @Transactional(readOnly = true)
     public Page<TestResult> findAll(Pageable pageable) {
-        logger.debug("Request to get all TestResults");
+        logger.debug("Request to get all TestResults with eager relationships");
         return testResultRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<TestResult> findOne(Long id) {
-        logger.debug("Request to get TestResult : {}", id);
+        logger.debug("Request to get TestResult with eager relationships: {}", id);
         return testResultRepository.findById(id);
     }
 

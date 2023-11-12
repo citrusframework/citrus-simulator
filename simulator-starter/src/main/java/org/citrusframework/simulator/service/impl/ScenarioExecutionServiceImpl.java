@@ -37,6 +37,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
+import static org.citrusframework.simulator.service.impl.TestCaseUtil.getScenarioExecutionId;
+
 /**
  * Service Implementation for managing {@link ScenarioExecution}.
  */
@@ -63,13 +65,20 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
     @Override
     @Transactional(readOnly = true)
     public Page<ScenarioExecution> findAll(Pageable pageable) {
-        logger.debug("Request to get all ScenarioExecutions");
+        logger.debug("Request to get all ScenarioExecutions with eager relationships");
         return scenarioExecutionRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioExecution> findOne(Long id) {
+        logger.debug("Request to get ScenarioExecution with eager relationships : {}", id);
+        return scenarioExecutionRepository.findOneByExecutionId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ScenarioExecution> findOneLazy(Long id) {
         logger.debug("Request to get ScenarioExecution : {}", id);
         return scenarioExecutionRepository.findById(id);
     }
@@ -105,7 +114,7 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
     }
 
     private ScenarioExecution completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, @Nullable Throwable cause) {
-        return findOne(getScenarioExecutionId(testCase))
+        return scenarioExecutionRepository.findOneByExecutionId(getScenarioExecutionId(testCase))
             .map(scenarioExecution -> {
                 scenarioExecution.setEndDate(timeProvider.getTimeNow());
                 scenarioExecution.setStatus(status);
@@ -127,10 +136,5 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
         } catch (IOException e) {
             logger.warn("Failed to write error message to scenario execution!", e);
         }
-    }
-
-    private long getScenarioExecutionId(TestCase testCase) {
-        logger.trace("Lookup '{}' in TestCaseParameters : {}", ScenarioExecution.EXECUTION_ID, testCase.getVariableDefinitions());
-        return Long.parseLong(testCase.getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID).toString());
     }
 }
