@@ -17,9 +17,10 @@
 package org.citrusframework.simulator.http;
 
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import org.citrusframework.simulator.config.SimulatorConfigurer;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.List;
 
 /**
  * @author Christoph Deppisch

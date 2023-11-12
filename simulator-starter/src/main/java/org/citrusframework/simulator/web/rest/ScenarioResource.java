@@ -16,14 +16,7 @@
 
 package org.citrusframework.simulator.web.rest;
 
-import static org.citrusframework.simulator.web.util.PaginationUtil.createPage;
-
 import jakarta.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
@@ -43,6 +36,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
+import static org.citrusframework.simulator.web.util.PaginationUtil.createPage;
 
 @RestController
 @RequestMapping("api")

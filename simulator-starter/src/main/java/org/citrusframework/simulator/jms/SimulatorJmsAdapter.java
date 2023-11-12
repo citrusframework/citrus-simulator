@@ -16,14 +16,13 @@
 
 package org.citrusframework.simulator.jms;
 
+import jakarta.jms.ConnectionFactory;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.jms.connection.SingleConnectionFactory;
-
-import jakarta.jms.ConnectionFactory;
 
 /**
  * @author Christoph Deppisch

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -25,7 +26,6 @@ public interface ScenarioExecutionRepository extends JpaRepository<ScenarioExecu
     @EntityGraph(attributePaths = {"scenarioParameters", "scenarioActions", "scenarioMessages"})
     Page<ScenarioExecution> findAll(Specification<ScenarioExecution> spec, Pageable pageable);
 
-    @Override
     @EntityGraph(attributePaths = {"scenarioParameters", "scenarioActions", "scenarioMessages"})
-    Optional<ScenarioExecution> findById(Long id);
+    Optional<ScenarioExecution> findOneByExecutionId(@Param("executionId") Long executionId);
 }

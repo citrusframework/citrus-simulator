@@ -17,8 +17,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ScenarioParameterServiceImplTest {
@@ -41,7 +41,7 @@ class ScenarioParameterServiceImplTest {
 
     @Test
     void testSave() {
-        when(scenarioParameterRepositoryMock.save(sampleScenarioParameter)).thenReturn(sampleScenarioParameter);
+        doReturn(sampleScenarioParameter).when(scenarioParameterRepositoryMock).save(sampleScenarioParameter);
 
         ScenarioParameter savedScenarioParameter = fixture.save(sampleScenarioParameter);
         assertEquals(sampleScenarioParameter, savedScenarioParameter);
@@ -52,7 +52,7 @@ class ScenarioParameterServiceImplTest {
         Pageable pageable = Pageable.unpaged();
         Page<ScenarioParameter> page = new PageImpl<>(List.of(sampleScenarioParameter));
 
-        when(scenarioParameterRepositoryMock.findAllWithEagerRelationships(pageable)).thenReturn(page);
+        doReturn(page).when(scenarioParameterRepositoryMock).findAllWithEagerRelationships(pageable);
 
         Page<ScenarioParameter> result = fixture.findAll(pageable);
 
@@ -63,7 +63,7 @@ class ScenarioParameterServiceImplTest {
     void testFindOne() {
         Long scenarioParameterId = 1L;
 
-        when(scenarioParameterRepositoryMock.findOneWithEagerRelationships(scenarioParameterId)).thenReturn(Optional.of(sampleScenarioParameter));
+        doReturn(Optional.of(sampleScenarioParameter)).when(scenarioParameterRepositoryMock).findOneWithEagerRelationships(scenarioParameterId);
 
         Optional<ScenarioParameter> maybeScenarioParameter = fixture.findOne(scenarioParameterId);
 

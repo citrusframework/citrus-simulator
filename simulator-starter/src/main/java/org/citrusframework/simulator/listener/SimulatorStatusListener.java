@@ -24,7 +24,7 @@ import org.citrusframework.actions.SleepAction;
 import org.citrusframework.common.Described;
 import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
-import org.citrusframework.simulator.service.ActivityService;
+import org.citrusframework.simulator.service.ScenarioActionService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.TestResultService;
 import org.slf4j.Logger;
@@ -55,13 +55,13 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
      */
     private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
-    private final ActivityService activityService;
+    private final ScenarioActionService scenarioActionService;
     private final ScenarioExecutionService scenarioExecutionService;
 
     private final TestResultService testResultService;
 
-    public SimulatorStatusListener(ActivityService activityService, ScenarioExecutionService scenarioExecutionService, TestResultService testResultService) {
-        this.activityService = activityService;
+    public SimulatorStatusListener(ScenarioActionService scenarioActionService, ScenarioExecutionService scenarioExecutionService, TestResultService testResultService) {
+        this.scenarioActionService = scenarioActionService;
         this.scenarioExecutionService = scenarioExecutionService;
         this.testResultService = testResultService;
     }
@@ -121,14 +121,14 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
                         (testAction instanceof Described && StringUtils.hasText(((Described) testAction).getDescription()) ? ((Described) testAction).getDescription() : ""));
             }
 
-            activityService.createTestAction(testCase, testAction);
+            scenarioActionService.createForScenarioExecutionAndSave(testCase, testAction);
         }
     }
 
     @Override
     public void onTestActionFinish(TestCase testCase, TestAction testAction) {
         if (!ignoreTestAction(testAction)) {
-            activityService.completeTestAction(testCase, testAction);
+            scenarioActionService.completeTestAction(testCase, testAction);
         }
     }
 

@@ -16,14 +16,14 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.Message;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Intercepts {@link org.citrusframework.messaging.Consumer#receive(TestContext)} method invocations

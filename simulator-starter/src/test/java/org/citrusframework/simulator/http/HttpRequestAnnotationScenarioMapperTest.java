@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author Christoph Deppisch
@@ -36,7 +36,7 @@ class HttpRequestAnnotationScenarioMapperTest {
         fixture = new HttpRequestAnnotationScenarioMapper();
         fixture.setConfiguration(simulatorConfiguration);
 
-        when(simulatorConfiguration.getDefaultScenario()).thenReturn("default");
+        doReturn("default").when(simulatorConfiguration).getDefaultScenario();
     }
 
     @Test

@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Christoph Deppisch
@@ -114,8 +114,8 @@ class WsdlScenarioGeneratorTest {
 
     @Test
     void generateScenariosWithDataDictionaries() {
-        when(beanRegistryMock.containsBeanDefinition("inboundXmlDataDictionary")).thenReturn(true);
-        when(beanRegistryMock.containsBeanDefinition("outboundXmlDataDictionary")).thenReturn(true);
+        doReturn(true).when(beanRegistryMock).containsBeanDefinition("inboundXmlDataDictionary");
+        doReturn(true).when(beanRegistryMock).containsBeanDefinition("outboundXmlDataDictionary");
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];

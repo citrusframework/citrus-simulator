@@ -24,7 +24,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
-import org.citrusframework.simulator.service.ScenarioActionQueryService;
 
 import java.io.Serial;
 import java.io.Serializable;

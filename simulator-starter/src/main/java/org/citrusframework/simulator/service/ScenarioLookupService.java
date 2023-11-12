@@ -16,14 +16,15 @@
 
 package org.citrusframework.simulator.service;
 
-import java.util.Collection;
-import java.util.Set;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioStarter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.Starter;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Service for looking-up and accessing {@link Scenario}'s and {@link Starter}'s.

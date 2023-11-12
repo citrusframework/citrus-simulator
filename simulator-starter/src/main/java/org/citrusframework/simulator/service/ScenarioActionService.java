@@ -16,6 +16,9 @@
 
 package org.citrusframework.simulator.service;
 
+import jakarta.annotation.Nullable;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.springframework.data.domain.Page;
@@ -52,6 +55,29 @@ public interface ScenarioActionService {
      * @return the entity.
      */
     Optional<ScenarioAction> findOne(Long id);
+
+    /**
+     * Create and save the new {@link ScenarioAction}, linked to the given {@link ScenarioExecution}. The latter is
+     * being determined based on the given {@link TestCase}. Detail information is bein extracted from
+     * the {@link TestAction}.
+     * <p>
+     * Beware that the method is allowed to skip persistence for <i>some</i> test actions, in which case it will
+     * return {@code null}.
+     *
+     * @param testCase the testcase identifying the entity.
+     * @param testAction the test action to attach to the scenario execution.
+     * @return the persisted entity or null.
+     */
+    @Nullable ScenarioAction createForScenarioExecutionAndSave(TestCase testCase, TestAction testAction);
+
+    /**
+     * Complete the {@link ScenarioAction}, linked to the given {@link ScenarioExecution}. The latter is
+     * being determined based on the given {@link TestCase}.
+     *
+     * @param testCase the testcase identifying the entity.
+     * @param testAction the test action to attach to the scenario execution.
+     */
+    void completeTestAction(TestCase testCase, TestAction testAction);
 
     /**
      * Function that converts the {@link ScenarioAction} to its "DTO-form": It may only contain the {@code scenarioName}

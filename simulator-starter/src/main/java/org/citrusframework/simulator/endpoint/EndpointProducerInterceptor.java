@@ -16,10 +16,10 @@
 
 package org.citrusframework.simulator.endpoint;
 
-import org.citrusframework.context.TestContext;
-import org.citrusframework.message.Message;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.message.Message;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

@@ -56,6 +56,14 @@ public interface ScenarioExecutionService {
     Optional<ScenarioExecution> findOne(Long id);
 
     /**
+     * Get the "id" scenarioExecution with explicit lazy fetched relationships.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
+    Optional<ScenarioExecution> findOneLazy(Long id);
+
+    /**
      * Creates a new {@link ScenarioExecution}, persisting it within the database.
      *
      * @param scenarioName       the name of the scenario.

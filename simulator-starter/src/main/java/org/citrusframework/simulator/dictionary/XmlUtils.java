@@ -1,12 +1,13 @@
 package org.citrusframework.simulator.dictionary;
 
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.spi.Resource;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
-import org.citrusframework.exceptions.CitrusRuntimeException;
-import org.citrusframework.spi.Resource;
-import org.slf4j.Logger;
 
 class XmlUtils {
 

@@ -1,8 +1,5 @@
 package org.citrusframework.simulator.http;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
@@ -40,6 +37,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
 

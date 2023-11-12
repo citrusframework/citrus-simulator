@@ -16,9 +16,15 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
+import org.citrusframework.TestAction;
+import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.repository.ScenarioActionRepository;
 import org.citrusframework.simulator.service.ScenarioActionService;
+import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,7 +32,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.citrusframework.simulator.service.impl.TestCaseUtil.getScenarioExecutionId;
 
 /**
  * Service Implementation for managing {@link ScenarioAction}.
@@ -37,10 +48,20 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScenarioActionServiceImpl.class);
 
-    private final ScenarioActionRepository scenarioActionRepository;
+    private static final List<String> IGNORE_TEST_ACTION_NAMES = List.of("create-variables");
 
-    public ScenarioActionServiceImpl(ScenarioActionRepository scenarioActionRepository) {
+    private final TimeProvider timeProvider = new TimeProvider();
+
+    private final ScenarioActionRepository scenarioActionRepository;
+    private final ScenarioExecutionService scenarioExecutionService;
+
+    public ScenarioActionServiceImpl(ScenarioActionRepository scenarioActionRepository, ScenarioExecutionService scenarioExecutionService) {
         this.scenarioActionRepository = scenarioActionRepository;
+        this.scenarioExecutionService = scenarioExecutionService;
+    }
+
+    private static boolean skipTestAction(TestAction testAction) {
+        return IGNORE_TEST_ACTION_NAMES.contains(testAction.getName());
     }
 
     @Override
@@ -53,15 +74,73 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
     @Transactional(readOnly = true)
     public Page<ScenarioAction> findAll(Pageable pageable) {
         logger.debug("Request to get all ScenarioActions with eager relationships");
-        return scenarioActionRepository.findAll(pageable)
+        return scenarioActionRepository.findAllWithToOneRelationships(pageable)
             .map(ScenarioActionService::restrictToDtoProperties);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioAction> findOne(Long id) {
-        logger.debug("Request to get ScenarioAction : {}", id);
+        logger.debug("Request to get ScenarioAction with eager relationships: {}", id);
         return scenarioActionRepository.findOneWithEagerRelationships(id)
             .map(ScenarioActionService::restrictToDtoProperties);
+    }
+
+    @Override
+    public @Nullable ScenarioAction createForScenarioExecutionAndSave(TestCase testCase, TestAction testAction) {
+        logger.debug("Request to save ScenarioAction from TestCase {} and TestAction {}", testCase, testAction);
+
+        if (skipTestAction(testAction)) {
+            logger.trace("TestAction marked as 'to skip', not persisting!");
+            return null;
+        }
+
+        AtomicReference<ScenarioAction> newScenarioAction = new AtomicReference<>(null);
+
+        scenarioExecutionService.findOneLazy(getScenarioExecutionId(testCase))
+            .map(scenarioExecution -> {
+                ScenarioAction scenarioAction = new ScenarioAction();
+                scenarioAction.setName(StringUtils.isNotBlank(testAction.getName()) ? testAction.getName() : scenarioExecution.getScenarioName());
+                scenarioAction.setStartDate(timeProvider.getTimeNow());
+
+                scenarioExecution.addScenarioAction(scenarioAction);
+                newScenarioAction.set(scenarioAction);
+
+                return scenarioExecution;
+            })
+            .map(scenarioExecutionService::save);
+
+        return newScenarioAction.get();
+    }
+
+    @Override
+    public void completeTestAction(TestCase testCase, TestAction testAction) {
+        logger.debug("Request to complete ScenarioAction from TestCase {} and TestAction {}", testCase, testAction);
+
+        if (skipTestAction(testAction)) {
+            logger.trace("TestAction marked as 'to skip', not persisting!");
+            return;
+        }
+
+        scenarioExecutionService.findOneLazy(getScenarioExecutionId(testCase))
+            .map(scenarioExecution -> {
+                Iterator<ScenarioAction> scenarioActions = scenarioExecution.getScenarioActions().iterator();
+                ScenarioAction lastScenarioAction = null;
+                while (scenarioActions.hasNext()) {
+                    lastScenarioAction = scenarioActions.next();
+                }
+
+                if (lastScenarioAction == null) {
+                    throw new CitrusRuntimeException(String.format("No test action found with name %s", testAction.getName()));
+                } else if ((StringUtils.isNotBlank(testAction.getName()) && !lastScenarioAction.getName().equals(testAction.getName()))
+                    || (StringUtils.isBlank(testAction.getName()) && !lastScenarioAction.getName().equals(scenarioExecution.getScenarioName()))) {
+                    throw new CitrusRuntimeException(String.format("Expected to find last test action with name '%s' but got '%s'", testAction.getName(), lastScenarioAction.getName()));
+                }
+
+                lastScenarioAction.setEndDate(timeProvider.getTimeNow());
+
+                return lastScenarioAction;
+            })
+            .map(scenarioActionRepository::save);
     }
 }

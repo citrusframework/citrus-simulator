@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.jms;
 
 import jakarta.jms.ConnectionFactory;
-
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.jms.endpoint.JmsEndpoint;

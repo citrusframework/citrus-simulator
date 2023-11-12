@@ -1,8 +1,9 @@
 package org.citrusframework.simulator.events;
 
-import java.util.Set;
 import org.citrusframework.simulator.service.ScenarioLookupService;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Set;
 
 public  final class ScenariosReloadedEvent extends ApplicationEvent {
 

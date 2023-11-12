@@ -1,8 +1,5 @@
 package org.citrusframework.simulator.events;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Objects;
 import org.apache.commons.lang3.NotImplementedException;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
@@ -15,6 +12,10 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @IntegrationTest
 class ScenariosReloadedEventIT {
