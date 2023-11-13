@@ -27,6 +27,7 @@ ifdef::basebackend-html[toc::[]]
 include::introduction.adoc[]
 include::installation.adoc[]
 include::concepts.adoc[]
+include::concepts-advanced.adoc[]
 
 include::rest-support.adoc[]
 include::ws-support.adoc[]

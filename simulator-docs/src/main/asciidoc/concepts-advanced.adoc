@@ -1,0 +1,46 @@
+[[concepts-advanced]]
+= Advanced Concepts
+
+[[concept-advanced-database-schema]]
+== Database Schema
+
+In some cases, it may be useful to keep the database schema in mind.
+The following diagram illustrates the database schema as defined in the package `org.citrusframework.simulator.model`, which should be considered the source of truth.
+This visual representation can help understand the relationships and structure of the database entities.
+
+image::database-schema.png[Database Schema, title="Database Schema of the Citrus Simulator"]
+
+[[concept-runtime-scenario-registration]]
+== Registering Simulator Scenarios at Runtime
+
+Registering simulator scenarios at runtime is a perfectly valid approach.
+However, it's crucial to ensure that the scenario cache used by the simulator remains synchronized.
+
+A "Scenario" in this context is not a database entity but rather a conceptual object that exists only during runtime.
+Essentially, these are simply Spring beans.
+The `ScenarioLookupService` is responsible for tracking these scenarios but cannot do so automatically.
+Therefore, after making modifications, it's necessary to call `ScenarioLookupService#evictAndReloadScenarioCache()` to update the cache.
+
+The following Java source code illustrates how to register a custom scenario and update the scenario cache:
+
+[source,java]
+----
+import org.citrusframework.simulator.service.ScenarioLookupService;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MyCustomBeanConfiguration {
+
+    public MyCustomBeanConfiguration(ApplicationContext applicationContext, ScenarioLookupService scenarioLookupService) {
+        // Replace 'MyCustomSimulatorScenario' with your custom scenario class
+        SimulatorScenario simulatorScenario = new MyCustomSimulatorScenario();
+
+        ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
+        beanFactory.registerSingleton(simulatorScenario.getClass().getSimpleName(), simulatorScenario);
+
+        scenarioLookupService.evictAndReloadScenarioCache();
+    }
+}
+----
