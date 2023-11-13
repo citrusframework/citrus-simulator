@@ -1,5 +1,5 @@
 <div>
-  <h2 id="page-heading" data-cy="ScenarioExecutionHeading">
+  <h2 id="page-heading" data-cy="ScenarioExecutionHeading" *ngIf="!hideTitle">
     <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
 
     <div class="d-flex justify-content-end">
@@ -14,7 +14,7 @@
 
   <app-alert></app-alert>
 
-  <app-filter [filters]="filters"></app-filter>
+  <app-filter [filters]="displayFilters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="scenarioExecutions?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.notFound">No Scenario Executions found</span>
@@ -80,7 +80,7 @@
           <td class="text-end">
             <div class="btn-group">
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/scenario-action']"
                 [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
                 class="btn btn-info btn-sm"
@@ -95,7 +95,7 @@
                 >
               </button>
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/message']"
                 [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
                 class="btn btn-info btn-sm"
@@ -110,7 +110,7 @@
                 >
               </button>
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/scenario-parameter']"
                 [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }"
                 class="btn btn-info btn-sm"
@@ -125,7 +125,7 @@
                 >
               </button>
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']"
                 class="btn btn-info btn-sm"
                 data-cy="entityDetailsButton"

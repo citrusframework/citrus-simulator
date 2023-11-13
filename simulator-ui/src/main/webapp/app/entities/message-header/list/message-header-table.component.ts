@@ -36,7 +36,7 @@ export default class MessageHeaderTableComponent implements OnInit {
 
   ngOnInit(): void {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-ignore: string-property identifier
     this.messageHeaders?.sort((a: IMessageHeader, b: IMessageHeader) => (a[this.predicate] as number) - b[this.predicate]);
   }
 

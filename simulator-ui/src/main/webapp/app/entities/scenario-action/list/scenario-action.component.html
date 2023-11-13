@@ -14,7 +14,7 @@
 
   <app-alert></app-alert>
 
-  <app-filter [filters]="filters"></app-filter>
+  <app-filter [filters]="displayFilters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="scenarioActions?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.notFound">No Scenario Actions found</span>

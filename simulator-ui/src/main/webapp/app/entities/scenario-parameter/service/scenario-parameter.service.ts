@@ -75,13 +75,6 @@ export class ScenarioParameterService {
     return scenarioParameterCollection;
   }
 
-  protected convertDateFromClient<T extends IScenarioParameter | NewScenarioParameter>(scenarioParameter: T): RestOf<T> {
-    return {
-      ...scenarioParameter,
-      lastModifiedDate: scenarioParameter.lastModifiedDate?.toJSON() ?? null,
-    };
-  }
-
   protected convertDateFromServer(restScenarioParameter: RestScenarioParameter): IScenarioParameter {
     return {
       ...restScenarioParameter,

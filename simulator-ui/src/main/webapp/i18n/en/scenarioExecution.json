@@ -9,10 +9,19 @@
       "detail": {
         "title": "Scenario Execution"
       },
+      "filter": {
+        "apply": "Apply Filter",
+        "reset": "Reset Filter",
+        "dateFrom": "From Date",
+        "dateTo": "To Date"
+      },
       "id": "ID",
       "startDate": "Start Date",
       "endDate": "End Date",
       "status": "Status",
+      "statusRunning": "Running",
+      "statusSuccess": "Success",
+      "statusFailed": "Failed",
       "scenarioName": "Scenario Name",
       "errorMessage": "Error Message",
       "scenarioActions": "Scenario Actions",

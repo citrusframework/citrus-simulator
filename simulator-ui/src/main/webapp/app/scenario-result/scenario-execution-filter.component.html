@@ -1,0 +1,55 @@
+<div>
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+    <fieldset>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="name" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name:</label>
+          <input type="text" class="form-control" id="name" placeholder="Filter by name..." formControlName="nameContains" />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="statusIn" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status:</label>
+          <select class="form-select" id="statusIn" formControlName="statusIn">
+            <option value="">*</option>
+            <option value="RUNNING" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusRunning">RUNNING</option>
+            <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusSuccess">SUCCESS</option>
+            <option value="FAILED" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusFailed">FAILED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="fromDate" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.dateFrom"
+            >From Date:</label
+          >
+          <input type="datetime-local" step="1" class="form-control" id="fromDate" formControlName="fromDate" />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="toDate" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.dateTo">To Date:</label>
+          <input type="datetime-local" step="1" class="form-control" id="toDate" formControlName="toDate" />
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="d-flex justify-content-end mt-3">
+      <div class="btn-group">
+        <button [disabled]="!valueChanged" type="submit" class="btn btn-info" data-cy="applyFilterButton">
+          <fa-icon icon="check"></fa-icon>
+          <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.apply">Apply Filter</span>
+        </button>
+        <button
+          [disabled]="filterForm.pristine"
+          type="button"
+          class="btn btn-secondary"
+          (click)="resetFilter()"
+          data-cy="clearFilterButton"
+        >
+          <fa-icon icon="xmark"></fa-icon>
+          <span class="d-none d-md-inline" jhiTranslate="entity.filters.clear">Clear Filter</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
