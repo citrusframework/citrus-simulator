@@ -14,7 +14,7 @@
 
   <app-alert></app-alert>
 
-  <app-filter [filters]="filters"></app-filter>
+  <app-filter [filters]="displayFilters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="messages?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.message.home.notFound">No Messages found</span>
@@ -87,7 +87,7 @@
           <td class="text-end">
             <div class="btn-group">
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/message-header']"
                 [queryParams]="{ 'filter[messageId.in]': message.messageId }"
                 class="btn btn-info btn-sm"
@@ -102,7 +102,7 @@
                 >
               </button>
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/message', message.messageId, 'view']"
                 class="btn btn-info btn-sm"
                 data-cy="entityDetailsButton"

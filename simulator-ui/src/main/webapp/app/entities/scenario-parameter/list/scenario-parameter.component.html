@@ -14,7 +14,7 @@
 
   <app-alert></app-alert>
 
-  <app-filter [filters]="filters"></app-filter>
+  <app-filter [filters]="displayFilters"></app-filter>
 
   <div class="alert alert-warning" id="no-result" *ngIf="scenarioParameters?.length === 0">
     <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.notFound">No Scenario Parameters found</span>
@@ -89,7 +89,7 @@
           <td class="text-end">
             <div class="btn-group">
               <button
-                type="submit"
+                type="button"
                 [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
                 class="btn btn-info btn-sm"
                 data-cy="entityDetailsButton"

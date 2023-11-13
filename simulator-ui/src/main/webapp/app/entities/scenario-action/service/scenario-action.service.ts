@@ -73,14 +73,6 @@ export class ScenarioActionService {
     return scenarioActionCollection;
   }
 
-  protected convertDateFromClient<T extends IScenarioAction | NewScenarioAction>(scenarioAction: T): RestOf<T> {
-    return {
-      ...scenarioAction,
-      startDate: scenarioAction.startDate?.toJSON() ?? null,
-      endDate: scenarioAction.endDate?.toJSON() ?? null,
-    };
-  }
-
   protected convertDateFromServer(restScenarioAction: RestScenarioAction): IScenarioAction {
     return {
       ...restScenarioAction,

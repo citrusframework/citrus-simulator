@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import { EntityArrayResponseType, ScenarioActionService } from '../service/scenario-action.service';
 import { IScenarioAction } from '../scenario-action.model';
@@ -38,11 +39,14 @@ export class ScenarioActionComponent implements OnInit {
 
   predicate = 'actionId';
   ascending = true;
-  filters: IFilterOptions = new FilterOptions();
+
+  displayFilters: IFilterOptions = new FilterOptions();
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  private filters: IFilterOptions = new FilterOptions();
 
   constructor(
     private ngZone: NgZone,
@@ -89,6 +93,7 @@ export class ScenarioActionComponent implements OnInit {
     this.predicate = sort[0];
     this.ascending = sort[1] === ASC;
     this.filters.initializeFromParams(params);
+    this.displayFilters = formatDateTimeFilterOptions(this.filters);
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {

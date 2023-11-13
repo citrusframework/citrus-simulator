@@ -1,3 +1,18 @@
 <div>
-  <app-scenario-execution></app-scenario-execution>
+  <h2 id="page-heading" data-cy="ScenarioExecutionHeading">
+    <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
+
+    <div *ngIf="scenarioExecutionComponent" class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
+        <fa-icon icon="sync" [spin]="scenarioExecutionComponent!.isLoading"></fa-icon>
+        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh list</span>
+      </button>
+    </div>
+  </h2>
+
+  <div class="mb-3">
+    <app-scenario-execution-filter></app-scenario-execution-filter>
+  </div>
+
+  <app-scenario-execution [hideTitle]="true"></app-scenario-execution>
 </div>
