@@ -18,18 +18,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TestResultServiceImplTest {
 
     @Mock
-    private TestResultRepository testResultRepository;
+    private TestResultRepository testResultRepositoryMock;
 
     private TestResultServiceImpl fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new TestResultServiceImpl(testResultRepository);
+        fixture = new TestResultServiceImpl(testResultRepositoryMock);
     }
 
     @Test
@@ -37,7 +38,7 @@ class TestResultServiceImplTest {
         org.citrusframework.TestResult citrusTestResult = org.citrusframework.TestResult.success("TestResult", TestResultServiceImpl.class.getSimpleName());
 
         TestResult testResult = new TestResult(citrusTestResult);
-        doReturn(testResult).when(testResultRepository).save(any(TestResult.class));
+        doReturn(testResult).when(testResultRepositoryMock).save(any(TestResult.class));
 
         TestResult result = fixture.transformAndSave(citrusTestResult);
 
@@ -47,7 +48,7 @@ class TestResultServiceImplTest {
     @Test
     void testSave() {
         TestResult testResult = new TestResult();
-        doReturn(testResult).when(testResultRepository).save(testResult);
+        doReturn(testResult).when(testResultRepositoryMock).save(testResult);
 
         TestResult result = fixture.save(testResult);
 
@@ -58,7 +59,7 @@ class TestResultServiceImplTest {
     void testFindAll() {
         Pageable pageable = mock(Pageable.class);
         Page<TestResult> mockPage = mock(Page.class);
-        doReturn(mockPage).when(testResultRepository).findAll(pageable);
+        doReturn(mockPage).when(testResultRepositoryMock).findAll(pageable);
 
         Page<TestResult> result = fixture.findAll(pageable);
 
@@ -71,7 +72,7 @@ class TestResultServiceImplTest {
 
         TestResult testResult = new TestResult();
         Optional<TestResult> optionalTestResult = Optional.of(testResult);
-        doReturn(optionalTestResult).when(testResultRepository).findById(id);
+        doReturn(optionalTestResult).when(testResultRepositoryMock).findById(id);
 
         Optional<TestResult> maybeTestResult = fixture.findOne(id);
 
@@ -82,9 +83,15 @@ class TestResultServiceImplTest {
     @Test
     void testCountByStatus() {
         TestResultByStatus testResultByStatus = new TestResultByStatus(1L, 1L);
-        doReturn(testResultByStatus).when(testResultRepository).countByStatus();
+        doReturn(testResultByStatus).when(testResultRepositoryMock).countByStatus();
 
         TestResultByStatus result = fixture.countByStatus();
         assertEquals(testResultByStatus, result);
+    }
+
+    @Test
+    void delete() {
+        fixture.deleteAll();
+        verify(testResultRepositoryMock).deleteAll();
     }
 }

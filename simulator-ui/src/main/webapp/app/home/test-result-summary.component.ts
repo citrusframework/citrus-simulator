@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { map } from 'rxjs/operators';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { filter, map } from 'rxjs/operators';
 
 import { STATUS_FAILED, STATUS_SUCCESS } from 'app/entities/scenario-execution/scenario-execution.model';
 import { TestResultsByStatus, TestResultService } from 'app/entities/test-result/service/test-result.service';
 import SharedModule from 'app/shared/shared.module';
+import TestResultDeleteDialogComponent from './delete/test-result-delete-dialog.component';
+import { switchMap } from 'rxjs';
+import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
 
 @Component({
   standalone: true,
@@ -14,6 +19,7 @@ import SharedModule from 'app/shared/shared.module';
   imports: [RouterModule, SharedModule],
 })
 export default class TestResultSummaryComponent implements OnInit {
+  isLoading = false;
   testResults: TestResultsByStatus | null = null;
 
   successfulPercentage = '0';
@@ -22,24 +28,40 @@ export default class TestResultSummaryComponent implements OnInit {
   statusSuccess = STATUS_SUCCESS;
   statusFailed = STATUS_FAILED;
 
-  constructor(private testResultService: TestResultService) {}
+  constructor(
+    private modalService: NgbModal,
+    private testResultService: TestResultService,
+  ) {}
 
   ngOnInit(): void {
     this.load();
   }
 
-  private load(): void {
+  protected load(): void {
+    this.isLoading = true;
     this.testResultService
       .countByStatus()
       .pipe(map(response => response.body ?? { total: 0, successful: 0, failed: 0 }))
-      .subscribe((testResults: TestResultsByStatus) => {
-        this.testResults = testResults;
+      .subscribe({
+        next: (testResults: TestResultsByStatus) => {
+          this.testResults = testResults;
 
-        if (testResults.total > 0) {
-          this.successfulPercentage = this.toFixedDecimalIfNotMatching((testResults.successful / testResults.total) * 100);
-          this.failedPercentage = this.toFixedDecimalIfNotMatching((testResults.failed / testResults.total) * 100);
-        }
+          if (testResults.total > 0) {
+            this.successfulPercentage = this.toFixedDecimalIfNotMatching((testResults.successful / testResults.total) * 100);
+            this.failedPercentage = this.toFixedDecimalIfNotMatching((testResults.failed / testResults.total) * 100);
+          }
+        },
+        complete: () => (this.isLoading = false),
       });
+  }
+  protected reset(): void {
+    const modalRef = this.modalService.open(TestResultDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.pipe(filter(reason => reason === ITEM_DELETED_EVENT)).subscribe({
+      next: () => {
+        this.load();
+      },
+    });
   }
 
   private toFixedDecimalIfNotMatching(percentage: number): string {

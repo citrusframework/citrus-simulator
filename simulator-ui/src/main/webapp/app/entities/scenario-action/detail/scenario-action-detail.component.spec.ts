@@ -27,7 +27,7 @@ describe('ScenarioAction Management Detail Component', () => {
   });
 
   describe('OnInit', () => {
-    it('Should load scenarioAction on init', async () => {
+    it('should load scenarioAction on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', ScenarioActionDetailComponent);
 

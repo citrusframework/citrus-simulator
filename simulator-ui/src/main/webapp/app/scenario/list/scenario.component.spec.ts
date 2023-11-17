@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+import { UserPreferenceService } from 'app/core/config/user-preference.service';
 
 import { ScenarioService } from '../service/scenario.service';
 
@@ -17,10 +17,12 @@ import { ScenarioComponent } from './scenario.component';
 import SpyInstance = jest.SpyInstance;
 
 describe('Scenario Management Component', () => {
-  let comp: ScenarioComponent;
-  let fixture: ComponentFixture<ScenarioComponent>;
   let service: ScenarioService;
   let routerNavigateSpy: SpyInstance<Promise<boolean>>;
+  let userPreferenceService: UserPreferenceService;
+
+  let fixture: ComponentFixture<ScenarioComponent>;
+  let component: ScenarioComponent;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -48,15 +50,23 @@ describe('Scenario Management Component', () => {
             snapshot: { queryParams: {} },
           },
         },
+        {
+          provide: UserPreferenceService,
+          useValue: {
+            getPreferredPageSize: jest.fn(),
+          },
+        },
       ],
     })
       .overrideTemplate(ScenarioComponent, '')
       .compileComponents();
 
     fixture = TestBed.createComponent(ScenarioComponent);
-    comp = fixture.componentInstance;
+    component = fixture.componentInstance;
+
     service = TestBed.inject(ScenarioService);
-    routerNavigateSpy = jest.spyOn(comp.router, 'navigate');
+    routerNavigateSpy = jest.spyOn(component.router, 'navigate');
+    userPreferenceService = TestBed.inject(UserPreferenceService);
 
     const headers = new HttpHeaders();
     jest.spyOn(service, 'query').mockReturnValue(
@@ -69,49 +79,44 @@ describe('Scenario Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
-    // WHEN
-    comp.ngOnInit();
+  it('should call load all on init', () => {
+    const itemsPerPage = 1234;
+    (userPreferenceService.getPreferredPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
 
-    // THEN
-    expect(service.query).toHaveBeenCalled();
-    expect(comp.scenarios?.[0]).toEqual(expect.objectContaining({ name: 'test-scenario' }));
+    component.ngOnInit();
+
+    expect(component.itemsPerPage).toEqual(itemsPerPage);
+    expect(service.query).toHaveBeenCalledWith({ page: 0, size: itemsPerPage, sort: ['id,desc'] });
+    expect(component.scenarios?.[0]).toEqual(expect.objectContaining({ name: 'test-scenario' }));
   });
 
   describe('trackId', () => {
-    it('Should forward to scenarioService', () => {
+    it('should forward to scenarioService', () => {
       const entity = { name: 'test-scenario' };
       jest.spyOn(service, 'getScenarioIdentifier');
-      const name = comp.trackId(0, entity);
+      const name = component.trackId(0, entity);
       expect(service.getScenarioIdentifier).toHaveBeenCalledWith(entity);
       expect(name).toBe(entity.name);
     });
   });
 
   it('should load a page', () => {
-    // WHEN
-    comp.navigateToPage(1);
+    component.navigateToPage(1);
 
-    // THEN
     expect(routerNavigateSpy).toHaveBeenCalled();
   });
 
   it('should calculate the sort attribute for an id', () => {
-    // WHEN
-    comp.ngOnInit();
+    component.ngOnInit();
 
-    // THEN
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['id,desc'] }));
   });
 
   it('should calculate the sort attribute for a non-id attribute', () => {
-    // GIVEN
-    comp.predicate = 'name';
+    component.predicate = 'name';
 
-    // WHEN
-    comp.navigateToWithComponentValues();
+    component.navigateToWithComponentValues();
 
-    // THEN
     expect(routerNavigateSpy).toHaveBeenLastCalledWith(
       expect.anything(),
       expect.objectContaining({
@@ -122,11 +127,13 @@ describe('Scenario Management Component', () => {
     );
   });
 
-  it('should calculate no filter attribute', () => {
-    // WHEN
-    comp.ngOnInit();
+  it('should adapt to page size changes', () => {
+    const itemsPerPage = 1234;
 
-    // THEN
-    expect(service.query).toHaveBeenLastCalledWith({ page: 0, size: ITEMS_PER_PAGE, sort: ['id,desc'] });
+    // @ts-ignore: Access private function for testing
+    component.pageSizeChanged(itemsPerPage);
+
+    expect(component.itemsPerPage).toEqual(itemsPerPage);
+    expect(service.query).toHaveBeenLastCalledWith({ page: 0, size: itemsPerPage, sort: ['id,desc'] });
   });
 });

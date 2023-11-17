@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -81,7 +82,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Optional test parameters
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "testResult")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "testResult", cascade = {CascadeType.REMOVE})
     @JsonIgnoreProperties(value = { "testResult" }, allowSetters = true)
     private final Set<TestParameter> testParameters = new HashSet<>();
 

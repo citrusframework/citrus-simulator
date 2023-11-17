@@ -62,7 +62,7 @@ describe('Message Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     comp.ngOnInit();
 
@@ -72,7 +72,7 @@ describe('Message Management Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to messageService', () => {
+    it('should forward to messageService', () => {
       const entity = { messageId: 123 };
       jest.spyOn(service, 'getMessageIdentifier');
       const messageId = comp.trackId(0, entity);

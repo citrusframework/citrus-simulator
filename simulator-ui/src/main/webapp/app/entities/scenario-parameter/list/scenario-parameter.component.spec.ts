@@ -62,7 +62,7 @@ describe('ScenarioParameter Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     comp.ngOnInit();
 
@@ -72,7 +72,7 @@ describe('ScenarioParameter Management Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to scenarioParameterService', () => {
+    it('should forward to scenarioParameterService', () => {
       const entity = { parameterId: 123 };
       jest.spyOn(service, 'getScenarioParameterIdentifier');
       const parameterId = comp.trackId(0, entity);

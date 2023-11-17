@@ -18,6 +18,7 @@ import { SortDirective, SortByDirective } from 'app/shared/sort';
 import { EntityArrayResponseType, ScenarioService } from '../service/scenario.service';
 import { IScenario } from '../scenario.model';
 import { filter, map } from 'rxjs/operators';
+import { UserPreferenceService } from '../../core/config/user-preference.service';
 
 @Component({
   standalone: true,
@@ -44,20 +45,24 @@ export class ScenarioComponent implements OnInit {
   ascending = true;
 
   itemsPerPage = ITEMS_PER_PAGE;
+  itemsPerPageKey = 'scenario';
+
   totalItems = 0;
   page = 1;
 
   constructor(
-    private alertService: AlertService,
-    private ngZone: NgZone,
+    public router: Router,
     protected scenarioService: ScenarioService,
     protected activatedRoute: ActivatedRoute,
-    public router: Router,
+    private alertService: AlertService,
+    private ngZone: NgZone,
+    private userPreferenceService: UserPreferenceService,
   ) {}
 
   trackId = (_index: number, item: IScenario): string => this.scenarioService.getScenarioIdentifier(item);
 
   ngOnInit(): void {
+    this.itemsPerPage = this.userPreferenceService.getPreferredPageSize(this.itemsPerPageKey);
     this.load();
   }
 
@@ -167,5 +172,10 @@ export class ScenarioComponent implements OnInit {
           });
         },
       });
+  }
+
+  protected pageSizeChanged(itemsPerPage: number): void {
+    this.itemsPerPage = itemsPerPage;
+    this.load();
   }
 }

@@ -72,7 +72,8 @@
       "set": "Following filters are set",
       "clear": "Clear filter",
       "clearAll": "Clear all filters"
-    }
+    },
+    "itemsPerPage": "Items per Page"
   },
   "error": {
     "internalServerError": "Internal server error",

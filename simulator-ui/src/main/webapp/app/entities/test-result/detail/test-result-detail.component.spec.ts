@@ -27,7 +27,7 @@ describe('TestResult Management Detail Component', () => {
   });
 
   describe('OnInit', () => {
-    it('Should load testResult on init', async () => {
+    it('should load testResult on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', TestResultDetailComponent);
 

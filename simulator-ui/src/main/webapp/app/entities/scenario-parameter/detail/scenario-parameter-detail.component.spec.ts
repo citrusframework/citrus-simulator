@@ -27,7 +27,7 @@ describe('ScenarioParameter Management Detail Component', () => {
   });
 
   describe('OnInit', () => {
-    it('Should load scenarioParameter on init', async () => {
+    it('should load scenarioParameter on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', ScenarioParameterDetailComponent);
 

@@ -62,7 +62,7 @@ describe('TestResult Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     comp.ngOnInit();
 
@@ -72,7 +72,7 @@ describe('TestResult Management Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to testResultService', () => {
+    it('should forward to testResultService', () => {
       const entity = { id: 123 };
       jest.spyOn(service, 'getTestResultIdentifier');
       const id = comp.trackId(0, entity);

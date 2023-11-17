@@ -67,4 +67,9 @@ public interface TestResultService {
      * @return the TestResult count.
      */
     TestResultByStatus countByStatus();
+
+    /**
+     * Delete all testResults
+     */
+    void deleteAll();
 }

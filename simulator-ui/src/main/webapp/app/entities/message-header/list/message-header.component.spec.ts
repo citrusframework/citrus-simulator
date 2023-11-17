@@ -64,7 +64,7 @@ describe('MessageHeader Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     component.ngOnInit();
 

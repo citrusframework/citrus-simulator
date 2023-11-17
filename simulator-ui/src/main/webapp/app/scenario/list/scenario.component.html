@@ -3,6 +3,11 @@
     <span jhiTranslate="citrusSimulatorApp.scenario.home.title">Scenarios</span>
 
     <div class="d-flex justify-content-end">
+      <app-select-page-size
+        class="col-md-4 me-3"
+        [key]="itemsPerPageKey"
+        (pageSizeChanged)="pageSizeChanged($event)"
+      ></app-select-page-size>
       <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenario.home.refreshListLabel">Refresh list</span>
