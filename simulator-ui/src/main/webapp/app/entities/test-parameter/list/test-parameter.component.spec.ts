@@ -62,7 +62,7 @@ describe('TestParameter Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     comp.ngOnInit();
 
@@ -72,7 +72,7 @@ describe('TestParameter Management Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to testParameterService', () => {
+    it('should forward to testParameterService', () => {
       const entity = { key: 'key', testResult: { id: 123 } };
       jest.spyOn(service, 'getTestParameterIdentifier');
       const id = comp.trackId(0, entity);

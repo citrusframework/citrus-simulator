@@ -27,7 +27,7 @@ describe('TestParameter Management Detail Component', () => {
   });
 
   describe('OnInit', () => {
-    it('Should load testParameter on init', async () => {
+    it('should load testParameter on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', TestParameterDetailComponent);
 

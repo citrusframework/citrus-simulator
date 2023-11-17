@@ -110,7 +110,7 @@ describe('TestParameter Service', () => {
     });
 
     describe('compareTestParameter', () => {
-      it('Should return true if both entities are null', () => {
+      it('should return true if both entities are null', () => {
         const entity1 = null;
         const entity2 = null;
 
@@ -119,7 +119,7 @@ describe('TestParameter Service', () => {
         expect(compareResult).toEqual(true);
       });
 
-      it('Should return false if one entity is null', () => {
+      it('should return false if one entity is null', () => {
         const entity1 = { key: 'key', testResult: { id: 123 } };
         const entity2 = null;
 
@@ -130,7 +130,7 @@ describe('TestParameter Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('Should return false if primaryKey differs', () => {
+      it('should return false if primaryKey differs', () => {
         const entity1 = { key: 'key', testResult: { id: 123 } };
         const entity2 = { key: 'another key', testResult: { id: 123 } };
         const entity3 = { key: 'key', testResult: { id: 234 } };
@@ -146,7 +146,7 @@ describe('TestParameter Service', () => {
         expect(compareResult4).toEqual(false);
       });
 
-      it('Should return true if primaryKey matches', () => {
+      it('should return true if primaryKey matches', () => {
         const entity1 = { key: 'key', testResult: { id: 123 } };
         const entity2 = { key: 'key', testResult: { id: 123 } };
 

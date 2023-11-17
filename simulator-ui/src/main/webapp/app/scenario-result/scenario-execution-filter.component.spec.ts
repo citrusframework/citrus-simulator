@@ -1,10 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
+
+import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
+import { STATUS_SUCCESS } from 'app/entities/scenario-execution/scenario-execution.model';
 
 import ScenarioExecutionFilterComponent from './scenario-execution-filter.component';
-import { STATUS_SUCCESS } from '../entities/scenario-execution/scenario-execution.model';
 
 const queryParamStartDate = new Date(2023, 10, 15).toISOString();
 const queryParamEndDate = new Date(2023, 10, 16).toISOString();
@@ -43,58 +45,122 @@ describe('ScenarioExecution Filter Component', () => {
     component = fixture.componentInstance;
   });
 
-  it('should initialize form values from activated route on ngOnInit', () => {
-    const nameContains = 'testName';
+  describe('ngOnInit', () => {
+    it('should initialize form values from activated route', () => {
+      const nameContains = 'nameContains';
 
-    // @ts-ignore: Access read-only property for testing
-    activatedRoute.queryParamMap = of(
-      convertToParamMap({
-        'filter[scenarioName.contains]': nameContains,
-        'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-        'filter[status.in]': STATUS_SUCCESS.id,
-        'filter[endDate.lessThanOrEqual]': queryParamEndDate,
-      }),
-    );
+      // @ts-ignore: Access read-only property for testing
+      activatedRoute.queryParamMap = of(
+        convertToParamMap({
+          'filter[scenarioName.contains]': nameContains,
+          'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
+          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[endDate.lessThanOrEqual]': queryParamEndDate,
+        }),
+      );
 
-    component.ngOnInit();
+      component.ngOnInit();
 
-    expect(component.filterForm.controls.nameContains.value).toEqual(nameContains);
-    expect(component.filterForm.controls.fromDate.value).toEqual(filterFormFromDate);
-    expect(component.filterForm.controls.toDate.value).toEqual(filterFormToDate);
-    expect(component.filterForm.controls.statusIn.value).toEqual(STATUS_SUCCESS.name);
+      expect(component.filterForm.getRawValue()).toEqual({
+        fromDate: filterFormFromDate,
+        nameContains,
+        statusIn: STATUS_SUCCESS.name,
+        toDate: filterFormToDate,
+      });
 
-    expect(component.filterForm.dirty).toBeTruthy();
-    expect(component.valueChanged).toBeFalsy();
+      expect(component.filterForm.dirty).toBeTruthy();
+    });
+
+    it('should subscribe to form value changes', fakeAsync(() => {
+      const filterFormValueChangesSubject = new Subject<{
+        nameContains: string;
+        statusIn: string;
+        fromDate: string;
+        toDate: string;
+      }>();
+      jest.spyOn(filterFormValueChangesSubject, 'subscribe');
+      // @ts-ignore: Override read-only property for testing
+      component.filterForm.valueChanges = filterFormValueChangesSubject;
+
+      component.ngOnInit();
+
+      // VERIFY that the subscription has been made
+
+      // @ts-ignore: Access private property for testing
+      expect(component.valueChanged).toBeFalsy();
+      // @ts-ignore: Access private property for testing
+      expect(component.filterFormValueChanges).toBeTruthy();
+      expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
+
+      expect(component.filterForm.getRawValue()).toEqual({ fromDate: null, nameContains: null, statusIn: null, toDate: null });
+
+      // TRIGGER subscription and expect reload of data
+
+      const nameContains = 'nameContains';
+      filterFormValueChangesSubject.next({
+        nameContains,
+        statusIn: STATUS_SUCCESS.name,
+        fromDate: filterFormFromDate,
+        toDate: filterFormToDate,
+      });
+
+      tick(DEBOUNCE_TIME_MILLIS);
+
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        queryParams: {
+          'filter[scenarioName.contains]': nameContains,
+          'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
+          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[endDate.lessThanOrEqual]': queryParamEndDate,
+        },
+      });
+    }));
   });
 
-  it('should navigate with correct query parameters on applyFilter', () => {
-    const nameContains = 'testName';
-
-    component.valueChanged = true;
-    component.filterForm.setValue({
-      nameContains,
-      fromDate: filterFormFromDate,
-      toDate: filterFormToDate,
-      statusIn: STATUS_SUCCESS.name,
+  describe('ngOnDestroy', () => {
+    it('should do noting if no subscription exists', () => {
+      component.ngOnDestroy();
     });
 
-    component.applyFilter();
+    it('should unsubscribe from previous filterFormValueChanges', () => {
+      const filterFormValueChanges = {
+        unsubscribe: jest.fn(),
+      };
+      // @ts-ignore: access private property
+      component.filterFormValueChanges = filterFormValueChanges;
 
-    expect(router.navigate).toHaveBeenCalledWith([], {
-      queryParams: {
-        'filter[scenarioName.contains]': nameContains,
-        'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-        'filter[status.in]': STATUS_SUCCESS.id,
-        'filter[endDate.lessThanOrEqual]': queryParamEndDate,
-      },
+      component.ngOnDestroy();
+
+      expect(filterFormValueChanges.unsubscribe).toHaveBeenCalled();
     });
-    expect(component.valueChanged).toBeFalsy();
+  });
+  describe('applyFilter', () => {
+    it('should navigate with correct query parameters', () => {
+      const nameContains = 'nameContains';
+
+      component.filterForm.setValue({
+        nameContains,
+        fromDate: filterFormFromDate,
+        toDate: filterFormToDate,
+        statusIn: STATUS_SUCCESS.name,
+      });
+
+      component.applyFilter();
+
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        queryParams: {
+          'filter[scenarioName.contains]': nameContains,
+          'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
+          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[endDate.lessThanOrEqual]': queryParamEndDate,
+        },
+      });
+    });
   });
 
   describe('resetFilter', () => {
     it('should reset form', () => {
       // Assume filter is dirty
-      component.valueChanged = true;
       component.filterForm.markAsDirty();
 
       jest.spyOn(component.filterForm, 'reset');
@@ -105,19 +171,6 @@ describe('ScenarioExecution Filter Component', () => {
       expect(component.filterForm.reset).toHaveBeenCalled();
       expect(component.filterForm.markAsPristine).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalled();
-      expect(component.valueChanged).toBeFalsy();
-    });
-
-    it('should unsubscribe from previous filterFormValueChanges', () => {
-      const filterFormValueChanges = {
-        unsubscribe: jest.fn(),
-      };
-      // @ts-ignore: access private property
-      component.filterFormValueChanges = filterFormValueChanges;
-
-      component.resetFilter();
-
-      expect(filterFormValueChanges.unsubscribe).toHaveBeenCalled();
     });
   });
 });

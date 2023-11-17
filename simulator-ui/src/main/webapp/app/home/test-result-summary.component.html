@@ -2,6 +2,19 @@
   <h3 class="mb-3">
     <fa-icon icon="chart-pie"></fa-icon>
     <span jhiTranslate="home.simulations.title"> Test Results </span>
+
+    <div class="d-flex justify-content-end">
+      <div class="btn-group">
+        <button class="btn btn-info" (click)="load()" [disabled]="isLoading">
+          <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+          <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh list</span>
+        </button>
+        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0">
+          <fa-icon icon="trash-alt"></fa-icon>
+          <span jhiTranslate="citrusSimulatorApp.testParameter.action.reset">Reset</span>
+        </button>
+      </div>
+    </div>
   </h3>
 
   <div class="row" *ngIf="testResults?.total !== 0; else infoNoSimulationsRanYet">

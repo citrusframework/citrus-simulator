@@ -53,6 +53,10 @@ export class TestResultService {
     return this.http.get<TestResultsByStatus>(`${this.resourceUrl}/count-by-status`, { observe: 'response' });
   }
 
+  deleteAll(): Observable<HttpResponse<void>> {
+    return this.http.delete<void>(this.resourceUrl, { observe: 'response' });
+  }
+
   getTestResultIdentifier(testResult: Pick<ITestResult, 'id'>): number {
     return testResult.id;
   }

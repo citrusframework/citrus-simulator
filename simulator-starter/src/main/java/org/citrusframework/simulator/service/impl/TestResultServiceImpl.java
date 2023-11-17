@@ -73,7 +73,13 @@ public class TestResultServiceImpl implements TestResultService {
     @Override
     @Transactional(readOnly = true)
     public TestResultByStatus countByStatus() {
-        logger.debug("count total by status");
+        logger.debug("Request to count TestResults by status");
         return testResultRepository.countByStatus();
+    }
+
+    @Override
+    public void deleteAll() {
+        logger.debug("Request to delete all TestResults");
+        testResultRepository.deleteAll();
     }
 }

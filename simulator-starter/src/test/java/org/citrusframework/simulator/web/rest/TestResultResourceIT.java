@@ -17,9 +17,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.citrusframework.simulator.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -726,6 +729,32 @@ class TestResultResourceIT {
     @Test
     @Transactional
     void getAllTestResultsByTestParameterIsEqualToSomething() throws Exception {
+        TestParameter testParameter = getOrCreateTestParameterWithTestResult();
+
+        String testParameterKey = testParameter.getKey();
+        // Get all the testResultList where testParameter equals to testParameterKey
+        defaultTestResultShouldBeFound("testParameterKey.equals=" + testParameterKey);
+
+        // Get all the testResultList where testParameter equals to (testParameterKey + 1)
+        defaultTestResultShouldNotBeFound("testParameterKey.equals=" + (testParameterKey + 1));
+    }
+
+    @Test
+    @Transactional
+    void deleteAllTestResults() throws Exception {
+        TestParameter testParameter = getOrCreateTestParameterWithTestResult();
+
+        int databaseSizeBeforeDelete = testResultRepository.findAll().size();
+
+        mockMvc
+            .perform(delete(ENTITY_API_URL).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
+
+        List<TestResult> eventList = testResultRepository.findAll();
+        assertThat(eventList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    private TestParameter getOrCreateTestParameterWithTestResult() {
         TestParameter testParameter;
         if (TestUtil.findAll(entityManager, TestParameter.class).isEmpty()) {
             testResultRepository.saveAndFlush(testResult);
@@ -737,12 +766,7 @@ class TestResultResourceIT {
         entityManager.flush();
         testResult.addTestParameter(testParameter);
         testResultRepository.saveAndFlush(testResult);
-        String testParameterKey = testParameter.getKey();
-        // Get all the testResultList where testParameter equals to testParameterKey
-        defaultTestResultShouldBeFound("testParameterKey.equals=" + testParameterKey);
-
-        // Get all the testResultList where testParameter equals to (testParameterKey + 1)
-        defaultTestResultShouldNotBeFound("testParameterKey.equals=" + (testParameterKey + 1));
+        return testParameter;
     }
 
     /**

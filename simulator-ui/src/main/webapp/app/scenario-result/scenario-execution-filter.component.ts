@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
+import { debounceTime, Subscription } from 'rxjs';
+
 import dayjs from 'dayjs/esm';
 
+import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
 import {
   IScenarioExecutionStatus,
   scenarioExecutionStatusFromId,
@@ -12,7 +15,6 @@ import {
 import SharedModule from 'app/shared/shared.module';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { FilterOptions, IFilterOptions } from 'app/shared/filter';
-import { first, Subscription } from 'rxjs';
 
 type ScenarioExecutionFilter = {
   nameContains: string | undefined;
@@ -27,14 +29,13 @@ type ScenarioExecutionFilter = {
   templateUrl: './scenario-execution-filter.component.html',
   imports: [FormsModule, ReactiveFormsModule, SharedModule],
 })
-export default class ScenarioExecutionFilterComponent implements OnInit {
+export default class ScenarioExecutionFilterComponent implements OnInit, OnDestroy {
   filterForm: FormGroup = new FormGroup({
     nameContains: new FormControl(),
     fromDate: new FormControl(),
     toDate: new FormControl(),
     statusIn: new FormControl(),
   });
-  valueChanged = false;
   private filterFormValueChanges: Subscription | null = null;
 
   constructor(
@@ -44,11 +45,14 @@ export default class ScenarioExecutionFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(params => this.initializeFilterOptionsFromActivatedRoute(params));
-    this.markFilterFormAsUnchanged();
+    this.automaticApplyOnFormValueChanges();
   }
 
-  applyFilter(): void {
-    const formValue = this.filterForm.value;
+  ngOnDestroy(): void {
+    this.filterFormValueChanges?.unsubscribe();
+  }
+
+  applyFilter(formValue = this.filterForm.value): void {
     this.router
       .navigate([], {
         queryParams: {
@@ -61,14 +65,12 @@ export default class ScenarioExecutionFilterComponent implements OnInit {
         },
       })
       .catch(() => location.reload());
-    this.markFilterFormAsUnchanged();
   }
 
   resetFilter(): void {
     this.filterForm.reset();
     this.filterForm.markAsPristine();
     this.applyFilter();
-    this.markFilterFormAsUnchanged();
   }
 
   private initializeFilterOptionsFromActivatedRoute(params: ParamMap): void {
@@ -94,8 +96,13 @@ export default class ScenarioExecutionFilterComponent implements OnInit {
     });
     if (filters.filterOptions.length > 0) {
       this.filterForm.markAsDirty();
-      this.markFilterFormAsUnchanged();
     }
+  }
+
+  private automaticApplyOnFormValueChanges(): void {
+    this.filterFormValueChanges = this.filterForm.valueChanges.pipe(debounceTime(DEBOUNCE_TIME_MILLIS)).subscribe({
+      next: values => this.applyFilter(values),
+    });
   }
 
   private getFilterQueryParameter({ nameContains, fromDate, toDate, statusIn }: ScenarioExecutionFilter): {
@@ -107,14 +114,5 @@ export default class ScenarioExecutionFilterComponent implements OnInit {
       'filter[endDate.lessThanOrEqual]': toDate ? toDate.toJSON() : undefined,
       'filter[status.in]': statusIn?.id ?? undefined,
     };
-  }
-
-  private markFilterFormAsUnchanged(): void {
-    if (this.filterFormValueChanges) {
-      this.filterFormValueChanges.unsubscribe();
-    }
-
-    this.valueChanged = false;
-    this.filterFormValueChanges = this.filterForm.valueChanges.pipe(first()).subscribe({ next: () => (this.valueChanged = true) });
   }
 }

@@ -27,7 +27,7 @@ describe('MessageHeader Management Detail Component', () => {
   });
 
   describe('OnInit', () => {
-    it('Should load messageHeader on init', async () => {
+    it('should load messageHeader on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', MessageHeaderDetailComponent);
 

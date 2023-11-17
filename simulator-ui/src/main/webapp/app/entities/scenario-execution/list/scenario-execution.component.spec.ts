@@ -62,7 +62,7 @@ describe('ScenarioExecution Management Component', () => {
     );
   });
 
-  it('Should call load all on init', () => {
+  it('should call load all on init', () => {
     // WHEN
     comp.ngOnInit();
 
@@ -72,7 +72,7 @@ describe('ScenarioExecution Management Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to scenarioExecutionService', () => {
+    it('should forward to scenarioExecutionService', () => {
       const entity = { executionId: 123 };
       jest.spyOn(service, 'getScenarioExecutionIdentifier');
       const executionId = comp.trackId(0, entity);

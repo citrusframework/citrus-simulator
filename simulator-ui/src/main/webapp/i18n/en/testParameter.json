@@ -1,6 +1,10 @@
 {
   "citrusSimulatorApp": {
     "testParameter": {
+      "action": {
+        "reset": "Reset",
+        "confirmDeleteAll": "Do you really want to permanently delete all Test Results?"
+      },
       "home": {
         "title": "Test Parameters",
         "refreshListLabel": "Refresh list",

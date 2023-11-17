@@ -10,7 +10,6 @@
         "title": "Scenario Execution"
       },
       "filter": {
-        "apply": "Apply Filter",
         "reset": "Reset Filter",
         "dateFrom": "From Date",
         "dateTo": "To Date"

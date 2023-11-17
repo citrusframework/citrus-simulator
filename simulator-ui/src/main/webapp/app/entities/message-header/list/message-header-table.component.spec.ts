@@ -63,7 +63,7 @@ describe('MessageHeader Table Component', () => {
   });
 
   describe('trackId', () => {
-    it('Should forward to messageHeaderService', () => {
+    it('should forward to messageHeaderService', () => {
       const entity = { headerId: 123 };
       jest.spyOn(service, 'getMessageHeaderIdentifier');
       const headerId = component.trackId(0, entity);

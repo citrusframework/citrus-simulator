@@ -35,10 +35,6 @@
 
     <div class="d-flex justify-content-end mt-3">
       <div class="btn-group">
-        <button [disabled]="!valueChanged" type="submit" class="btn btn-info" data-cy="applyFilterButton">
-          <fa-icon icon="check"></fa-icon>
-          <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.apply">Apply Filter</span>
-        </button>
         <button
           [disabled]="filterForm.pristine"
           type="button"
