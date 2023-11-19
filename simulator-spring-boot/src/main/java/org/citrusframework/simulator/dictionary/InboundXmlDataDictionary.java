@@ -5,8 +5,6 @@ import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.variable.dictionary.xml.XpathMappingDataDictionary;
 import org.citrusframework.xml.xpath.XPathUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -18,14 +16,10 @@ import javax.xml.xpath.XPathConstants;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
-
 /**
  * @author Christoph Deppisch
  */
 public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
-
-    private static final Logger logger = LoggerFactory.getLogger(InboundXmlDataDictionary.class);
 
     /**
      * Default constructor setting default mappings and mappings file.
@@ -42,7 +36,7 @@ public class InboundXmlDataDictionary extends XpathMappingDataDictionary {
 
     @Override
     public void initialize() {
-        loadXMLMappingFile(logger, mappingFile, mappings);
+        super.initialize();
 
         mappings.put("//*[string-length(normalize-space(text())) > 0]", "@ignore@");
         mappings.put("//@*", "@ignore@");
