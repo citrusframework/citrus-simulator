@@ -23,7 +23,7 @@
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 
     <lombok.version>1.18.20</lombok.version>
-    <citrus.version>4.0.0</citrus.version>
+    <citrus.version>4.0.2</citrus.version>
     <spring-boot.version>3.1.5</spring-boot.version>
     <spring.version>6.0.13</spring.version>
     <spring.ws.version>4.0.7</spring.ws.version>

@@ -4,21 +4,15 @@ import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.variable.dictionary.xml.XpathMappingDataDictionary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.w3c.dom.Node;
 
-import static org.citrusframework.simulator.dictionary.XmlUtils.loadXMLMappingFile;
-
 /**
  * @author Christoph Deppisch
  */
 public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
-
-    private static final Logger logger = LoggerFactory.getLogger(OutboundXmlDataDictionary.class);
 
     /**
      * Default constructor setting default mappings and mappings file.
@@ -29,11 +23,6 @@ public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
         if (outboundMappingFile.exists()) {
             mappingFile = new CitrusResourceWrapper(outboundMappingFile);
         }
-    }
-
-    @Override
-    public void initialize() {
-        loadXMLMappingFile(logger, mappingFile, mappings);
     }
 
     @Override
