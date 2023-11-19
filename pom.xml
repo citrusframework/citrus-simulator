@@ -29,7 +29,7 @@
     <spring.ws.version>4.0.7</spring.ws.version>
     <testng.version>7.8.0</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
-    <xerces.version>2.12.1</xerces.version>
+    <xerces.version>2.12.2</xerces.version>
 
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.1.2 -->
     <log4j2.version>2.20.0</log4j2.version>
