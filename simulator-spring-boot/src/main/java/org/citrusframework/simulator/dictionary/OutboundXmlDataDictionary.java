@@ -27,12 +27,10 @@ public class OutboundXmlDataDictionary extends XpathMappingDataDictionary {
 
     @Override
     public <T> T translate(Node node, T value, TestContext context) {
-        if (value instanceof String) {
-            String toTranslate;
+        if (value instanceof String stringValue) {
+            String toTranslate = stringValue;
             if (!mappings.isEmpty()) {
                 toTranslate = (String) super.translate(node, value, context);
-            } else {
-                toTranslate = (String) value;
             }
 
             if (toTranslate.equals(value)) {

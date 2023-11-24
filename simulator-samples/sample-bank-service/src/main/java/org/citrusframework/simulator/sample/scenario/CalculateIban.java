@@ -62,24 +62,19 @@ public class CalculateIban extends AbstractSimulatorScenario {
 
         scenario.run(calculateIban());
 
-        scenario.$(scenario.http()
-                .send()
-                    .response(HttpStatus.OK)
-                    .message()
-                    .body(JSON_RESPONSE.placeholder())
-                    .contentType(MediaType.APPLICATION_JSON_VALUE));
+        scenario.$(
+            scenario.http()
+                .sendOkJson(JSON_RESPONSE.placeholder())
+        );
     }
 
     private TestAction calculateIban() {
-        return new AbstractTestAction() {
-            @Override
-            public void doExecute(TestContext context) {
-                final String queryParams = context.getVariable(QUERY_PARAMS.name(), String.class);
-                final String sortCode = queryParameterService.getSortCode(queryParams);
-                final String bankAccountNumber = queryParameterService.getBankAccountNumber(queryParams);
-                final String jsonResponse = bankService.calculate(sortCode, bankAccountNumber).asJson();
-                context.setVariable(JSON_RESPONSE.name(), jsonResponse);
-            }
+        return (TestContext context) -> {
+            final String queryParams = context.getVariable(QUERY_PARAMS.name(), String.class);
+            final String sortCode = queryParameterService.getSortCode(queryParams);
+            final String bankAccountNumber = queryParameterService.getBankAccountNumber(queryParams);
+            final String jsonResponse = bankService.calculate(sortCode, bankAccountNumber).asJson();
+            context.setVariable(JSON_RESPONSE.name(), jsonResponse);
         };
     }
 }
