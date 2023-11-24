@@ -61,12 +61,10 @@ public class ValidateIban extends AbstractSimulatorScenario {
 
         scenario.run(validateIban());
 
-        scenario.$(scenario.http()
-                .send()
-                    .response(HttpStatus.OK)
-                    .message()
-                    .body(JSON_RESPONSE.placeholder())
-                    .contentType(MediaType.APPLICATION_JSON_VALUE));
+        scenario.$(
+            scenario.http()
+                .sendOkJson(JSON_RESPONSE.placeholder())
+        );
     }
 
     private TestAction validateIban() {
