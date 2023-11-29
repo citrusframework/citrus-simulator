@@ -34,7 +34,7 @@
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.1.2 -->
     <log4j2.version>2.20.0</log4j2.version>
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.1.2 -->
-    <logback.classic.version>1.4.11</logback.classic.version>
+    <logback.classic.version>1.4.12</logback.classic.version>
 
     <node.version>v18.18.0</node.version>
     <npm.version>9.8.1</npm.version>
