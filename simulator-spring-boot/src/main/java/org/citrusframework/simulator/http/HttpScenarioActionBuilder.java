@@ -48,8 +48,7 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      */
     public HttpMessageBuilderSupport sendOkJson(String json) {
         return server(scenarioEndpoint)
-            .send()
-            .response(HttpStatus.OK)
+            .respond(HttpStatus.OK)
             .message()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(json);
@@ -60,17 +59,10 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * @return
      */
     public HttpMessageBuilderSupport sendOkJson(Object jsonObject) {
-        HttpMessageBuilderSupport httpMessageBuilderSupport = server(scenarioEndpoint).send()
-            .response(HttpStatus.OK)
-            .message()
-            .contentType(MediaType.APPLICATION_JSON_VALUE);
-
         try {
-            httpMessageBuilderSupport.body(OBJECT_MAPPER.writeValueAsString(jsonObject));
+            return sendOkJson(OBJECT_MAPPER.writeValueAsString(jsonObject));
         } catch (JsonProcessingException e) {
             throw new CitrusRuntimeException(e);
         }
-
-        return httpMessageBuilderSupport;
     }
 }
