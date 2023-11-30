@@ -16,6 +16,9 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import static org.citrusframework.simulator.scenario.TestCaseUtils.getContainedEntityManagerOrDefault;
+
+import jakarta.persistence.EntityManager;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.message.Message;
@@ -38,9 +41,11 @@ public class EndpointMessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(EndpointMessageHandler.class);
 
+    private final EntityManager defaultEntityManager;
     private final MessageService messageService;
 
-    public EndpointMessageHandler(MessageService messageService) {
+    public EndpointMessageHandler(EntityManager entityManager, MessageService messageService) {
+        this.defaultEntityManager = entityManager;
         this.messageService = messageService;
     }
 
@@ -62,7 +67,8 @@ public class EndpointMessageHandler {
                 direction,
                 message.getPayload(String.class),
                 citrusMessageId.get(),
-                message.getHeaders()
+                message.getHeaders(),
+                getContainedEntityManagerOrDefault(context.getVariables(), defaultEntityManager)
             );
         }
     }

@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
 import org.citrusframework.TestCase;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
@@ -68,9 +69,10 @@ public interface ScenarioExecutionService {
      *
      * @param scenarioName       the name of the scenario.
      * @param scenarioParameters the scenario's start parameters.
+     * @param entityManager      an entity manager with an open transaction used to persist the new {@link ScenarioExecution}.
      * @return the new entity.
      */
-    ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters);
+    ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters, EntityManager entityManager);
 
     /**
      * Mark a {@link ScenarioExecution} as completed successfully.

@@ -1,5 +1,6 @@
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -86,6 +87,9 @@ class MessageServiceImplTest {
     @Nested
     class AttachMessageToScenarioExecutionAndSave {
 
+        @Mock
+        private EntityManager entityManagerMock;
+
         @Test
         void persistsMessageInCorrelationWithScenarioExecution() {
             Long scenarioExecutionId = 1234L;
@@ -94,7 +98,7 @@ class MessageServiceImplTest {
 
             doReturn(Collections.emptyList())
                 .when(messageRepositoryMock)
-                .findAllForScenarioExecution(scenarioExecutionId, citrusMessageId, direction);
+                .findAllForScenarioExecution(scenarioExecutionId, direction, citrusMessageId, entityManagerMock);
 
             Long messageId = 1234L;
             AtomicReference<Message> newMessage = new AtomicReference<>(null);
@@ -105,20 +109,19 @@ class MessageServiceImplTest {
                 ReflectionTestUtils.setField(message, "messageId", messageId, Long.class);
                 return message;
             })
-                .when(messageRepositoryMock)
-                .save(any(Message.class));
+                .when(entityManagerMock)
+                .persist(any(Message.class));
 
             ScenarioExecution scenarioExecutionSpy = spy(new ScenarioExecution());
-            doReturn(Optional.of(scenarioExecutionSpy))
-                .when(scenarioExecutionServiceMock)
-                .findOneLazy(scenarioExecutionId);
+            doReturn(scenarioExecutionSpy)
+                .when(entityManagerMock)
+                .find(ScenarioExecution.class, scenarioExecutionId);
 
-            Message result = fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, Collections.emptyMap());
+            Message result = fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, Collections.emptyMap(), entityManagerMock);
 
             assertEquals(messageId, result.getMessageId());
 
             verify(scenarioExecutionSpy).addScenarioMessage(newMessage.get());
-            verify(scenarioExecutionServiceMock).save(scenarioExecutionSpy);
         }
 
         @Test
@@ -129,19 +132,20 @@ class MessageServiceImplTest {
 
             doReturn(Collections.emptyList())
                 .when(messageRepositoryMock)
-                .findAllForScenarioExecution(scenarioExecutionId, citrusMessageId, direction);
-            doAnswer(returnsFirstArg()).when(messageRepositoryMock).save(any(Message.class));
+                .findAllForScenarioExecution(scenarioExecutionId, direction, citrusMessageId, entityManagerMock);
 
             // Explicit declaration of invocation, although this is not strictly necessary
-            doReturn(Optional.empty())
-                .when(scenarioExecutionServiceMock)
-                .findOneLazy(scenarioExecutionId);
+            doReturn(null)
+                .when(entityManagerMock)
+                .find(ScenarioExecution.class, scenarioExecutionId);
 
             Map<String, Object> headers = Collections.emptyMap();
             CitrusRuntimeException exception = assertThrows(
                 CitrusRuntimeException.class,
-                () -> fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, headers)
+                () -> fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, headers, entityManagerMock)
             );
+
+            verify(entityManagerMock).persist(any(Message.class));
 
             assertEquals(
                 String.format(
@@ -160,9 +164,9 @@ class MessageServiceImplTest {
             Message existingMessage = new Message();
             doReturn(List.of(existingMessage))
                 .when(messageRepositoryMock)
-                .findAllForScenarioExecution(scenarioExecutionId, citrusMessageId, direction);
+                .findAllForScenarioExecution(scenarioExecutionId, direction, citrusMessageId, entityManagerMock);
 
-            Message result = fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, Collections.emptyMap());
+            Message result = fixture.attachMessageToScenarioExecutionAndSave(scenarioExecutionId, direction, "payload", citrusMessageId, Collections.emptyMap(), entityManagerMock);
             assertEquals(existingMessage, result);
         }
     }

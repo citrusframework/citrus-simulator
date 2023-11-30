@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,5 +65,5 @@ public interface MessageService {
      * @param headers             the message headers
      * @return the already or newly persisted message
      */
-    Message attachMessageToScenarioExecutionAndSave(Long scenarioExecutionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers);
+    Message attachMessageToScenarioExecutionAndSave(Long scenarioExecutionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers, EntityManager entityManager);
 }

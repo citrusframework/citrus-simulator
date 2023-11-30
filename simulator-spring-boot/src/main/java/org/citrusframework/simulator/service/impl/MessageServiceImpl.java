@@ -16,8 +16,10 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.citrusframework.simulator.service.MessageService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
@@ -36,7 +38,6 @@ import java.util.Optional;
  * Service Implementation for managing {@link Message§}.
  */
 @Service
-@Transactional
 public class MessageServiceImpl implements MessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
@@ -50,6 +51,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
     public Message save(Message message) {
         logger.debug("Request to save Message : {}", message);
         return messageRepository.save(message);
@@ -70,32 +72,31 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message attachMessageToScenarioExecutionAndSave(Long scenarioExecutionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers) {
+    public Message attachMessageToScenarioExecutionAndSave(Long scenarioExecutionId, Message.Direction direction, String payload, String citrusMessageId, Map<String, Object> headers, EntityManager entityManager) {
         logger.debug("Request to save {} Message with citrusMessageId '{}' in correlation with ScenarioExecution : {}", direction, citrusMessageId, scenarioExecutionId);
 
-        List<Message> messages = messageRepository.findAllForScenarioExecution(scenarioExecutionId, citrusMessageId, direction);
+        List<Message> messages = messageRepository.findAllForScenarioExecution(scenarioExecutionId, direction, citrusMessageId, entityManager);
         if (!messages.isEmpty()) {
             logger.trace("Message is already persisted and attached to execution scenario");
             return messages.get(0);
         }
 
-        Message message = messageRepository.save(
-            Message.builder()
+        Message message = Message.builder()
                 .direction(direction)
                 .payload(payload)
                 .citrusMessageId(citrusMessageId)
                 .headers(headers)
-                .build()
-        );
+                .build();
+        entityManager.persist(message);
 
-        scenarioExecutionService.save(
-            scenarioExecutionService.findOneLazy(scenarioExecutionId)
-                .map(scenarioExecution -> {
-                    scenarioExecution.addScenarioMessage(message);
-                    return scenarioExecution;
-                })
-                .orElseThrow(() -> new CitrusRuntimeException(String.format("Error while attaching Message to ScenarioExecution %s: Did not find corresponding ScenarioExecution!", scenarioExecutionId)))
-        );
+        Optional.ofNullable(entityManager.find(ScenarioExecution.class, scenarioExecutionId))
+            .orElseThrow(() -> new CitrusRuntimeException(
+                String.format(
+                    "Error while attaching Message to ScenarioExecution %s: Did not find corresponding ScenarioExecution!",
+                    scenarioExecutionId
+                )
+            ))
+            .addScenarioMessage(message);
 
         return message;
     }

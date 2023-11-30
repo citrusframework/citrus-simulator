@@ -1,5 +1,9 @@
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import org.apache.commons.lang3.tuple.Triple;
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusContext;
 import org.citrusframework.TestCase;
@@ -13,28 +17,35 @@ import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
+import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultScenarioExecutorServiceImplTest {
@@ -47,6 +58,9 @@ class DefaultScenarioExecutorServiceImplTest {
 
     @Mock
     private Citrus citrusMock;
+
+    @Mock
+    private EntityManagerFactory entityManagerFactoryMock;
 
     @Mock
     private ScenarioExecutionService scenarioExecutionServiceMock;
@@ -75,70 +89,186 @@ class DefaultScenarioExecutorServiceImplTest {
     public void beforeEachSetup() {
         doReturn(1).when(propertiesMock).getExecutorThreads();
 
-        fixture = new DefaultScenarioExecutorServiceImpl(applicationContextMock, citrusMock, scenarioExecutionServiceMock, propertiesMock);
-        ReflectionTestUtils.setField(fixture, "executorService", executorServiceMock, ExecutorService.class);
+        fixture = new DefaultScenarioExecutorServiceImpl(applicationContextMock, citrusMock, entityManagerFactoryMock, scenarioExecutionServiceMock, propertiesMock);
+        setField(fixture, "executorService", executorServiceMock, ExecutorService.class);
 
         scenarioEndpointMock = mock(ScenarioEndpoint.class);
         customScenarioExecuted = new AtomicBoolean(false);
     }
 
-    @Test
-    void runSimulatorScenarioByName() {
-        SimulatorScenario simulatorScenarioMock = mock(SimulatorScenario.class);
-        doReturn(simulatorScenarioMock).when(applicationContextMock).getBean(scenarioName, SimulatorScenario.class);
+    @Nested
+    class RunScenario {
 
-        Long executionId = mockScenarioExecutionCreation();
+        static Stream<Long> withPessimisticLock() {
+            return Stream.of(
+                0L,
+                1L
+            );
+        }
 
-        // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it
-        Long result = fixture.run(scenarioName, parameters);
-        assertEquals(executionId, result);
+        @Nested
+        class ByName {
 
-        ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(executorServiceMock).submit(scenarioRunnableArgumentCaptor.capture());
+            static Stream<Long> withPessimisticLock() {
+                return RunScenario.withPessimisticLock();
+            }
 
-        // Now, we need more mocks!
-        mockCitrusTestContext();
+            @Test
+            void withOptimisticLock() {
+                preparePessimisticLockTimeout(-1L);
 
-        // This invokes the scenario execution with the captured runnable
-        scenarioRunnableArgumentCaptor.getValue().run();
+                Triple<SimulatorScenario, EntityManager, EntityTransaction> result = submitSimulatorScenarioByName();
 
-        verifyNoInteractions(simulatorScenarioMock);
-    }
+                verify(result.getMiddle(), never()).flush();
+                verify(result.getMiddle(), never()).lock(any(ScenarioExecution.class), eq(PESSIMISTIC_WRITE));
 
-    @Test
-    void runScenarioDirectly() {
-        Long executionId = mockScenarioExecutionCreation();
+                runSimulatorScenario(result);
+            }
 
-        SimulatorScenario simulatorScenario = spy(new CustomSimulatorScenario());
+            @MethodSource
+            @ParameterizedTest
+            void withPessimisticLock(Long pessimisticLockTimeout) {
+                preparePessimisticLockTimeout(pessimisticLockTimeout);
 
-        // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it
-        Long result = fixture.run(simulatorScenario, scenarioName, parameters);
-        assertEquals(executionId, result);
+                Triple<SimulatorScenario, EntityManager, EntityTransaction> result = submitSimulatorScenarioByName();
 
-        ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(executorServiceMock).submit(scenarioRunnableArgumentCaptor.capture());
+                verify(result.getMiddle()).flush();
+                verify(result.getMiddle()).lock(any(ScenarioExecution.class), eq(PESSIMISTIC_WRITE));
 
-        // Now, we need more mocks!
-        TestContext testContextMock = mockCitrusTestContext();
-        TestListeners testListenersMock = mock(TestListeners.class);
-        doReturn(testListenersMock).when(testContextMock).getTestListeners();
+                runSimulatorScenario(result);
+            }
 
-        // This invokes the scenario execution with the captured runnable
-        scenarioRunnableArgumentCaptor.getValue().run();
+            private Triple<SimulatorScenario, EntityManager, EntityTransaction> submitSimulatorScenarioByName() {
+                SimulatorScenario simulatorScenarioMock = mock(SimulatorScenario.class);
+                doReturn(simulatorScenarioMock).when(applicationContextMock).getBean(scenarioName, SimulatorScenario.class);
 
-        ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = ArgumentCaptor.forClass(ScenarioRunner.class);
-        verify(simulatorScenario).run(scenarioRunnerArgumentCaptor.capture());
+                EntityManager entityManagerMock = mock(EntityManager.class);
+                doReturn(entityManagerMock).when(entityManagerFactoryMock).createEntityManager();
+                EntityTransaction transactionMock = mock(EntityTransaction.class);
+                doReturn(transactionMock).when(entityManagerMock).getTransaction();
 
-        ScenarioRunner scenarioRunner = scenarioRunnerArgumentCaptor.getValue();
-        assertEquals(scenarioEndpointMock, scenarioRunner.scenarioEndpoint());
-        assertEquals(executionId, scenarioRunner.getTestCaseRunner().getTestCase().getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID));
+                Long executionId = mockScenarioExecutionCreation(entityManagerMock);
 
-        verify(testListenersMock).onTestStart(any(TestCase.class));
-        verify(testListenersMock).onTestSuccess(any(TestCase.class));
-        verify(testListenersMock).onTestFinish(any(TestCase.class));
-        verifyNoMoreInteractions(testListenersMock);
+                // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it
+                Long result = fixture.run(scenarioName, parameters);
+                assertEquals(executionId, result);
 
-        assertTrue(customScenarioExecuted.get());
+                // Transaction should have been started
+                verify(transactionMock).begin();
+                verify(scenarioExecutionServiceMock).createAndSaveExecutionScenario(scenarioName, parameters, entityManagerMock);
+
+                return Triple.of(simulatorScenarioMock, entityManagerMock, transactionMock);
+            }
+
+            private void runSimulatorScenario(Triple<SimulatorScenario, EntityManager, EntityTransaction> arguments) {
+                ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
+                verify(executorServiceMock).execute(scenarioRunnableArgumentCaptor.capture());
+
+                // Now, we need more mocks!
+                mockCitrusTestContext();
+
+                // This invokes the scenario execution with the captured runnable
+                scenarioRunnableArgumentCaptor.getValue().run();
+
+                verifyNoInteractions(arguments.getLeft());
+
+                // Transaction has been committed
+                verify(arguments.getRight()).commit();
+            }
+        }
+
+        @Nested
+        class ByBean {
+
+            static Stream<Long> withPessimisticLock() {
+                return RunScenario.withPessimisticLock();
+            }
+
+            @Test
+            void withOptimisticLock() {
+                preparePessimisticLockTimeout(-1L);
+
+                Object[] result = submitSimulatorScenarioBean();
+
+                EntityManager entityManagerMock = (EntityManager) result[0];
+                verify(entityManagerMock, never()).flush();
+                verify(entityManagerMock, never()).lock(any(ScenarioExecution.class), eq(PESSIMISTIC_WRITE));
+
+                runSimulatorScenario(Triple.of((SimulatorScenario) result[3], (Long) result[2], (EntityTransaction) result[1]));
+            }
+
+            @MethodSource
+            @ParameterizedTest
+            void withPessimisticLock(Long pessimisticLockTimeout) {
+                preparePessimisticLockTimeout(pessimisticLockTimeout);
+
+                Object[] result = submitSimulatorScenarioBean();
+
+                EntityManager entityManagerMock = (EntityManager) result[0];
+                verify(entityManagerMock).flush();
+                verify(entityManagerMock).lock(any(ScenarioExecution.class), eq(PESSIMISTIC_WRITE));
+
+                runSimulatorScenario(Triple.of((SimulatorScenario) result[3], (Long) result[2], (EntityTransaction) result[1]));
+            }
+
+            private Object[] submitSimulatorScenarioBean() {
+                EntityManager entityManagerMock = mock(EntityManager.class);
+                doReturn(entityManagerMock).when(entityManagerFactoryMock).createEntityManager();
+                EntityTransaction transactionMock = mock(EntityTransaction.class);
+                doReturn(transactionMock).when(entityManagerMock).getTransaction();
+
+                Long executionId = mockScenarioExecutionCreation(entityManagerMock);
+
+                SimulatorScenario simulatorScenario = spy(new CustomSimulatorScenario());
+
+                // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it
+                Long result = fixture.run(simulatorScenario, scenarioName, parameters);
+                assertEquals(executionId, result);
+
+                // Transaction should have been started
+                verify(transactionMock).begin();
+                verify(scenarioExecutionServiceMock).createAndSaveExecutionScenario(scenarioName, parameters, entityManagerMock);
+
+                return new Object[]{entityManagerMock, transactionMock, executionId, simulatorScenario};
+            }
+
+            private void runSimulatorScenario(Triple<SimulatorScenario, Long, EntityTransaction> arguments) {
+                ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
+                verify(executorServiceMock).execute(scenarioRunnableArgumentCaptor.capture());
+
+                // Now, we need more mocks!
+                TestContext testContextMock = mockCitrusTestContext();
+                TestListeners testListenersMock = mock(TestListeners.class);
+                doReturn(testListenersMock).when(testContextMock).getTestListeners();
+
+                // This invokes the scenario execution with the captured runnable
+                scenarioRunnableArgumentCaptor.getValue().run();
+
+                ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = ArgumentCaptor.forClass(ScenarioRunner.class);
+                verify(arguments.getLeft()).run(scenarioRunnerArgumentCaptor.capture());
+
+                ScenarioRunner scenarioRunner = scenarioRunnerArgumentCaptor.getValue();
+                assertEquals(scenarioEndpointMock, scenarioRunner.scenarioEndpoint());
+                assertEquals(arguments.getMiddle(), scenarioRunner.getTestCaseRunner().getTestCase().getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID));
+
+                verify(testListenersMock).onTestStart(any(TestCase.class));
+                verify(testListenersMock).onTestSuccess(any(TestCase.class));
+                verify(testListenersMock).onTestFinish(any(TestCase.class));
+                verifyNoMoreInteractions(testListenersMock);
+
+                assertTrue(customScenarioExecuted.get());
+
+                // Transaction has been committed
+                verify(arguments.getRight()).commit();
+            }
+        }
+
+        private void preparePessimisticLockTimeout(Long pessimisticLockTimeout) {
+            doReturn(pessimisticLockTimeout).when(propertiesMock).getPessimisticLockTimeout();
+            // Re-Init, so that properties will be read again
+            fixture = new DefaultScenarioExecutorServiceImpl(applicationContextMock, citrusMock, entityManagerFactoryMock, scenarioExecutionServiceMock, propertiesMock);
+            setField(fixture, "executorService", executorServiceMock, ExecutorService.class);
+        }
     }
 
     @Test
@@ -153,11 +283,11 @@ class DefaultScenarioExecutorServiceImplTest {
         verify(executorServiceMock).shutdownNow();
     }
 
-    private Long mockScenarioExecutionCreation() {
+    private Long mockScenarioExecutionCreation(EntityManager entityManager) {
         Long executionId = 1L;
         ScenarioExecution scenarioExecutionMock = mock(ScenarioExecution.class);
         doReturn(executionId).when(scenarioExecutionMock).getExecutionId();
-        doReturn(scenarioExecutionMock).when(scenarioExecutionServiceMock).createAndSaveExecutionScenario(scenarioName, parameters);
+        doReturn(scenarioExecutionMock).when(scenarioExecutionServiceMock).createAndSaveExecutionScenario(scenarioName, parameters, entityManager);
         return executionId;
     }
 

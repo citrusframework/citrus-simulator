@@ -82,23 +82,7 @@ class MessageRepositoryIT {
     }
 
     private void verifyOnlyOneMessageFoundForScenarioExecution(Message expectedMessage) {
-        List<Message> allForScenarioExecution = messageRepository.findAllForScenarioExecution(scenarioExecution.getExecutionId(), expectedMessage.getCitrusMessageId(), expectedMessage.getDirection());
-        assertThat(allForScenarioExecution)
-            .hasSize(1)
-            .containsExactly(expectedMessage);
-    }
-
-    @Test
-    @Transactional
-    void findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals() {
-        Message message2 = createAndPersistMessageForScenarioExecution(MessageResourceIT.createUpdatedEntity(entityManager), scenarioExecution);
-
-        verifyOnlyOneMessageFoundByIdentifier(message);
-        verifyOnlyOneMessageFoundByIdentifier(message2);
-    }
-
-    void verifyOnlyOneMessageFoundByIdentifier(Message expectedMessage) {
-        List<Message> allForScenarioExecution = messageRepository.findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(scenarioExecution.getExecutionId(), expectedMessage.getCitrusMessageId(), expectedMessage.getDirection().getId());
+        List<Message> allForScenarioExecution = messageRepository.findAllForScenarioExecution(scenarioExecution.getExecutionId(), expectedMessage.getDirection(), expectedMessage.getCitrusMessageId(), entityManager);
         assertThat(allForScenarioExecution)
             .hasSize(1)
             .containsExactly(expectedMessage);

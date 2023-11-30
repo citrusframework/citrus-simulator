@@ -88,9 +88,9 @@ public class ScenarioRunner implements GherkinTestActionRunner {
 
     @Override
     public <T extends TestAction> T run(TestActionBuilder<T> builder) {
-        if (builder instanceof CorrelationHandlerBuilder) {
-            ((CorrelationHandlerBuilder) builder).setApplicationContext(applicationContext);
-            delegate.run(doFinally().actions(((CorrelationHandlerBuilder) builder).stop()));
+        if (builder instanceof CorrelationHandlerBuilder correlationHandlerBuilder) {
+            correlationHandlerBuilder.setApplicationContext(applicationContext);
+            delegate.run(doFinally().actions(correlationHandlerBuilder.stop()));
         }
 
         return delegate.run(builder);

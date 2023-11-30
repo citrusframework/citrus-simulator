@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,8 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestStart(TestCase test) {
-        if (test instanceof DefaultTestCase) {
-            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), defaultTestCase.getParameters()));
         } else {
             runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName()));
         }
@@ -83,8 +83,8 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     @Override
     public void onTestSuccess(TestCase test) {
         TestResult result;
-        if (test instanceof DefaultTestCase) {
-            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), defaultTestCase.getParameters());
         } else {
             result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
         }
@@ -98,8 +98,8 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
         TestResult result;
-        if (test instanceof DefaultTestCase) {
-            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, defaultTestCase.getParameters());
         } else {
             result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
@@ -140,8 +140,8 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     private String[] getParameters(TestCase test) {
         List<String> parameterStrings = new ArrayList<>();
 
-        if (test instanceof DefaultTestCase) {
-            for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            for (Map.Entry<String, Object> param : defaultTestCase.getParameters().entrySet()) {
                 parameterStrings.add(param.getKey() + "=" + param.getValue());
             }
         }

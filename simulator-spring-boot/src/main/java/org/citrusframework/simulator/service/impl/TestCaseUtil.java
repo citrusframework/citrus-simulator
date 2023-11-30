@@ -1,5 +1,7 @@
 package org.citrusframework.simulator.service.impl;
 
+import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
+
 import org.citrusframework.TestCase;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.slf4j.Logger;
@@ -14,7 +16,7 @@ class TestCaseUtil {
     }
 
     static long getScenarioExecutionId(TestCase testCase) {
-        logger.trace("Lookup '{}' in TestCaseParameters : {}", ScenarioExecution.EXECUTION_ID, testCase.getVariableDefinitions());
-        return Long.parseLong(testCase.getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID).toString());
+        logger.trace("Lookup '{}' in TestCaseParameters : {}", EXECUTION_ID, testCase.getVariableDefinitions());
+        return Long.parseLong(testCase.getVariableDefinitions().get(EXECUTION_ID).toString());
     }
 }

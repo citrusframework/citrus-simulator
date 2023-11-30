@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
             try {
                 if (handleResponse) {
-                    return responseFuture.get(configuration.getDefaultTimeout(), TimeUnit.MILLISECONDS);
+                    return responseFuture.get(configuration.getDefaultScenarioTimeout(), TimeUnit.MILLISECONDS);
                 } else {
                     return null;
                 }
@@ -99,8 +99,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         } else {
             scenarioName = configuration.getDefaultScenario();
-            logger.info("Unable to find scenario for mapping '{}' - " +
-                    "using default scenario '{}'", mappingName, scenarioName);
+            logger.info("Unable to find scenario for mapping '{}' - using default scenario '{}'", mappingName, scenarioName);
             scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         }
 
@@ -110,7 +109,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
         try {
             if (handleResponse) {
-                return responseFuture.get(configuration.getDefaultTimeout(), TimeUnit.MILLISECONDS);
+                return responseFuture.get(configuration.getDefaultScenarioTimeout(), TimeUnit.MILLISECONDS);
             } else {
                 return null;
             }

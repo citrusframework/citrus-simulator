@@ -27,22 +27,22 @@ import static org.mockito.Mockito.doReturn;
 class SimulatorRestAutoConfigurationTest {
 
     @Mock
-    SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
+    private SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
 
     @Mock
-    SimulatorRestAdapter simulatorRestAdapter;
+    private SimulatorRestAdapter simulatorRestAdapter;
 
     @Mock
-    MessageListeners messageListeners;
+    private MessageListeners messageListeners;
 
     @Mock
-    SimulatorMessageListener simulatorMessageListener;
+    private SimulatorMessageListener simulatorMessageListener;
 
     @Mock
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @InjectMocks
-    SimulatorRestAutoConfiguration simulatorRestAutoConfiguration;
+    private SimulatorRestAutoConfiguration simulatorRestAutoConfiguration;
 
     @Test
     void shouldHandleSingleUrlMappings() {

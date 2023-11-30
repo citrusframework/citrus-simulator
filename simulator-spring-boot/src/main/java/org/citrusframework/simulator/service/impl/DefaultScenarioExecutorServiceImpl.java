@@ -18,6 +18,9 @@ package org.citrusframework.simulator.service.impl;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.citrusframework.Citrus;
 import org.citrusframework.annotations.CitrusAnnotations;
 import org.citrusframework.context.TestContext;
@@ -37,10 +40,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
+import static jakarta.persistence.FlushModeType.COMMIT;
+import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
+import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
 
 /**
  * {@inheritDoc}
@@ -50,15 +59,21 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
 
     private static final Logger logger = LoggerFactory.getLogger( DefaultScenarioExecutorServiceImpl.class);
 
+    public static final String ENTITY_MANAGER_VARIABLE_KEY = "org.citrusframework.simulator.entity.manager";
+    private static final String PERSISTENCE_LOCK_TIMEOUT_KEY = "jakarta.persistence.lock.timeout";
+
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
+    private final EntityManagerFactory entityManagerFactory;
     private final ScenarioExecutionService scenarioExecutionService;
 
     private final ExecutorService executorService;
+    private final Map<String, Object> lockProperties = new HashMap<>();
 
-    public DefaultScenarioExecutorServiceImpl(ApplicationContext applicationContext, Citrus citrus, ScenarioExecutionService scenarioExecutionService, SimulatorConfigurationProperties properties) {
+    public DefaultScenarioExecutorServiceImpl(ApplicationContext applicationContext, Citrus citrus, EntityManagerFactory entityManagerFactory, ScenarioExecutionService scenarioExecutionService, SimulatorConfigurationProperties properties) {
         this.applicationContext = applicationContext;
         this.citrus = citrus;
+        this.entityManagerFactory = entityManagerFactory;
         this.scenarioExecutionService = scenarioExecutionService;
 
         this.executorService = Executors.newFixedThreadPool(
@@ -68,6 +83,7 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
                 .setNameFormat("execution-svc-thread-%d")
                 .build()
         );
+        lockProperties.put(PERSISTENCE_LOCK_TIMEOUT_KEY, properties.getPessimisticLockTimeout());
     }
 
     @Override
@@ -89,25 +105,44 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
     public final Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters) {
         logger.info("Starting scenario : {}", name);
 
-        ScenarioExecution scenarioExecution = scenarioExecutionService.createAndSaveExecutionScenario(name, scenarioParameters);
+        // Note that entity manager may not be closed here! It must stay open during the whole (asynchronous) transaction.
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.setFlushMode(COMMIT);
+
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        ScenarioExecution scenarioExecution = scenarioExecutionService.createAndSaveExecutionScenario(name, scenarioParameters, entityManager);
+        lockScenarioExecutionIfApplicable(entityManager, scenarioExecution);
 
         prepareBeforeExecution(scenario);
 
-        startScenarioAsync(scenarioExecution.getExecutionId(), name, scenario, scenarioParameters);
+        startScenarioAsync(scenarioExecution.getExecutionId(), name, scenario, scenarioParameters, entityManager)
+            .whenComplete((ignored, error) -> transaction.commit());
 
         return scenarioExecution.getExecutionId();
     }
 
-    private Future<?> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        return executorService.submit(() -> startScenarioSync(executionId, name, scenario, scenarioParameters));
+    private void lockScenarioExecutionIfApplicable(EntityManager entityManager, ScenarioExecution scenarioExecution) {
+        logger.debug("Locking ScenarioExecution for update: {}", scenarioExecution);
+        if (((Long) lockProperties.getOrDefault(PERSISTENCE_LOCK_TIMEOUT_KEY, -1L)) >= 0) {
+            entityManager.flush();
+            entityManager.lock(scenarioExecution, PESSIMISTIC_WRITE);
+        }
     }
 
-    private void startScenarioSync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
+    private CompletableFuture<Void> startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, EntityManager entityManager) {
+        return CompletableFuture.runAsync(() -> startScenarioSync(executionId, name, scenario, scenarioParameters, entityManager), executorService);
+    }
+
+    private void startScenarioSync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, EntityManager entityManager) {
         try {
             TestContext context = citrus.getCitrusContext().createTestContext();
+            context.setVariable(ENTITY_MANAGER_VARIABLE_KEY, entityManager);
+
             ReflectionUtils.doWithMethods(
                 scenario.getClass(),
-                method -> createAndRunScenarioRunner(context, method, executionId, name, scenario, scenarioParameters),
+                method -> createAndRunScenarioRunner(context, method, executionId, name, scenario, scenarioParameters, entityManager),
                 method -> method.getName().equals("run")
             );
             logger.debug("Scenario completed: {}", name);
@@ -116,7 +151,7 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
         }
     }
 
-    private void createAndRunScenarioRunner(TestContext context, Method method, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
+    private void createAndRunScenarioRunner(TestContext context, Method method, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, EntityManager entityManager) {
         if (method.getDeclaringClass().equals(SimulatorScenario.class)) {
             // no need to execute the default run implementations
             return;
@@ -133,7 +168,9 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
                 scenarioParameters.forEach(p -> runner.variable(p.getName(), p.getValue()));
             }
 
-            runner.variable(ScenarioExecution.EXECUTION_ID, executionId);
+            runner.variable(ENTITY_MANAGER_VARIABLE_KEY, entityManager);
+            runner.variable(EXECUTION_ID, executionId);
+
             runner.name(String.format("Scenario(%s)", name));
 
             CitrusAnnotations.injectAll(scenario, citrus, context);

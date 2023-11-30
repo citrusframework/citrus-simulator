@@ -1,6 +1,14 @@
 package org.citrusframework.simulator.repository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.Message_;
+import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,9 +49,21 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
     @EntityGraph(attributePaths = {"headers", "scenarioExecution"})
     Page<Message> findAll(Specification<Message> spec, Pageable pageable);
 
-    default List<Message> findAllForScenarioExecution(Long scenarioExecutionId, String citrusMessageId, Message.Direction direction) {
-        return findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(scenarioExecutionId, citrusMessageId, direction.getId());
-    }
+    default List<Message> findAllForScenarioExecution(Long scenarioExecutionId, Message.Direction direction, String citrusMessageId, EntityManager entityManager) {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Message> criteriaQuery = criteriaBuilder.createQuery(Message.class);
+            Root<Message> root = criteriaQuery.from(Message.class);
 
-    List<Message> findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(@Param("scenarioExecutionId") Long scenarioExecutionId, @Param("citrusMessageId") String citrusMessageId, @Param("direction") Integer direction);
+            Predicate[] predicates = new Predicate[]{
+                criteriaBuilder.equal( root.join(Message_.scenarioExecution, JoinType.LEFT).get(
+                        ScenarioExecution_.executionId),
+                    scenarioExecutionId),
+                criteriaBuilder.equal(root.get(Message_.citrusMessageId), citrusMessageId),
+                criteriaBuilder.equal(root.get(Message_.direction), direction.getId())
+            };
+
+            criteriaQuery.select(root).where(predicates);
+
+            return entityManager.createQuery(criteriaQuery).getResultList();
+    }
 }

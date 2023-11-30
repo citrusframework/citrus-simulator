@@ -17,8 +17,12 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
+import java.util.HashMap;
+import java.util.Map;
 import org.citrusframework.TestCase;
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
@@ -37,28 +41,37 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
+import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+import static org.citrusframework.simulator.scenario.TestCaseUtils.getContainedEntityManagerOrDefault;
 import static org.citrusframework.simulator.service.impl.TestCaseUtil.getScenarioExecutionId;
 
 /**
  * Service Implementation for managing {@link ScenarioExecution}.
  */
 @Service
-@Transactional
 public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScenarioExecutionServiceImpl.class);
 
+
     private final TimeProvider timeProvider = new TimeProvider();
 
+    private final EntityManager defaultEntityManager;
     private final ScenarioExecutionRepository scenarioExecutionRepository;
 
-    public ScenarioExecutionServiceImpl(ScenarioExecutionRepository scenarioExecutionRepository) {
+
+    public ScenarioExecutionServiceImpl(EntityManager entityManager, ScenarioExecutionRepository scenarioExecutionRepository) {
+        this.defaultEntityManager = entityManager;
         this.scenarioExecutionRepository = scenarioExecutionRepository;
     }
 
     @Override
+    @Transactional
     public ScenarioExecution save(ScenarioExecution scenarioExecution) {
         logger.debug("Request to save ScenarioExecution : {}", scenarioExecution);
+
         return scenarioExecutionRepository.save(scenarioExecution);
     }
 
@@ -84,7 +97,7 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
     }
 
     @Override
-    public ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters) {
+    public ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters, EntityManager entityManager) {
         logger.debug("Request to create and save ScenarioExecution : {}", scenarioName);
 
         ScenarioExecution scenarioExecution = new ScenarioExecution();
@@ -98,7 +111,9 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
             }
         }
 
-        return save(scenarioExecution);
+        entityManager.persist(scenarioExecution);
+
+        return scenarioExecution;
     }
 
     @Override
@@ -114,7 +129,10 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
     }
 
     private ScenarioExecution completeScenarioExecution(ScenarioExecution.Status status, TestCase testCase, @Nullable Throwable cause) {
-        return scenarioExecutionRepository.findOneByExecutionId(getScenarioExecutionId(testCase))
+        EntityManager entityManager = getContainedEntityManagerOrDefault(testCase, defaultEntityManager);
+        Optional<ScenarioExecution> possibleScenarioExecution = ofNullable(
+            entityManager.find(ScenarioExecution.class, getScenarioExecutionId(testCase))
+        )
             .map(scenarioExecution -> {
                 scenarioExecution.setEndDate(timeProvider.getTimeNow());
                 scenarioExecution.setStatus(status);
@@ -124,9 +142,14 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
                 }
 
                 return scenarioExecution;
-            })
-            .map(scenarioExecutionRepository::save)
-            .orElseThrow(() -> new CitrusRuntimeException(String.format("Error while completing ScenarioExecution for test %s", testCase.getName())));
+            });
+
+        if (!entityManager.equals(defaultEntityManager)) {
+            entityManager.close();
+        }
+
+        return possibleScenarioExecution
+            .orElseThrow(() -> new CitrusRuntimeException(format("Failed to find corresponding ScenarioExecution by executionId %s for test %s", getScenarioExecutionId(testCase), testCase.getName())));
     }
 
     private static void writeCauseToErrorMessage(Throwable cause, ScenarioExecution scenarioExecution) {
