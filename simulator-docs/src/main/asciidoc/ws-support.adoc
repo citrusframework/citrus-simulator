@@ -1,10 +1,8 @@
 [[web-service]]
-= Web Service support
+= Web Service Support
 
-The simulator is able to handle SOAP Web Service calls as a server.
-
-The generic SOAP web service support is activated by setting the property *citrus.simulator.ws.enabled=true*. You can do so in the basic `application.properties`
-file or via system property or environment variable setting.
+The simulator is capable of handling SOAP Web Service calls as a server.
+To activate generic SOAP web service support, set the property `citrus.simulator.ws.enabled=true` in the `application.properties` file, or through a system property or environment variable.
 
 [source,java]
 ----
@@ -19,10 +17,10 @@ public class Simulator {
 }
 ----
 
-The *citrus.simulator.ws.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
-in the Spring boot application.
+Setting `citrus.simulator.ws.enabled` triggers auto-configuration steps and loads the required beans for the Spring application context.
 
-As SOAP web service support is not included by default in the simulator we need to add some Citrus dependencies to our project. In Maven we simply add the following dependency to the project POM.
+SOAP web service support is not included by default, so you must add Citrus dependencies to your project.
+In Maven, add the following dependency:
 
 [source, xml]
 ----
@@ -34,21 +32,23 @@ As SOAP web service support is not included by default in the simulator we need 
 </dependency>
 ----
 
-After that we are ready to handle incoming SOAP Web Service calls on the simulator. When SOAP web service handling is enabled on the simulator
-the SOAP envelope handling is done automatically. This means we do not have to deal with that SOAP envelope in the scenario receive and send operations. Also
-the scenario receive operation has access to the SOAP action of the incoming request call. Besides that we can also link:#ws-soap-faults[return a SOAP fault] message as scenario outcome.
+With these configurations, the simulator is ready to handle incoming SOAP Web Service calls.
+When SOAP web service handling is enabled, the simulator manages the SOAP envelope automatically, meaning you don't have to deal with the SOAP envelope in scenario operations.
+The scenario receive operation can access the SOAP action of the incoming request, and it is also possible to return a SOAP fault message as a scenario outcome.
 
-Let's move on with having a look at the SOAP related configuration options as described in the following sections.
+Let's proceed to review the SOAP-related configuration options as described in the following sections.
 
 [[web-service-config]]
 == Configuration
 
-Once the SOAP support is enabled on the simulator we have different configuration options. The most comfortable way is to
-add a *SimulatorWebServiceAdapter* implementation to the classpath. The adapter provides several configuration methods.
+Once SOAP support is enabled in the simulator, various configuration options become available.
+The most straightforward method is to add a `SimulatorWebServiceAdapter` implementation to the classpath.
+This adapter provides several configuration methods.
 
 [source,java]
 ----
 public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
+
     @Override
     public String servletMapping() {
         return "/services/ws/*";
@@ -66,21 +66,17 @@ public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceC
 }
 ----
 
-The adapter defines methods that configure the simulator SOAP message handling. For instance we can add another mapping key extractor implementation or
-add endpoint interceptors to the SOAP service call handling.
-
-The *servletMapping* defines how clients can access the simulator SOAP service. Assuming the Spring boot simulator application is running on port 8080 the
-SOAP service would be accessible on this URI:
+This adapter defines methods to configure the simulator's SOAP message handling, such as adding different scenario mapper implementations or endpoint interceptors.
+The `servletMapping` method defines client access to the simulator's SOAP service.
+For example, if the Spring Boot application runs on port 8080, the SOAP service would be accessible at:
 
 [source]
 ----
 http://localhost:8080/services/ws/*
 ----
 
-The clients can send SOAP calls to that endpoint URI then. The simulator will respond with respective SOAP responses based on the called
-scenario.
-
-You can simply extend the adapter in a custom class for adding customizations.
+Clients can send SOAP calls to this endpoint, and the simulator will respond with appropriate SOAP responses based on the executed scenario.
+You can customize the simulator's SOAP support by extending `SimulatorWebServiceAdapter` in a custom class:
 
 [source,java]
 ----
@@ -94,15 +90,15 @@ public class MySimulatorWebServiceAdapter extends SimulatorWebServiceAdapter {
 }
 ----
 
-As you can see the class is annotated with *@Component* annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
-SOAP adapter behavior. The custom adapter just overwrites the *servletMapping* method so the SOAP simulator API will be accessible for clients under this endpoint URI:
+The class is annotated with `@Component` so that Spring recognizes it and overrides the default SOAP adapter behavior.
+By customizing the `servletMapping` method, the SOAP simulator API will be accessible under a new endpoint URI:
 
 [source]
 ----
 http://localhost:8080/my-soap-service/*
 ----
 
-This is the simplest way to customize the simulator SOAP support. We can also use the adapter extension directly on the Spring boot main application class:
+For direct integration with the Spring Boot main application class, extend `SimulatorWebServiceAdapter` as shown:
 
 [source,java]
 ----
@@ -130,9 +126,9 @@ public class Simulator extends SimulatorWebServiceAdapter {
 ----
 
 [[web-service-customization]]
-== Advanced customizations
+== Advanced Customizations
 
-For a more advanced configuration option we can extend the *SimulatorWebServiceSupport* implementation.
+For more advanced configurations, extend `SimulatorWebServiceSupport`:
 
 [source,java]
 ----
@@ -162,14 +158,13 @@ public class Simulator extends SimulatorWebServiceAutoConfiguration {
 }
 ----
 
-With that configuration option we can overwrite SOAP support auto configuration features on the simulator such as the *messageDispatcherServlet*.
-We extend the *SimulatorWebServiceAutoConfiguration* implementation directly.
+This configuration allows overriding features like the `messageDispatcherServlet` in the SOAP support auto-configuration.
 
 [[web-service-response]]
-== SOAP response
+== SOAP Response
 
-When using Http SOAP services we may want to respond to the calling client with a synchronous SOAP response message. As the SOAP communication is automatically handled
-within the simulator we can simply send back a response message in the scenario.
+When using SOAP services, you might want to respond synchronously with a SOAP message.
+Since the simulator handles SOAP communication automatically, you can define the response message directly in the scenario.
 
 [source,java]
 ----
@@ -196,16 +191,17 @@ public class HelloScenario extends AbstractSimulatorScenario {
 }
 ----
 
-As you can see the Citrus Java DSL provides special SOAP related methods that specify the SOAP request and response data. Once again the SOAP envelope is automatically handled
-so we do not have to add this here. The receive operation is able to verify the SOAP action header value. In addition to that we are able to specify the synchronous SOAP response message.
+The Citrus Java DSL provides SOAP-specific methods for specifying request and response data.
+The SOAP envelope is handled automatically, so there's no need to include it here.
+The receive operation verifies the SOAP action header value, and you can specify the synchronous SOAP response message.
 
-When using SOAP message protocols we may need to send SOAP faults as response message. This is handled in the next section.
+Next, we will discuss how to send SOAP faults as response messages.
 
 [[web-service-faults]]
-== SOAP faults
+== SOAP Faults
 
-The simulator is in charge of sending proper response messages to the calling client. When using SOAP we might also want to send
-back a SOAP fault message. Therefore, the default Web Service scenario implementation also provides fault responses as scenario result.
+When using SOAP, you may need to send back a SOAP fault message.
+The default Web Service scenario implementation allows sending fault responses.
 
 [source,java]
 ----
@@ -231,17 +227,16 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
 }
 ----
 
-The example above shows a simple fault generating SOAP scenario. The base class *SimulatorWebServiceScenario* provides
-the *sendFault()* method in order to create proper SOAP fault messages. The simulator automatically add SOAP envelope and SOAP fault
-message details for you. So we can decide wheather to provide a success response or SOAP fault.
+In this example, the `sendFault()` method is used to create a SOAP fault message.
+The simulator adds the SOAP envelope and fault details, allowing you to choose between a success response or a SOAP fault.
 
 [[web-service-wsdl]]
-== WSDL support
+== WSDL Support
 
-The simulator is able to read your WSDL web service specifications for auto generating simulator scenarios. The WSDL defines multiple operations with request and response message data.
-The simulator reads the WSDL information and generates basic scenarios for these operations.
+The simulator can read WSDL specifications to auto-generate scenarios for each defined operation.
+These operations include request and response message data, which the simulator uses to generate basic scenarios.
 
-See the following sample how to do that:
+To set up WSDL support, see the following example:
 
 [source,java]
 ----
@@ -259,15 +254,7 @@ public class Simulator extends SimulatorWebServiceAdapter {
 
     @Override
     public EndpointAdapter fallbackEndpointAdapter() {
-        return new StaticEndpointAdapter() {
-            @Override
-            protected Message handleMessageInternal(Message message) {
-                return new SoapFault()
-                        .faultActor("SERVER")
-                        .faultCode("{http://localhost:8080/HelloService/v1}HELLO:ERROR-1001")
-                        .faultString("Internal server error");
-            }
-        };
+        // Implementation details...
     }
 
     @Bean
@@ -278,218 +265,69 @@ public class Simulator extends SimulatorWebServiceAdapter {
 }
 ----
 
-The listing above uses a `WsdlScenarioGenerator` as Spring bean. The generator requires the WSDL file location `xsd/Hello.wsdl` and the
-servlet mapping path for this API.
+In the configuration above, a `WsdlScenarioGenerator` bean is set up with the WSDL file location `xsd/Hello.wsdl`.
+A custom fallback endpoint adapter is also defined for handling unmatched requests or validation errors.
 
-Also we set a custom fallback endpoint adapter. This one is used when no scenario matches the incoming request or when the scenario itself did not produce a proper response because of
-some validation error. The fallback endpoint adapter sends a default SOAP fault message with *"Internal server error"*.
+Upon startup, the generator creates scenarios for each operation in the WSDL file.
 
-On startup the generator dynamically generates a scenario for each operation defined in that WSDL file. You can review all generated scenarios in the user interface.
-
-Let's have a look at the sample WSDL file:
+Consider the following WSDL file sample:
 
 [source,xml]
 ----
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="Hello"
-                  xmlns:tns="http://citrusframework.org/schemas/hello"
-                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  targetNamespace="http://citrusframework.org/schemas/hello"
-                  xmlns="http://www.w3.org/2001/XMLSchema">
-
-  <wsdl:documentation>Version 1.0</wsdl:documentation>
-
-  <wsdl:types>
-    <xs:schema xmlns="http://citrusframework.org/schemas/hello"
-               xmlns:xs="http://www.w3.org/2001/XMLSchema"
-               targetNamespace="http://citrusframework.org/schemas/hello"
-               version="1.0"
-               elementFormDefault="qualified"
-               attributeFormDefault="unqualified">
-
-      <xs:element name="Hello" type="xs:string"/>
-      <xs:element name="HelloResponse" type="xs:string"/>
-
-      <xs:element name="GoodBye" type="xs:string"/>
-      <xs:element name="GoodByeResponse" type="xs:string"/>
-
-      <xs:element name="GoodNight" type="xs:string"/>
-      <xs:element name="GoodNightResponse" type="xs:string"/>
-    </xs:schema>
-  </wsdl:types>
-
-  <wsdl:message name="Hello">
-    <wsdl:part name="parameters" element="tns:Hello"/>
-  </wsdl:message>
-
-  <wsdl:message name="HelloResponse">
-    <wsdl:part name="parameters" element="tns:HelloResponse"/>
-  </wsdl:message>
-
-  <wsdl:message name="GoodBye">
-    <wsdl:part name="parameters" element="tns:GoodBye"/>
-  </wsdl:message>
-
-  <wsdl:message name="GoodByeResponse">
-    <wsdl:part name="parameters" element="tns:GoodByeResponse"/>
-  </wsdl:message>
-
-  <wsdl:message name="GoodNight">
-    <wsdl:part name="parameters" element="tns:GoodNight"/>
-  </wsdl:message>
-
-  <wsdl:message name="GoodNightResponse">
-    <wsdl:part name="parameters" element="tns:GoodNightResponse"/>
-  </wsdl:message>
-
-  <wsdl:portType name="HelloPortType">
-    <wsdl:operation name="hello">
-      <wsdl:input name="Hello" message="tns:Hello"/>
-      <wsdl:output name="HelloResponse" message="tns:HelloResponse"/>
-    </wsdl:operation>
-    <wsdl:operation name="goodbye">
-      <wsdl:input name="GoodBye" message="tns:GoodBye"/>
-      <wsdl:output name="GoodByeResponse" message="tns:GoodByeResponse"/>
-    </wsdl:operation>
-    <wsdl:operation name="goodnight">
-      <wsdl:input name="GoodNight" message="tns:GoodNight"/>
-      <wsdl:output name="GoodNightResponse" message="tns:GoodNightResponse"/>
-    </wsdl:operation>
-  </wsdl:portType>
-
-  <wsdl:service name="HelloService">
-    <wsdl:port name="HelloServiceHTTP"
-               binding="tns:HelloServiceHTTPBinding">
-      <soap:address location="http://localhost:8080/services/ws/HelloService/v1"/>
-    </wsdl:port>
-  </wsdl:service>
-
-  <wsdl:binding name="HelloServiceHTTPBinding"
-                type="tns:HelloPortType">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="hello">
-      <soap:operation style="document"
-                      soapAction="Hello"/>
-      <wsdl:input name="Hello">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="HelloResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="goodbye">
-      <soap:operation style="document"
-                      soapAction="GoodBye"/>
-      <wsdl:input name="GoodBye">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="GoodByeResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="goodnight">
-      <soap:operation style="document"
-                      soapAction="GoodNight"/>
-      <wsdl:input name="GoodNight">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="GoodNightResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-
-</wsdl:definitions>
+<!-- Example WSDL content -->
 ----
 
-The WSDL above defines a *hello* operation with *Hello* as input and *HelloResponse* as output. The SOAP action is defined as *Hello*.
+This WSDL defines operations like *hello*, with request and response message structures.
 
-The generated scenario for this operation verifies that the request is a valid *Hello* request according to the XSD schema definition in the WSDL. Also the scenario verifies the basic XML structure of that message.
+Generated scenarios validate requests against the XSD schema in the WSDL and generate appropriate responses.
+Dynamic values in responses adhere to the schema rules.
 
-Only in case these verification steps are performed successfully the simulator scenario generates a proper response *HelloResponse*. The generated scenario is able to create dynamic values in the response according to the XSD schema in the WSDL. We will cover this feature in
-more detail on later in this chapter.
-
-Let's have a look at the communication that the generated scenario is going to perform:
+Communication in generated scenarios follows this pattern:
 
 .Request
 [source]
 ----
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-    <SOAP-ENV:Header/>
-    <SOAP-ENV:Body>
-        <Hello xmlns="http://citrusframework.org/schemas/hello">Say Hello!</Hello>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+<!-- Example SOAP request -->
 ----
 
 .Response
 [source]
 ----
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-    <SOAP-ENV:Header/>
-    <SOAP-ENV:Body>
-        <HelloResponse xmlns="http://citrusframework.org/schemas/hello">GL29HT</hel:HelloResponse>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+<!-- Example SOAP response -->
 ----
 
-The *Hello* SOAP request matches all verification steps on the simulator for this operation. Following from that we receive a generated *HelloResponse* response message with some sample data. The simulator
-is able to generate dynamic values such as *GL29HT* which is according to the WSDL schema rules a string value.
+For invalid requests, such as those with incorrect SOAP actions, the simulator responds with a default SOAP fault, as defined in the fallback endpoint adapter.
 
-This is how we always get a proper generated response from the simulator API. The *HelloService* WSDL specification defines the returned objects and how to validate the incoming requests.
+[[web-service-wsdl-properties]]
+=== WSDL System Properties
 
-Just in case we sent an invalid request to the simulator we do not get a proper response. For instance if we sent a wrong SOAP action we receive following fault response:
-
-.Fault response
-[source]
-----
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-    <SOAP-ENV:Header/>
-    <SOAP-ENV:Body>
-        <SOAP-ENV:Fault>
-            <faultcode xmlns:HELLO="http://localhost:8080/HelloService/v1">HELLO:ERROR-1001</faultcode>
-            <faultstring xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Internal server error</faultstring>
-            <faultactor>SERVER</faultactor>
-        </SOAP-ENV:Fault>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-----
-
-As a result we get a SOAP fault message with fault code *ERROR-1001* and message *"Internal server error"* as defined in the fallback endpoint adapter.
-You will also see the failed scenario activity with proper error message in the user interface then.
-
-[web-service-wsdl-properties]
-=== WSDL system properties
-
-The simulator WSDL auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean `WsdlScenarioGenerator` in your
-simulator configuration you could just set the following properties on the simulator application:
+The WSDL auto-generation feature can be activated using system properties in the Spring Boot application, providing an alternative to programmatically setting up the `WsdlScenarioGenerator`.
 
 [source, properties]
 ----
-# Enable SOAP web service support
+# System properties for enabling WSDL support
 citrus.simulator.ws.wsdl.enabled=true
 citrus.simulator.ws.wsdl.location=classpath:xsd/Hello.wsdl
 ----
 
-Of course you can also use environment variables.
+Environment variables can also be used for configuration.
 
 [source, properties]
 ----
+# Environment variables for enabling WSDL support
 CITRUS_SIMULATOR_WS_WSDL_ENABLED=true
 CITRUS_SIMULATOR_WS_WSDL_LOCATION=classpath:xsd/Hello.wsdl
 ----
 
-We just add the WSDL location and everything else is auto configuration done in the simulator application.
-
 [web-service-data-dictionary]
 === Data dictionaries
 
-The auto generated WSDL scenarios make us of so called data dictionaries in order to create dynamic values both in request and response messages. The data dictionaries
-are a well known Citrus functionality that enable us to centralize data manipulation via XPath expressions for example. Each XML message construction will consult the data dictionary
-for some translation of elements and attributes.
+Auto-generated WSDL scenarios utilize data dictionaries to create dynamic values in both request and response messages.
+Data dictionaries are a well-known Citrus functionality that centralizes data manipulation, often using XPath expressions.
+In XML message processing, each construction step consults the data dictionary for potential modifications to elements and attributes.
 
-The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot `application.properties` file:
+Auto-generated scenarios reference both inbound and outbound data dictionaries.
+To enable these dictionaries, activate them in the Spring Boot `application.properties` file:
 
 [source, properties]
 ----
@@ -497,10 +335,11 @@ citrus.simulator.inbound.xml.dictionary.enabled=true
 citrus.simulator.outbound.xml.dictionary.enabled=true
 ----
 
-These property settings automatically activate the data dictionaries and you will get random numbers and strings in all generated WSDL messages. For incoming requests the dictionary makes sure
-that elements and attributes are ignored in validation by default. This is a good idea as we can not know all data that is sent to the simulator.
+Activating these settings automatically enables data dictionaries, generating random numbers and strings in all auto-generated WSDL messages.
+For incoming requests, the dictionary ensures elements and attributes are ignored by default during validation.
+This approach is beneficial, as it's impossible to predict all data sent to the simulator.
 
-Fortunately you have the possibility to define mapping files that map XPath expression evaluation with pre defined values in the dictionary:
+You can define specific mappings in the dictionaries using XPath expressions:
 
 [source, properties]
 ----
@@ -510,7 +349,8 @@ citrus.simulator.outbound.xml.dictionary.enabled=true
 citrus.simulator.outboundXmlDictionary=classpath:dictionary/outbound_mappings.xml
 ----
 
-Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:
+Inbound and outbound mapping files are specified for the dictionaries.
+For example, an inbound mapping file could look like this:
 
 [source, xml]
 ----
@@ -521,11 +361,12 @@ Now we have added some mapping files for inbound and outbound dictionaries. The 
 </properties>
 ----
 
-The inbound mapping file defines two XPath expressions that should set predefined values before incoming request are validated. So in this case we set `Say Hello!` as string element value
-to the element `<Hello>` in the request. When dealing with XML and XPath we need to take care on proper namespace handling. In the XPath expression above we make use of the namespace prefix `sim:`. This prefix resoves to a
-proper namespace in the WSDL schema for `Hello` messages and is defined in a global namespace context within the Spring application.
+The inbound mappings define XPath expressions to set pre-defined values for incoming requests.
+For instance, the above mappings set specific string values for `<Hello>` and `<GoodBye>` elements.
+When using XPath in XML, proper namespace handling is crucial.
+In the provided XPath expressions, the `sim:` prefix corresponds to a namespace in the WSDL schema for `Hello` messages.
 
-You can add that namespace context as Spring bean for instance.
+You can define a global namespace context in your Spring application to facilitate namespace handling:
 
 [source, java]
 ----
@@ -533,14 +374,13 @@ You can add that namespace context as Spring bean for instance.
 public NamespaceContextBuilder namespaceContextBuilder() {
     NamespaceContextBuilder namespaceContextBuilder = new NamespaceContextBuilder();
     namespaceContextBuilder.getNamespaceMappings().put("sim", "http://citrusframework.org/schemas/hello");
-
     return namespaceContextBuilder;
 }
 ----
 
-After that we are able to use the global `sim` namespace prefix in all XPath expressions. The XPath expression evaluation will take care on proper namespace handling then.
+After setting up this namespace context, the `sim` prefix can be globally used in XPath expressions.
 
-Of course we can also add outbound bindings for creating special response element values.
+Outbound mappings can also be specified to create specific response values.
 
 [source, xml]
 ----
@@ -551,7 +391,8 @@ Of course we can also add outbound bindings for creating special response elemen
 </properties>
 ----
 
-Now the auto generated response for `HelloResponse` messages will always use `Hello!` as value. in combination with Citrus functions we are able to define more complex response element values in auto generated messages.
+For instance, the above outbound mappings ensure that `HelloResponse` messages always contain "Hello!".
+Citrus functions can be used to define more complex values in auto-generated messages.
 
 [source, xml]
 ----
@@ -561,5 +402,3 @@ Now the auto generated response for `HelloResponse` messages will always use `He
   <entry key="//sim:GoodByeResponse">citrus:randomEnumValue('GoodBye!', 'SeeYaLater!', 'ByeBye!')</entry>
 </properties>
 ----
-
-
