@@ -1,11 +1,9 @@
 [[rest]]
-= REST support
+= REST Support
 
-The simulator is able to provide Http REST APIs as a server. Clients can call the simulator on request paths using methods such as
-Http GET, POST, PUT, DELETE and so on.
+The Citrus simulator can serve as an Http REST API server, handling client requests using HTTP methods such as GET, POST, PUT, DELETE, etc.
 
-The generic rest support is activated by setting the property *citrus.simulator.rest.enabled=true*. You can do so in the basic `application.properties`
-file or via system property or environment variable setting.
+Enable generic REST support by setting the property `citrus.simulator.rest.enabled=true` in the `application.properties` file or via system property or environment variable.
 
 [source,java]
 ----
@@ -20,16 +18,12 @@ public class Simulator {
 }
 ----
 
-The *citrus.simulator.rest.enabled* property performs some auto configuration steps and loads required beans for the Spring application context
-in the Spring boot application.
-
-After that we are ready to handle incoming REST API calls on the simulator.
+Setting `citrus.simulator.rest.enabled` triggers autoconfiguration steps and loads the required beans into the Spring application context.
 
 [[rest-config]]
 == Configuration
 
-Once the REST support is enabled on the simulator we have different configuration options. The most comfortable way is to
-add a *SimulatorRestAdapter* implementation to the classpath. The adapter provides several configuration methods.
+With REST support enabled, various configuration options are available, typically via a `SimulatorRestAdapter` implementation:
 
 [source,java]
 ----
@@ -52,25 +46,21 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
 }
 ----
 
-The adapter defines methods that configure the simulator REST handling. For instance we can add another scenario mapper implementation or
-add handler interceptors to the REST API call handling.
+The adapter allows customization of REST handling, such as implementing different scenario mappers or adding handler interceptors.
 
-*Note*
-The REST support is using the default scenario mapper *HttpRequestAnnotationScenarioMapper* that searches for *@RequestMapping* annotations
-on scenario classes. Read more about that in link:#rest-request-mapping[rest-request-mapping].
+*Note*: By default, the REST support uses the `HttpRequestAnnotationScenarioMapper` to search for `@RequestMapping` annotations on scenario classes.
 
-The *urlMapping* defines how clients can access the simulator REST API. Assuming the Spring boot simulator application is running on port 8080 the
-REST API would be accessible on this URI:
+The `urlMapping` method defines the access path to the simulator's REST API.
+Assuming the Spring Boot application runs on port 8080, the API would be accessible at:
 
 [source]
 ----
 http://localhost:8080/services/rest/*
 ----
 
-The clients can send GET, POST, DELETE and other calls to that endpoint URI then. The simulator will respond with respective responses based on the called
-scenario.
+Clients can send requests like GET, POST, DELETE to this endpoint, and the simulator will respond based on the executed scenario.
 
-You can simply extend the adapter in a custom class for adding customizations.
+Customize the simulator REST support by extending `SimulatorRestAdapter` in a custom class:
 
 [source,java]
 ----
@@ -84,15 +74,10 @@ public class MySimulatorRestAdapter extends SimulatorRestAdapter {
 }
 ----
 
-As you can see the class is annotated with *@Component* annotation. This is because the adapter should be recognized by Spring in order to overwrite the default
-REST adapter behavior. The custom adapter just overwrites the *urlMapping* method so the REST simulator API will be accessible for clients under this endpoint URI:
+Annotate your custom class with `@Component` to override the default REST adapter behavior.
+Now, the REST API will be accessible at `http://localhost:8080/my-rest-service/*`.
 
-[source]
-----
-http://localhost:8080/my-rest-service/*
-----
-
-This is the simplest way to customize the simulator REST support. We can also use the adapter extension directly on the Spring boot main application class:
+Extend the adapter directly in the main application class for further customizations:
 
 [source,java]
 ----
@@ -122,9 +107,9 @@ public class Simulator extends SimulatorRestAdapter {
 ----
 
 [[rest-customization]]
-== Advanced customizations
+== Advanced Customizations
 
-For a more advanced configuration option we can extend the *SimulatorRestSupport* implementation.
+For more advanced configurations, extend `SimulatorRestSupport`:
 
 [source,java]
 ----
@@ -173,16 +158,13 @@ public class Simulator extends SimulatorRestAutoConfiguration {
 }
 ----
 
-With that configuration option we can overwrite REST support auto configuration features on the simulator such as the *requestCachingFilter* or the *handlerMapping*.
-We extend the *SimulatorRestAutoConfiguration* implementation directly.
+This approach allows you to override auto-configuration features like `requestCachingFilter` or `handlerMapping`.
 
 [[rest-request-mapping]]
-== Request mapping
+== Request Mapping
 
-By default the simulator will map incoming requests to scenarios using so called mapping keys that are evaluated on the incoming request. When using REST support on
-the simulator we can also use *@RequestMapping* annotations on scenarios in order to map incoming requests.
-
-This looks like follows:
+By default, the simulator maps incoming requests to scenarios using mapping keys evaluated from the requests.
+When utilizing REST support, `@RequestMapping` annotations on scenarios can also be used:
 
 [source,java]
 ----
@@ -192,35 +174,32 @@ public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        scenario.$(scenario.http()
+                .receive()
+                .post()
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Say Hello!" +
-                     "</Hello>");
+                     "</Hello>"));
 
-        scenario
-            .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+        scenario.$(scenario.http()
+                .send()
+                .response(HttpStatus.OK)
+                .message()
+                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
                         "Hi there!" +
-                     "</HelloResponse>");
+                     "</HelloResponse>"));
     }
 }
 ----
 
-As you can see the example above uses *@RequestMapping* annotation in addition to the *@Scenario* annotation.
-All requests on the request path */services/rest/simulator/hello* of method *POST* that include the query
-parameter *user* will be mapped to the scenario. With this strategy the simulator is able to map requests based
-on methods, request paths and query parameters.
-
-The mapping strategy requires a special scenario mapper implementation that is used by default. This scenario mapper automatically scans for scenarios with *@RequestMapping* annotations.
-The *HttpRequestAnnotationScenarioMapper* is active by default when enabling REST support on the simulator. Of course you can use traditional scenario mappers, too when using REST.
-So in case you need to apply different mapping strategies you can overwrite the scenario mapper implementation in the configuration adapter.
+In the above example, any POST request to `/services/rest/simulator/hello` with the `user` query parameter will be mapped to the `HelloScenario`.
 
 [[rest-status-code]]
-== Http responses
+== HTTP Responses
 
-As Http is a synchronous messaging transport by its nature we can provide response messages to the calling client. In Http REST APIs this should include some Http status code.
-You can specify the Http status code very easy when using the Citrus Java DSL methods as shown in the next example.
+HTTP responses in REST APIs should include appropriate status codes.
+This can be easily specified using Citrus's Java DSL:
 
 [source,java]
 ----
@@ -230,36 +209,36 @@ public class HelloScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .http()
-            .receive()
-            .post()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Say Hello!" +
-                    "</Hello>");
+        scenario.$(scenario.http()
+                .receive()
+                .post()
+                .message()
+                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Say Hello!" +
+                    "</Hello>"));
 
-        scenario
-            .http()
-            .send()
-            .response(HttpStatus.OK)
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there!" +
-                    "</HelloResponse>");
+        scenario.$(scenario.http()
+                .send()
+                .response(HttpStatus.OK)
+                .message()
+                .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                        "Hi there!" +
+                    "</HelloResponse>"));
     }
 }
 ----
 
-The Http Java DSL extension in Citrus provides easy access to Http related identities such as request methods, query parameters and status codes. Please
-see the official Citrus documentation for more details how to use this Http specific Java fluent API.
+Citrus's HTTP Java DSL simplifies setting request methods, query parameters, and status codes.
+Refer to the Citrus documentation for more details on using this API.
 
 [[rest-swagger]]
-== Swagger support
+== Swagger Support
 
-The simulator application is able to read link:https://swagger.io/[Swagger] link:https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md[Open API V3.0] specifications for auto
-generating simulator scenarios for each operation. The Open API specification defines available REST request paths, supported methods (GET, POST, PUT, DELETE, ...) and their outcome when clients
-call that API operations. The simulator generates basic scenarios for these specification information.
+The simulator is equipped to interpret Swagger (OpenAPI V3.0) specifications, using them to automatically generate scenarios for each defined operation.
+This feature streamlines the process of creating a simulator that mirrors real-world API behavior based on the Swagger documentation.
 
-See the following sample how to do that:
+To utilize this feature, the Swagger API file should be configured within the simulator's settings.
+Below is an example of how to set up Swagger support:
 
 [source,java]
 ----
@@ -299,15 +278,15 @@ public class Simulator extends SimulatorRestAdapter {
 }
 ----
 
-The listing above adds a `HttpScenarioGenerator` as Spring bean to the simulator application. The generator receives the swagger api file location `swagger/petstore-api.json` and the
-context path for this API. In addition to that we need to set a special scenario mapper implementation `HttpRequestPathScenarioMapper` that is aware of generated REST scenarios.
+In the above configuration, the `HttpScenarioGenerator` bean is defined with the location of the Swagger API file (`swagger/petstore-api.json`) and the context path for the API.
+The `HttpRequestPathScenarioMapper` is set to handle the REST scenarios generated from the Swagger specification.
 
-Also we set a custom fallback endpoint adapter. This one is used when no scenario matches the incoming request or when the scenario itself did not produce a proper response because of
-some validation error.
+Additionally, a custom fallback endpoint adapter is defined for handling unmatched requests or validation errors.
 
-On startup the generator dynamically generates a scenario for each operation defined in that swagger api file. You can review all generated scenarios in the user interface.
+Upon startup, the simulator dynamically generates scenarios for each operation in the Swagger API file.
+These scenarios are available for review in the simulator's user interface.
 
-Let's have a look at a sample operation in that *petstore* swagger api file:
+Consider the following sample operation from the Swagger API file:
 
 [source,json]
 ----
@@ -365,87 +344,30 @@ Let's have a look at a sample operation in that *petstore* swagger api file:
       }
     ]
   }
-}
 ----
 
-The REST operation above defines a *GET* method on */pet/findByStatus*. The required query parameter *status* is defined to filter the returned list of pets. As a response
-the API defines *200 OK* with an array of *Pet* objects. In addition to that *400* response is defined when the *status* parameter is not within its restriction enumeration *available, pending, sold*.
+This operation would prompt the simulator to generate scenarios that validate requests against the defined criteria and provide appropriate responses, including handling different HTTP methods and query parameters.
 
-*IMPORTANT:* _The simulator will always generate the success case exclusively. Here this would be the *200 OK* response. Other response variations are not generated up to now!_
+*Important*: The current implementation primarily focuses on generating scenarios for successful cases, like `200 OK` responses.
+Other variations, such as error responses, are not automatically generated but can be manually added.
 
-The generated scenario for this operation verifies that the request is using *GET* method on request path */pet/findByStatus*. Also the scenario verifies the existence of the *status* query
-parameter and that the value is within the enumeration boundaries.
+.Request and Response Examples
+The simulator's response to requests is based on the generated scenarios.
+For a valid request, it would provide a response as defined in the Swagger specification.
+Conversely, for an invalid request (e.g., missing required parameters), the simulator would respond with an error, such as `404 NOT_FOUND`.
 
-Only in case these verification steps are performed successfully the simulator scenario generates a proper response *200 OK* that contains a dynamic array of pet objects.
-
-Let's have a look at the communication on that scenario:
-
-.Request
-[source]
-----
-GET http://localhost:8080/petstore/v2/pet/findByStatus?status=pending
-Accept:application/json
-Content-Type:text/plain;charset=UTF-8
-Content-Length:0
-----
-
-.Response
-[source]
-----
-HTTP/1.1 200
-X-Application-Context:application
-Content-Type:application/json
-Content-Length:193
-Date:Wed, 13 Sep 2017 08:13:52 GMT
-
-[{"id": 5243024128,"category": {"id": 5032916791,"name": "hneBENfFDq"},"name": "JjZhcsvSRA","photoUrls": ["GwSVIBOhsi"],"tags": [{"id": 8074462757,"name": "DYwotNekKc"}],"status": "available"}]
-----
-
-The request did match all verification steps on the simulator for this operation. Following from that we receive a generated response message with some sample data as array of pet objects. The simulator
-is able to generate dynamic identifier such as *id*, *category* and *name* values. According to the field type the simulator generates dynamic number of string values. When there is a enumeration value restriction as seen in *status*
-the simulator generates a dynamic enumeration value.
-
-This is how we always get a proper generated response from the simulator API. The petstore swagger Open API specification defines the returned objects and how to validate the incoming requests.
-
-Just in case we sent an invalid request according to the Open API specification we do not get a proper response.
-
-.Request
-[source]
-----
-GET http://localhost:8080/petstore/v2/pet/findByStatus
-Accept:application/json
-Content-Type:text/plain;charset=UTF-8
-Content-Length:0
-----
-
-.Response
-[source]
-----
-HTTP/1.1 404
-X-Application-Context:application
-Content-Type:text/plain;charset=UTF-8
-Content-Length:0
-Date:Wed, 13 Sep 2017 08:42:56 GMT
-----
-
-The sample request above is missing the required *status* query parameter on the *findByStatus* operation. As a result we get a *404 NOT_FOUND* response from the fallback endpoint adapter
-as the scenario did not complete because of validation errors. You will see the failed scenario activity with proper error message on that missing *status* parameter in the user interface then.
-
-[rest-swagger-properties]
-=== Swagger system properties
-
-The simulator Swagger API auto generate scenario feature can also be activated using pure property settings on the Spring boot application. Instead of adding the Spring bean `HttpScenarioGenerator` in your
-simulator configuration you could just set the following properties on the simulator application:
+.Additional Configuration Options
+Swagger support can also be configured using system properties or environment variables, providing an alternative to programmatically setting up the `HttpScenarioGenerator`.
 
 [source, properties]
 ----
-# Enable swagger api support
+# Example system properties for enabling Swagger support
 citrus.simulator.rest.swagger.enabled=true
 citrus.simulator.rest.swagger.api=classpath:swagger/petstore-api.json
 citrus.simulator.rest.swagger.contextPath=/petstore
 ----
 
-Of course you can also use environment variables.
+Of course, the same can be achieved using environment variables.
 
 [source, properties]
 ----
@@ -454,32 +376,17 @@ CITRUS_SIMULATOR_REST_SWAGGER_API=classpath:swagger/petstore-api.json
 CITRUS_SIMULATOR_REST_SWAGGER_CONTEXT_PATH=/petstore
 ----
 
-We just add the api file location and everything else is auto configuration done in the simulator application.
+.Data Dictionary Integration
+To further enhance dynamic message handling, data dictionaries can be used.
+These dictionaries allow for centralized manipulation of message content via JsonPath expressions, making the interaction with the simulator more dynamic and adaptable.
 
-[rest-swagger-data-dictionary]
-=== Data dictionaries
-
-Data dictionaries enable us to centralize data manipulation via JsonPath expressions in order to have more dynamic message values in generated request and response message.
-When a scenario receives and sends messages the data dictionary is asked for available translations for message elements. This means that
-data dictionaries are able to manipulate message content before they are processed.
-
-The auto generated scenario references both inbound and outbound data dictionaries. We simply need to enable those in the Spring boot `application.properties` file:
-
-[source, properties]
-----
-citrus.simulator.inbound.json.dictionary.enabled=true
-citrus.simulator.inboundJsonDictionary=classpath:dictionary/inbound_mappings.properties
-citrus.simulator.outbound.json.dictionary.enabled=true
-citrus.simulator.outboundJsonDictionary=classpath:dictionary/outbound_mappings.properties
-----
-
-As you can see you have the possibility to define mapping files that map JsonPath expression evaluation with pre defined values in the dictionary:
-
-Now we have added some mapping files for inbound and outbound dictionaries. The mapping file can look like this:
+.Defining Data Dictionaries
+Data dictionaries are defined in property files, with mappings that dictate how message content should be manipulated:
 
 .inbound mappings
 [source, properties]
 ----
+# Example inbound data dictionary mappings
 $.category.name=@assertThat(anyOf(is(dog),is(cat)))@
 $.status=@matches(available|pending|sold|placed)@
 $.quantity=@greaterThan(0)@
@@ -488,9 +395,9 @@ $.quantity=@greaterThan(0)@
 .outbound mappings
 [source, properties]
 ----
+# Example outbound data dictionary mappings
 $.category.name=citrus:randomEnumValue('dog', 'cat')
 $.name=citrus:randomEnumValue('hasso', 'cutie', 'fluffy')
 ----
 
-The inbound and outbound mapping files defines several JsonPath expressions that should set predefined values before incoming and outgoing messages are validated respectively sent out.
-As you can see we can use Citrus validation matchers and functions in order to get more complex value generation.
+These mappings apply to both incoming and outgoing messages, ensuring that the simulator's responses are dynamic and contextually relevant, adhering to the constraints and possibilities defined in the Swagger specification.

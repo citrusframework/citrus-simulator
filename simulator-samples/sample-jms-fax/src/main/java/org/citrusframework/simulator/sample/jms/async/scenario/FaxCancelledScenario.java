@@ -35,37 +35,43 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario.$(scenario.receive()
-                .message()
-                .validate(xpath().expression(Variables.ROOT_ELEMENT_XPATH, "SendFaxMessage"))
-                .extract(fromBody().expression(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_VAR)));
+            .message()
+            .validate(xpath().expression(Variables.ROOT_ELEMENT_XPATH, "SendFaxMessage"))
+            .extract(
+                fromBody().expression(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_VAR)));
 
         scenario.$(correlation().start()
-                .onPayload(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_PH));
+            .onPayload(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_PH));
 
         scenario.$(send()
-                .endpoint(getStatusEndpoint())
-                .message()
-                .body(new MarshallingPayloadBuilder(
-                    getPayloadHelper().generateFaxStatusMessage(Variables.REFERENCE_ID_PH,
-                            FaxStatusEnumType.QUEUED,
-                            "The fax message has been queued and will be send shortly"),
+            .endpoint(getStatusEndpoint())
+            .message()
+            .body(
+                new MarshallingPayloadBuilder(
+                    getPayloadHelper().generateFaxStatusMessage(
+                        Variables.REFERENCE_ID_PH,
+                        FaxStatusEnumType.QUEUED,
+                        "The fax message has been queued and will be send shortly"
+                    ),
                     getPayloadHelper().getMarshaller())
             ));
 
         scenario.$(scenario.receive()
-                .message()
-                .validate(xpath()
-                        .expression(Variables.ROOT_ELEMENT_XPATH, "CancelFaxMessage")
-                        .expression(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_PH))
-        );
+            .message()
+            .validate(xpath()
+                .expression(Variables.ROOT_ELEMENT_XPATH, "CancelFaxMessage")
+                .expression(Variables.REFERENCE_ID_XPATH, Variables.REFERENCE_ID_PH)));
 
         scenario.$(send()
-                .endpoint(getStatusEndpoint())
-                .message()
-                .body(new MarshallingPayloadBuilder(
-                    getPayloadHelper().generateFaxStatusMessage(Variables.REFERENCE_ID_PH,
-                            FaxStatusEnumType.CANCELLED,
-                            "The fax message has been cancelled"),
+            .endpoint(getStatusEndpoint())
+            .message()
+            .body(
+                new MarshallingPayloadBuilder(
+                    getPayloadHelper().generateFaxStatusMessage(
+                        Variables.REFERENCE_ID_PH,
+                        FaxStatusEnumType.CANCELLED,
+                        "The fax message has been cancelled"
+                    ),
                     getPayloadHelper().getMarshaller())
             ));
     }
