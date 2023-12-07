@@ -29,18 +29,18 @@ public class HelloScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario.$(scenario.soap()
-                .receive()
-                .message()
-                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                    "</Hello>")
-                .soapAction("Hello"));
+            .receive()
+            .message()
+            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                "</Hello>")
+            .soapAction("Hello"));
 
         scenario.$(scenario.soap()
-                .send()
-                .message()
-                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                    "</HelloResponse>"));
+            .send()
+            .message()
+            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                "</HelloResponse>"));
     }
 }

@@ -37,40 +37,38 @@ public class GoodNightScenario extends AbstractSimulatorScenario {
     @Override
     public void run(ScenarioRunner scenario) {
         scenario.$(scenario.http()
-                .receive()
-                    .post()
-                    .message()
-                    .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Go to sleep!" +
-                            "</GoodNight>")
-                    .extract(fromHeaders().header(CORRELATION_ID, "correlationId")
+            .receive()
+            .post()
+            .message()
+            .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Go to sleep!" +
+                "</GoodNight>")
+            .extract(fromHeaders().header(CORRELATION_ID, "correlationId")
             ));
 
         scenario.$(correlation().start()
-                .onHeader(CORRELATION_ID, "${correlationId}")
+            .onHeader(CORRELATION_ID, "${correlationId}")
         );
 
         scenario.$(scenario.http()
-                .send()
-                    .response(HttpStatus.OK)
-                    .message()
-                    .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                                "Good Night!" +
-                            "</GoodNightResponse>"));
+            .send()
+            .response(HttpStatus.OK)
+            .message()
+            .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Good Night!" +
+                "</GoodNightResponse>"));
 
         scenario.$(scenario.http()
-                .receive()
-                    .post()
-                    .selector("x-correlationid = '1${correlationId}'")
-                    .message()
-                    .body("<InterveningRequest>In between!</InterveningRequest>")
-            );
+            .receive()
+            .post()
+            .selector("x-correlationid = '1${correlationId}'")
+            .message()
+            .body("<InterveningRequest>In between!</InterveningRequest>"));
 
         scenario.$(scenario.http()
-                .send()
-                    .response(HttpStatus.OK)
-                    .message()
-                    .body("<InterveningResponse>In between!</InterveningResponse>")
-            );
+            .send()
+            .response(HttpStatus.OK)
+            .message()
+            .body("<InterveningResponse>In between!</InterveningResponse>"));
     }
 }

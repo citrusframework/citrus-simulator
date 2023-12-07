@@ -190,18 +190,17 @@ public class HelloJmsScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "<user>@ignore@</user>" +
-                     "</Hello>")
-            .extractFromPayload("/Hello/user", "userName");
+        scenario.$(scenario.receive()
+            .message()
+            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                "</Hello>"));
 
-        scenario
-            .send(replyEndpoint)
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "<text>Hi there ${userName}!</text>" +
-                     "</HelloResponse>");
+        scenario.$(scenario.send()
+            .message()
+            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                "</HelloResponse>"));
     }
 }
 ----
@@ -217,29 +216,6 @@ In general scenarios can interact with all Citrus endpoints that get defined as 
 When dealing with synchronous communication the message producer waits for a reply message on a reply destination. This reply destination handling is automatically done
 within the simulator. So when we have synchronous communication we simply send back a response message using the scenario endpoint. The simulator makes sure that the response is
 provided to the waiting producer on the reply destination.
-
-[source,java]
-----
-@Scenario("Hello")
-public class HelloJmsScenario extends AbstractSimulatorScenario {
-
-    @Override
-    public void run(ScenarioRunner scenario) {
-        scenario
-            .receive()
-            .payload("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "<user>@ignore@</user>" +
-                     "</Hello>")
-            .extractFromPayload("/Hello/user", "userName");
-
-        scenario
-            .send()
-            .payload("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "<text>Hi there ${userName}!</text>" +
-                     "</HelloResponse>");
-    }
-}
-----
 
 The synchronous JMS communication needs to be enabled on the JMS simulator adapter.
 

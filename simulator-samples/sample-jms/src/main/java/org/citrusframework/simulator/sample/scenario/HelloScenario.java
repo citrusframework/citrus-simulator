@@ -33,15 +33,15 @@ public class HelloScenario extends AbstractSimulatorScenario {
         scenario.$(echo("Simulator: ${simulator.name}"));
 
         scenario.$(scenario.receive()
-                .message()
-                .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Say Hello!" +
-                     "</Hello>"));
+            .message()
+            .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Say Hello!" +
+                "</Hello>"));
 
         scenario.$(scenario.send()
-                .message()
-                .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Hi there!" +
-                     "</HelloResponse>"));
+            .message()
+            .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Hi there!" +
+                "</HelloResponse>"));
     }
 }

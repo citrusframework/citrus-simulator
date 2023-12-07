@@ -17,31 +17,44 @@ To explain this concept, consider the following simple example.
 @Scenario("GoodNight")
 public class GoodNightScenario extends AbstractSimulatorScenario {
 
+    private static final String CORRELATION_ID = "x-correlationid";
+
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
+        scenario.$(scenario.http()
             .receive()
-            .payload("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Go to sleep!" +
-                     "</GoodNight>")
-            .extractFromHeader("X-CorrelationId", "correlationId");
+            .post()
+            .message()
+            .body("<GoodNight xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Go to sleep!" +
+                "</GoodNight>")
+            .extract(fromHeaders().header(CORRELATION_ID, "correlationId")
+            ));
 
-        scenario.correlation().start()
-            .onHeader("X-CorrelationId", "${correlationId}");
+        scenario.$(correlation().start()
+            .onHeader(CORRELATION_ID, "${correlationId}")
+        );
 
-        scenario
+        scenario.$(scenario.http()
             .send()
-            .payload("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                        "Good Night!" +
-                    "</GoodNightResponse>");
+            .response(HttpStatus.OK)
+            .message()
+            .body("<GoodNightResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
+                    "Good Night!" +
+                "</GoodNightResponse>"));
 
-        scenario
+        scenario.$(scenario.http()
             .receive()
-            .payload("<IntermediateRequest>In between!</IntermediateRequest>");
+            .post()
+            .selector("x-correlationid = '1${correlationId}'")
+            .message()
+            .body("<InterveningRequest>In between!</InterveningRequest>"));
 
-        scenario
+        scenario.$(scenario.http()
             .send()
-            .payload("<IntermediateResponse>In between!</IntermediateResponse>");
+            .response(HttpStatus.OK)
+            .message()
+            .body("<InterveningResponse>In between!</InterveningResponse>"));
     }
 }
 ----
@@ -59,39 +72,51 @@ public class FaxCancelledScenario extends AbstractFaxScenario {
 
     public static final String ROOT_ELEMENT_XPATH = "string:local-name(/*)";
     public static final String REFERENCE_ID_XPATH = "//fax:referenceId";
+    public static final String REFERENCE_ID_VAR = "referenceId";
+    public static final String REFERENCE_ID_PH = "${referenceId}";
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario
-            .receive()
-            .xpath(ROOT_ELEMENT_XPATH, "SendFaxMessage")
-            .extractFromPayload(REFERENCE_ID_XPATH, "referenceId");
+        scenario.$(scenario.receive()
+            .message()
+            .validate(xpath().expression(ROOT_ELEMENT_XPATH, "SendFaxMessage"))
+            .extract(
+                fromBody().expression(REFERENCE_ID_XPATH, REFERENCE_ID_VAR)));
 
-        scenario.correlation().start()
-                .onPayload(REFERENCE_ID_XPATH, "${referenceId}");
+        scenario.$(correlation().start()
+            .onPayload(REFERENCE_ID_XPATH, REFERENCE_ID_PH));
 
-        scenario
-            .send(getStatusEndpoint())
-            .payload(
-                    getPayloadHelper().generateFaxStatusMessage("${referenceId}",
-                            FaxStatusEnumType.QUEUED,
-                            "The fax message has been queued and will be sent shortly"),
-                    getPayloadHelper().getMarshaller()
-            );
+        scenario.$(send()
+            .endpoint(getStatusEndpoint())
+            .message()
+            .body(
+                new MarshallingPayloadBuilder(
+                    getPayloadHelper().generateFaxStatusMessage(
+                        REFERENCE_ID_PH,
+                        "QUEUED",
+                        "The fax message has been queued and will be send shortly"
+                    ),
+                    getPayloadHelper().getMarshaller())
+            ));
 
-        scenario
-            .receive()
-            .xpath(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
-            .xpath(REFERENCE_ID_XPATH, "${referenceId}");
+        scenario.$(scenario.receive()
+            .message()
+            .validate(xpath()
+                .expression(ROOT_ELEMENT_XPATH, "CancelFaxMessage")
+                .expression(REFERENCE_ID_XPATH, REFERENCE_ID_PH)));
 
-        scenario
-            .send(getStatusEndpoint())
-            .payload(
-                    getPayloadHelper().generateFaxStatusMessage("${referenceId}",
-                            FaxStatusEnumType.CANCELLED,
-                            "The fax message has been cancelled"),
-                    getPayloadHelper().getMarshaller()
-            );
+        scenario.$(send()
+            .endpoint(getStatusEndpoint())
+            .message()
+            .body(
+                new MarshallingPayloadBuilder(
+                    getPayloadHelper().generateFaxStatusMessage(
+                        REFERENCE_ID_PH,
+                        "CANCELLED",
+                        "The fax message has been cancelled"
+                    ),
+                    getPayloadHelper().getMarshaller())
+            ));
     }
 }
 ----

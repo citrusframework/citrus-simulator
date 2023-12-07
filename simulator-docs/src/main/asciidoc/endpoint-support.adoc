@@ -115,20 +115,21 @@ public class HelloScenario extends AbstractSimulatorScenario {
         scenario
             .receive()
             .payload("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                        "<from>user@citrusframework.org</from>" +
-                        "<to>citrus@citrusframework.org</to>" +
-                        "<cc></cc>" +
-                        "<bcc></bcc>" +
-                        "<subject>Hello</subject>" +
-                        "<body>" +
-                            "<contentType>text/plain; charset=utf-8</contentType>" +
-                            "<content>Say Hello!</content>" +
-                        "</body>" +
-                    "</mail-message>");
+                    "<from>user@citrusframework.org</from>" +
+                    "<to>citrus@citrusframework.org</to>" +
+                    "<cc></cc>" +
+                    "<bcc></bcc>" +
+                    "<subject>Hello</subject>" +
+                    "<body>" +
+                        "<contentType>text/plain; charset=utf-8</contentType>" +
+                        "<content>Say Hello!</content>" +
+                    "</body>" +
+                "</mail-message>");
 
         scenario
             .send()
-            .payload("<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+            .payload(
+                "<mail-response xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
                         "<code>250</code>" +
                         "<message>OK</message>" +
                     "</mail-response>");
