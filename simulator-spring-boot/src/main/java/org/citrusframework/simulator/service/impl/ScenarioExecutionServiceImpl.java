@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,10 +36,12 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.citrusframework.simulator.service.impl.TestCaseUtil.getScenarioExecutionId;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Service Implementation for managing {@link ScenarioExecution}.
+ * Service implementation for managing {@link ScenarioExecution}.
  */
 @Service
 @Transactional
@@ -92,10 +93,8 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
         scenarioExecution.setStartDate(timeProvider.getTimeNow());
         scenarioExecution.setStatus(ScenarioExecution.Status.RUNNING);
 
-        if (!CollectionUtils.isEmpty(scenarioParameters)) {
-            for (ScenarioParameter scenarioParameter : scenarioParameters) {
-                scenarioExecution.addScenarioParameter(scenarioParameter);
-            }
+        if (!isEmpty(scenarioParameters)) {
+            scenarioParameters.forEach(scenarioExecution::addScenarioParameter);
         }
 
         return save(scenarioExecution);
@@ -109,7 +108,7 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
 
     @Override
     public ScenarioExecution completeScenarioExecutionFailure(TestCase testCase, Throwable cause) {
-        logger.warn("Request to complete ScenarioExecution for failed TestCase : {}", testCase, cause);
+        logger.warn("Request to complete ScenarioExecution for failed TestCase : {}", testCase);
         return completeScenarioExecution(ScenarioExecution.Status.FAILED, testCase, cause);
     }
 
@@ -126,7 +125,7 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
                 return scenarioExecution;
             })
             .map(scenarioExecutionRepository::save)
-            .orElseThrow(() -> new CitrusRuntimeException(String.format("Error while completing ScenarioExecution for test %s", testCase.getName())));
+            .orElseThrow(() -> new CitrusRuntimeException(format("Error while completing ScenarioExecution for test %s", testCase.getName())));
     }
 
     private static void writeCauseToErrorMessage(Throwable cause, ScenarioExecution scenarioExecution) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ public class ScenarioParameterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the scenarioParameter, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/scenario-parameters/{id}")
-    public ResponseEntity<ScenarioParameter> getScenarioParameter(@PathVariable Long id) {
+    public ResponseEntity<ScenarioParameter> getScenarioParameter(@PathVariable("id") Long id) {
         logger.debug("REST request to get ScenarioParameter : {}", id);
         Optional<ScenarioParameter> scenarioParameter = scenarioParameterService.findOne(id);
         return ResponseUtil.wrapOrNotFound(scenarioParameter);
