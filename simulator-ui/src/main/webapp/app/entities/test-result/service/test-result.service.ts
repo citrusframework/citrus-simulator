@@ -71,7 +71,7 @@ export class TestResultService {
   ): Type[] {
     const testResults: Type[] = testResultsToCheck.filter(isPresent);
     if (testResults.length > 0) {
-      const testResultCollectionIdentifiers = testResultCollection.map(testResultItem => this.getTestResultIdentifier(testResultItem)!);
+      const testResultCollectionIdentifiers = testResultCollection.map(testResultItem => this.getTestResultIdentifier(testResultItem));
       const testResultsToAdd = testResults.filter(testResultItem => {
         const testResultIdentifier = this.getTestResultIdentifier(testResultItem);
         if (testResultCollectionIdentifiers.includes(testResultIdentifier)) {

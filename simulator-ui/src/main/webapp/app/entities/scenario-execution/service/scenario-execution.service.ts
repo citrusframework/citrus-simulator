@@ -60,8 +60,8 @@ export class ScenarioExecutionService {
   ): Type[] {
     const scenarioExecutions: Type[] = scenarioExecutionsToCheck.filter(isPresent);
     if (scenarioExecutions.length > 0) {
-      const scenarioExecutionCollectionIdentifiers = scenarioExecutionCollection.map(
-        scenarioExecutionItem => this.getScenarioExecutionIdentifier(scenarioExecutionItem)!,
+      const scenarioExecutionCollectionIdentifiers = scenarioExecutionCollection.map(scenarioExecutionItem =>
+        this.getScenarioExecutionIdentifier(scenarioExecutionItem),
       );
       const scenarioExecutionsToAdd = scenarioExecutions.filter(scenarioExecutionItem => {
         const scenarioExecutionIdentifier = this.getScenarioExecutionIdentifier(scenarioExecutionItem);

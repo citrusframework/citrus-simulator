@@ -60,7 +60,7 @@ export class MessageService {
   ): Type[] {
     const messages: Type[] = messagesToCheck.filter(isPresent);
     if (messages.length > 0) {
-      const messageCollectionIdentifiers = messageCollection.map(messageItem => this.getMessageIdentifier(messageItem)!);
+      const messageCollectionIdentifiers = messageCollection.map(messageItem => this.getMessageIdentifier(messageItem));
       const messagesToAdd = messages.filter(messageItem => {
         const messageIdentifier = this.getMessageIdentifier(messageItem);
         if (messageCollectionIdentifiers.includes(messageIdentifier)) {

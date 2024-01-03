@@ -58,8 +58,8 @@ export class MessageHeaderService {
   ): Type[] {
     const messageHeaders: Type[] = messageHeadersToCheck.filter(isPresent);
     if (messageHeaders.length > 0) {
-      const messageHeaderCollectionIdentifiers = messageHeaderCollection.map(
-        messageHeaderItem => this.getMessageHeaderIdentifier(messageHeaderItem)!,
+      const messageHeaderCollectionIdentifiers = messageHeaderCollection.map(messageHeaderItem =>
+        this.getMessageHeaderIdentifier(messageHeaderItem),
       );
       const messageHeadersToAdd = messageHeaders.filter(messageHeaderItem => {
         const messageHeaderIdentifier = this.getMessageHeaderIdentifier(messageHeaderItem);
