@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class TestParameterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the testParameter, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/test-parameters/{testResultId}/{key}")
-    public ResponseEntity<TestParameter> getTestParameter(@PathVariable Long testResultId, @PathVariable String key) {
+    public ResponseEntity<TestParameter> getTestParameter(@PathVariable("testResultId") Long testResultId, @PathVariable("key") String key) {
         logger.debug("REST request to get TestParameter '{}' of TestResult: {}", key, testResultId);
         Optional<TestParameter> testParameter = testParameterService.findOne(testResultId, key);
         return ResponseUtil.wrapOrNotFound(testParameter);
