@@ -51,7 +51,7 @@ export class ScenarioService {
   ): Type[] {
     const scenarios: Type[] = scenariosToCheck.filter(isPresent);
     if (scenarios.length > 0) {
-      const scenarioCollectionIdentifiers = scenarioCollection.map(scenarioItem => this.getScenarioIdentifier(scenarioItem)!);
+      const scenarioCollectionIdentifiers = scenarioCollection.map(scenarioItem => this.getScenarioIdentifier(scenarioItem));
       const scenariosToAdd = scenarios.filter(scenarioItem => {
         const scenarioIdentifier = this.getScenarioIdentifier(scenarioItem);
         if (scenarioCollectionIdentifiers.includes(scenarioIdentifier)) {

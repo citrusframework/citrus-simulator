@@ -60,8 +60,8 @@ export class TestParameterService {
   ): Type[] {
     const testParameters: Type[] = testParametersToCheck.filter(isPresent);
     if (testParameters.length > 0) {
-      const testParameterCollectionIdentifiers = testParameterCollection.map(
-        testParameterItem => this.getTestParameterIdentifier(testParameterItem)!,
+      const testParameterCollectionIdentifiers = testParameterCollection.map(testParameterItem =>
+        this.getTestParameterIdentifier(testParameterItem),
       );
       const testParametersToAdd = testParameters.filter(testParameterItem => {
         const testParameterIdentifier = this.getTestParameterIdentifier(testParameterItem);

@@ -59,8 +59,8 @@ export class ScenarioParameterService {
   ): Type[] {
     const scenarioParameters: Type[] = scenarioParametersToCheck.filter(isPresent);
     if (scenarioParameters.length > 0) {
-      const scenarioParameterCollectionIdentifiers = scenarioParameterCollection.map(
-        scenarioParameterItem => this.getScenarioParameterIdentifier(scenarioParameterItem)!,
+      const scenarioParameterCollectionIdentifiers = scenarioParameterCollection.map(scenarioParameterItem =>
+        this.getScenarioParameterIdentifier(scenarioParameterItem),
       );
       const scenarioParametersToAdd = scenarioParameters.filter(scenarioParameterItem => {
         const scenarioParameterIdentifier = this.getScenarioParameterIdentifier(scenarioParameterItem);

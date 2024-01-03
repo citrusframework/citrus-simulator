@@ -13,3 +13,8 @@ bracketSameLine: false
 
 plugins:
   - prettier-plugin-packagejson
+
+overrides:
+    - files: "*.json"
+      options:
+          trailingComma: none
