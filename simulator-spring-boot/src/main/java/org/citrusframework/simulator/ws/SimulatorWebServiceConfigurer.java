@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.ws;
 
+import java.util.List;
 import org.citrusframework.simulator.config.SimulatorConfigurer;
 import org.springframework.ws.server.EndpointInterceptor;
 
@@ -29,7 +30,7 @@ public interface SimulatorWebServiceConfigurer extends SimulatorConfigurer {
      *
      * @return
      */
-    String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration);
+    List<String> servletMappings(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration);
 
     /**
      * Gets the list of endpoint interceptors.

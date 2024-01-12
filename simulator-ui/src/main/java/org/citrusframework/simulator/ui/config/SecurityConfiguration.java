@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package org.citrusframework.simulator.ui.config;
 
+import static java.util.Objects.nonNull;
+
 import jakarta.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
@@ -37,10 +41,6 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Configuration
 public class SecurityConfiguration {
@@ -146,21 +146,21 @@ public class SecurityConfiguration {
     }
 
     private void addWebServiceMatchers(List<String> urlMappings) {
-        if (!Objects.isNull(simulatorWebServiceConfigurationProperties)
-            && !Objects.isNull(simulatorWebServiceAdapter)
-            && simulatorWebServiceAdapter.servletMapping(simulatorWebServiceConfigurationProperties) != null) {
-            urlMappings.add(simulatorWebServiceAdapter.servletMapping(simulatorWebServiceConfigurationProperties));
-        } else if (!Objects.isNull(simulatorWebServiceConfigurationProperties)
-            && simulatorWebServiceConfigurationProperties.getServletMapping() != null) {
-            urlMappings.add(simulatorWebServiceConfigurationProperties.getServletMapping());
+        if (nonNull(simulatorWebServiceConfigurationProperties)
+            && nonNull(simulatorWebServiceAdapter)
+            && simulatorWebServiceAdapter.servletMappings(simulatorWebServiceConfigurationProperties) != null) {
+            urlMappings.addAll(simulatorWebServiceAdapter.servletMappings(simulatorWebServiceConfigurationProperties));
+        } else if (nonNull(simulatorWebServiceConfigurationProperties)
+            && simulatorWebServiceConfigurationProperties.getServletMappings() != null) {
+            urlMappings.addAll(simulatorWebServiceConfigurationProperties.getServletMappings());
         }
     }
 
     private void addRestMatchers(List<String> urlMappings) {
-        if (!Objects.isNull(simulatorRestConfigurationProperties)
-            && !Objects.isNull(simulatorRestAdapter)) {
+        if (nonNull(simulatorRestConfigurationProperties)
+            && nonNull(simulatorRestAdapter)) {
             urlMappings.addAll(simulatorRestAdapter.urlMappings(simulatorRestConfigurationProperties));
-        } else if (!Objects.isNull(simulatorRestConfigurationProperties)) {
+        } else if (nonNull(simulatorRestConfigurationProperties)) {
             urlMappings.addAll(simulatorRestConfigurationProperties.getUrlMappings());
         }
     }

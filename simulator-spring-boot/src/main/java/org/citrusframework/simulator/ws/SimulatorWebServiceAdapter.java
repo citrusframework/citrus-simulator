@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.ws;
 
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
@@ -28,8 +29,8 @@ import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
 
     @Override
-    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return simulatorWebServiceConfiguration.getServletMapping();
+    public List<String> servletMappings(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        return simulatorWebServiceConfiguration.getServletMappings();
     }
 
     @Override
