@@ -12,6 +12,7 @@ import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,16 +31,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultScenarioExecutorServiceImplTest {
 
     private static ScenarioEndpoint scenarioEndpointMock;
+
     private static AtomicBoolean customScenarioExecuted;
 
     @Mock
@@ -59,8 +62,8 @@ class DefaultScenarioExecutorServiceImplTest {
 
     private DefaultScenarioExecutorServiceImpl fixture;
 
-    private String scenarioName = "testScenario";
-    private List<ScenarioParameter> parameters = List.of(
+    private final String scenarioName = "testScenario";
+    private final List<ScenarioParameter> parameters = List.of(
         ScenarioParameter.builder()
             .name("param1")
             .value("value1")
@@ -102,7 +105,9 @@ class DefaultScenarioExecutorServiceImplTest {
         // This invokes the scenario execution with the captured runnable
         scenarioRunnableArgumentCaptor.getValue().run();
 
-        verifyNoInteractions(simulatorScenarioMock);
+        verify(simulatorScenarioMock).getScenarioEndpoint();
+        verify(simulatorScenarioMock).run(any(ScenarioRunner.class));
+        verifyNoMoreInteractions(simulatorScenarioMock);
     }
 
     @Test
@@ -127,7 +132,7 @@ class DefaultScenarioExecutorServiceImplTest {
         scenarioRunnableArgumentCaptor.getValue().run();
 
         ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = ArgumentCaptor.forClass(ScenarioRunner.class);
-        verify(simulatorScenario).run(scenarioRunnerArgumentCaptor.capture());
+        verify(simulatorScenario, times(1)).run(scenarioRunnerArgumentCaptor.capture());
 
         ScenarioRunner scenarioRunner = scenarioRunnerArgumentCaptor.getValue();
         assertEquals(scenarioEndpointMock, scenarioRunner.scenarioEndpoint());
@@ -166,15 +171,26 @@ class DefaultScenarioExecutorServiceImplTest {
         doReturn(citrusContextMock).when(citrusMock).getCitrusContext();
         TestContext testContextMock = mock(TestContext.class);
         doReturn(testContextMock).when(citrusContextMock).createTestContext();
+
+        TestListeners testListenersMock = mock(TestListeners.class);
+        lenient().doReturn(testListenersMock).when(testContextMock).getTestListeners();
         return testContextMock;
     }
 
-    public static class CustomSimulatorScenario implements SimulatorScenario {
+    public static class BaseCustomSimulatorScenario implements SimulatorScenario {
 
         @Override
         public ScenarioEndpoint getScenarioEndpoint() {
             return scenarioEndpointMock;
         }
+
+        @Override
+        public void run(ScenarioRunner runner) {
+            Assertions.fail("This method should never be called");
+        }
+    }
+
+    public static class CustomSimulatorScenario extends BaseCustomSimulatorScenario {
 
         @Override
         public void run(ScenarioRunner runner) {

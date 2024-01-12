@@ -18,11 +18,14 @@ package org.citrusframework.simulator.service.impl;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import jakarta.annotation.Nullable;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.citrusframework.Citrus;
 import org.citrusframework.annotations.CitrusAnnotations;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
@@ -34,13 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * {@inheritDoc}
@@ -105,47 +101,29 @@ public class DefaultScenarioExecutorServiceImpl implements ScenarioExecutorServi
     private void startScenarioSync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         try {
             TestContext context = citrus.getCitrusContext().createTestContext();
-            ReflectionUtils.doWithMethods(
-                scenario.getClass(),
-                method -> createAndRunScenarioRunner(context, method, executionId, name, scenario, scenarioParameters),
-                method -> method.getName().equals("run")
-            );
+            createAndRunScenarioRunner(context, executionId, name, scenario, scenarioParameters);
             logger.debug("Scenario completed: {}", name);
         } catch (Exception e) {
             logger.error("Scenario completed with error: {}!", name, e);
         }
     }
 
-    private void createAndRunScenarioRunner(TestContext context, Method method, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        if (method.getDeclaringClass().equals(SimulatorScenario.class)) {
-            // no need to execute the default run implementations
-            return;
+    private void createAndRunScenarioRunner(TestContext context, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
+        ScenarioRunner runner = new ScenarioRunner(scenario.getScenarioEndpoint(), applicationContext, context);
+        if (scenarioParameters != null) {
+            scenarioParameters.forEach(p -> runner.variable(p.getName(), p.getValue()));
         }
 
-        if (method.getParameterCount() != 1) {
-            throw new SimulatorException("Invalid scenario method signature - expect single method parameter but got: " + method.getParameterCount());
-        }
+        runner.variable(ScenarioExecution.EXECUTION_ID, executionId);
+        runner.name(String.format("Scenario(%s)", name));
 
-        Class<?> parameterType = method.getParameterTypes()[0];
-        if (parameterType.equals(ScenarioRunner.class)) {
-            ScenarioRunner runner = new ScenarioRunner(scenario.getScenarioEndpoint(), applicationContext, context);
-            if (scenarioParameters != null) {
-                scenarioParameters.forEach(p -> runner.variable(p.getName(), p.getValue()));
-            }
+        CitrusAnnotations.injectAll(scenario, citrus, context);
 
-            runner.variable(ScenarioExecution.EXECUTION_ID, executionId);
-            runner.name(String.format("Scenario(%s)", name));
-
-            CitrusAnnotations.injectAll(scenario, citrus, context);
-
-            try {
-                runner.start();
-                ReflectionUtils.invokeMethod(method, scenario, runner);
-            } finally {
-                runner.stop();
-            }
-        } else {
-            throw new SimulatorException("Invalid scenario method parameter type: " + parameterType);
+        try {
+            runner.start();
+            scenario.run(runner);
+        } finally {
+            runner.stop();
         }
     }
 
