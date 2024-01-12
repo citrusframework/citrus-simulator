@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package org.citrusframework.simulator.config;
 
-import jakarta.annotation.PostConstruct;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
@@ -27,35 +28,19 @@ import org.springframework.core.env.Environment;
  * @author Christoph Deppisch
  */
 @ConfigurationProperties(prefix = "citrus.simulator")
-public class SimulatorConfigurationProperties implements EnvironmentAware {
+public class SimulatorConfigurationProperties implements EnvironmentAware, InitializingBean {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
 
-    /**
-     * System property constants and environment variable names. Post construct callback reads these values and overwrites
-     * settings in this property class in order to add support for environment variables.
-     */
-    private static final String SIMULATOR_TEMPLATE_PATH_PROPERTY = "citrus.simulator.template.path";
-    private static final String SIMULATOR_TEMPLATE_PATH_ENV = "CITRUS_SIMULATOR_TEMPLATE_PATH";
-    private static final String SIMULATOR_SCENARIO_PROPERTY = "citrus.simulator.default.scenario";
-    private static final String SIMULATOR_SCENARIO_ENV = "CITRUS_SIMULATOR_DEFAULT_SCENARIO";
-    private static final String SIMULATOR_TIMEOUT_PROPERTY = "citrus.simulator.default.timeout";
-    private static final String SIMULATOR_TIMEOUT_ENV = "CITRUS_SIMULATOR_DEFAULT_TIMEOUT";
-    private static final String SIMULATOR_TEMPLATE_VALIDATION_PROPERTY = "citrus.simulator.template.validation";
-    private static final String SIMULATOR_TEMPLATE_VALIDATION_ENV = "CITRUS_SIMULATOR_TEMPLATE_VALIDATION";
-    private static final String SIMULATOR_EXCEPTION_DELAY_PROPERTY = "citrus.simulator.exception.delay";
-    private static final String SIMULATOR_EXCEPTION_DELAY_ENV = "CITRUS_SIMULATOR_EXCEPTION_DELAY";
-    private static final String SIMULATOR_EXECUTOR_THREADS_PROPERTY = "citrus.simulator.executor.threads";
-    private static final String SIMULATOR_EXECUTOR_THREADS_ENV = "CITRUS_SIMULATOR_EXECUTOR_THREADS";
-    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary";
-    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY";
-    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary";
-    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY";
-    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.inbound.json.dictionary";
-    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY";
-    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary";
-    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY";
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary.location";
+    private static final String SIMULATOR_INBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_XML_DICTIONARY_LOCATION";
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.outbound.xml.dictionary.location";
+    private static final String SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_XML_DICTIONARY_LOCATION";
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.inbound.json.dictionary.location";
+    private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY_LOCATION";
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary.location";
+    private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY_LOCATION";
 
     /**
      * Global option to enable/disable simulator support, default is true.
@@ -112,27 +97,6 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
      * Optional outbound JSON data dictionary mapping file which gets automatically loaded when default outbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
      */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
-
-     /**
-     * The Spring application context environment auto-injected by environment aware mechanism.
-     */
-    private Environment env;
-
-    @PostConstruct
-    private void loadProperties() {
-        templatePath = env.getProperty(SIMULATOR_TEMPLATE_PATH_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_PATH_ENV, templatePath));
-        defaultScenario = env.getProperty(SIMULATOR_SCENARIO_PROPERTY, env.getProperty(SIMULATOR_SCENARIO_ENV, defaultScenario));
-        defaultTimeout = Long.valueOf(env.getProperty(SIMULATOR_TIMEOUT_PROPERTY, env.getProperty(SIMULATOR_TIMEOUT_ENV, String.valueOf(defaultTimeout))));
-        templateValidation = Boolean.parseBoolean(env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_PROPERTY, env.getProperty(SIMULATOR_TEMPLATE_VALIDATION_ENV, String.valueOf(templateValidation))));
-        exceptionDelay = Long.valueOf(env.getProperty(SIMULATOR_EXCEPTION_DELAY_PROPERTY, env.getProperty(SIMULATOR_EXCEPTION_DELAY_ENV, String.valueOf(exceptionDelay))));
-        executorThreads = Integer.parseInt(env.getProperty(SIMULATOR_EXECUTOR_THREADS_PROPERTY, env.getProperty(SIMULATOR_EXECUTOR_THREADS_ENV, Integer.toString(executorThreads))));
-        inboundXmlDictionary = env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
-        outboundXmlDictionary = env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
-        inboundJsonDictionary = env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
-        outboundJsonDictionary = env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY, env.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV, outboundJsonDictionary));
-
-        logger.info("Using the simulator configuration: {}", this.toString());
-    }
 
     /**
      * Gets the enabled.
@@ -330,24 +294,32 @@ public class SimulatorConfigurationProperties implements EnvironmentAware {
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "enabled='" + enabled + '\'' +
-                ", templatePath='" + templatePath + '\'' +
-                ", defaultScenario='" + defaultScenario + '\'' +
-                ", defaultTimeout=" + defaultTimeout +
-                ", exceptionDelay=" + exceptionDelay +
-                ", executorThreads=" + executorThreads +
-                ", templateValidation=" + templateValidation +
-                ", inboundXmlDictionary=" + inboundXmlDictionary +
-                ", outboundXmlDictionary=" + outboundXmlDictionary +
-                ", inboundJsonDictionary=" + inboundJsonDictionary +
-                ", outboundJsonDictionary=" + outboundJsonDictionary +
-                '}';
+    public void setEnvironment(Environment environment) {
+        inboundXmlDictionary = environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
+        outboundXmlDictionary = environment.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_OUTBOUND_XML_DICTIONARY_ENV, outboundXmlDictionary));
+        inboundJsonDictionary = environment.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_INBOUND_JSON_DICTIONARY_ENV, inboundJsonDictionary));
+        outboundJsonDictionary = environment.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV, outboundJsonDictionary));
+  }
+
+    @Override
+    public void afterPropertiesSet() {
+        logger.info("Using the simulator configuration: {}", this);
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append(enabled)
+            .append(templatePath)
+            .append(defaultScenario)
+            .append(defaultTimeout)
+            .append(exceptionDelay)
+            .append(executorThreads)
+            .append(templateValidation)
+            .append(inboundXmlDictionary)
+            .append(outboundXmlDictionary)
+            .append(inboundJsonDictionary)
+            .append(outboundJsonDictionary)
+            .toString();
     }
 }

@@ -20,6 +20,7 @@ import org.citrusframework.annotations.CitrusTest;
 import org.citrusframework.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.sample.BankServiceSimulator;
 import org.citrusframework.simulator.sample.config.HttpClientConfig;
 import org.citrusframework.simulator.sample.model.BankAccount;
@@ -41,7 +42,7 @@ import org.testng.annotations.Test;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
 
 @Test
-@ContextConfiguration(classes = { BankServiceSimulatorIT.EndpointConfig.class, HttpClientConfig.class })
+@ContextConfiguration(classes = { BankServiceSimulatorIT.EndpointConfig.class, HttpClientConfig.class, SimulatorConfigurationProperties.class})
 public class BankServiceSimulatorIT extends TestNGCitrusSpringSupport {
 
     /**

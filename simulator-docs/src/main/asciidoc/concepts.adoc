@@ -65,8 +65,8 @@ Following from that, you can add properties to the `application.properties` file
 [source,properties]
 ----
 citrus.simulator.rest.enabled=true
-citrus.simulator.defaultTimeout=10000
-citrus.simulator.templatePath=com/company/simulator/templates
+citrus.simulator.default-timeout=10000
+citrus.simulator.template-path=com/company/simulator/templates
 ----
 
 The available simulator properties are grouped into the following configuration classes:
@@ -82,16 +82,16 @@ There are several properties that you can use to customize the simulator behavio
 
 .Spring Boot application properties
 [horizontal]
-`citrus.simulator.templatePath`:: Default path to message payload template files.
-`citrus.simulator.defaultScenario`:: Default scenario name.
-`citrus.simulator.defaultTimeout`:: Timeout when waiting for inbound messages.
-`citrus.simulator.templateValidation`:: Enable/disable schema validation.
-`citrus.simulator.exceptionDelay`:: Default delay in milliseconds to wait after uncategorized exceptions.
-`citrus.simulator.executor.threads`:: The number of threads available for parallel scenario execution.
-`citrus.simulator.rest.urlMapping`:: Handler adapter URL mapping for inbound requests.
-`citrus.simulator.ws.servletMappings`:: Message dispatcher servlet mappings for inbound SOAP requests.
-`citrus.simulator.jms.inboundDestination`:: JMS destination name to consume inbound messages from.
-`citrus.simulator.jms.replyDestination`:: JMS destination name to publish reply messages to.
+`citrus.simulator.template-path`:: Default path to message payload template files.
+`citrus.simulator.default-scenario`:: Default scenario name.
+`citrus.simulator.default-timeout`:: Timeout when waiting for inbound messages.
+`citrus.simulator.template-validation`:: Enable/disable schema validation.
+`citrus.simulator.exception-delay`:: Default delay in milliseconds to wait after uncategorized exceptions.
+`citrus.simulator.executor-threads`:: The number of threads available for parallel scenario execution.
+`citrus.simulator.rest.url-mapping`:: Handler adapter URL mapping for inbound requests.
+`citrus.simulator.ws.servlet-mappings`:: Message dispatcher servlet mappings for inbound SOAP requests.
+`citrus.simulator.jms.inbound-destination`:: JMS destination name to consume inbound messages from.
+`citrus.simulator.jms.reply-destination`:: JMS destination name to publish reply messages to.
 
 Please refer to the respective configuration property classes to see in detail what property settings are supported.
 
@@ -104,16 +104,16 @@ The properties include:
 .System property names
 [horizontal]
 `citrus.simulator.configuration.class`:: Java configuration class that is automatically loaded (default is org.citrusframework.simulator.SimulatorConfig).
-`citrus.simulator.template.path`:: Default path to message payload template files.
-`citrus.simulator.default.scenario`:: Default scenario name.
-`citrus.simulator.default.timeout`:: Timeout when waiting for inbound messages.
-`citrus.simulator.template.validation`:: Enable/disable schema validation.
-`citrus.simulator.exception.delay`:: Default delay in milliseconds to wait after uncategorized exceptions.
-`citrus.simulator.executor.threads`:: The number of threads available for parallel scenario execution.
-`citrus.simulator.rest.url.mapping`:: Handler adapter URL mapping for inbound requests.
-`citrus.simulator.ws.servlet.mapping`:: Message dispatcher servlet mapping for inbound SOAP requests.
-`citrus.simulator.jms.inbound.destination`:: JMS destination name to consume inbound messages from.
-`citrus.simulator.jms.reply.destination`:: JMS destination name to publish outbound messages to.
+`citrus.simulator.template-path`:: Default path to message payload template files.
+`citrus.simulator.default-scenario`:: Default scenario name.
+`citrus.simulator.default-timeout`:: Timeout when waiting for inbound messages.
+`citrus.simulator.template-validation`:: Enable/disable schema validation.
+`citrus.simulator.exception-delay`:: Default delay in milliseconds to wait after uncategorized exceptions.
+`citrus.simulator.executor-threads`:: The number of threads available for parallel scenario execution.
+`citrus.simulator.rest.url-mappings`:: Handler adapter URL mappings for inbound requests.
+`citrus.simulator.ws.servlet-mappings`:: Message dispatcher servlet mappings for inbound SOAP requests.
+`citrus.simulator.jms.inbound-destination`:: JMS destination name to consume inbound messages from.
+`citrus.simulator.jms.reply-destination`:: JMS destination name to publish outbound messages to.
 
 You can set these properties as system properties when starting the Spring Boot application, or you can add the properties to the default
 Spring Boot application properties file, `application.properties`, located as a resource file in your project.
@@ -135,8 +135,8 @@ This is extremely helpful when running the simulator in containerized infrastruc
 `CITRUS_SIMULATOR_TEMPLATE_VALIDATION`:: Enable/disable schema validation.
 `CITRUS_SIMULATOR_EXCEPTION_DELAY`:: Default delay in milliseconds to wait after uncategorized exceptions.
 `CITRUS_SIMULATOR_EXECUTOR_THREADS`:: The number of threads available for parallel scenario execution.
-`CITRUS_SIMULATOR_REST_URL_MAPPING`:: Handler adapter URL mapping for inbound requests.
-`CITRUS_SIMULATOR_WS_SERVLET_MAPPING`:: Message dispatcher servlet mapping for inbound SOAP requests.
+`CITRUS_SIMULATOR_REST_URL_MAPPINGS`:: Handler adapter URL mappings for inbound requests.
+`CITRUS_SIMULATOR_WS_SERVLET_MAPPINGS`:: Message dispatcher servlet mappings for inbound SOAP requests.
 `CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION`:: JMS destination name to consume inbound messages from.
 `CITRUS_SIMULATOR_JMS_REPLY_DESTINATION`:: JMS destination name to publish outbound messages to.
 

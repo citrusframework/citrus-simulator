@@ -32,6 +32,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import static java.util.Objects.hash;
+
 /**
  * Represents a parameter of a test result, holding a key-value pair of parameter details. It is linked to
  * a {@link org.citrusframework.simulator.model.TestResult} entity through a many-to-one relationship, where
@@ -193,6 +195,11 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
                 return key != null && testResultId != null && key.equals(testParameterId.key) && testResultId.equals(testParameterId.testResultId);
             }
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash(key, testResultId);
         }
     }
 

@@ -1,9 +1,9 @@
 package org.citrusframework.simulator.model;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 class TestParameterTest {
 
@@ -16,10 +16,10 @@ class TestParameterTest {
 
         assertThat(testParameter1).isEqualTo(testParameter2);
 
-        ReflectionTestUtils.setField(testParameter2, "testParameterId", new TestParameter.TestParameterId("key-2", testParameter1.getTestResult()), TestParameter.TestParameterId.class);
+        setField(testParameter2, "testParameterId", new TestParameter.TestParameterId("key-2", testParameter1.getTestResult()), TestParameter.TestParameterId.class);
         assertThat(testParameter1).isNotEqualTo(testParameter2);
 
-        ReflectionTestUtils.setField(testParameter2, "testParameterId", new TestParameter.TestParameterId(testParameter1.getKey(), TestResult.builder().id(2L).build()), TestParameter.TestParameterId.class);
+        setField(testParameter2, "testParameterId", new TestParameter.TestParameterId(testParameter1.getKey(), TestResult.builder().id(2L).build()), TestParameter.TestParameterId.class);
         assertThat(testParameter1).isNotEqualTo(testParameter2);
 
         testParameter1.setTestResult(null);

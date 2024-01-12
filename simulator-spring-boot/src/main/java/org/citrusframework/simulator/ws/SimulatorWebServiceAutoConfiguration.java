@@ -16,6 +16,9 @@
 
 package org.citrusframework.simulator.ws;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
@@ -36,7 +39,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.Environment;
 import org.springframework.ws.config.annotation.WsConfigurationSupport;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.EndpointMapping;
@@ -44,10 +46,6 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.adapter.MessageEndpointAdapter;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -148,8 +146,8 @@ public class SimulatorWebServiceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(WsdlScenarioGenerator.class)
     @ConditionalOnProperty(prefix = "citrus.simulator.ws.wsdl", value = "enabled", havingValue = "true")
-    public static WsdlScenarioGenerator simulatorWsdlScenarioGenerator(Environment environment) {
-        return new WsdlScenarioGenerator(environment);
+    public WsdlScenarioGenerator simulatorWsdlScenarioGenerator() {
+        return new WsdlScenarioGenerator(simulatorWebServiceConfiguration);
     }
 
     /**

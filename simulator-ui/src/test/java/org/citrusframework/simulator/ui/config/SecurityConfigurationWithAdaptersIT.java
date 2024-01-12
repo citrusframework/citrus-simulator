@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
+import static java.util.Collections.singletonList;
+
 /**
  * @author Thorsten Schlathoelter
  */
@@ -55,7 +57,7 @@ class SecurityConfigurationWithAdaptersIT extends AbstractSecurityConfigurationI
             return new SimulatorRestAdapter() {
                 @Override
                 public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-                    return List.of("/modified-simulator/rest/**");
+                    return singletonList("/modified-simulator/rest/**");
                 }
             };
         }
@@ -64,8 +66,9 @@ class SecurityConfigurationWithAdaptersIT extends AbstractSecurityConfigurationI
         @ConditionalOnProperty(name = "with-adapters", havingValue = "true")
         public SimulatorWebServiceAdapter simulatorWebServiceAdapter() {
             return new SimulatorWebServiceAdapter() {
-                public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-                    return "/modified-simulator/ws/*";
+                @Override
+                public List<String> servletMappings(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+                    return singletonList("/modified-simulator/ws/*");
                 }
             };
         }

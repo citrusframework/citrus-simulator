@@ -128,7 +128,8 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
 
         @Bean
         public HttpClient simulatorRestEndpoint() {
-            return CitrusEndpoints.http().client()
+            return CitrusEndpoints.http()
+                    .client()
                     .requestUrl(String.format("http://localhost:%s", 8080))
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .build();

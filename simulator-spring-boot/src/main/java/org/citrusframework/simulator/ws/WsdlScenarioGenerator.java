@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.citrusframework.simulator.ws;
 
 import org.apache.xmlbeans.SchemaType;
@@ -20,7 +36,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -48,12 +63,6 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
     private static final Logger logger = LoggerFactory.getLogger(WsdlScenarioGenerator.class);
 
     /**
-     * Optional WSDL file location system property for auto generated scenarios
-     */
-    private static final String SIMULATOR_WSDL_LOCATION_PROPERTY = "citrus.simulator.ws.wsdl.location";
-    private static final String SIMULATOR_WSDL_LOCATION_ENV = "CITRUS_SIMULATOR_WS_WSDL_LOCATION";
-
-    /**
      * Target wsdl to generate scenarios from
      */
     private final Resource wsdlResource;
@@ -66,9 +75,11 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
     /**
      * Default constructor.
      */
-    public WsdlScenarioGenerator(Environment environment) {
-        org.springframework.core.io.Resource springResource = new PathMatchingResourcePatternResolver().getResource(environment.getProperty(SIMULATOR_WSDL_LOCATION_PROPERTY, environment.getProperty(SIMULATOR_WSDL_LOCATION_ENV, "")));
-        wsdlResource = new CitrusResourceWrapper(springResource);
+    public WsdlScenarioGenerator(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfigurationProperties) {
+        wsdlResource = new CitrusResourceWrapper(
+            new PathMatchingResourcePatternResolver()
+                .getResource(simulatorWebServiceConfigurationProperties.getWsdl().getLocation())
+        );
     }
 
     /**
