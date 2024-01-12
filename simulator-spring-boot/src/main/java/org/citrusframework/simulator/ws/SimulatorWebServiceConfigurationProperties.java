@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +20,19 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * @author Christoph Deppisch
  */
 @ConfigurationProperties(prefix = "citrus.simulator.ws")
-public class SimulatorWebServiceConfigurationProperties implements EnvironmentAware {
+public class SimulatorWebServiceConfigurationProperties {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorWebServiceConfigurationProperties.class);
-
-    /**
-     * System property constants and environment variable names. Post construct callback reads these values and overwrites
-     * settings in this property class in order to add support for environment variables.
-     */
-    private static final String SIMULATOR_SERVLET_MAPPING_PROPERTY = "citrus.simulator.ws.servlet.mapping";
-    private static final String SIMULATOR_SERVLET_MAPPING_ENV = "CITRUS_SIMULATOR_WS_SERVLET_MAPPING";
 
     /**
      * Global option to enable/disable SOAP web service support, default is false.
@@ -48,18 +43,11 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
      * The web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
      */
-    private String servletMapping = "/services/ws/*";
-
-    /**
-     * The Spring application context environment auto injected by environment aware mechanism.
-     */
-    private Environment env;
+    private List<String> servletMappings = singletonList("/services/ws/*");
 
     @PostConstruct
     private void loadProperties() {
-        servletMapping = env.getProperty(SIMULATOR_SERVLET_MAPPING_PROPERTY, env.getProperty(SIMULATOR_SERVLET_MAPPING_ENV, servletMapping));
-
-        logger.info("Using the simulator configuration: {}", this.toString());
+        logger.info("Using the simulator configuration: {}", this);
     }
 
     /**
@@ -85,29 +73,24 @@ public class SimulatorWebServiceConfigurationProperties implements EnvironmentAw
      *
      * @return
      */
-    public String getServletMapping() {
-        return servletMapping;
+    public List<String> getServletMappings() {
+        return servletMappings;
     }
 
     /**
      * Sets the servletMapping.
      *
-     * @param servletMapping
+     * @param servletMappings
      */
-    public void setServletMapping(String servletMapping) {
-        this.servletMapping = servletMapping;
+    public void setServletMappings(List<String> servletMappings) {
+        this.servletMappings = servletMappings;
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "enabled='" + enabled + '\'' +
-                ", servletMapping='" + servletMapping + '\'' +
+                ", servletMappings=" + servletMappings +
                 '}';
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
     }
 }

@@ -89,7 +89,7 @@ There are several properties that you can use to customize the simulator behavio
 `citrus.simulator.exceptionDelay`:: Default delay in milliseconds to wait after uncategorized exceptions.
 `citrus.simulator.executor.threads`:: The number of threads available for parallel scenario execution.
 `citrus.simulator.rest.urlMapping`:: Handler adapter URL mapping for inbound requests.
-`citrus.simulator.ws.servletMapping`:: Message dispatcher servlet mapping for inbound SOAP requests.
+`citrus.simulator.ws.servletMappings`:: Message dispatcher servlet mappings for inbound SOAP requests.
 `citrus.simulator.jms.inboundDestination`:: JMS destination name to consume inbound messages from.
 `citrus.simulator.jms.replyDestination`:: JMS destination name to publish reply messages to.
 
