@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,6 @@
 
 package org.citrusframework.simulator.sample.config;
 
-import java.io.IOException;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import javax.net.ssl.SSLContext;
-
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -34,17 +26,25 @@ import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
 @Configuration
 public class HttpClientConfig {
 
-    @Value("${citrus.simulator.defaultTimeout}")
-    private long defaultTimeout;
+    private final SimulatorConfigurationProperties simulatorConfigurationProperties;
 
     @Value("${server.port}")
     private int port;
@@ -55,11 +55,15 @@ public class HttpClientConfig {
     @Value("${server.ssl.key-store-password}")
     private String keyStorePassword;
 
+    public HttpClientConfig(SimulatorConfigurationProperties simulatorConfigurationProperties) {
+        this.simulatorConfigurationProperties = simulatorConfigurationProperties;
+    }
+
     @Bean
     public HttpClient simulatorHttpClientEndpoint() {
         return CitrusEndpoints.http()
                 .client()
-                .timeout(defaultTimeout)
+                .timeout(simulatorConfigurationProperties.getDefaultTimeout())
                 .requestUrl(String.format("https://localhost:%s/", port))
                 .requestFactory(sslRequestFactory())
                 .build();
@@ -92,5 +96,4 @@ public class HttpClientConfig {
     public HttpComponentsClientHttpRequestFactory sslRequestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());
     }
-
 }

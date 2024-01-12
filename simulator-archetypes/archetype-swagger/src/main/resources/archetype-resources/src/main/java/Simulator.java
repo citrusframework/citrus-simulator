@@ -16,16 +16,22 @@
 
 package ${package};
 
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMappers;
+import org.citrusframework.simulator.http.HttpRequestAnnotationScenarioMapper;
+import org.citrusframework.simulator.http.HttpRequestPathScenarioMapper;
+import org.citrusframework.simulator.http.HttpScenarioGenerator;
+import org.citrusframework.simulator.http.SimulatorRestAdapter;
+import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
+import org.citrusframework.spi.Resources;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
 @SpringBootApplication
@@ -42,8 +48,8 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Override
-    public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-        return "/petstore/v2/**";
+    public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return List.of("/petstore/v2/**");
     }
 
     @Override

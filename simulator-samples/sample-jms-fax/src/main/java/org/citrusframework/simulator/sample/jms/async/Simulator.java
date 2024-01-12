@@ -47,7 +47,7 @@ public class Simulator extends SimulatorJmsAdapter {
     @Value("${spring.artemis.broker-url:tcp://localhost:61616}")
     private String brokerURL;
 
-    @Value("${citrus.simulator.jms.status.destination}")
+    @Value("${citrus.simulator.jms.status-destination}")
     private String statusDestinationName;
 
     @Override

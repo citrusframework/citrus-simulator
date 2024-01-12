@@ -1,40 +1,40 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.citrusframework.simulator.jms;
 
-import jakarta.annotation.PostConstruct;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 /**
  * @author Christoph Deppisch
  */
 @ConfigurationProperties(prefix = "citrus.simulator.jms")
-public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
+public class SimulatorJmsConfigurationProperties implements InitializingBean {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
 
     /**
-     * System property constants and environment variable names. Post construct callback reads these values and overwrites
-     * settings in this property class in order to add support for environment variables.
-     */
-    private static final String SIMULATOR_INBOUND_DESTINATION_PROPERTY = "citrus.simulator.jms.inbound.destination";
-    private static final String SIMULATOR_INBOUND_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_INBOUND_DESTINATION";
-    private static final String SIMULATOR_REPLY_DESTINATION_PROPERTY = "citrus.simulator.jms.reply.destination";
-    private static final String SIMULATOR_REPLY_DESTINATION_ENV = "CITRUS_SIMULATOR_JMS_REPLY_DESTINATION";
-    private static final String SIMULATOR_SYNC_PROPERTY = "citrus.simulator.jms.synchronous";
-    private static final String SIMULATOR_SYNC_ENV = "CITRUS_SIMULATOR_JMS_SYNCHRONOUS";
-    private static final String SIMULATOR_SOAP_ENVELOPE_PROPERTY = "citrus.simulator.jms.soap";
-    private static final String SIMULATOR_SOAP_ENVELOPE_ENV = "CITRUS_SIMULATOR_JMS_SOAP";
-    private static final String SIMULATOR_PUB_SUB_DOMAIN_PROPERTY = "citrus.simulator.jms.pub.sub.domain";
-    private static final String SIMULATOR_PUB_SUB_DOMAIN_ENV = "CITRUS_SIMULATOR_JMS_PUB_SUB_DOMAIN";
-
-    /**
      * Global option to enable/disable JMS support, default is false.
      */
-    private boolean enabled;
+    private boolean enabled = false;
 
     /**
      * The JMS inbound destination name. The simulator receives asynchronous messages using this destination.
@@ -47,35 +47,19 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     private String replyDestination = "";
 
     /**
-     * En-/Disable JMS synchronous communication. By default this option is disabled.
+     * En-/Disable JMS synchronous communication. By default, this option is disabled.
      */
     private boolean synchronous = false;
 
     /**
-     * En-/Disable JMS synchronous communication. By default this option is disabled.
+     * En-/Disable JMS synchronous communication. By default, this option is disabled.
      */
     private boolean useSoap = false;
 
     /**
-     * Pub-Sum Domain . By default this option is disabled.
+     * Pub-Sum Domain. By default, this option is disabled.
      */
     private boolean pubSubDomain = false;
-
-    /**
-     * The Spring application context environment auto injected by environment aware mechanism.
-     */
-    private Environment env;
-
-    @PostConstruct
-    private void loadProperties() {
-        inboundDestination = env.getProperty(SIMULATOR_INBOUND_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_INBOUND_DESTINATION_ENV, inboundDestination));
-        replyDestination = env.getProperty(SIMULATOR_REPLY_DESTINATION_PROPERTY, env.getProperty(SIMULATOR_REPLY_DESTINATION_ENV, replyDestination));
-        synchronous = Boolean.parseBoolean(env.getProperty(SIMULATOR_SYNC_PROPERTY, env.getProperty(SIMULATOR_SYNC_ENV, String.valueOf(synchronous))));
-        useSoap = Boolean.parseBoolean(env.getProperty(SIMULATOR_SOAP_ENVELOPE_PROPERTY, env.getProperty(SIMULATOR_SOAP_ENVELOPE_ENV, String.valueOf(useSoap))));
-        pubSubDomain = Boolean.parseBoolean(env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_PROPERTY, env.getProperty(SIMULATOR_PUB_SUB_DOMAIN_ENV, String.valueOf(pubSubDomain))));
-
-        logger.info("Using the simulator configuration: {}", this.toString());
-    }
 
     /**
      * Gets the enabled.
@@ -186,19 +170,19 @@ public class SimulatorJmsConfigurationProperties implements EnvironmentAware {
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "enabled='" + enabled + '\'' +
-                ", inboundDestination='" + inboundDestination + '\'' +
-                ", replyDestination='" + replyDestination + '\'' +
-                ", synchronous='" + synchronous + '\'' +
-                ", useSoap='" + useSoap + '\'' +
-                ", pubSubDomain='" + pubSubDomain + '\'' +
-                '}';
+    public void afterPropertiesSet() {
+        logger.info("Using the simulator configuration: {}", this);
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append(enabled)
+            .append(inboundDestination)
+            .append(replyDestination)
+            .append(synchronous)
+            .append(useSoap)
+            .append(pubSubDomain)
+            .toString();
     }
 }

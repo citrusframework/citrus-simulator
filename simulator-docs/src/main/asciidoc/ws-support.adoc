@@ -50,8 +50,8 @@ This adapter provides several configuration methods.
 public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceConfigurer {
 
     @Override
-    public String servletMapping() {
-        return "/services/ws/*";
+    public List<String> servletMappings() {
+        return singletonList("/services/ws/*");
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class SimulatorWebServiceAdapter implements SimulatorWebServiceC
 ----
 
 This adapter defines methods to configure the simulator's SOAP message handling, such as adding different scenario mapper implementations or endpoint interceptors.
-The `servletMapping` method defines client access to the simulator's SOAP service.
+The `servletMappings` method defines client access to the simulator's SOAP service.
 For example, if the Spring Boot application runs on port 8080, the SOAP service would be accessible at:
 
 [source]
@@ -84,14 +84,14 @@ You can customize the simulator's SOAP support by extending `SimulatorWebService
 public class MySimulatorWebServiceAdapter extends SimulatorWebServiceAdapter {
 
     @Override
-    public String servletMapping() {
-        return "/my-soap-service/**";
+    public List<String> servletMappings() {
+        return singletonList("/my-soap-service/*");
     }
 }
 ----
 
 The class is annotated with `@Component` so that Spring recognizes it and overrides the default SOAP adapter behavior.
-By customizing the `servletMapping` method, the SOAP simulator API will be accessible under a new endpoint URI:
+By customizing the `servletMappings` method, the SOAP simulator API will be accessible under a new endpoint URI:
 
 [source]
 ----
@@ -110,8 +110,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Simulator extends SimulatorWebServiceAdapter {
 
     @Override
-    public String servletMapping() {
-        return "/my-soap-service/**";
+    public List<String> servletMappings() {
+        return singletonList("/my-soap-service/*");
     }
 
     @Override
@@ -248,8 +248,8 @@ public class Simulator extends SimulatorWebServiceAdapter {
     }
 
     @Override
-    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return "/services/ws/HelloService/v1/*";
+    public List<String> servletMappings(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        return singletonList("/services/ws/HelloService/v1/*");
     }
 
     @Override
@@ -344,9 +344,9 @@ You can define specific mappings in the dictionaries using XPath expressions:
 [source, properties]
 ----
 citrus.simulator.inbound.xml.dictionary.enabled=true
-citrus.simulator.inboundXmlDictionary=classpath:dictionary/inbound_mappings.xml
+citrus.simulator.inbound.xml.dictionary.location=classpath:dictionary/inbound_mappings.xml
 citrus.simulator.outbound.xml.dictionary.enabled=true
-citrus.simulator.outboundXmlDictionary=classpath:dictionary/outbound_mappings.xml
+citrus.simulator.outbound.xml.dictionary.location=classpath:dictionary/outbound_mappings.xml
 ----
 
 Inbound and outbound mapping files are specified for the dictionaries.

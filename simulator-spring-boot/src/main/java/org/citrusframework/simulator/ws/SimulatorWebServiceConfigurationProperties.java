@@ -16,9 +16,10 @@
 
 package org.citrusframework.simulator.ws;
 
-import jakarta.annotation.PostConstruct;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
@@ -29,7 +30,7 @@ import static java.util.Collections.singletonList;
  * @author Christoph Deppisch
  */
 @ConfigurationProperties(prefix = "citrus.simulator.ws")
-public class SimulatorWebServiceConfigurationProperties {
+public class SimulatorWebServiceConfigurationProperties implements InitializingBean {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorWebServiceConfigurationProperties.class);
@@ -37,7 +38,7 @@ public class SimulatorWebServiceConfigurationProperties {
     /**
      * Global option to enable/disable SOAP web service support, default is false.
      */
-    private boolean enabled;
+    private boolean enabled = false;
 
     /**
      * The web service message dispatcher servlet mapping. Clients must use this
@@ -45,10 +46,7 @@ public class SimulatorWebServiceConfigurationProperties {
      */
     private List<String> servletMappings = singletonList("/services/ws/*");
 
-    @PostConstruct
-    private void loadProperties() {
-        logger.info("Using the simulator configuration: {}", this);
-    }
+    private Wsdl wsdl = new Wsdl();
 
     /**
      * Gets the enabled.
@@ -69,7 +67,7 @@ public class SimulatorWebServiceConfigurationProperties {
     }
 
     /**
-     * Gets the servletMapping.
+     * Gets the servletMappings.
      *
      * @return
      */
@@ -78,7 +76,7 @@ public class SimulatorWebServiceConfigurationProperties {
     }
 
     /**
-     * Sets the servletMapping.
+     * Sets the servletMappings.
      *
      * @param servletMappings
      */
@@ -86,11 +84,55 @@ public class SimulatorWebServiceConfigurationProperties {
         this.servletMappings = servletMappings;
     }
 
+    public Wsdl getWsdl() {
+        return wsdl;
+    }
+
+    public void setWsdl(Wsdl wsdl) {
+        this.wsdl = wsdl;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        logger.info("Using the simulator configuration: {}", this);
+    }
+
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "enabled='" + enabled + '\'' +
-                ", servletMappings=" + servletMappings +
-                '}';
+        return new ToStringBuilder(this)
+            .append(enabled)
+            .append(servletMappings)
+            .append(wsdl)
+            .toString();
+    }
+
+    public static class Wsdl {
+
+        private boolean enabled;
+        private String location;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                .append(enabled)
+                .append(location)
+                .toString();
+        }
     }
 }

@@ -16,14 +16,20 @@
 
 package ${package};
 
+import static java.util.Collections.singletonList;
+
+import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.message.Message;
+import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
+import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
+import org.citrusframework.simulator.ws.WsdlScenarioGenerator;
+import org.citrusframework.spi.Resources;
 import org.citrusframework.ws.message.SoapFault;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
 
 @SpringBootApplication
 public class Simulator extends SimulatorWebServiceAdapter {
@@ -33,8 +39,8 @@ public class Simulator extends SimulatorWebServiceAdapter {
     }
 
     @Override
-    public String servletMapping(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
-        return "/services/ws/HelloService/v1/*";
+    public List<String> servletMappings(SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration) {
+        return singletonList("/services/ws/HelloService/*");
     }
 
     @Override

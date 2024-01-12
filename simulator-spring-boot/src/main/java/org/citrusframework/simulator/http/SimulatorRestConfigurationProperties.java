@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,26 @@
 
 package org.citrusframework.simulator.http;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * @author Christoph Deppisch
  */
 @ConfigurationProperties(prefix = "citrus.simulator.rest")
-public class SimulatorRestConfigurationProperties implements EnvironmentAware {
+public class SimulatorRestConfigurationProperties implements InitializingBean {
 
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
-
-    /**
-     * System property constants and environment variable names. Post construct callback reads these values and overwrites
-     * settings in this property class in order to add support for environment variables.
-     */
-    private static final String SIMULATOR_URL_MAPPING_PROPERTY = "citrus.simulator.rest.url.mapping";
-    private static final String SIMULATOR_URL_MAPPING_ENV = "CITRUS_SIMULATOR_REST_URL_MAPPING";
 
     /**
      * Global option to enable/disable REST support, default is true.
@@ -54,21 +48,7 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
      */
     private List<String> urlMappings =  List.of("/services/rest/**");
 
-    /**
-     * The Spring application context environment auto-injected by environment aware mechanism.
-     */
-    private Environment env;
-
-    @PostConstruct
-    private void configure() {
-        String urlMapping = env.getProperty(SIMULATOR_URL_MAPPING_PROPERTY, env.getProperty(SIMULATOR_URL_MAPPING_ENV, ""));
-
-        if (!urlMapping.isEmpty()) {
-            urlMappings = List.of(urlMapping.split(","));
-        }
-
-        logger.info("Using the simulator configuration: {}", this);
-    }
+    private Swagger swagger = new Swagger();
 
     /**
      * Gets the enabled.
@@ -89,7 +69,7 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
     }
 
     /**
-     * Gets the urlMapping.
+     * Gets the urlMappings.
      *
      * @return
      */
@@ -99,24 +79,63 @@ public class SimulatorRestConfigurationProperties implements EnvironmentAware {
     }
 
     /**
-     * Sets the urlMapping.
+     * Sets the urlMappings.
      *
      * @param urlMappings
      */
     public void setUrlMappings(List<String> urlMappings) {
-        this.urlMappings = urlMappings != null ? Collections.unmodifiableList(urlMappings) : Collections.emptyList();
+        this.urlMappings = urlMappings != null ? unmodifiableList(urlMappings) : emptyList();
+    }
+
+    public Swagger getSwagger() {
+        return swagger;
+    }
+
+    public void setSwagger(Swagger swagger) {
+        this.swagger = swagger;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        logger.info("Using the simulator configuration: {}", this);
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "enabled='" + enabled + '\'' +
-                ", urlMappings='" + String.join(",",urlMappings) + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+            .append(enabled)
+            .append(urlMappings)
+            .toString();
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
+    public static class Swagger {
+
+        private String api;
+        private String contextPath;
+        private boolean enabled = false;
+
+        public String getApi() {
+            return api;
+        }
+
+        public void setApi(String api) {
+            this.api = api;
+        }
+
+        public String getContextPath() {
+            return contextPath;
+        }
+
+        public void setContextPath(String contextPath) {
+            this.contextPath = contextPath;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 }

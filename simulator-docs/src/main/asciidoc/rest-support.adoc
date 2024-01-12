@@ -40,8 +40,8 @@ public abstract class SimulatorRestAdapter implements SimulatorRestConfigurer {
     }
 
     @Override
-    public String urlMapping() {
-        return "/services/rest/**";
+    public List<String> urlMappings() {
+        return singletonList("/services/rest/**");
     }
 }
 ----
@@ -50,7 +50,7 @@ The adapter allows customization of REST handling, such as implementing differen
 
 *Note*: By default, the REST support uses the `HttpRequestAnnotationScenarioMapper` to search for `@RequestMapping` annotations on scenario classes.
 
-The `urlMapping` method defines the access path to the simulator's REST API.
+The `urlMappings` method defines the access path to the simulator's REST API.
 Assuming the Spring Boot application runs on port 8080, the API would be accessible at:
 
 [source]
@@ -68,8 +68,8 @@ Customize the simulator REST support by extending `SimulatorRestAdapter` in a cu
 public class MySimulatorRestAdapter extends SimulatorRestAdapter {
 
     @Override
-    public String urlMapping() {
-        return "/my-rest-service/**";
+    public List<String> urlMappings() {
+        return singletonList("/my-rest-service/**");
     }
 }
 ----
@@ -89,8 +89,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Simulator extends SimulatorRestAdapter {
 
     @Override
-    public String urlMapping() {
-        return "/my-rest-service/**";
+    public List<String> urlMappings() {
+        return singletonList("/my-rest-service/**");
     }
 
     @Override
@@ -255,8 +255,8 @@ public class Simulator extends SimulatorRestAdapter {
     }
 
     @Override
-    public String urlMapping(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-        return "/petstore/v2/**";
+    public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return singletonList("/petstore/v2/**");
     }
 
     @Override
