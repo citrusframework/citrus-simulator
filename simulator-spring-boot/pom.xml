@@ -16,7 +16,7 @@
 
   <properties>
     <!-- Plugin Management -->
-    <hibernate.version>6.2.7.Final</hibernate.version>
+    <hibernate.version>6.4.1.Final</hibernate.version>
   </properties>
 
   <dependencies>
