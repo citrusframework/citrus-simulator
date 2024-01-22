@@ -25,13 +25,13 @@ export default class SelectPageSizeComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.key) {
-      this.pageSizeForm.controls.pageSize.setValue(this.userPreferenceService.getPreferredPageSize(this.key));
+      this.pageSizeForm.controls.pageSize.setValue(this.userPreferenceService.getPageSize(this.key));
     }
 
     this.pageSizeForm.valueChanges.subscribe({
       next: ({ pageSize }) => {
         if (this.key) {
-          this.userPreferenceService.setPreferredPageSize(this.key, pageSize);
+          this.userPreferenceService.setPageSize(this.key, pageSize);
         }
 
         this.pageSizeChanged.next(pageSize);

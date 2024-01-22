@@ -7,9 +7,10 @@ import { AlertService } from 'app/core/util/alert.service';
 import { AlertComponent } from './alert.component';
 
 describe('Alert Component', () => {
-  let comp: AlertComponent;
+  let alertService: AlertService;
+
+  let component: AlertComponent;
   let fixture: ComponentFixture<AlertComponent>;
-  let mockAlertService: AlertService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -22,23 +23,23 @@ describe('Alert Component', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AlertComponent);
-    comp = fixture.componentInstance;
-    mockAlertService = TestBed.inject(AlertService);
+    component = fixture.componentInstance;
+    alertService = TestBed.inject(AlertService);
   });
 
   it('should call alertService.get on init', () => {
     // WHEN
-    comp.ngOnInit();
+    component.ngOnInit();
 
     // THEN
-    expect(mockAlertService.get).toHaveBeenCalled();
+    expect(alertService.get).toHaveBeenCalled();
   });
 
   it('should call alertService.clear on destroy', () => {
     // WHEN
-    comp.ngOnDestroy();
+    component.ngOnDestroy();
 
     // THEN
-    expect(mockAlertService.clear).toHaveBeenCalled();
+    expect(alertService.clear).toHaveBeenCalled();
   });
 });

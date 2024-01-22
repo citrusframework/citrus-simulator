@@ -23,7 +23,7 @@ describe('ScenarioResult Component', () => {
         {
           provide: UserPreferenceService,
           useValue: {
-            getPreferredPageSize: jest.fn(),
+            getPageSize: jest.fn(),
           },
         },
       ],
@@ -44,7 +44,7 @@ describe('ScenarioResult Component', () => {
 
   describe('ngAfterViewInit', () => {
     it('initially loads page size', () => {
-      (userPreferenceService.getPreferredPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
+      (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
       component.scenarioExecutionComponent = scenarioExecutionComponent;
 
       component.ngAfterViewInit();

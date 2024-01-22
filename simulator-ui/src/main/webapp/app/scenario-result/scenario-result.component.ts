@@ -21,7 +21,7 @@ export default class ScenarioResultComponent implements AfterViewInit {
   constructor(private userPreferenceService: UserPreferenceService) {}
 
   ngAfterViewInit(): void {
-    this.pageSizeChanged(this.userPreferenceService.getPreferredPageSize(this.itemsPerPageKey));
+    this.pageSizeChanged(this.userPreferenceService.getPageSize(this.itemsPerPageKey));
   }
 
   pageSizeChanged(pageSize: number): void {

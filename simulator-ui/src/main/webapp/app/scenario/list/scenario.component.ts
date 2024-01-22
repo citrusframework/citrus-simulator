@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
@@ -6,19 +6,20 @@ import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/r
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { ASC, DEFAULT_SORT_DATA, DESC, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
 
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { UserPreferenceService } from 'app/core/config/user-preference.service';
+
+import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { AlertService } from 'app/core/util/alert.service';
 import { FilterComponent, IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
 import SharedModule from 'app/shared/shared.module';
-import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioService } from '../service/scenario.service';
 import { IScenario } from '../scenario.model';
 import { filter, map } from 'rxjs/operators';
-import { UserPreferenceService } from '../../core/config/user-preference.service';
 
 @Component({
   standalone: true,
@@ -43,12 +44,14 @@ export class ScenarioComponent implements OnInit {
 
   predicate = 'id';
   ascending = true;
+  entityOrder: EntityOrder = EntityOrder.ASCENDING;
 
   itemsPerPage = ITEMS_PER_PAGE;
-  itemsPerPageKey = 'scenario';
 
   totalItems = 0;
   page = 1;
+
+  protected readonly USER_PREFERENCES_KEY = 'scenario';
 
   constructor(
     public router: Router,
@@ -57,17 +60,24 @@ export class ScenarioComponent implements OnInit {
     private alertService: AlertService,
     private ngZone: NgZone,
     private userPreferenceService: UserPreferenceService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   trackId = (_index: number, item: IScenario): string => this.scenarioService.getScenarioIdentifier(item);
 
   ngOnInit(): void {
-    this.itemsPerPage = this.userPreferenceService.getPreferredPageSize(this.itemsPerPageKey);
+    this.itemsPerPage = this.userPreferenceService.getPageSize(this.USER_PREFERENCES_KEY);
+    this.predicate = this.userPreferenceService.getPredicate(this.USER_PREFERENCES_KEY, this.predicate);
+    this.entityOrder = this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY);
+    this.ascending = this.entityOrder === EntityOrder.ASCENDING;
+
+    this.navigateToWithComponentValues();
     this.load();
+    this.changeDetectorRef.detectChanges();
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformations().subscribe({
+    this.loadFromBackendWithRouteInformation().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
@@ -82,7 +92,7 @@ export class ScenarioComponent implements OnInit {
     this.handleNavigation(page, this.predicate, this.ascending);
   }
 
-  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
+  protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
       switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending)),
@@ -93,8 +103,13 @@ export class ScenarioComponent implements OnInit {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
+
     this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, this.predicate);
+
+    this.entityOrder = toEntityOrder(sort[1]) ?? EntityOrder.ASCENDING;
+    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, this.entityOrder);
+    this.ascending = this.entityOrder === EntityOrder.ASCENDING;
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -141,7 +156,7 @@ export class ScenarioComponent implements OnInit {
     );
   }
 
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
+  protected getSortQueryParam(predicate = this.predicate, ascending = true): string[] {
     const ascendingQueryParam = ascending ? ASC : DESC;
     if (predicate === '') {
       return [];
@@ -167,7 +182,7 @@ export class ScenarioComponent implements OnInit {
         },
         error: () => {
           this.alertService.addAlert({
-            type: 'success',
+            type: 'danger',
             translationKey: 'citrusSimulatorApp.scenario.action.launchFailed',
           });
         },

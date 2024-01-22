@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <app-select-page-size
         class="col-md-4 me-3"
-        [key]="itemsPerPageKey"
+        [key]="USER_PREFERENCES_KEY"
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>
       <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">

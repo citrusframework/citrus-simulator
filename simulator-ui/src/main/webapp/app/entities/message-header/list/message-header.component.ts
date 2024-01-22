@@ -52,7 +52,7 @@ export class MessageHeaderComponent implements OnInit {
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformations().subscribe({
+    this.loadFromBackendWithRouteInformation().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
@@ -70,7 +70,7 @@ export class MessageHeaderComponent implements OnInit {
     this.handleNavigation(page, this.predicate, this.ascending, this.filters.filterOptions);
   }
 
-  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
+  protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
       switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.filters.filterOptions)),
