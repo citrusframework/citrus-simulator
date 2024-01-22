@@ -17,6 +17,32 @@
         <b *ngIf="simulatorInfo" jhiTranslate="home.version" [translateValues]="{ version: simulatorInfo!.version }"></b>
       </p>
 
+      <ngb-alert class="mt-3" type="info" [dismissible]="false">
+        <h3 jhiTranslate="home.disclaimer.title">Disclaimer!</h3>
+        <p jhiTranslate="home.disclaimer.introduction">
+          We are excited to announce that the Simulator UI has been comprehensively updated in our latest 3.0.0 release.
+          This marks a significant advancement for our development team.
+          The updated UI adheres to current best practices, utilizes up-to-date dependencies, and features well-structured, formatted, and thoroughly tested code.
+          This transformation not only brings the project back to a state of sustainable maintainability but also allows us to roll out updates and new releases more swiftly.
+        </p>
+        <p jhiTranslate="home.disclaimer.experience">
+          However, for our valued users, these changes may present a different experience from the previous UI.
+          The interface now sports a fresh look, and you might notice alterations in behavior.
+          Additionally, some functionalities might differ from those in earlier versions, impacting the UI's interaction.
+        </p>
+        <p>
+          <a href="https://github.com/citrusframework/citrus-simulator/issues/new" target="_blank" rel="noopener noreferrer"
+            ><b jhiTranslate="home.disclaimer.feedback">We greatly appreciate your feedback and suggestions!</b></a
+          >
+          <span jhiTranslate="home.disclaimer.closingNote">
+            Especially regarding features or aspects you might miss from the previous versions.
+            As we continue to enhance the simulator, please remember that much of this work is a labor of love, carried out in our spare time.
+            Our commitment to citrus stems from our belief in its potential and our desire to provide you with the best possible tools for software development.
+            We kindly ask for your constructive and respectful feedback to help us improve further.
+          </span>
+        </p>
+      </ngb-alert>
+
       <p>
         <span jhiTranslate="home.like">If you like Citrus and the Simulator, don't forget to give us a star on</span>
         <a href="https://github.com/citrusframework/citrus-simulator" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github">
