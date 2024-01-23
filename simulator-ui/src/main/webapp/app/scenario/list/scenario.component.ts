@@ -71,7 +71,7 @@ export class ScenarioComponent implements OnInit {
     this.entityOrder = this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY);
     this.ascending = this.entityOrder === EntityOrder.ASCENDING;
 
-    this.navigateToWithComponentValues();
+    this.navigateToWithComponentValues({ predicate: this.predicate, ascending: this.ascending });
     this.load();
     this.changeDetectorRef.detectChanges();
   }
@@ -84,8 +84,9 @@ export class ScenarioComponent implements OnInit {
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.handleNavigation(this.page, this.predicate, this.ascending);
+  navigateToWithComponentValues({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
+    this.updateUserPreferences(predicate, ascending);
+    this.handleNavigation(this.page, predicate, ascending);
   }
 
   navigateToPage(page = this.page): void {
@@ -103,12 +104,8 @@ export class ScenarioComponent implements OnInit {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-
     this.predicate = sort[0];
-    this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, this.predicate);
-
     this.entityOrder = toEntityOrder(sort[1]) ?? EntityOrder.ASCENDING;
-    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, this.entityOrder);
     this.ascending = this.entityOrder === EntityOrder.ASCENDING;
   }
 
@@ -192,5 +189,10 @@ export class ScenarioComponent implements OnInit {
   protected pageSizeChanged(itemsPerPage: number): void {
     this.itemsPerPage = itemsPerPage;
     this.load();
+  }
+
+  private updateUserPreferences(predicate: string, ascending: boolean): void {
+    this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
+    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
   }
 }

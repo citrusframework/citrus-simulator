@@ -11,7 +11,7 @@ import { of, throwError } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { DESC, EntityOrder } from 'app/config/navigation.constants';
+import { ASC, DESC, EntityOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
@@ -96,19 +96,22 @@ describe('Scenario Management Component', () => {
     });
 
     it('should call load all on init with default values', () => {
-      // Since the page size has no default in the route, we must mock a value
+      // Mock the default return value behaviour
       (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(ITEMS_PER_PAGE);
+      (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce('id');
+      (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(EntityOrder.ASCENDING);
 
       // Mock the activated route accordingly, note the absence of page and sort
       // @ts-ignore: Access private function for testing
-      (activatedRoute.queryParamMap = of(
+      activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           size: ITEMS_PER_PAGE,
           'filter[someId.in]': 'eff151df-0e8e-4f24-8c0b-bff1734c0569',
         }),
-      )),
-        // WHEN
-        component.ngOnInit();
+      );
+
+      // WHEN
+      component.ngOnInit();
 
       // Make sure data was loaded with default values
       expect(service.query).toHaveBeenCalledWith({ page: 0, size: 10, sort: ['id,asc'] });
@@ -195,19 +198,22 @@ describe('Scenario Management Component', () => {
   });
 
   describe('navigateToWithComponentValues', () => {
-    it('should calculate the sort attribute for a non-id attribute', () => {
-      component.predicate = 'name';
-
-      component.navigateToWithComponentValues();
+    test.each([
+      { predicate: 'name', ascending: true, expectedSort: 'name,asc' },
+      { predicate: 'name', ascending: false, expectedSort: 'name,desc' },
+    ])('should calculate the sort attribute for ascending=$ascending', ({ predicate, ascending, expectedSort }) => {
+      component.navigateToWithComponentValues({ predicate, ascending });
 
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(
         ['./'],
         expect.objectContaining({
           queryParams: expect.objectContaining({
-            sort: ['name,asc'],
+            sort: [expectedSort],
           }),
         }),
       );
+      expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
+      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
     });
   });
 
