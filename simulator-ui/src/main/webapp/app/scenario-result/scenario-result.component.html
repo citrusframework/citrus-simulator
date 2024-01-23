@@ -5,7 +5,7 @@
     <div *ngIf="scenarioExecutionComponent" class="d-flex justify-content-end">
       <app-select-page-size
         class="col-md-4 me-3"
-        [key]="itemsPerPageKey"
+        [key]="USER_PREFERENCES_KEY"
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>
       <button class="btn btn-info me-2" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
@@ -19,5 +19,5 @@
     <app-scenario-execution-filter></app-scenario-execution-filter>
   </div>
 
-  <app-scenario-execution [hideTitle]="true"></app-scenario-execution>
+  <app-scenario-execution [hideTitle]="true" (sortChange)="updateUserPreferences($event)"></app-scenario-execution>
 </div>

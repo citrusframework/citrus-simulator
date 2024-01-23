@@ -1,18 +1,19 @@
-import { Component, Input, NgZone, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+
+import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
+import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import SharedModule from 'app/shared/shared.module';
 import { SortDirective, SortByDirective } from 'app/shared/sort';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
 import { ItemCountComponent } from 'app/shared/pagination';
-import { FormsModule } from '@angular/forms';
-
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 
 import { EntityArrayResponseType, ScenarioExecutionService } from '../service/scenario-execution.service';
 import { IScenarioExecution, IScenarioExecutionStatus } from '../scenario-execution.model';
@@ -37,6 +38,8 @@ import { IScenarioExecution, IScenarioExecutionStatus } from '../scenario-execut
 export class ScenarioExecutionComponent implements OnInit {
   @Input() hideTitle = false;
 
+  @Output() sortChange = new EventEmitter<{ predicate: string; ascending: boolean }>();
+
   scenarioExecutions?: IScenarioExecution[];
   isLoading = false;
 
@@ -48,6 +51,8 @@ export class ScenarioExecutionComponent implements OnInit {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  protected readonly USER_PREFERENCES_KEY = 'scenario';
 
   private filters: IFilterOptions = new FilterOptions();
 
@@ -75,6 +80,7 @@ export class ScenarioExecutionComponent implements OnInit {
   }
 
   navigateToWithComponentValues(): void {
+    this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
     this.handleNavigation(this.page, this.predicate, this.ascending, this.filters.filterOptions);
   }
 

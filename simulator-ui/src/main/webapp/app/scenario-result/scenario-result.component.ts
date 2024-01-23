@@ -1,7 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+
+import { EntityOrder } from 'app/config/navigation.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
+
 import { ScenarioExecutionComponent } from 'app/entities/scenario-execution/list/scenario-execution.component';
+
 import SharedModule from 'app/shared/shared.module';
 
 import ScenarioExecutionFilterComponent from './scenario-execution-filter.component';
@@ -16,18 +20,36 @@ export default class ScenarioResultComponent implements AfterViewInit {
   @ViewChild(ScenarioExecutionComponent)
   scenarioExecutionComponent: ScenarioExecutionComponent | null = null;
 
-  itemsPerPageKey = 'scenario-result';
+  protected readonly USER_PREFERENCES_KEY = 'scenario-result';
 
-  constructor(private userPreferenceService: UserPreferenceService) {}
+  constructor(
+    private userPreferenceService: UserPreferenceService,
+    private changeDetector: ChangeDetectorRef,
+  ) {}
 
   ngAfterViewInit(): void {
-    this.pageSizeChanged(this.userPreferenceService.getPageSize(this.itemsPerPageKey));
+    if (this.scenarioExecutionComponent) {
+      this.scenarioExecutionComponent.itemsPerPage = this.userPreferenceService.getPageSize(this.USER_PREFERENCES_KEY);
+      this.scenarioExecutionComponent.predicate = this.userPreferenceService.getPredicate(this.USER_PREFERENCES_KEY, 'id');
+      this.scenarioExecutionComponent.ascending =
+        this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY) === EntityOrder.ASCENDING;
+
+      this.scenarioExecutionComponent.navigateToWithComponentValues();
+    }
+
+    this.changeDetector.detectChanges();
   }
 
-  pageSizeChanged(pageSize: number): void {
+  protected pageSizeChanged(pageSize: number): void {
     if (this.scenarioExecutionComponent) {
       this.scenarioExecutionComponent.itemsPerPage = pageSize;
       this.scenarioExecutionComponent.load();
     }
+  }
+
+  protected updateUserPreferences({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
+    // eslint-disable-next-line
+    this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
+    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
   }
 }

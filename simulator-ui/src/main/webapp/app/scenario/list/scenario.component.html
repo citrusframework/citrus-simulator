@@ -26,7 +26,7 @@
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarios && scenarios.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues($event)">
           <th scope="col" jhiSortBy="name">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.scenario.name">Name</span>
