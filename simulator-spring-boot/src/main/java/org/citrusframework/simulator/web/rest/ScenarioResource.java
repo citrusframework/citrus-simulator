@@ -21,6 +21,7 @@ import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
+import org.citrusframework.simulator.web.rest.pagination.ScenarioComparator;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class ScenarioResource {
     public ResponseEntity<List<Scenario>> getScenarios(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         logger.debug("REST request get registered Scenarios");
 
-        Page<Scenario> page = createPage(scenarioCache, pageable);
+        Page<Scenario> page = createPage(scenarioCache, pageable, ScenarioComparator::fromProperty);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
