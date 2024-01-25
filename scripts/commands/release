@@ -130,7 +130,8 @@ release::run() {
 
     if [ ! $(hasflag --local-release) ] && [ ! $(hasflag --snapshot-release) ]; then
         # Release staging repo
-        release_staging_repo "$working_dir" "$maven_opts"
+        # NOTE: not working recently (because of timeouts) - fallback to doing this manually
+        # release_staging_repo "$working_dir" "$maven_opts"
 
         # Push everything (if configured)
         git_push "$working_dir" "$release_version"
@@ -145,8 +146,10 @@ release::run() {
         fi
 
         if [ ! $(hasflag --no-git-push) ]; then
+            local remote=$(get_git_remote)
+
             # Push changes
-            git push $(get_git_remote)
+            git push ${remote}
         fi
     fi
 
