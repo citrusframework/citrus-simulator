@@ -32,7 +32,9 @@ To retrieve a single `TestParameter`, use the `GET /{testResultId}/{key}` endpoi
 
 The `Scenario` resource is an exception to the standard pattern.
 The `GET /` endpoint returns a list of scenarios with their unique names and types, indicating whether it's a `SimulatorScenario` (`MESSAGE_TRIGGERED`) or a `ScenarioStarter` (`STARTER`).
-This resource supports pagination and sorting but not filtering.
+This resource supports pagination, sorting and simple filtering.
+
+Use the optional query parameter `nameContains` to filter scenarios by name containing the given value - case-sensitive!
 
 This resource does not have a single resource endpoint, as scenarios are identified by name, which provides sufficient detail.
 However, you can view a scenario's parameters with the `GET /{scenarioName}/parameters` endpoint or launch scenarios with the `POST /{scenarioName}/launch` endpoint, which accepts an array of parameters in the request body.

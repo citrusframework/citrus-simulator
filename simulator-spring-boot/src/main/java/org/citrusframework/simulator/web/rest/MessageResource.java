@@ -24,6 +24,7 @@ import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -63,10 +64,7 @@ public class MessageResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of messages in body.
      */
     @GetMapping("/messages")
-    public ResponseEntity<List<Message>> getAllMessages(
-        MessageCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+    public ResponseEntity<List<Message>> getAllMessages(MessageCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get Messages by criteria: {}", criteria);
 
         Page<Message> page = messageQueryService.findByCriteria(criteria, pageable);

@@ -25,6 +25,7 @@ import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -65,10 +66,7 @@ public class TestResultResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of testResults in body.
      */
     @GetMapping("/test-results")
-    public ResponseEntity<List<TestResult>> getAllTestResults(
-        TestResultCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+    public ResponseEntity<List<TestResult>> getAllTestResults(TestResultCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get TestResults by criteria: {}", criteria);
 
         Page<TestResult> page = testResultQueryService.findByCriteria(criteria, pageable);

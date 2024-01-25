@@ -24,6 +24,7 @@ import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -66,10 +67,7 @@ public class ScenarioExecutionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioExecutions in body.
      */
     @GetMapping("/scenario-executions")
-    public ResponseEntity<List<ScenarioExecution>> getAllScenarioExecutions(
-        ScenarioExecutionCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+    public ResponseEntity<List<ScenarioExecution>> getAllScenarioExecutions(ScenarioExecutionCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get ScenarioExecutions by criteria: {}", criteria);
 
         Page<ScenarioExecution> page = scenarioExecutionQueryService.findByCriteria(criteria, pageable);
