@@ -21,6 +21,7 @@
     <javadoc.doclint>none</javadoc.doclint>
 
     <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+    <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <lombok.version>1.18.30</lombok.version>
     <citrus.version>4.1.0</citrus.version>
@@ -30,6 +31,7 @@
     <testng.version>7.8.0</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
+    <xstream.version>1.4.20</xstream.version>
 
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.2.1 -->
     <log4j2.version>2.21.1</log4j2.version>
@@ -283,7 +285,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
+          <version>${maven-compiler-plugin.version}</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${java.version}</source>
@@ -420,12 +422,22 @@
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.8</version>
+          <version>${maven.nexus-staging.plugin.version}</version>
+          <dependencies>
+              <!--
+                TODO: Remove after OSSRH-66257, NEXUS-26993 are fixed,
+              -->
+              <dependency>
+                  <groupId>com.thoughtworks.xstream</groupId>
+                  <artifactId>xstream</artifactId>
+                  <version>${xstream.version}</version>
+              </dependency>
+          </dependencies>
           <configuration>
-            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-            <serverId>sonatype-nexus-staging</serverId>
-            <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
-            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <serverId>sonatype-nexus-staging</serverId>
+              <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
+              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
           </configuration>
         </plugin>
         <plugin>
