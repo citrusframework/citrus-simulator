@@ -22,9 +22,9 @@ import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
 import org.citrusframework.simulator.web.rest.pagination.ScenarioComparator;
-import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,16 +35,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Comparator.comparing;
+import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.MESSAGE_TRIGGERED;
+import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
 import static org.citrusframework.simulator.web.util.PaginationUtil.createPage;
+import static org.citrusframework.simulator.web.util.PaginationUtil.generatePaginationHttpHeaders;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
 @RequestMapping("api")
@@ -76,10 +81,10 @@ public class ScenarioResource {
 
         scenarioCache.clear();
 
-        scenarioNames.forEach(name -> scenarioCache.add(new Scenario(name, Scenario.ScenarioType.MESSAGE_TRIGGERED)));
-        scenarioStarterNames.forEach(name -> scenarioCache.add(new Scenario(name, Scenario.ScenarioType.STARTER)));
+        scenarioNames.forEach(name -> scenarioCache.add(new Scenario(name, MESSAGE_TRIGGERED)));
+        scenarioStarterNames.forEach(name -> scenarioCache.add(new Scenario(name, STARTER)));
 
-        scenarioCache.sort(Comparator.comparing(Scenario::name));
+        scenarioCache.sort(comparing(Scenario::name));
     }
 
     /**
@@ -89,11 +94,18 @@ public class ScenarioResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarios in body.
      */
     @GetMapping("/scenarios")
-    public ResponseEntity<List<Scenario>> getScenarios(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        logger.debug("REST request get registered Scenarios");
+    public ResponseEntity<List<Scenario>> getScenarios(@RequestParam(name = "nameContains", required = false) Optional< String> nameContains, @ParameterObject Pageable pageable) {
+        logger.debug("REST request get registered Scenarios, where name contains: {}", nameContains.orElse("*"));
 
-        Page<Scenario> page = createPage(scenarioCache, pageable, ScenarioComparator::fromProperty);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        Page<Scenario> page = createPage(
+            scenarioCache.stream()
+                .filter(scenario -> nameContains.isEmpty()  || scenario.name().contains(nameContains.get()))
+                .toList(),
+            pageable,
+            ScenarioComparator::fromProperty
+        );
+
+        HttpHeaders headers = generatePaginationHttpHeaders(fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

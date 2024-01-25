@@ -24,6 +24,7 @@ import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -63,10 +64,7 @@ public class ScenarioActionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioActions in body.
      */
     @GetMapping("/scenario-actions")
-    public ResponseEntity<List<ScenarioAction>> getAllScenarioActions(
-        ScenarioActionCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+    public ResponseEntity<List<ScenarioAction>> getAllScenarioActions(ScenarioActionCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get ScenarioActions by criteria: {}", criteria);
 
         Page<ScenarioAction> page = scenarioActionQueryService.findByCriteria(criteria, pageable);

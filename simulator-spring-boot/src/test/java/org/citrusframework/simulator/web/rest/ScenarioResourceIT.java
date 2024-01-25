@@ -63,7 +63,7 @@ class ScenarioResourceIT {
     void getAllScenarioNamesDesc() throws Exception {
         // Get all the scenarioParameterList
         restScenarioParameterMockMvc
-            .perform(get(ENTITY_API_URL+"?sort=name,desc"))
+            .perform(get(ENTITY_API_URL + "?sort=name,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.length()").value(equalTo(2)))
@@ -77,7 +77,7 @@ class ScenarioResourceIT {
     void getAllScenarioNamesByTypeDesc() throws Exception {
         // Get all the scenarioParameterList
         restScenarioParameterMockMvc
-            .perform(get(ENTITY_API_URL+"?sort=type,desc"))
+            .perform(get(ENTITY_API_URL + "?sort=type,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.length()").value(equalTo(2)))
@@ -85,6 +85,30 @@ class ScenarioResourceIT {
             .andExpect(jsonPath("$.[0].type").value(equalTo("MESSAGE_TRIGGERED")))
             .andExpect(jsonPath("$.[1].name").value(equalTo("testScenarioStarter")))
             .andExpect(jsonPath("$.[1].type").value(equalTo("STARTER")));
+    }
+
+    @Test
+    void getTestSimulatorScenario() throws Exception {
+        restScenarioParameterMockMvc
+            .perform(get(ENTITY_API_URL + "?nameContains=Simulator"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.length()").value(equalTo(1)))
+            .andExpect(jsonPath("$.[0].name").value(equalTo("testSimulatorScenario")))
+            .andExpect(jsonPath("$.[0].type").value(equalTo("MESSAGE_TRIGGERED")));
+    }
+
+    @Test
+    void getScenariosWithNameContains() throws Exception {
+        restScenarioParameterMockMvc
+            .perform(get(ENTITY_API_URL + "?nameContains=Scenario"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.length()").value(equalTo(2)))
+            .andExpect(jsonPath("$.[0].name").value(equalTo("testScenarioStarter")))
+            .andExpect(jsonPath("$.[0].type").value(equalTo("STARTER")))
+            .andExpect(jsonPath("$.[1].name").value(equalTo("testSimulatorScenario")))
+            .andExpect(jsonPath("$.[1].type").value(equalTo("MESSAGE_TRIGGERED")));
     }
 
     @Test
