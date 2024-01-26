@@ -1,11 +1,12 @@
+import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 import { ScenarioExecutionComponent } from 'app/entities/scenario-execution/list/scenario-execution.component';
 
-import ScenarioResultComponent from './scenario-result.component';
 import { EntityOrder } from '../config/navigation.constants';
-import { ChangeDetectorRef } from '@angular/core';
+
+import ScenarioResultComponent from './scenario-result.component';
 
 import SpyInstance = jest.SpyInstance;
 

@@ -3,7 +3,7 @@
     "scenarioParameter": {
       "home": {
         "title": "Scenario Parameters",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Scenario Parameters found"
       },
       "detail": {

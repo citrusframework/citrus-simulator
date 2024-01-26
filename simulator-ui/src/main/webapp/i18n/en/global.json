@@ -70,7 +70,7 @@
     },
     "filters": {
       "set": "Following filters are set",
-      "clear": "Clear filter",
+      "clear": "Clear Filter",
       "clearAll": "Clear all filters"
     },
     "itemsPerPage": "Items per Page"

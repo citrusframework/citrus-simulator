@@ -3,7 +3,7 @@
     "scenarioExecution": {
       "home": {
         "title": "Scenario Executions",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Scenario Executions found"
       },
       "detail": {

@@ -3,11 +3,13 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+
 import { of } from 'rxjs';
 
 import { TestResultService } from '../service/test-result.service';
 
 import { TestResultComponent } from './test-result.component';
+
 import SpyInstance = jest.SpyInstance;
 
 describe('TestResult Management Component', () => {

@@ -1,19 +1,44 @@
 <div>
   <h2 id="page-heading" data-cy="ScenarioHeading">
     <span jhiTranslate="citrusSimulatorApp.scenario.home.title">Scenarios</span>
-
-    <div class="d-flex justify-content-end">
-      <app-select-page-size
-        class="col-md-4 me-3"
-        [key]="USER_PREFERENCES_KEY"
-        (pageSizeChanged)="pageSizeChanged($event)"
-      ></app-select-page-size>
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="citrusSimulatorApp.scenario.home.refreshListLabel">Refresh list</span>
-      </button>
-    </div>
   </h2>
+
+  <div class="mb-3">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+      <fieldset>
+        <div class="row align-items-end">
+          <div class="form-group col-md-6">
+            <label for="name" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName"
+              >Scenario Name:</label
+            >
+            <input type="text" class="form-control" id="name" placeholder="Filter by name..." formControlName="nameContains" />
+          </div>
+
+          <div class="form-group col-md-3 me-md-auto">
+            <app-select-page-size [key]="USER_PREFERENCES_KEY" (pageSizeChanged)="pageSizeChanged($event)"></app-select-page-size>
+          </div>
+
+          <div class="btn-group form-group col-md-2 mt-sm-3">
+            <button
+              [disabled]="filterForm.pristine"
+              type="button"
+              class="btn btn-secondary"
+              (click)="resetFilter()"
+              data-cy="clearFilterButton"
+            >
+              <fa-icon icon="xmark"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.filters.clear">Clear Filter</span>
+            </button>
+
+            <button class="btn btn-info" (click)="load()" [disabled]="isLoading">
+              <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+              <span jhiTranslate="citrusSimulatorApp.scenario.home.refreshListLabel">Refresh List</span>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
 
   <app-alert-error></app-alert-error>
 

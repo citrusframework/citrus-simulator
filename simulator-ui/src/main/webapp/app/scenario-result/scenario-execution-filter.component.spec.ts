@@ -89,7 +89,7 @@ describe('ScenarioExecution Filter Component', () => {
       // @ts-ignore: Access private property for testing
       expect(component.valueChanged).toBeFalsy();
       // @ts-ignore: Access private property for testing
-      expect(component.filterFormValueChanges).toBeTruthy();
+      expect(component.filterFormValueChanges).not.toBeNull();
       expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
 
       expect(component.filterForm.getRawValue()).toEqual({ fromDate: null, nameContains: null, statusIn: null, toDate: null });
@@ -145,6 +145,7 @@ describe('ScenarioExecution Filter Component', () => {
         statusIn: STATUS_SUCCESS.name,
       });
 
+      // @ts-ignore: Access protected function for testing
       component.applyFilter();
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -166,6 +167,7 @@ describe('ScenarioExecution Filter Component', () => {
       jest.spyOn(component.filterForm, 'reset');
       jest.spyOn(component.filterForm, 'markAsPristine');
 
+      // @ts-ignore: Access protected function for testing
       component.resetFilter();
 
       expect(component.filterForm.reset).toHaveBeenCalled();

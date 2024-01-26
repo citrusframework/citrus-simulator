@@ -3,11 +3,13 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+
 import { of } from 'rxjs';
 
 import { MessageHeaderService } from '../service/message-header.service';
 
 import { MessageHeaderComponent } from './message-header.component';
+
 import SpyInstance = jest.SpyInstance;
 
 describe('MessageHeader Management Component', () => {

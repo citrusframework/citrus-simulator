@@ -3,7 +3,7 @@
     "scenario": {
       "home": {
         "title": "Scenarios",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Scenarios found"
       },
       "detail": {
