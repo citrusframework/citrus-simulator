@@ -7,7 +7,7 @@
       },
       "home": {
         "title": "Test Parameters",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Test Parameters found"
       },
       "detail": {

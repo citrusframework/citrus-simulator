@@ -1,13 +1,15 @@
+import { DEBOUNCE_TIME_MILLIS } from '../../config/input.constants';
+
 jest.mock('app/core/util/alert.service');
 
 import { ChangeDetectorRef } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, Subject, throwError } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -135,15 +137,16 @@ describe('Scenario Management Component', () => {
       // Mock the activated route accordingly
       const sort = predicate + ',desc';
       // @ts-ignore: Access private function for testing
-      (activatedRoute.queryParamMap = of(
+      activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           page: '1',
           size: itemsPerPage,
           sort,
         }),
-      )),
-        // WHEN
-        component.ngOnInit();
+      );
+
+      // WHEN
+      component.ngOnInit();
 
       // This is the initial read
       expect(userPreferenceService.getPageSize).toHaveBeenCalledWith('scenario');
@@ -179,6 +182,94 @@ describe('Scenario Management Component', () => {
       expect(component.entityOrder).toEqual(DESC);
       expect(component.ascending).toBeFalsy();
     });
+
+    it('subscribes to form value changes', fakeAsync(() => {
+      const filterFormValueChangesSubject = new Subject<{
+        nameContains: string;
+      }>();
+      jest.spyOn(filterFormValueChangesSubject, 'subscribe');
+      // @ts-ignore: Override read-only property for testing
+      component.filterForm.valueChanges = filterFormValueChangesSubject;
+
+      // @ts-ignore: Access private function for testing
+      activatedRoute.queryParamMap = EMPTY;
+
+      component.ngOnInit();
+
+      // VERIFY that the subscription has been made
+
+      // @ts-ignore: Access private member for testing
+      expect(component.filterFormValueChanges).not.toBeNull();
+      expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
+
+      expect(component.filterForm.getRawValue()).toEqual({ nameContains: null });
+
+      // TRIGGER subscription and expect reload of data
+
+      const nameContains = 'name filter';
+      filterFormValueChangesSubject.next({ nameContains });
+
+      tick(DEBOUNCE_TIME_MILLIS);
+
+      expect(routerNavigateSpy).toHaveBeenNthCalledWith(2, [], { queryParams: { 'filter[scenarioName.contains]': nameContains } });
+    }));
+  });
+
+  describe('ngOnDestroy', () => {
+    it('unsubscribes from form value changes', () => {
+      const unsubscribe = jest.fn();
+      // @ts-ignore: Access private member for testing
+      component.filterFormValueChanges = {
+        unsubscribe,
+      };
+
+      component.ngOnDestroy();
+
+      expect(unsubscribe).toHaveBeenCalled();
+    });
+  });
+
+  describe('load', () => {
+    it('should ignore empty name filter', () => {
+      // Mock the activated route
+      const page = 3;
+      const predicate = 'some-predicate';
+      const sort = predicate + ',desc';
+
+      // @ts-ignore: Access private function for testing
+      activatedRoute.queryParamMap = of(
+        jest.requireActual('@angular/router').convertToParamMap({
+          page,
+          sort,
+        }),
+      );
+
+      component.load();
+
+      expect(service.query).toHaveBeenCalledWith({ page: page - 1, size: 10, sort: [sort] });
+    });
+
+    it('should include name filter if it has a value', () => {
+      // Mock the activated route
+      const page = 3;
+      const predicate = 'some-predicate';
+      const sort = predicate + ',desc';
+
+      // @ts-ignore: Access private function for testing
+      activatedRoute.queryParamMap = of(
+        jest.requireActual('@angular/router').convertToParamMap({
+          page,
+          sort,
+        }),
+      );
+
+      const nameContains = 'any name';
+      component.filterForm.value.nameContains = nameContains;
+
+      component.load();
+
+      expect(service.query).toHaveBeenCalledWith({ page: page - 1, size: 10, sort: [sort], nameContains });
+    });
   });
 
   describe('trackId', () => {
@@ -191,10 +282,21 @@ describe('Scenario Management Component', () => {
     });
   });
 
-  it('should load a page', () => {
-    component.navigateToPage(1);
+  describe('resetFilter', () => {
+    it('should reset form', () => {
+      // Assume filter is dirty
+      component.filterForm.markAsDirty();
 
-    expect(routerNavigateSpy).toHaveBeenCalled();
+      jest.spyOn(component.filterForm, 'reset');
+      jest.spyOn(component.filterForm, 'markAsPristine');
+
+      // @ts-ignore: Access protected function for testing
+      component.resetFilter();
+
+      expect(component.filterForm.reset).toHaveBeenCalled();
+      expect(component.filterForm.markAsPristine).toHaveBeenCalled();
+      expect(routerNavigateSpy).toHaveBeenCalled();
+    });
   });
 
   describe('navigateToWithComponentValues', () => {
@@ -202,6 +304,7 @@ describe('Scenario Management Component', () => {
       { predicate: 'name', ascending: true, expectedSort: 'name,asc' },
       { predicate: 'name', ascending: false, expectedSort: 'name,desc' },
     ])('should calculate the sort attribute for ascending=$ascending', ({ predicate, ascending, expectedSort }) => {
+      // @ts-ignore: Access private function for testing
       component.navigateToWithComponentValues({ predicate, ascending });
 
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(
@@ -214,6 +317,15 @@ describe('Scenario Management Component', () => {
       );
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
       expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
+    });
+  });
+
+  describe('navigateToPage', () => {
+    it('should load a page', () => {
+      // @ts-ignore: Access private function for testing
+      component.navigateToPage(1);
+
+      expect(routerNavigateSpy).toHaveBeenCalled();
     });
   });
 

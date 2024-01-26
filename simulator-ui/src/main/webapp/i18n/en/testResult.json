@@ -3,7 +3,7 @@
     "testResult": {
       "home": {
         "title": "Test Results",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Test Results found"
       },
       "detail": {

@@ -3,7 +3,7 @@
     "messageHeader": {
       "home": {
         "title": "Message Headers",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Message Headers found"
       },
       "detail": {

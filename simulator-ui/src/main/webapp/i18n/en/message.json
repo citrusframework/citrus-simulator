@@ -3,7 +3,7 @@
     "message": {
       "home": {
         "title": "Messages",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Refresh List",
         "notFound": "No Messages found"
       },
       "detail": {

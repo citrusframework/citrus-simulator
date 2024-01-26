@@ -52,7 +52,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
     this.filterFormValueChanges?.unsubscribe();
   }
 
-  applyFilter(formValue = this.filterForm.value): void {
+  protected applyFilter(formValue = this.filterForm.value): void {
     this.router
       .navigate([], {
         queryParams: {
@@ -67,7 +67,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
       .catch(() => location.reload());
   }
 
-  resetFilter(): void {
+  protected resetFilter(): void {
     this.filterForm.reset();
     this.filterForm.markAsPristine();
     this.applyFilter();

@@ -1,12 +1,14 @@
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 
-import { combineLatest, Observable, switchMap, tap } from 'rxjs';
+import { combineLatest, debounceTime, Observable, Subscription, switchMap, tap } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
 import { ASC, DEFAULT_SORT_DATA, DESC, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 
@@ -19,7 +21,10 @@ import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioService } from '../service/scenario.service';
 import { IScenario } from '../scenario.model';
-import { filter, map } from 'rxjs/operators';
+
+type ScenarioFilter = {
+  nameContains: string | undefined;
+};
 
 @Component({
   standalone: true,
@@ -36,9 +41,14 @@ import { filter, map } from 'rxjs/operators';
     FormatMediumDatePipe,
     FilterComponent,
     ItemCountComponent,
+    ReactiveFormsModule,
   ],
 })
-export class ScenarioComponent implements OnInit {
+export class ScenarioComponent implements OnDestroy, OnInit {
+  filterForm: FormGroup = new FormGroup({
+    nameContains: new FormControl(),
+  });
+
   scenarios?: IScenario[];
   isLoading = false;
 
@@ -52,6 +62,8 @@ export class ScenarioComponent implements OnInit {
   page = 1;
 
   protected readonly USER_PREFERENCES_KEY = 'scenario';
+
+  private filterFormValueChanges: Subscription | null = null;
 
   constructor(
     public router: Router,
@@ -74,6 +86,12 @@ export class ScenarioComponent implements OnInit {
     this.navigateToWithComponentValues({ predicate: this.predicate, ascending: this.ascending });
     this.load();
     this.changeDetectorRef.detectChanges();
+
+    this.automaticApplyOnFormValueChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.filterFormValueChanges?.unsubscribe();
   }
 
   load(): void {
@@ -84,12 +102,30 @@ export class ScenarioComponent implements OnInit {
     });
   }
 
-  navigateToWithComponentValues({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
+  protected applyFilter(formValue = this.filterForm.value): void {
+    this.router
+      .navigate([], {
+        queryParams: {
+          ...this.getFilterQueryParameter({
+            nameContains: formValue.nameContains,
+          }),
+        },
+      })
+      .catch(() => location.reload());
+  }
+
+  protected resetFilter(): void {
+    this.filterForm.reset();
+    this.filterForm.markAsPristine();
+    this.applyFilter();
+  }
+
+  protected navigateToWithComponentValues({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
     this.updateUserPreferences(predicate, ascending);
     this.handleNavigation(this.page, predicate, ascending);
   }
 
-  navigateToPage(page = this.page): void {
+  protected navigateToPage(page = this.page): void {
     this.handleNavigation(page, this.predicate, this.ascending);
   }
 
@@ -131,6 +167,11 @@ export class ScenarioComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
+
+    if (this.filterForm.value.nameContains) {
+      queryObject.nameContains = this.filterForm.value.nameContains;
+    }
+
     return this.scenarioService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
@@ -194,5 +235,19 @@ export class ScenarioComponent implements OnInit {
   private updateUserPreferences(predicate: string, ascending: boolean): void {
     this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
     this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
+  }
+
+  private automaticApplyOnFormValueChanges(): void {
+    this.filterFormValueChanges = this.filterForm.valueChanges.pipe(debounceTime(DEBOUNCE_TIME_MILLIS)).subscribe({
+      next: values => this.applyFilter(values),
+    });
+  }
+
+  private getFilterQueryParameter({ nameContains }: ScenarioFilter): {
+    [id: string]: any;
+  } {
+    return {
+      'filter[scenarioName.contains]': nameContains ?? undefined,
+    };
   }
 }
