@@ -76,15 +76,15 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "citrus-simulator:build:development",
+            "buildTarget": "citrus-simulator:build:development",
             "port": 4200
           },
           "configurations": {
             "production": {
-              "browserTarget": "citrus-simulator:build:production"
+              "buildTarget": "citrus-simulator:build:production"
             },
             "development": {
-              "browserTarget": "citrus-simulator:build:development"
+              "buildTarget": "citrus-simulator:build:development"
             }
           },
           "defaultConfiguration": "development"
