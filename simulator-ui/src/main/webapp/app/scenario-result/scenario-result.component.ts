@@ -30,7 +30,10 @@ export default class ScenarioResultComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     if (this.scenarioExecutionComponent) {
       this.scenarioExecutionComponent.itemsPerPage = this.userPreferenceService.getPageSize(this.USER_PREFERENCES_KEY);
-      this.scenarioExecutionComponent.predicate = this.userPreferenceService.getPredicate(this.USER_PREFERENCES_KEY, 'id');
+      this.scenarioExecutionComponent.predicate = this.userPreferenceService.getPredicate(
+        this.USER_PREFERENCES_KEY,
+        this.scenarioExecutionComponent.predicate,
+      );
       this.scenarioExecutionComponent.ascending =
         this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY) === EntityOrder.ASCENDING;
 

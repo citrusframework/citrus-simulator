@@ -64,9 +64,15 @@ describe('ScenarioResult Component', () => {
         (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
         (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
         (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(entityOrder);
+
+        const defaultPredicate = 'default-predicate';
+        scenarioExecutionComponent.predicate = defaultPredicate;
+
         component.scenarioExecutionComponent = scenarioExecutionComponent;
 
         component.ngAfterViewInit();
+
+        expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario-result', defaultPredicate);
 
         expect(scenarioExecutionComponent.itemsPerPage).toEqual(itemsPerPage);
         expect(scenarioExecutionComponent.predicate).toEqual(itemsPerPage);
