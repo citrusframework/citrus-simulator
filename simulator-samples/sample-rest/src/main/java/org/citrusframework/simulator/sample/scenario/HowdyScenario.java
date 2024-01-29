@@ -10,6 +10,5 @@ public class HowdyScenario extends DefaultGreetingScenario {
 
     @Override
     String getGreetingMessage() {
-        return "Howdy partner!";
-    }
+        return "Howdy partner!";    }
 }

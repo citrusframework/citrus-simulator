@@ -1,64 +1,102 @@
-[[user-interface]]
-= User interface
+= User Interface
 
-The simulator application is started as a Spring boot web application. If you open your browser and point to the running simulator instance at `http://localhost:8080`
-you will see the default welcome page.
+The simulator application, initiated as a Spring Boot web application, offers an intuitive user interface to enhance user interaction and efficiency.
+Upon launching the simulator and navigating to http://localhost:8080 in your browser, you are greeted with the default welcome page, designed for straightforward interaction and focused on displaying JSON response data from the simulator REST API.
 
-image:default-ui.png[]
+image:default-ui.png[The default Simulator UI]
 
-The default ui is straight forward and limited to viewing Json response data returned by the simulator REST API. Fortunately there is also a more comfortable user interface based
-on Angular2 available. Users can then access an administrative web user interface in order to review the simulator status and list all executed scenarios and their outcome.
+For an enriched experience, the simulator supports a more advanced user interface built with Angular, providing comprehensive administrative capabilities.
+This enhanced UI allows users to effortlessly monitor the simulator's status and review detailed logs of executed scenarios and their outcomes.
 
-The simulator Angular2 user interface comes as dependency that is added to the simulator project. In Maven we simply add the following dependency:
+== Integrating the Angular-based UI
 
-[source, xml]
-----
+To integrate the advanced Angular-based UI into your simulator project, add the following Maven dependency:
+
+[source,xml]
+-----
 <!-- Simulator web ui -->
 <dependency>
   <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator-ui</artifactId>
   <version>${citrus.simulator.version}</version>
 </dependency>
-----
+-----
 
-Now you can start the simulator and open your browser pointing to the simulator UI at `http://localhost:8080`. You will see the extended
-web application user interface that gives you information about the simulator.
+Replace `${citrus.simulator.version}` with the appropriate version of the Citrus Simulator you are using.
+This information can typically be found in the project documentation or the repository where the simulator is hosted.
 
-[[ui-dashboard]]
-== Dashboard
+Upon successful integration and starting the simulator, the Angular-based UI becomes accessible at http://localhost:8080, automatically enhancing the default user interface without any additional configuration.
+The simulator dashboard provides a comprehensive overview of your project, presenting key metrics and insights at a glance.
 
-The simulator dashboard gives you a quick overview of the numbers and facts on your simulator project.
-
-image:dashboard.png[]
+image:dashboard.png[The Dashboard provides a quick overview of the simulator's metrics and activity]
 
 [[ui-scenarios]]
 == Scenarios
 
-The user interface lists all available scenarios. These are scenarios that are available for automatic mapping when incoming requests are handled.
+The "Scenarios" tab within the user interface displays all scenarios available for automatic mapping upon handling incoming requests.
+This tab not only lists the scenarios but also offers functionalities such as initiating scenario executions directly from the UI.
 
-image:scenario-list.png[]
+image:scenario-list.png[List of available scenarios in the simulator]
 
-In case you open one of the listed scenarios you get a detailed information page of that specific scenario.
+Selecting any scenario from the list opens a detailed view of that specific scenario.
+This view includes comprehensive information about the scenario, such as the messages processed during executions and the results of each execution, providing valuable insights into the behavior and outcome of the scenario.
 
-image:scenario-details.png[]
+image:scenario-details.png[Detailed view of a scenario,including execution messages and outcomes]
 
-[[ui-activity]]
-== Activities
+Each scenario detail page is designed to offer a deep dive into the scenario's workings, including the input and output data, any validations or assertions applied, and a step-by-step breakdown of the scenario's execution path.
+This level of detail aids in understanding each scenario's role within the simulator and troubleshooting any issues that may arise.
 
-Each time a scenario instance is started the user interface will display that scenario as running activity.
+[[ui-scenario-results]]
+== Scenario Executions
 
-image:scenario-activity-list.png[]
+Every execution of a scenario within the simulator is meticulously recorded, with the results readily accessible through the user interface for review and analysis.
 
-You can view the details of that scenario activity when opening a specific activity entry.
+image:scenario-executions.png[Overview of scenario executions,showing a list with statuses and key details]
 
-image:scenario-activity-details.png[]
+[[ui-scenario-results]]
+=== Viewing Execution Results
 
-[ui-messages]
-== Messages
+The results of each scenario execution provide a comprehensive overview, including the outcome (such as Passed, Failed, or Errored), execution duration, and the parameters and data utilized during the execution.
+To access the detailed results of a specific execution, simply select the desired entry from the list.
 
-When scenarios get executed they usually exchange several messages in request and response communication. These messages are also stored in the simulator so you
-can review all exchanged messages on a scenario in the user interface.
+image:scenario-execution-details.png[Detailed view of a scenario execution,including request/response data and any logged messages or errors]
 
-image:messages.png[]
+*Detailed Execution Insights*
 
-Open a specific message entry and you will see the details such as header information and message payload details.
+Upon opening an execution entry, you will be presented with a detailed account of the scenario's activity, including:
+
+* Request and Response Messages: The exact data sent and received, allowing for a detailed inspection of the scenario's external interactions.
+* Log Entries: Custom log messages or system-generated logs that were recorded during the execution, providing context and additional insights.
+* Error Details: In cases of failure, detailed error information, including stack traces, is provided to aid in diagnosing and resolving issues.
+
+*Navigation and Analysis*
+
+The user interface is designed to facilitate easy navigation through the execution history.
+Use available tools such as filters to narrow down the list by status, date range, or specific keywords.
+Each execution entry is designed to offer a quick summary, with more in-depth data just a click away for those requiring further analysis.
+
+*Troubleshooting with Execution Details*
+
+The detailed view of scenario executions is an invaluable tool for troubleshooting.
+By examining the requests and responses, users can identify discrepancies or unexpected behavior.
+Furthermore, the detailed logs and error messages serve as a direct insight into the scenario's runtime, aiding in rapid diagnosis and resolution of any issues encountered.
+
+Leveraging the execution details effectively can significantly enhance the efficiency of testing cycles and contribute to a more robust and reliable testing process within the Citrus framework.
+
+[[ui-entities]]
+== Exploring Database Entities
+
+For instances when you require more detailed information or are unable to locate specific data within the simulator's UI, the "Entities" drop-down menu offers a solution.
+Located at the top of the user interface, this menu provides direct access to all database entities used by the simulator, allowing for an in-depth review of the underlying data.
+
+[[ui-entities-access]]
+=== Accessing Database Entities
+
+To explore the database entities:
+
+1. Navigate to the top menu of the simulator's user interface.
+2. Locate and click on the "Entities" drop-down menu.
+3. Select the specific entity you wish to review from the list that appears.
+
+Each selection provides a detailed view of the chosen entity, including all relevant records and their attributes.
+This feature is particularly useful for advanced users who need to analyze the simulator's data storage, audit logs, or troubleshoot specific issues related to the data.
