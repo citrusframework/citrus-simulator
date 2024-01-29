@@ -150,7 +150,7 @@ describe('Scenario Management Component', () => {
 
       // This is the initial read
       expect(userPreferenceService.getPageSize).toHaveBeenCalledWith('scenario');
-      expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario', 'id');
+      expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario', 'name');
       expect(userPreferenceService.getEntityOrder).toHaveBeenCalledWith('scenario');
 
       // Then follows the update of the route

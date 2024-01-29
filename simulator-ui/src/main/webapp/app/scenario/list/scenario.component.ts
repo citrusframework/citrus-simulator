@@ -52,7 +52,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
   scenarios?: IScenario[];
   isLoading = false;
 
-  predicate = 'id';
+  predicate = 'name';
   ascending = true;
   entityOrder: EntityOrder = EntityOrder.ASCENDING;
 
