@@ -14,6 +14,11 @@ describe('FormatMediumDatePipe', () => {
   });
 
   it('should format date like this D MMM YYYY', () => {
-    expect(formatMediumDatetimePipe.transform(dayjs('2020-11-16').locale('fr'))).toBe('16 Nov 2020 00:00:00');
+    const input = dayjs('2020-11-16');
+    dayjs.utc = jest.fn().mockReturnValueOnce(input);
+
+    expect(formatMediumDatetimePipe.transform(input)).toBe('16 Nov 2020 00:00:00');
+
+    expect(dayjs.utc).toHaveBeenCalledWith(input);
   });
 });
