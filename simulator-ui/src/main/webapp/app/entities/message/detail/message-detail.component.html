@@ -46,7 +46,7 @@
 
       <hr />
 
-      <app-message-header-table [messageHeaders]="message.headers ?? []" [fullDetails]="false" predicate="name"></app-message-header-table>
+      <app-message-header-table [messageHeaders]="message.headers ?? []" [standalone]="true" predicate="name"></app-message-header-table>
 
       <button type="button" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>

@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { SortParameters } from 'app/core/util/sort-parameters.type';
+import { sort } from 'app/core/util/operators';
+
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
-
-export type MessageHeaderSort = { predicate: string; ascending: boolean };
 
 @Component({
   standalone: true,
@@ -24,25 +25,36 @@ export default class MessageHeaderTableComponent implements OnInit {
   predicate = 'headerId';
 
   @Output()
-  sortChange = new EventEmitter<MessageHeaderSort>();
+  sortChange = new EventEmitter<SortParameters>();
+
+  sortedMessageHeaders: IMessageHeader[] | null = null;
 
   @Input()
-  messageHeaders: IMessageHeader[] | null = null;
-
-  @Input()
-  fullDetails = true;
+  standalone = false;
 
   constructor(private messageHeaderService: MessageHeaderService) {}
 
   ngOnInit(): void {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: string-property identifier
-    this.messageHeaders?.sort((a: IMessageHeader, b: IMessageHeader) => (a[this.predicate] as number) - b[this.predicate]);
+    this.sortedMessageHeaders?.sort((a: IMessageHeader, b: IMessageHeader) => (a[this.predicate] as number) - b[this.predicate]);
+  }
+
+  @Input() set messageHeaders(messageHeaders: IMessageHeader[] | null) {
+    this.sortedMessageHeaders = messageHeaders ? messageHeaders.slice() : [];
+
+    if (this.standalone) {
+      this.emitSortChange();
+    }
   }
 
   trackId = (_index: number, item: IMessageHeader): number => this.messageHeaderService.getMessageHeaderIdentifier(item);
 
   protected emitSortChange(): void {
-    this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
+    if (this.standalone) {
+      sort(this.sortedMessageHeaders, this.predicate, this.ascending);
+    } else {
+      this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
+    }
   }
 }

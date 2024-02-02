@@ -1,4 +1,4 @@
-<div class="table-responsive table-entities" id="entities" *ngIf="messageHeaders && messageHeaders.length > 0">
+<div class="table-responsive table-entities" id="entities" *ngIf="sortedMessageHeaders && sortedMessageHeaders.length > 0">
   <table class="table table-striped" aria-describedby="page-heading">
     <thead>
       <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="emitSortChange()">
@@ -20,19 +20,19 @@
             <fa-icon class="p-1" icon="sort"></fa-icon>
           </div>
         </th>
-        <th *ngIf="fullDetails" scope="col" jhiSortBy="message.citrusMessageId">
+        <th *ngIf="standalone" scope="col" jhiSortBy="message.citrusMessageId">
           <div class="d-flex">
             <span jhiTranslate="citrusSimulatorApp.messageHeader.message">Message</span>
             <fa-icon class="p-1" icon="sort"></fa-icon>
           </div>
         </th>
-        <th *ngIf="fullDetails" scope="col" jhiSortBy="createdDate">
+        <th *ngIf="standalone" scope="col" jhiSortBy="createdDate">
           <div class="d-flex">
             <span jhiTranslate="citrusSimulatorApp.messageHeader.createdDate">Created Date</span>
             <fa-icon class="p-1" icon="sort"></fa-icon>
           </div>
         </th>
-        <th *ngIf="fullDetails" scope="col" jhiSortBy="lastModifiedDate">
+        <th *ngIf="standalone" scope="col" jhiSortBy="lastModifiedDate">
           <div class="d-flex">
             <span jhiTranslate="citrusSimulatorApp.messageHeader.lastModifiedDate">Last Modified Date</span>
             <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -42,19 +42,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let messageHeader of messageHeaders; trackBy: trackId" data-cy="entityTable">
+      <tr *ngFor="let messageHeader of sortedMessageHeaders; trackBy: trackId" data-cy="entityTable">
         <td>
           <a [routerLink]="['/message-header', messageHeader.headerId, 'view']">{{ messageHeader.headerId }}</a>
         </td>
         <td>{{ messageHeader.name }}</td>
         <td>{{ messageHeader.value }}</td>
-        <td *ngIf="fullDetails">
+        <td *ngIf="standalone">
           <div *ngIf="messageHeader.message">
             <a [routerLink]="['/message', messageHeader.message.messageId, 'view']">{{ messageHeader.message.citrusMessageId }}</a>
           </div>
         </td>
-        <td *ngIf="fullDetails">{{ messageHeader.createdDate | formatMediumDatetime }}</td>
-        <td *ngIf="fullDetails">{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</td>
+        <td *ngIf="standalone">{{ messageHeader.createdDate | formatMediumDatetime }}</td>
+        <td *ngIf="standalone">{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group">
             <button

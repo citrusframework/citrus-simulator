@@ -1,16 +1,22 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
 
+import * as operators from 'app/core/util/operators';
+
+import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
 
 import MessageHeaderTableComponent from './message-header-table.component';
 
+import SpyInstance = jest.SpyInstance;
+
 describe('MessageHeader Table Component', () => {
+  let sortSpy: SpyInstance;
+
   let service: MessageHeaderService;
 
   let fixture: ComponentFixture<MessageHeaderTableComponent>;
@@ -23,31 +29,16 @@ describe('MessageHeader Table Component', () => {
         HttpClientTestingModule,
         MessageHeaderTableComponent,
       ],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            data: of({
-              defaultSort: 'headerId,asc',
-            }),
-            queryParamMap: of(
-              jest.requireActual('@angular/router').convertToParamMap({
-                page: '1',
-                size: '1',
-                sort: 'headerId,desc',
-                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
-              }),
-            ),
-            snapshot: { queryParams: {} },
-          },
-        },
-      ],
+      providers: [],
     })
       .overrideTemplate(MessageHeaderTableComponent, '')
       .compileComponents();
 
     fixture = TestBed.createComponent(MessageHeaderTableComponent);
     component = fixture.componentInstance;
+
+    sortSpy = jest.spyOn(operators, 'sort');
+    sortSpy.mockClear();
 
     service = TestBed.inject(MessageHeaderService);
 
@@ -69,6 +60,61 @@ describe('MessageHeader Table Component', () => {
       const headerId = component.trackId(0, entity);
       expect(service.getMessageHeaderIdentifier).toHaveBeenCalledWith(entity);
       expect(headerId).toBe(entity.headerId);
+    });
+  });
+
+  describe('set messageHeaders', () => {
+    it('sets the message header list and calls sort in standalone mode', () => {
+      component.standalone = true;
+
+      const messageHeaders = [{ headerId: 1234 }] as IMessageHeader[];
+
+      component.messageHeaders = messageHeaders;
+
+      expect(component.sortedMessageHeaders).toEqual(messageHeaders);
+      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, 'headerId', true);
+    });
+
+    it('sets the message header list only in non-standalone mode', () => {
+      component.standalone = false;
+
+      const messageHeaders = [{ headerId: 1234 }] as IMessageHeader[];
+
+      component.messageHeaders = messageHeaders;
+
+      expect(component.sortedMessageHeaders).toEqual(messageHeaders);
+      expect(sortSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('emitSortChange', () => {
+    let sortChange: SpyInstance;
+
+    beforeEach(() => {
+      sortChange = jest.spyOn(component.sortChange, 'emit');
+    });
+
+    it('sorts in place in standalone mode', () => {
+      component.standalone = true;
+
+      const messageHeaders = [{ headerId: 1234 }] as IMessageHeader[];
+      component.messageHeaders = messageHeaders;
+
+      // @ts-ignore: Access protected function for testing
+      component.emitSortChange();
+
+      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, 'headerId', true);
+      expect(sortChange).not.toHaveBeenCalled();
+    });
+
+    it('emits event in non-standalone mode', () => {
+      component.standalone = false;
+
+      // @ts-ignore: Access protected function for testing
+      component.emitSortChange();
+
+      expect(sortSpy).not.toHaveBeenCalled();
+      expect(sortChange).toHaveBeenCalledWith({ predicate: 'headerId', ascending: true });
     });
   });
 });
