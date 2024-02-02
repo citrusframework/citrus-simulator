@@ -1,5 +1,7 @@
 import dayjs from 'dayjs/esm';
 
+import { IMessage } from 'app/entities/message/message.model';
+
 export interface IScenarioExecution {
   executionId: number;
   startDate?: dayjs.Dayjs | null;
@@ -7,6 +9,7 @@ export interface IScenarioExecution {
   scenarioName?: string | null;
   status?: 'UNKNOWN' | 'RUNNING' | 'SUCCESS' | 'FAILED' | null;
   errorMessage?: string | null;
+  scenarioMessages?: IMessage[] | null;
 }
 
 export type NewScenarioExecution = Omit<IScenarioExecution, 'executionId'> & { executionId: null };

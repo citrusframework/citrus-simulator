@@ -38,6 +38,14 @@
         </dd>
       </dl>
 
+      <h3 data-cy="messageDetailsHeading">
+        <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
+      </h3>
+
+      <hr />
+
+      <app-message-table [messages]="scenarioExecution.scenarioMessages ?? []" predicate="createdDate"></app-message-table>
+
       <button type="button" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>

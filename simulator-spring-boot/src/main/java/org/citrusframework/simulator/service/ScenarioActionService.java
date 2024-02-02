@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import org.citrusframework.simulator.model.ScenarioExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Service Interface for managing {@link ScenarioAction}.
@@ -89,8 +90,8 @@ public interface ScenarioActionService {
      */
     static ScenarioAction restrictToDtoProperties(ScenarioAction scenarioAction) {
         ScenarioExecution scenarioExecution = scenarioAction.getScenarioExecution();
-        if (!Objects.isNull(scenarioExecution)) {
-            scenarioAction.setScenarioExecution(ScenarioExecution.builder().scenarioName(scenarioExecution.getScenarioName()).build());
+        if (nonNull(scenarioExecution)) {
+            scenarioAction.setScenarioExecution(ScenarioExecution.builder().executionId(scenarioExecution.getExecutionId()).scenarioName(scenarioExecution.getScenarioName()).build());
         }
         return scenarioAction;
     }

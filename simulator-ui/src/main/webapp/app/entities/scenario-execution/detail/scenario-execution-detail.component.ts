@@ -3,13 +3,16 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+
+import { MessageTableComponent } from './message-table.component';
+
 import { IScenarioExecution } from '../scenario-execution.model';
 
 @Component({
   standalone: true,
   selector: 'app-scenario-execution-detail',
   templateUrl: './scenario-execution-detail.component.html',
-  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
+  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, MessageTableComponent],
 })
 export class ScenarioExecutionDetailComponent {
   @Input() scenarioExecution: IScenarioExecution | null = null;

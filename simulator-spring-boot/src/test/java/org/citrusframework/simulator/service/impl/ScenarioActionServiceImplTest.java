@@ -42,10 +42,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.citrusframework.simulator.model.ScenarioExecution.Status.UNKNOWN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -87,6 +90,7 @@ class ScenarioActionServiceImplTest {
     void beforeEachSetup()  {
         ScenarioAction scenarioAction = new ScenarioAction();
         ScenarioExecution scenarioExecution = ScenarioExecution.builder()
+            .executionId(1234L)
             .startDate(Instant.now())
             .endDate(Instant.now())
             .scenarioName("scenario-name")
@@ -129,20 +133,31 @@ class ScenarioActionServiceImplTest {
 
         Optional<ScenarioAction> maybeScenarioAction = fixture.findOne(scenarioActionId);
 
-        assertTrue(maybeScenarioAction.isPresent());
-        assertEquals(scenarioActionWithScenarioExecution, maybeScenarioAction.get());
+        assertThat(maybeScenarioAction)
+            .isPresent()
+            .containsSame(scenarioActionWithScenarioExecution);
 
         verifyDtoPreparations();
     }
 
     private void verifyDtoPreparations() {
-        ArgumentCaptor<ScenarioExecution> scenarioExecutionArgumentCaptor = ArgumentCaptor.forClass(ScenarioExecution.class);
+        ArgumentCaptor<ScenarioExecution> scenarioExecutionArgumentCaptor = captor();
         verify(scenarioActionWithScenarioExecution).setScenarioExecution(scenarioExecutionArgumentCaptor.capture());
 
         ScenarioExecution expectedScenarioExecution = scenarioActionWithScenarioExecution.getScenarioExecution();
         ScenarioExecution capturedScenarioExecution = scenarioExecutionArgumentCaptor.getValue();
 
-        assertEquals(expectedScenarioExecution.getScenarioName(), capturedScenarioExecution.getScenarioName());
+        assertThat(capturedScenarioExecution)
+            .hasAllNullFieldsOrPropertiesExcept(
+                "executionId",
+                "scenarioName",
+                "status",
+                "scenarioParameters",
+                "scenarioActions",
+                "scenarioMessages")
+            .hasFieldOrPropertyWithValue("executionId", expectedScenarioExecution.getExecutionId())
+            .hasFieldOrPropertyWithValue("scenarioName", expectedScenarioExecution.getScenarioName())
+            .hasFieldOrPropertyWithValue("status", UNKNOWN);
     }
 
     @Nested
