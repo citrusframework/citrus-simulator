@@ -25,9 +25,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -35,12 +37,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.data.domain.Pageable.unpaged;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes;
@@ -91,17 +96,25 @@ class ScenarioResourceTest {
         private static final List<Scenario> SCENARIO_CACHE = asList(
             new Scenario("abc", STARTER),
             new Scenario("cde", STARTER),
-            new Scenario("efg", STARTER)
+            new Scenario("efg", STARTER),
+            new Scenario("$#&", STARTER)
         );
 
-        @Test
-        void doesFilterCacheWithNameContains() {
+        static Stream<Arguments> doesFilterCacheWithNameContains() {
+            return Stream.of(
+                arguments("b", "abc"),
+                arguments("#", "$#&")
+            );
+        }
+
+        @MethodSource
+        @ParameterizedTest
+        void doesFilterCacheWithNameContains(String filterLetter, String expectedScenario) {
             setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
 
             setField(fixture, "scenarioCache", SCENARIO_CACHE);
 
-            String filterLetter = "b";
-            var result = fixture.getScenarios(Optional.of(filterLetter), Pageable.unpaged());
+            var result = fixture.getScenarios(Optional.of(filterLetter), unpaged());
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)
@@ -110,7 +123,7 @@ class ScenarioResourceTest {
                 .first()
                 .asInstanceOf(type(Scenario.class))
                 .extracting(Scenario::name)
-                .isEqualTo("abc");
+                .isEqualTo(expectedScenario);
         }
 
         @Test
@@ -120,7 +133,7 @@ class ScenarioResourceTest {
             setField(fixture, "scenarioCache", SCENARIO_CACHE);
 
             String filterLetter = "e";
-            var result = fixture.getScenarios(Optional.of(filterLetter), Pageable.unpaged());
+            var result = fixture.getScenarios(Optional.of(filterLetter), unpaged());
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)
@@ -140,7 +153,7 @@ class ScenarioResourceTest {
 
             setField(fixture, "scenarioCache", SCENARIO_CACHE);
 
-            var result = fixture.getScenarios(Optional.empty(), Pageable.unpaged());
+            var result = fixture.getScenarios(Optional.empty(), unpaged());
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)

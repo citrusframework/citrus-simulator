@@ -44,11 +44,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.net.URLDecoder.decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.MESSAGE_TRIGGERED;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
 import static org.citrusframework.simulator.web.util.PaginationUtil.createPage;
 import static org.citrusframework.simulator.web.util.PaginationUtil.generatePaginationHttpHeaders;
+import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
@@ -94,19 +97,20 @@ public class ScenarioResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarios in body.
      */
     @GetMapping("/scenarios")
-    public ResponseEntity<List<Scenario>> getScenarios(@RequestParam(name = "nameContains", required = false) Optional< String> nameContains, @ParameterObject Pageable pageable) {
-        logger.debug("REST request get registered Scenarios, where name contains: {}", nameContains.orElse("*"));
+    public ResponseEntity<List<Scenario>> getScenarios(@RequestParam(name = "nameContains", required = false) Optional<String> nameContains, @ParameterObject Pageable pageable) {
+        var nameFilter = nameContains.map(contains -> decode(contains, UTF_8)).orElse("*");
+        logger.debug("REST request get registered Scenarios, where name contains: {}", nameFilter);
 
         Page<Scenario> page = createPage(
             scenarioCache.stream()
-                .filter(scenario -> nameContains.isEmpty()  || scenario.name().contains(nameContains.get()))
+                .filter(scenario -> nameContains.isEmpty() || scenario.name().contains(nameFilter))
                 .toList(),
             pageable,
             ScenarioComparator::fromProperty
         );
 
         HttpHeaders headers = generatePaginationHttpHeaders(fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ok().headers(headers).body(page.getContent());
     }
 
     /**
