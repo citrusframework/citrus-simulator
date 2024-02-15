@@ -29,6 +29,9 @@ import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -37,10 +40,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static lombok.AccessLevel.NONE;
+
 /**
  * JPA entity for representing a scenario execution
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class ScenarioExecution implements Serializable {
 
     @Serial
@@ -49,6 +57,7 @@ public class ScenarioExecution implements Serializable {
     public static final String EXECUTION_ID = "scenarioExecutionId";
 
     @Id
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long executionId;
@@ -66,9 +75,12 @@ public class ScenarioExecution implements Serializable {
      * Actual status as a numerical representation of {@link Status}
      */
     @NotNull
+    @Getter(NONE)
+    @Setter(NONE)
     @Column(nullable = false)
     private Integer status = Status.UNKNOWN.getId();
 
+    @Setter(NONE)
     @Size(max = 1000)
     @Column(length = 1000)
     private String errorMessage;
@@ -91,32 +103,8 @@ public class ScenarioExecution implements Serializable {
         return new ScenarioExecutionBuilder();
     }
 
-    public Long getExecutionId() {
-        return executionId;
-    }
-
-    public Instant getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Instant endDate) {
-        this.endDate = endDate;
-    }
-
-    public Instant getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Instant startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getScenarioName() {
-        return scenarioName;
-    }
-
-    public void setScenarioName(String scenarioName) {
-        this.scenarioName = scenarioName;
+    void setExecutionId(Long executionId) {
+        this.executionId = executionId;
     }
 
     public Status getStatus() {
@@ -127,16 +115,8 @@ public class ScenarioExecution implements Serializable {
         this.status = status.id;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", errorMessage);
-    }
-
-    public Set<ScenarioParameter> getScenarioParameters() {
-        return scenarioParameters;
     }
 
     public void addScenarioParameter(ScenarioParameter scenarioParameter) {
@@ -144,27 +124,9 @@ public class ScenarioExecution implements Serializable {
         scenarioParameter.setScenarioExecution(this);
     }
 
-    public void removeScenarioParameter(ScenarioParameter scenarioParameter) {
-        scenarioParameters.remove(scenarioParameter);
-        scenarioParameter.setScenarioExecution(null);
-    }
-
-    public Set<ScenarioAction> getScenarioActions() {
-        return scenarioActions;
-    }
-
     public void addScenarioAction(ScenarioAction scenarioAction) {
         scenarioActions.add(scenarioAction);
         scenarioAction.setScenarioExecution(this);
-    }
-
-    public void removeScenarioAction(ScenarioAction scenarioAction) {
-        scenarioActions.remove(scenarioAction);
-        scenarioAction.setScenarioExecution(null);
-    }
-
-    public Set<Message> getScenarioMessages() {
-        return scenarioMessages;
     }
 
     public void addScenarioMessage(Message scenarioMessage) {
@@ -172,23 +134,23 @@ public class ScenarioExecution implements Serializable {
         scenarioMessage.setScenarioExecution(this);
     }
 
-    public void removeScenarioMessage(Message scenarioMessage) {
-        scenarioMessages.remove(scenarioMessage);
-        scenarioMessage.setScenarioExecution(null);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof ScenarioExecution scenarioExecution) {
+            return executionId != null && executionId.equals(scenarioExecution.executionId);
+        }
+        return false;
     }
 
     @Override
-    public String toString() {
-        return "ScenarioExecution{" +
-            "executionId='" + getExecutionId() + "'" +
-            ", startDate='" + getStartDate() + "'" +
-            ", endDate='" + getEndDate() + "'" +
-            ", scenarioName='" + getScenarioName() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", errorMessage='" + getErrorMessage() + "'" +
-            "}";
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    @Getter
     public enum Status {
 
         UNKNOWN(0), RUNNING(1), SUCCESS(2), FAILED(3);
@@ -197,10 +159,6 @@ public class ScenarioExecution implements Serializable {
 
         Status(int id) {
             this.id = id;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public static Status fromId(int id) {

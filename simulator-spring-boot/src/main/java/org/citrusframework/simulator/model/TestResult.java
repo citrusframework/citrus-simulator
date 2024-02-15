@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static lombok.AccessLevel.NONE;
 
 /**
  * Represents the persistent data model for a test result in the system. This class holds all information
@@ -48,13 +53,17 @@ import java.util.Set;
  * @see org.citrusframework.simulator.model.TestParameter
  * @see org.citrusframework.simulator.model.AbstractAuditingEntity
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class TestResult extends AbstractAuditingEntity<TestResult, Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
+    @Setter(NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
@@ -62,6 +71,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Actual result as a numerical representation of {@link Status}
      */
+    @Getter(NONE)
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     private Integer status = Status.UNKNOWN.getId();
 
@@ -133,10 +144,6 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return new TestResultBuilder();
     }
 
-    public Long getId() {
-        return id;
-    }
-
     void setId(Long id) {
         this.id = id;
     }
@@ -145,37 +152,8 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return Status.fromId(status);
     }
 
-    public String getTestName() {
-        return testName;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public Set<TestParameter> getTestParameters() {
-        return testParameters;
-    }
-
     public void addTestParameter(TestParameter testParameter) {
         testParameters.add(testParameter);
-    }
-
-    public void removeTestParameter(TestParameter testParameter) {
-        testParameters.remove(testParameter);
-        testParameter.setTestResult(null);
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getFailureStack() {
-        return failureStack;
-    }
-
-    public String getFailureType() {
-        return failureType;
     }
 
     private int convertToStatus(String resultName) {
@@ -190,8 +168,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o instanceof TestResult testResult) {
+        } else if (o instanceof TestResult testResult) {
             return id != null && id.equals(testResult.id);
         }
         return false;
@@ -203,21 +180,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return getClass().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "TestResult{" +
-            "id=" + getId() +
-            ", status=" + getStatus() +
-            ", testName='" + getTestName() + "'" +
-            ", className='" + getClassName() + "'" +
-            ", errorMessage='" + getErrorMessage() + "'" +
-            ", failureStack='" + getFailureStack() + "'" +
-            ", failureType='" + getFailureType() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
-    }
-
+    @Getter
     public enum Status {
 
         UNKNOWN(0), SUCCESS(1), FAILURE(2), SKIP(3);
@@ -226,10 +189,6 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
         Status(int i) {
             this.id = i;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public static Status fromId(int id) {

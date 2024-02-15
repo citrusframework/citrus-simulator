@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -34,16 +37,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static lombok.AccessLevel.NONE;
+
 /**
  * JPA entity for representing a scenario parameter
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter, Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long parameterId;
@@ -56,6 +65,8 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
      * Actual control type as a numerical representation of {@link ControlType}
      */
     @NotNull
+    @Getter(NONE)
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     private Integer controlType = ControlType.UNKNOWN.getId();
 
@@ -79,32 +90,8 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
         return new ScenarioParameterBuilder();
     }
 
-    public Long getParameterId() {
-        return parameterId;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public List<ScenarioParameterOption> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<ScenarioParameterOption> options) {
-        this.options = options;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setParameterId(Long parameterId) {
+        this.parameterId = parameterId;
     }
 
     public ControlType getControlType() {
@@ -115,44 +102,23 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
         this.controlType = controlType.id;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof ScenarioParameter scenarioParameter) {
+            return parameterId != null && parameterId.equals(scenarioParameter.parameterId);
+        }
+        return false;
     }
 
     @Override
-    public String toString() {
-        return "ScenarioParameter{" +
-            ", parameterId='" + getParameterId() + "'" +
-            ", name='" + getName() + "'" + "'" +
-            ", controlType='" + getControlType() + "'" +
-            ", value='" + getValue() + "'" +
-            ", required='" + isRequired() + "'" +
-            ", label='" + getLabel() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    @Getter
     public enum ControlType {
 
         UNKNOWN(0), TEXTBOX(1), TEXTAREA(2), DROPDOWN(3);
@@ -161,10 +127,6 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
 
         ControlType(int id) {
             this.id = id;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public static ControlType fromId(int id) {

@@ -26,22 +26,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+
+import static lombok.AccessLevel.NONE;
 
 /**
  * JPA entity for representing message headers
  *
  * @author Georgi Todorov
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long headerId;
@@ -73,44 +82,15 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
         return new MessageHeaderBuilder();
     }
 
-    public Long getHeaderId() {
-        return headerId;
-    }
-
     void setHeaderId(Long headerId) {
         this.headerId = headerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Message getMessage() {
-        return message;
-    }
-
-    public void setMessage(Message message) {
-        this.message = message;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o instanceof MessageHeader messageHeader) {
+        } else if (o instanceof MessageHeader messageHeader) {
             return headerId != null && headerId.equals(messageHeader.headerId);
         }
         return false;
@@ -120,16 +100,6 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     public int hashCode() {
         // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "MessageHeader{" +
-            "headerId='" + getHeaderId() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", name='" + getName() + "'" +
-            ", value='" + getValue() + "'" +
-            "}";
     }
 
     public static class MessageHeaderBuilder extends AuditingEntityBuilder<MessageHeaderBuilder, MessageHeader, Long> {
