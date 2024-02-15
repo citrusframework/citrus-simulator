@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -52,8 +54,10 @@ import static java.util.Objects.hash;
  * @see org.citrusframework.simulator.model.TestResult
  * @see org.citrusframework.simulator.model.AbstractAuditingEntity
  */
+@Getter
+@Setter
 @Entity
-@Table(name = "test_parameter")
+@ToString
 public class TestParameter extends AbstractAuditingEntity<TestParameter, TestParameter.TestParameterId> implements Serializable {
 
     @Serial
@@ -101,24 +105,11 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
         return testParameterId.key;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public TestResult getTestResult() {
-        return testResult;
-    }
-
-    public void setTestResult(TestResult testResult) {
-        this.testResult = testResult;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o instanceof TestParameter testParameter) {
+        } else if (o instanceof TestParameter testParameter) {
             return testParameterId != null && testParameterId.equals(testParameter.testParameterId);
         }
         return false;
@@ -128,16 +119,6 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
     public int hashCode() {
         // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "TestParameter{" +
-            "key='" + getKey() + "'" +
-            ", value='" + getValue() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
+import static lombok.AccessLevel.NONE;
+
 /**
  * JPA entity for representing a scenario action
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class ScenarioAction implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long actionId;
@@ -60,50 +69,24 @@ public class ScenarioAction implements Serializable {
         return new ScenarioActionBuilder();
     }
 
-    public Long getActionId() {
-        return actionId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Instant getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Instant startDate) {
-        this.startDate = startDate;
-    }
-
-    public Instant getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Instant endDate) {
-        this.endDate = endDate;
-    }
-
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
+    void setActionId(Long actionId) {
+        this.actionId = actionId;
     }
 
     @Override
-    public String toString() {
-        return "ScenarioAction{" +
-                "actionId='" + getActionId() + "'" +
-                ", name='" + getName() + "'" +
-                ", startDate='" + getStartDate() + "'" +
-                ", endDate='" + getEndDate() + "'" +
-                "}";
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof ScenarioAction scenarioAction) {
+            return actionId != null && actionId.equals(scenarioAction.actionId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     public static class ScenarioActionBuilder {

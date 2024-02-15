@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,26 +30,35 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Arrays.stream;
+import static lombok.AccessLevel.NONE;
+
 /**
  * JPA entity for representing inbound and outbound messages
  */
+@Getter
+@Setter
 @Entity
+@ToString
 public class Message extends AbstractAuditingEntity<Message, Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2L;
 
     @Id
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
@@ -58,6 +67,8 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
      * Actual direction as a numerical representation of {@link Direction}
      */
     @NotNull
+    @Getter(NONE)
+    @Setter(NONE)
     @Column(nullable = false, updatable = false)
     private Integer direction = Direction.UNKNOWN.getId();
 
@@ -82,10 +93,6 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return new MessageBuilder();
     }
 
-    public Long getMessageId() {
-        return messageId;
-    }
-
     void setMessageId(Long messageId) {
         this.messageId = messageId;
     }
@@ -94,34 +101,13 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return Direction.fromId(direction);
     }
 
-    public String getPayload() {
-        return payload;
-    }
-
-    public String getCitrusMessageId() {
-        return citrusMessageId;
-    }
-
-    public Set<MessageHeader> getHeaders() {
-        return headers;
+    public void setDirection(Direction direction) {
+        this.direction = direction.id;
     }
 
     public void addHeader(MessageHeader messageHeader) {
         headers.add(messageHeader);
         messageHeader.setMessage(this);
-    }
-
-    public void removeHeader(MessageHeader messageHeader) {
-        headers.remove(messageHeader);
-        messageHeader.setMessage(null);
-    }
-
-    public ScenarioExecution getScenarioExecution() {
-        return scenarioExecution;
-    }
-
-    public void setScenarioExecution(ScenarioExecution scenarioExecution) {
-        this.scenarioExecution = scenarioExecution;
     }
 
     public Long getScenarioExecutionId() {
@@ -142,8 +128,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o instanceof Message message) {
+        } else if (o instanceof Message message) {
             return messageId != null && messageId.equals(message.messageId);
         }
         return false;
@@ -155,17 +140,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         return getClass().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-            "messageId='" + getMessageId() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", direction='" + getDirection() + "'" +
-            ", payload='" + getPayload() + "'" +
-            ", citrusMessageId='" + getCitrusMessageId() + "'" +
-            "}";
-    }
-
+    @Getter
     public enum Direction {
 
         UNKNOWN(0), INBOUND(1), OUTBOUND(2);
@@ -176,12 +151,8 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
             this.id = i;
         }
 
-        public int getId() {
-            return id;
-        }
-
         public static Direction fromId(int id) {
-            return Arrays.stream(values())
+            return stream(values())
                 .filter(direction -> direction.id == id)
                 .findFirst()
                 .orElse(Direction.UNKNOWN);
