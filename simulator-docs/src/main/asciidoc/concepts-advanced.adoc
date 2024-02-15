@@ -1,6 +1,90 @@
 [[concepts-advanced]]
 = Advanced Concepts
 
+[[concept-advanced-execution-modes]]
+== Execution Modes in Citrus Simulator
+
+The Citrus Simulator offers different modes of operation to accommodate various testing scenarios and requirements.
+These modes dictate how the simulator executes the test scenarios.
+It comes with two modes, a synchronous and an asynchronous one, providing flexibility in how interactions are simulated and tested.
+
+[[concept-advanced-execution-sync-mode]]
+=== Synchronous Execution Mode
+
+The synchronous execution mode ensures that scenarios are executed one after the other, in a single thread.
+This mode is beneficial for scenarios where operations need to be performed in a strict sequence, and data consistency is crucial.
+
+==== Configuration
+
+To configure the simulator in synchronous mode, set the `citrus.simulator.mode` property in your application's configuration file (`application.properties` or `application.yml`) to `sync`.
+If this property is not set at all, the simulator defaults to synchronous mode.
+
+.Example `application.properties`
+----
+citrus.simulator.mode=sync
+----
+
+.Example `application.yml`
+----
+citrus:
+  simulator:
+    mode: sync
+----
+
+[[concept-advanced-execution-async-mode]]
+=== Asynchronous Execution Mode
+
+In asynchronous execution mode, scenarios are executed concurrently in separate threads, allowing for parallel processing.
+This mode is suitable for more complex simulations where scenarios do not depend on the execution order or when simulating high concurrency.
+
+==== Configuration
+
+To enable asynchronous mode, set the `citrus.simulator.mode` property to `async`.
+Additionally, you can configure the number of executor threads that handle the parallel execution of scenarios through the `citrus.simulator.executor.threads` property.
+
+.Example `application.properties`
+----
+citrus.simulator.mode=async
+citrus.simulator.executor.threads=10
+----
+
+.Example `application.yml`
+----
+citrus:
+  simulator:
+    mode: async
+    executor:
+      threads: 10
+----
+
+[[concept-advanced-execution-custom-mode]]
+=== Custom Executors
+
+For advanced scenarios, you have the flexibility to provide custom executors by implementing the `ScenarioExecutorService` interface.
+This allows for tailored execution strategies, such as custom thread management, prioritization of scenarios, or integration with external systems for scenario execution.
+
+To use a custom executor, define your implementation of the `ScenarioExecutorService` and register it as a bean in your Spring application context.
+Ensure that your custom executor is appropriately configured to be recognized by the simulator in place of the default synchronous or asynchronous executors.
+To disable the default synchronous executor, set the following property: `citrus.simulator.mode=custom`.
+
+.Example Custom Executor Bean Definition
+[source,java]
+----
+@Bean
+public ScenarioExecutorService customScenarioExecutorService() {
+    return new MyCustomScenarioExecutorService();
+}
+----
+
+This custom executor will then be used by the simulator to execute scenarios according to the logic you've implemented.
+
+== Best Practices
+
+- Use the _synchronous mode_ as the standard, for linear simulations where data consistency matters or when debugging to ensure straightforward tracing of actions and outcomes.
+- Opt for the _asynchronous mode_ only when explicitly needed, when simulating more complex scenarios that involve intermediate synchronous messages.
+
+By understanding and appropriately configuring the execution modes of the Citrus Simulator, you can tailor the simulation environment to best suit your testing needs, whether you require precise control over scenario execution or need to simulate high-volume, concurrent interactions.
+
 [[concept-advanced-database-schema]]
 == Database Schema
 
@@ -10,7 +94,7 @@ This visual representation can help understand the relationships and structure o
 
 image::database-schema.png[Database Schema, title="Database Schema of the Citrus Simulator"]
 
-[[concept-runtime-scenario-registration]]
+[[concept-advanced-runtime-scenario-registration]]
 == Registering Simulator Scenarios at Runtime
 
 Registering simulator scenarios at runtime is a perfectly valid approach.
