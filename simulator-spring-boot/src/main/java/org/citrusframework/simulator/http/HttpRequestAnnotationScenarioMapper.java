@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import lombok.Builder;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
-import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioListAware;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.mapper.AbstractScenarioMapper;
@@ -33,12 +32,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.citrusframework.simulator.scenario.ScenarioUtils.getAnnotationFromClassHierarchy;
+
 /**
  * Scenario mapper performs mapping logic on request mapping annotations on given scenarios. Scenarios match on request method as well as
  * request path pattern matching.
  *
  * @author Christoph Deppisch
  */
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper implements ScenarioListAware {
 
     private final HttpRequestAnnotationMatcher httpRequestAnnotationMatcher = HttpRequestAnnotationMatcher.instance();
@@ -48,8 +50,8 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper 
 
     @Override
     protected String getMappingKey(Message request) {
-        if (request instanceof HttpMessage) {
-            return getMappingKeyForHttpMessage((HttpMessage) request);
+        if (request instanceof HttpMessage httpMessage) {
+            return getMappingKeyForHttpMessage(httpMessage);
         }
 
         return super.getMappingKey(request);
@@ -62,7 +64,7 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper 
         Optional<String> mapping = nullSafeList.stream()
             .map(scenario -> EnrichedScenarioWithRequestMapping.builder()
                 .scenario(scenario)
-                .requestMapping(AnnotationUtils.findAnnotation(scenario.getClass(), RequestMapping.class))
+                .requestMapping(getAnnotationFromClassHierarchy(scenario, RequestMapping.class))
                 .build()
             )
             .filter(EnrichedScenarioWithRequestMapping::hasRequestMapping)
@@ -134,12 +136,13 @@ public class HttpRequestAnnotationScenarioMapper extends AbstractScenarioMapper 
 
     @Builder
     private record EnrichedScenarioWithRequestMapping(SimulatorScenario scenario, RequestMapping requestMapping) {
+
         public boolean hasRequestMapping() {
             return requestMapping != null;
         }
 
         public String name() {
-            return scenario.getClass().getAnnotation(Scenario.class).value();
+            return scenario.getName();
         }
     }
 }
