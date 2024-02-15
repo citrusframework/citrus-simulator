@@ -17,13 +17,25 @@
 package org.citrusframework.simulator.web.rest;
 
 import org.citrusframework.simulator.IntegrationTest;
+import org.citrusframework.simulator.service.impl.ScenarioLookupServiceImplTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.citrusframework.simulator.service.impl.ScenarioLookupServiceImplTest.SCENARIO_NAME;
+import static org.citrusframework.simulator.service.impl.ScenarioLookupServiceImplTest.STARTER_NAME;
+import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.MESSAGE_TRIGGERED;
+import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,11 +64,17 @@ class ScenarioResourceIT {
             .perform(get(ENTITY_API_URL))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.length()").value(equalTo(2)))
-            .andExpect(jsonPath("$.[0].name").value(equalTo("testScenarioStarter")))
-            .andExpect(jsonPath("$.[0].type").value(equalTo("STARTER")))
-            .andExpect(jsonPath("$.[1].name").value(equalTo("testSimulatorScenario")))
-            .andExpect(jsonPath("$.[1].type").value(equalTo("MESSAGE_TRIGGERED")));
+            .andExpect(jsonPath("$.length()").value(greaterThan(2)))
+            .andExpect(jsonPath("$.[*]", hasItems(
+                allOf(
+                    hasEntry("name", STARTER_NAME),
+                    hasEntry("type", STARTER.toString())
+                ),
+                allOf(
+                    hasEntry("name", SCENARIO_NAME),
+                    hasEntry("type", MESSAGE_TRIGGERED.toString())
+                )
+            )));
     }
 
     @Test
@@ -66,11 +84,17 @@ class ScenarioResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=name,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.length()").value(equalTo(2)))
-            .andExpect(jsonPath("$.[0].name").value(equalTo("testSimulatorScenario")))
-            .andExpect(jsonPath("$.[0].type").value(equalTo("MESSAGE_TRIGGERED")))
-            .andExpect(jsonPath("$.[1].name").value(equalTo("testScenarioStarter")))
-            .andExpect(jsonPath("$.[1].type").value(equalTo("STARTER")));
+            .andExpect(jsonPath("$.length()").value(greaterThan(2)))
+            .andExpect(jsonPath("$.[*]", hasItems(
+                allOf(
+                    hasEntry("name", SCENARIO_NAME),
+                    hasEntry("type", MESSAGE_TRIGGERED.toString())
+                ),
+                allOf(
+                    hasEntry("name", STARTER_NAME),
+                    hasEntry("type", STARTER.toString())
+                )
+            )));
     }
 
     @Test
@@ -80,11 +104,17 @@ class ScenarioResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=type,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.length()").value(equalTo(2)))
-            .andExpect(jsonPath("$.[0].name").value(equalTo("testSimulatorScenario")))
-            .andExpect(jsonPath("$.[0].type").value(equalTo("MESSAGE_TRIGGERED")))
-            .andExpect(jsonPath("$.[1].name").value(equalTo("testScenarioStarter")))
-            .andExpect(jsonPath("$.[1].type").value(equalTo("STARTER")));
+            .andExpect(jsonPath("$.length()").value(greaterThan(2)))
+            .andExpect(jsonPath("$.[*]", hasItems(
+                allOf(
+                    hasEntry("name", SCENARIO_NAME),
+                    hasEntry("type", MESSAGE_TRIGGERED.toString())
+                ),
+                allOf(
+                    hasEntry("name", STARTER_NAME),
+                    hasEntry("type", STARTER.toString())
+                )
+            )));
     }
 
     @Test
@@ -94,28 +124,48 @@ class ScenarioResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.length()").value(equalTo(1)))
-            .andExpect(jsonPath("$.[0].name").value(equalTo("testSimulatorScenario")))
-            .andExpect(jsonPath("$.[0].type").value(equalTo("MESSAGE_TRIGGERED")));
+            .andExpect(jsonPath("$.[*]", hasItem(
+                allOf(
+                    hasEntry("name", SCENARIO_NAME),
+                    hasEntry("type", MESSAGE_TRIGGERED.toString())
+                )
+            )));
     }
 
     @Test
-    void getScenariosWithNameContains() throws Exception {
+    void getSingleScenarioWithNameContains() throws Exception {
         restScenarioParameterMockMvc
-            .perform(get(ENTITY_API_URL + "?nameContains=Scenario"))
+            .perform(get(ENTITY_API_URL + "?nameContains=" + encode(SCENARIO_NAME, UTF_8)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.length()").value(equalTo(1)))
+            .andExpect(jsonPath("$.[0].name", equalTo(SCENARIO_NAME)))
+            .andExpect(jsonPath("$.[0].type", equalTo(MESSAGE_TRIGGERED.toString())));
+    }
+
+    @Test
+    void getMultipleScenariosWithNameContains() throws Exception {
+        restScenarioParameterMockMvc
+            .perform(get(ENTITY_API_URL + "?nameContains=" + ScenarioLookupServiceImplTest.class.getSimpleName()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.length()").value(equalTo(2)))
-            .andExpect(jsonPath("$.[0].name").value(equalTo("testScenarioStarter")))
-            .andExpect(jsonPath("$.[0].type").value(equalTo("STARTER")))
-            .andExpect(jsonPath("$.[1].name").value(equalTo("testSimulatorScenario")))
-            .andExpect(jsonPath("$.[1].type").value(equalTo("MESSAGE_TRIGGERED")));
+            .andExpect(jsonPath("$.[*]", hasItems(
+                allOf(
+                    hasEntry("name", STARTER_NAME),
+                    hasEntry("type", STARTER.toString())
+                ),
+                allOf(
+                    hasEntry("name", SCENARIO_NAME),
+                    hasEntry("type", MESSAGE_TRIGGERED.toString())
+                )
+            )));
     }
 
     @Test
     void getAllScenarioStarterParameters() throws Exception {
-        // Get all the scenarioParameterList
         restScenarioParameterMockMvc
-            .perform(get(ENTITY_API_URL_SCENARIO_NAME + "/parameters", "testScenarioStarter"))
+            .perform(get(ENTITY_API_URL_SCENARIO_NAME + "/parameters", STARTER_NAME))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.length()").value(equalTo(1)))

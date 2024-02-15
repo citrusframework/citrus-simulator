@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,16 @@ import org.citrusframework.simulator.service.TestResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.citrusframework.TestResult.failed;
+import static org.citrusframework.TestResult.success;
+import static org.citrusframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
 /**
  * @author Christoph Deppisch
@@ -50,7 +54,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     /**
      * Currently running test.
-     *
+     * <p>
      * TODO: Replace with metric.
      */
     private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
@@ -68,25 +72,25 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     @Override
     public void onTestStart(TestCase test) {
-        if (test instanceof DefaultTestCase) {
-            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters()));
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            runningTests.put(arrayToCommaDelimitedString(getParameters(test)), success(test.getName(), test.getTestClass().getSimpleName(), defaultTestCase.getParameters()));
         } else {
-            runningTests.put(StringUtils.arrayToCommaDelimitedString(getParameters(test)), TestResult.success(test.getName(), test.getTestClass().getSimpleName()));
+            runningTests.put(arrayToCommaDelimitedString(getParameters(test)), success(test.getName(), test.getTestClass().getSimpleName()));
         }
     }
 
     @Override
     public void onTestFinish(TestCase test) {
-        runningTests.remove(StringUtils.arrayToCommaDelimitedString(getParameters(test)));
+        runningTests.remove(arrayToCommaDelimitedString(getParameters(test)));
     }
 
     @Override
     public void onTestSuccess(TestCase test) {
         TestResult result;
-        if (test instanceof DefaultTestCase) {
-            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName(), ((DefaultTestCase)test).getParameters());
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            result = success(test.getName(), test.getTestClass().getSimpleName(), defaultTestCase.getParameters());
         } else {
-            result = TestResult.success(test.getName(), test.getTestClass().getSimpleName());
+            result = success(test.getName(), test.getTestClass().getSimpleName());
         }
 
         testResultService.transformAndSave(result);
@@ -98,10 +102,10 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     @Override
     public void onTestFailure(TestCase test, Throwable cause) {
         TestResult result;
-        if (test instanceof DefaultTestCase) {
-            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause, ((DefaultTestCase)test).getParameters());
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            result = failed(test.getName(), test.getTestClass().getSimpleName(), cause, defaultTestCase.getParameters());
         } else {
-            result = TestResult.failed(test.getName(), test.getTestClass().getSimpleName(), cause);
+            result = failed(test.getName(), test.getTestClass().getSimpleName(), cause);
         }
 
         testResultService.transformAndSave(result);
@@ -116,9 +120,9 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         if (!ignoreTestAction(testAction)) {
             if (logger.isDebugEnabled()) {
                 logger.debug(testCase.getName() + "(" +
-                        StringUtils.arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
-                        testAction.getName() + ": " +
-                        (testAction instanceof Described && StringUtils.hasText(((Described) testAction).getDescription()) ? ((Described) testAction).getDescription() : ""));
+                    arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
+                    testAction.getName() +
+                    (testAction instanceof Described described && hasText(described.getDescription()) ? ": " + described.getDescription() : ""));
             }
 
             scenarioActionService.createForScenarioExecutionAndSave(testCase, testAction);
@@ -140,8 +144,8 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     private String[] getParameters(TestCase test) {
         List<String> parameterStrings = new ArrayList<>();
 
-        if (test instanceof DefaultTestCase) {
-            for (Map.Entry<String, Object> param : ((DefaultTestCase) test).getParameters().entrySet()) {
+        if (test instanceof DefaultTestCase defaultTestCase) {
+            for (Map.Entry<String, Object> param : defaultTestCase.getParameters().entrySet()) {
                 parameterStrings.add(param.getKey() + "=" + param.getValue());
             }
         }

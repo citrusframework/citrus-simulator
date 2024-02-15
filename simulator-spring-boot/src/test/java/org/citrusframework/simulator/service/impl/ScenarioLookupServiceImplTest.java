@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.citrusframework.simulator.service.impl;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -32,7 +48,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class ScenarioLookupServiceImplTest {
+public class ScenarioLookupServiceImplTest {
+
+    public static final String SCENARIO_NAME = "ScenarioLookupServiceImplTest#testSimulatorScenario";
+    public static final String STARTER_NAME = "ScenarioLookupServiceImplTest#testScenarioStarter";
 
     private static final ScenarioParameter SCENARIO_PARAMETER = ScenarioParameter.builder()
         .name("parameter-name")
@@ -61,11 +80,11 @@ class ScenarioLookupServiceImplTest {
     @MethodSource
     @ParameterizedTest
     void evictAndReloadScenarioCacheIsIdempotent(Consumer<ScenarioLookupServiceImpl> invocation) {
-        final String testSimulatorScenario = "testSimulatorScenario";
+        final String testSimulatorScenario = SCENARIO_NAME;
         Map<String, SimulatorScenario> contextSimulatorScenarios = Map.of(testSimulatorScenario, new TestSimulatorScenario(), "invalidTestSimulatorScenario", new InvalidTestSimulatorScenario());
         doReturn(contextSimulatorScenarios).when(applicationContextMock).getBeansOfType(SimulatorScenario.class);
 
-        final String testScenarioStarter = "testScenarioStarter";
+        final String testScenarioStarter = STARTER_NAME;
         Map<String, ScenarioStarter> contextScenarioStarters = Map.of(testScenarioStarter, new TetsScenarioStarter());
         doReturn(contextScenarioStarters).when(applicationContextMock).getBeansOfType(ScenarioStarter.class);
 
@@ -96,7 +115,7 @@ class ScenarioLookupServiceImplTest {
 
     @Test
     void getScenarioNames() {
-        final String testSimulatorScenario = "testSimulatorScenario";
+        final String testSimulatorScenario = SCENARIO_NAME;
         ReflectionTestUtils.setField(fixture, "scenarios", Map.of(testSimulatorScenario, new TestSimulatorScenario()), Map.class);
 
         assertThat(fixture.getScenarioNames())
@@ -106,7 +125,7 @@ class ScenarioLookupServiceImplTest {
 
     @Test
     void getStarterNames() {
-        final String testScenarioStarter = "testScenarioStarter";
+        final String testScenarioStarter = STARTER_NAME;
         ReflectionTestUtils.setField(fixture, "scenarioStarters", Map.of(testScenarioStarter, new TetsScenarioStarter()), Map.class);
 
         assertThat(fixture.getStarterNames())
@@ -139,7 +158,7 @@ class ScenarioLookupServiceImplTest {
             .isEmpty();
     }
 
-    @Scenario("testSimulatorScenario")
+    @Scenario(SCENARIO_NAME)
     private static class TestSimulatorScenario implements SimulatorScenario {
 
         @Override
@@ -148,7 +167,7 @@ class ScenarioLookupServiceImplTest {
         }
     }
 
-    @Starter("testScenarioStarter")
+    @Starter(STARTER_NAME)
     private static class TetsScenarioStarter implements ScenarioStarter {
 
         @Override
@@ -162,7 +181,7 @@ class ScenarioLookupServiceImplTest {
         }
     }
 
-    @Starter("invalidTestScenarioStarter")
+    @Starter("ScenarioLookupServiceImplTest#invalidTestScenarioStarter")
     private static class InvalidTestSimulatorScenario implements SimulatorScenario {
 
         @Override
