@@ -16,7 +16,9 @@
 
 package org.citrusframework.simulator.config;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +29,9 @@ import org.springframework.core.env.Environment;
 /**
  * @author Christoph Deppisch
  */
+@Getter
+@Setter
+@ToString
 @ConfigurationProperties(prefix = "citrus.simulator")
 public class SimulatorConfigurationProperties implements EnvironmentAware, InitializingBean {
 
@@ -98,201 +103,6 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
      */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
-    /**
-     * Gets the enabled.
-     *
-     * @return
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Sets the enabled.
-     *
-     * @param enabled
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * Gets the template path property.
-     *
-     * @return
-     */
-    public String getTemplatePath() {
-        return templatePath;
-    }
-
-    /**
-     * Sets the template path property.
-     *
-     * @param templatePath
-     */
-    public void setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-    }
-
-    /**
-     * Gets the default scenario name.
-     *
-     * @return
-     */
-    public String getDefaultScenario() {
-        return defaultScenario;
-    }
-
-    /**
-     * Sets the default scenario name.
-     *
-     * @param defaultScenario
-     */
-    public void setDefaultScenario(String defaultScenario) {
-        this.defaultScenario = defaultScenario;
-    }
-
-    /**
-     * Checks System property on template validation setting. By default enabled (e.g. if System property is not set).
-     *
-     * @return
-     */
-    public boolean isTemplateValidation() {
-        return templateValidation;
-    }
-
-    /**
-     * En- or disables the template validation.
-     *
-     * @param templateValidation
-     */
-    public void setTemplateValidation(boolean templateValidation) {
-        this.templateValidation = templateValidation;
-    }
-
-    /**
-     * Sets the default timeout property.
-     *
-     * @param timout
-     */
-    public void setDefaultTimeout(Long timout) {
-        this.defaultTimeout = timout;
-    }
-
-    /**
-     * Gets the default timeout property.
-     *
-     * @return
-     */
-    public Long getDefaultTimeout() {
-        return defaultTimeout;
-    }
-
-    /**
-     * Gets the exceptionDelay.
-     *
-     * @return
-     */
-    public Long getExceptionDelay() {
-        return exceptionDelay;
-    }
-
-    /**
-     * Sets the exceptionDelay.
-     *
-     * @param exceptionDelay
-     */
-    public void setExceptionDelay(Long exceptionDelay) {
-        this.exceptionDelay = exceptionDelay;
-    }
-
-    /**
-     * Gets the number of threads available to the scenario executor.
-     */
-    public int getExecutorThreads() {
-        return executorThreads;
-    }
-
-    /**
-     * Sets the number of threads for parallel scenario execution.
-     * @param executorThreads
-     */
-    public void setExecutorThreads(int executorThreads) {
-        this.executorThreads = executorThreads;
-    }
-
-    /**
-     * Gets the inboundXmlDictionary.
-     *
-     * @return
-     */
-    public String getInboundXmlDictionary() {
-        return inboundXmlDictionary;
-    }
-
-    /**
-     * Sets the inboundXmlDictionary.
-     *
-     * @param inboundXmlDictionary
-     */
-    public void setInboundXmlDictionary(String inboundXmlDictionary) {
-        this.inboundXmlDictionary = inboundXmlDictionary;
-    }
-
-    /**
-     * Gets the outboundXmlDictionary.
-     *
-     * @return
-     */
-    public String getOutboundXmlDictionary() {
-        return outboundXmlDictionary;
-    }
-
-    /**
-     * Sets the outboundXmlDictionary.
-     *
-     * @param outboundXmlDictionary
-     */
-    public void setOutboundXmlDictionary(String outboundXmlDictionary) {
-        this.outboundXmlDictionary = outboundXmlDictionary;
-    }
-
-    /**
-     * Gets the inboundJsonDictionary.
-     *
-     * @return
-     */
-    public String getInboundJsonDictionary() {
-        return inboundJsonDictionary;
-    }
-
-    /**
-     * Sets the inboundJsonDictionary.
-     *
-     * @param inboundJsonDictionary
-     */
-    public void setInboundJsonDictionary(String inboundJsonDictionary) {
-        this.inboundJsonDictionary = inboundJsonDictionary;
-    }
-
-    /**
-     * Gets the outboundJsonDictionary.
-     *
-     * @return
-     */
-    public String getOutboundJsonDictionary() {
-        return outboundJsonDictionary;
-    }
-
-    /**
-     * Sets the outboundJsonDictionary.
-     *
-     * @param outboundJsonDictionary
-     */
-    public void setOutboundJsonDictionary(String outboundJsonDictionary) {
-        this.outboundJsonDictionary = outboundJsonDictionary;
-    }
-
     @Override
     public void setEnvironment(Environment environment) {
         inboundXmlDictionary = environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
@@ -304,22 +114,5 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
     @Override
     public void afterPropertiesSet() {
         logger.info("Using the simulator configuration: {}", this);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append(enabled)
-            .append(templatePath)
-            .append(defaultScenario)
-            .append(defaultTimeout)
-            .append(exceptionDelay)
-            .append(executorThreads)
-            .append(templateValidation)
-            .append(inboundXmlDictionary)
-            .append(outboundXmlDictionary)
-            .append(inboundJsonDictionary)
-            .append(outboundJsonDictionary)
-            .toString();
     }
 }
