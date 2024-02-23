@@ -69,6 +69,7 @@
 
   <modules>
     <module>simulator-spring-boot</module>
+    <module>simulator-spring-boot-junit</module>
     <module>simulator-ui</module>
     <module>simulator-docs</module>
     <module>simulator-samples</module>
@@ -177,6 +178,11 @@
       <dependency>
         <groupId>org.citrusframework</groupId>
         <artifactId>citrus-spring-boot-simulator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.citrusframework</groupId>
+        <artifactId>citrus-spring-boot-simulator-junit</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

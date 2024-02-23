@@ -33,6 +33,7 @@
     <module>sample-ws</module>
     <module>sample-ws-client</module>
     <module>sample-wsdl</module>
+    <module>sample-junit-extension-rest</module>
   </modules>
 
   <build>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:citrus="http://www.citrusframework.org/schema/config"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.citrusframework.org/schema/config http://www.citrusframework.org/schema/config/citrus-config.xsd">
+
+    <citrus:schema-repository id="schemaRepository">
+      <citrus:locations>
+        <citrus:location path="classpath:xsd/HelloService.xsd"/>
+      </citrus:locations>
+    </citrus:schema-repository>
+
+    <citrus:global-variables>
+        <citrus:variable name="simulator.name" value="Citrus REST Simulator"/>
+    </citrus:global-variables>
+
+    <citrus:namespace-context>
+        <citrus:namespace prefix="citrus" uri="http://citrusframework.org"/>
+      <citrus:namespace prefix="hello" uri="http://citrusframework.org/schemas/hello"/>
+    </citrus:namespace-context>
+
+</beans>
