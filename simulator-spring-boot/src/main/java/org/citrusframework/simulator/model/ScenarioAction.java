@@ -62,6 +62,7 @@ public class ScenarioAction implements Serializable {
     private Instant endDate;
 
     @ManyToOne
+    @ToString.Exclude
     @JsonIgnoreProperties(value = { "scenarioParameters", "scenarioActions", "scenarioMessages" }, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 
