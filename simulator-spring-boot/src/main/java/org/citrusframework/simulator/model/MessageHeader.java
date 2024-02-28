@@ -64,6 +64,7 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     private String value;
 
     @NotNull
+    @ToString.Exclude
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)

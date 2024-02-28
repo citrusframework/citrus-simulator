@@ -76,6 +76,7 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     private String value;
 
     @ManyToOne
+    @ToString.Exclude
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 

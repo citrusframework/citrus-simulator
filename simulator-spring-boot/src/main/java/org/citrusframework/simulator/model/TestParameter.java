@@ -72,6 +72,7 @@ public class TestParameter extends AbstractAuditingEntity<TestParameter, TestPar
 
     @NotNull
     @ManyToOne
+    @ToString.Exclude
     @MapsId("testResultId")
     @JoinColumn(name = "test_result_id", nullable = false)
     @JsonIgnoreProperties(value = { "testParameters" }, allowSetters = true)

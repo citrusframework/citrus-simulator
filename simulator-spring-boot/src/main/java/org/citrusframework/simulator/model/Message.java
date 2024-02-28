@@ -85,6 +85,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<MessageHeader> headers = new HashSet<>();
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
