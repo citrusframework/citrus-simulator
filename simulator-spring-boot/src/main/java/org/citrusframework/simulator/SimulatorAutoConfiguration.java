@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,36 +54,19 @@ import java.util.Properties;
  * @author Christoph Deppisch
  */
 @Configuration
-@ComponentScan(basePackages = {
-        "org.citrusframework.simulator.web.rest",
-        "org.citrusframework.simulator.listener",
-        "org.citrusframework.simulator.service",
-        "org.citrusframework.simulator.endpoint",
-}, nameGenerator = ScenarioBeanNameGenerator.class)
-@Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class, RepositoryConfig.class})
-@ImportResource(
-        locations = {
-                "classpath*:citrus-simulator-context.xml",
-                "classpath*:META-INF/citrus-simulator-context.xml"
-        })
-@PropertySource(
-        value = {
-                "META-INF/citrus-simulator.properties"
-        }, ignoreResourceNotFound = true)
 @EnableConfigurationProperties(SimulatorConfigurationProperties.class)
+@PropertySource(value = {"META-INF/citrus-simulator.properties"}, ignoreResourceNotFound = true)
+@Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class, RepositoryConfig.class})
+@ImportResource(locations = {"classpath*:citrus-simulator-context.xml", "classpath*:META-INF/citrus-simulator-context.xml"})
+@ComponentScan(basePackages = {"org.citrusframework.simulator.web.rest", "org.citrusframework.simulator.listener", "org.citrusframework.simulator.service", "org.citrusframework.simulator.endpoint",}, nameGenerator = ScenarioBeanNameGenerator.class)
 @ConditionalOnProperty(prefix = "citrus.simulator", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorAutoConfiguration {
 
-    /**
-     * Logger
-     */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorAutoConfiguration.class);
 
-    /** Application version */
     private static String version;
 
-    @Autowired
-    private SimulatorConfigurationProperties simulatorConfiguration;
+    private final SimulatorConfigurationProperties simulatorConfiguration;
 
     /* Load application version */
     static {
@@ -95,6 +78,11 @@ public class SimulatorAutoConfiguration {
             logger.warn("Unable to read application version information", e);
             version = "";
         }
+    }
+
+    @Autowired
+    public SimulatorAutoConfiguration(SimulatorConfigurationProperties simulatorConfiguration) {
+        this.simulatorConfiguration = simulatorConfiguration;
     }
 
     /**
@@ -120,7 +108,7 @@ public class SimulatorAutoConfiguration {
     @ConditionalOnProperty(prefix = "citrus.simulator.inbound.xml.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(InboundXmlDataDictionary.class)
     public InboundXmlDataDictionary inboundXmlDataDictionary() {
-        InboundXmlDataDictionary inboundXmlDataDictionary = new InboundXmlDataDictionary(simulatorConfiguration);
+        var inboundXmlDataDictionary = new InboundXmlDataDictionary(simulatorConfiguration);
         inboundXmlDataDictionary.setGlobalScope(false);
         return inboundXmlDataDictionary;
     }
@@ -129,16 +117,16 @@ public class SimulatorAutoConfiguration {
     @ConditionalOnProperty(prefix = "citrus.simulator.outbound.xml.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(OutboundXmlDataDictionary.class)
     public OutboundXmlDataDictionary outboundXmlDataDictionary() {
-        OutboundXmlDataDictionary outboundXmlDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
+        var outboundXmlDataDictionary = new OutboundXmlDataDictionary(simulatorConfiguration);
         outboundXmlDataDictionary.setGlobalScope(false);
         return outboundXmlDataDictionary;
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "citrus.simulator.inbound.json.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(name = "inboundJsonDataDictionary")
+    @ConditionalOnProperty(prefix = "citrus.simulator.inbound.json.dictionary", value = "enabled", havingValue = "true")
     public JsonPathMappingDataDictionary inboundJsonDataDictionary() {
-        JsonPathMappingDataDictionary inboundJsonDataDictionary = new JsonPathMappingDataDictionary();
+        var inboundJsonDataDictionary = new JsonPathMappingDataDictionary();
         inboundJsonDataDictionary.setMappings(new LinkedHashMap<>());
         inboundJsonDataDictionary.setGlobalScope(false);
 
@@ -151,10 +139,10 @@ public class SimulatorAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "citrus.simulator.outbound.json.dictionary", value = "enabled", havingValue = "true")
     @ConditionalOnMissingBean(name = "outboundJsonDataDictionary")
+    @ConditionalOnProperty(prefix = "citrus.simulator.outbound.json.dictionary", value = "enabled", havingValue = "true")
     public JsonPathMappingDataDictionary outboundJsonDataDictionary() {
-        JsonPathMappingDataDictionary outboundJsonDataDictionary = new JsonPathMappingDataDictionary();
+        var outboundJsonDataDictionary = new JsonPathMappingDataDictionary();
         outboundJsonDataDictionary.setMappings(new LinkedHashMap<>());
         outboundJsonDataDictionary.setGlobalScope(false);
 

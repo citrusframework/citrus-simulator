@@ -19,11 +19,6 @@ package org.citrusframework.simulator.http;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
@@ -37,6 +32,7 @@ import org.citrusframework.simulator.listener.SimulatorMessageListener;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -55,13 +51,20 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Christoph Deppisch
  */
 @Configuration
 @ConditionalOnWebApplication
-@AutoConfigureAfter(SimulatorAutoConfiguration.class)
-@EnableConfigurationProperties(SimulatorRestConfigurationProperties.class)
+@ConditionalOnBean({SimulatorAutoConfiguration.class})
+@AutoConfigureAfter({SimulatorAutoConfiguration.class})
+@EnableConfigurationProperties({SimulatorRestConfigurationProperties.class})
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorRestAutoConfiguration {
 
@@ -198,7 +201,7 @@ public class SimulatorRestAutoConfiguration {
 
     @Bean
     protected HandlerInterceptor httpInterceptor(MessageListeners messageListeners,
-        SimulatorMessageListener simulatorMessageListener) {
+                                                 SimulatorMessageListener simulatorMessageListener) {
         messageListeners.addMessageListener(simulatorMessageListener);
         return new InterceptorHttp(messageListeners);
     }
