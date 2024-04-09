@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,24 @@
 
 package org.citrusframework.simulator.service;
 
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageHeader_;
 import org.citrusframework.simulator.model.Message_;
 import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.citrusframework.simulator.service.criteria.MessageCriteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for executing complex queries for {@link Message} entities in the database.
@@ -39,15 +41,16 @@ import java.util.List;
  * in a way that all the filters must apply.
  * It returns a {@link List} of {@link Message} or a {@link Page} of {@link Message} which fulfills the criteria.
  */
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class MessageQueryService extends QueryService<Message> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageQueryService.class);
-
+    private final EntityManager entityManager;
     private final MessageRepository messageRepository;
 
-    public MessageQueryService(MessageRepository messageRepository) {
+    public MessageQueryService(EntityManager entityManager, MessageRepository messageRepository) {
+        this.entityManager = entityManager;
         this.messageRepository = messageRepository;
     }
 
@@ -60,8 +63,19 @@ public class MessageQueryService extends QueryService<Message> {
     @Transactional(readOnly = true)
     public Page<Message> findByCriteria(MessageCriteria criteria, Pageable page) {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<Message> specification = createSpecification(criteria);
-        return messageRepository.findAll(specification, page);
+
+        var specification = createSpecification(criteria);
+        var messageIds = newSelectIdBySpecificationQuery(
+            Message.class,
+            Message_.messageId,
+            specification,
+            page,
+            entityManager
+        )
+            .getResultList();
+
+        var messages = messageRepository.findAllWhereIdIn(messageIds, page);
+        return new PageImpl<>(messages.getContent(), page, messageRepository.count(specification));
     }
 
     /**

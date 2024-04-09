@@ -63,6 +63,15 @@ public class ScenarioParameterResourceIT {
 
     private ScenarioParameter scenarioParameter;
 
+    public static ScenarioParameter.ScenarioParameterBuilder createEntityBuilder(EntityManager entityManager) {
+        return ScenarioParameter.builder()
+            .name(DEFAULT_NAME)
+            .controlType(DEFAULT_CONTROL_TYPE)
+            .value(DEFAULT_VALUE)
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE);
+    }
+
     /**
      * Create an entity for this test.
      * <p>
@@ -70,12 +79,7 @@ public class ScenarioParameterResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ScenarioParameter createEntity(EntityManager entityManager) {
-        return ScenarioParameter.builder()
-            .name(DEFAULT_NAME)
-            .controlType(DEFAULT_CONTROL_TYPE)
-            .value(DEFAULT_VALUE)
-            .createdDate(DEFAULT_CREATED_DATE)
-            .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
+        return createEntityBuilder(entityManager)
             .build();
     }
 
