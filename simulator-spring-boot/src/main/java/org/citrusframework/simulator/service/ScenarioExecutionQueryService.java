@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 
 package org.citrusframework.simulator.service;
 
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.simulator.model.Message_;
 import org.citrusframework.simulator.model.ScenarioAction_;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -24,15 +29,12 @@ import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.model.ScenarioParameter_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for executing complex queries for {@link ScenarioExecution} entities in the database.
@@ -40,15 +42,16 @@ import java.util.List;
  * in a way that all the filters must apply.
  * It returns a {@link List} of {@link ScenarioExecution} or a {@link Page} of {@link ScenarioExecution} which fulfills the criteria.
  */
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class ScenarioExecutionQueryService extends QueryService<ScenarioExecution> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ScenarioExecutionQueryService.class);
-
+    private final EntityManager entityManager;
     private final ScenarioExecutionRepository scenarioExecutionRepository;
 
-    public ScenarioExecutionQueryService(ScenarioExecutionRepository scenarioExecutionRepository) {
+    public ScenarioExecutionQueryService(EntityManager entityManager, ScenarioExecutionRepository scenarioExecutionRepository) {
+        this.entityManager = entityManager;
         this.scenarioExecutionRepository = scenarioExecutionRepository;
     }
 
@@ -75,8 +78,19 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
     @Transactional(readOnly = true)
     public Page<ScenarioExecution> findByCriteria(ScenarioExecutionCriteria criteria, Pageable page) {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<ScenarioExecution> specification = createSpecification(criteria);
-        return scenarioExecutionRepository.findAll(specification, page);
+
+        var specification = createSpecification(criteria);
+        var scenarioExecutionIds = newSelectIdBySpecificationQuery(
+            ScenarioExecution.class,
+            ScenarioExecution_.executionId,
+            specification,
+            page,
+            entityManager
+        )
+            .getResultList();
+
+        var scenarioExecutions = scenarioExecutionRepository.findAllWhereIdIn(scenarioExecutionIds, page);
+        return new PageImpl<>(scenarioExecutions.getContent(), page, scenarioExecutionRepository.count(specification));
     }
 
     /**

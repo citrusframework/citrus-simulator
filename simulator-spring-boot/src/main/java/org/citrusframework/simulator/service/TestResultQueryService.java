@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 
 package org.citrusframework.simulator.service;
 
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.simulator.model.TestParameter_;
 import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.model.TestResult_;
 import org.citrusframework.simulator.repository.TestResultRepository;
 import org.citrusframework.simulator.service.criteria.TestResultCriteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for executing complex queries for {@link TestResult} entities in the database.
@@ -38,15 +40,16 @@ import java.util.List;
  * in a way that all the filters must apply.
  * It returns a {@link List} of {@link TestResult} or a {@link Page} of {@link TestResult} which fulfills the criteria.
  */
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class TestResultQueryService extends QueryService<TestResult> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestResultQueryService.class);
-
+    private final EntityManager entityManager;
     private final TestResultRepository testResultRepository;
 
-    public TestResultQueryService(TestResultRepository testResultRepository) {
+    public TestResultQueryService(EntityManager entityManager, TestResultRepository testResultRepository) {
+        this.entityManager = entityManager;
         this.testResultRepository = testResultRepository;
     }
 
@@ -59,8 +62,19 @@ public class TestResultQueryService extends QueryService<TestResult> {
     @Transactional(readOnly = true)
     public Page<TestResult> findByCriteria(TestResultCriteria criteria, Pageable page) {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<TestResult> specification = createSpecification(criteria);
-        return testResultRepository.findAll(specification, page);
+
+        var specification = createSpecification(criteria);
+        var testResultIds = newSelectIdBySpecificationQuery(
+            TestResult.class,
+            TestResult_.id,
+            specification,
+            page,
+            entityManager
+        )
+            .getResultList();
+
+        var testResults = testResultRepository.findAllWhereIdIn(testResultIds, page);
+        return new PageImpl<>(testResults.getContent(), page, testResultRepository.count(specification));
     }
 
     /**

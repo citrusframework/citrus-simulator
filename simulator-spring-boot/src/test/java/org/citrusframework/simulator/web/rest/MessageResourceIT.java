@@ -3,6 +3,7 @@ package org.citrusframework.simulator.web.rest;
 import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.Message.MessageBuilder;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.repository.MessageRepository;
@@ -64,6 +65,15 @@ public class MessageResourceIT {
 
     private Message message;
 
+    public static MessageBuilder createEntityBuilder(EntityManager entityManager) {
+        return Message.builder()
+            .direction(DEFAULT_DIRECTION)
+            .payload(DEFAULT_PAYLOAD)
+            .citrusMessageId(DEFAULT_CITRUS_MESSAGE_ID)
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE);
+    }
+
     /**
      * Create an entity for this test.
      * <p>
@@ -71,12 +81,7 @@ public class MessageResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Message createEntity(EntityManager entityManager) {
-        return Message.builder()
-            .direction(DEFAULT_DIRECTION)
-            .payload(DEFAULT_PAYLOAD)
-            .citrusMessageId(DEFAULT_CITRUS_MESSAGE_ID)
-            .createdDate(DEFAULT_CREATED_DATE)
-            .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
+        return createEntityBuilder(entityManager)
             .build();
     }
 

@@ -5,6 +5,7 @@ import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.ScenarioExecution.ScenarioExecutionBuilder;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +63,15 @@ public class ScenarioExecutionResourceIT {
 
     private ScenarioExecution scenarioExecution;
 
+    public static ScenarioExecutionBuilder createEntityBuilder(EntityManager entityManager) {
+        return ScenarioExecution.builder()
+            .startDate(DEFAULT_START_DATE)
+            .endDate(DEFAULT_END_DATE)
+            .scenarioName(DEFAULT_SCENARIO_NAME)
+            .status(DEFAULT_STATUS)
+            .errorMessage(DEFAULT_ERROR_MESSAGE);
+    }
+
     /**
      * Create an entity for this test.
      * <p>
@@ -69,14 +79,8 @@ public class ScenarioExecutionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ScenarioExecution createEntity(EntityManager entityManager) {
-        ScenarioExecution scenarioExecution = ScenarioExecution.builder()
-            .startDate(DEFAULT_START_DATE)
-            .endDate(DEFAULT_END_DATE)
-            .scenarioName(DEFAULT_SCENARIO_NAME)
-            .status(DEFAULT_STATUS)
-            .errorMessage(DEFAULT_ERROR_MESSAGE)
+        return createEntityBuilder(entityManager)
             .build();
-        return scenarioExecution;
     }
 
     /**
@@ -86,14 +90,13 @@ public class ScenarioExecutionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ScenarioExecution createUpdatedEntity(EntityManager entityManager) {
-        ScenarioExecution scenarioExecution = ScenarioExecution.builder()
+        return ScenarioExecution.builder()
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
             .scenarioName(UPDATED_SCENARIO_NAME)
             .status(UPDATED_STATUS)
             .errorMessage(UPDATED_ERROR_MESSAGE)
             .build();
-        return scenarioExecution;
     }
 
     @BeforeEach
