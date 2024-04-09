@@ -22,7 +22,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +42,12 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "scenario_action",
+    indexes = {
+        @Index(name = "idx_scenario_action_scenario_execution_execution_id", columnList = "scenario_execution_execution_id")
+    }
+)
 @ToString
 public class ScenarioAction implements Serializable {
 

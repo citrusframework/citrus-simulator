@@ -21,9 +21,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -57,6 +59,12 @@ import static java.util.Objects.hash;
 @Getter
 @Setter
 @Entity
+@Table(
+    name="test_parameter",
+    indexes = {
+        @Index(name="idx_test_parameter_test_result_id", columnList = "test_result_id")
+    }
+)
 @ToString
 public class TestParameter extends AbstractAuditingEntity<TestParameter, TestParameter.TestParameterId> implements Serializable {
 

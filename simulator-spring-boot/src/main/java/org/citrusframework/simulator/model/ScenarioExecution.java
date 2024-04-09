@@ -24,8 +24,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -48,6 +50,14 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "scenario_execution",
+    indexes = {
+        @Index(name = "idx_scenario_execution_scenario_name", columnList = "scenario_name"),
+        @Index(name = "idx_scenario_execution_start_date", columnList = "start_date"),
+        @Index(name = "idx_scenario_execution_status", columnList = "status"),
+    }
+)
 @ToString
 public class ScenarioExecution implements Serializable {
 
@@ -119,19 +129,22 @@ public class ScenarioExecution implements Serializable {
         this.errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", errorMessage);
     }
 
-    public void addScenarioParameter(ScenarioParameter scenarioParameter) {
+    public ScenarioExecution addScenarioParameter(ScenarioParameter scenarioParameter) {
         scenarioParameters.add(scenarioParameter);
         scenarioParameter.setScenarioExecution(this);
+        return this;
     }
 
-    public void addScenarioAction(ScenarioAction scenarioAction) {
+    public ScenarioExecution addScenarioAction(ScenarioAction scenarioAction) {
         scenarioActions.add(scenarioAction);
         scenarioAction.setScenarioExecution(this);
+        return this;
     }
 
-    public void addScenarioMessage(Message scenarioMessage) {
+    public ScenarioExecution addScenarioMessage(Message scenarioMessage) {
         scenarioMessages.add(scenarioMessage);
         scenarioMessage.setScenarioExecution(this);
+        return this;
     }
 
     @Override

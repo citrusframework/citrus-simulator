@@ -24,7 +24,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -56,6 +58,14 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "test_result",
+    indexes = {
+        @Index(name = "idx_failure_type", columnList = "failure_type"),
+        @Index(name = "idx_test_result_class_name", columnList = "class_name"),
+        @Index(name = "idx_test_result_test_name", columnList = "test_name")
+    }
+)
 @ToString
 public class TestResult extends AbstractAuditingEntity<TestResult, Long> implements Serializable {
 
@@ -152,8 +162,10 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         return Status.fromId(status);
     }
 
-    public void addTestParameter(TestParameter testParameter) {
+    public TestResult addTestParameter(TestParameter testParameter) {
         testParameters.add(testParameter);
+        testParameter.setTestResult(this);
+        return this;
     }
 
     private int convertToStatus(String resultName) {
