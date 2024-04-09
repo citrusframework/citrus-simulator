@@ -24,16 +24,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -44,6 +46,7 @@ import java.util.Set;
 
 import static java.util.Arrays.stream;
 import static lombok.AccessLevel.NONE;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * JPA entity for representing inbound and outbound messages
@@ -51,6 +54,16 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "message",
+    indexes = {
+        @Index(name = "idx_message_direction", columnList = "direction"),
+        @Index(name = "idx_message_scenario_execution_execution_id", columnList = "scenario_execution_execution_id")
+    },
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_citrus_message_id", columnNames = {"citrus_message_id"})
+    }
+)
 @ToString
 public class Message extends AbstractAuditingEntity<Message, Long> implements Serializable {
 
@@ -106,9 +119,10 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
         this.direction = direction.id;
     }
 
-    public void addHeader(MessageHeader messageHeader) {
+    public Message addHeader(MessageHeader messageHeader) {
         headers.add(messageHeader);
         messageHeader.setMessage(this);
+        return this;
     }
 
     public Long getScenarioExecutionId() {
@@ -197,7 +211,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
             headers.entrySet().stream()
                 .map(header -> {
                     if (header.getValue() != null
-                        && StringUtils.isNotEmpty(header.getValue().toString())) {
+                        && isNotEmpty(header.getValue().toString())) {
                         return new MessageHeader(header.getKey(), header.getValue().toString());
                     } else {
                         return null;

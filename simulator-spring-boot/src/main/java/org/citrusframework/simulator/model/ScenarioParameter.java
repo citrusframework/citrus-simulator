@@ -22,8 +22,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +47,12 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "scenario_parameter",
+    indexes = {
+        @Index(name = "idx_scenario_parameter_scenario_execution_execution_id", columnList = "scenario_execution_execution_id")
+    }
+)
 @ToString
 public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter, Long> implements Serializable {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2023 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -43,6 +45,14 @@ import static lombok.AccessLevel.NONE;
 @Getter
 @Setter
 @Entity
+@Table(
+    name = "message_header",
+    indexes = {
+        @Index(name = "idx_message_header_name", columnList = "name"),
+        @Index(name = "idx_message_header_value", columnList = "header_value"),
+        @Index(name = "idx_message_id", columnList = "message_id")
+    }
+)
 @ToString
 public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> implements Serializable {
 
@@ -66,7 +76,7 @@ public class MessageHeader extends AbstractAuditingEntity<MessageHeader, Long> i
     @NotNull
     @ToString.Exclude
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "message_id", nullable = false)
     @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
     private Message message;
 
