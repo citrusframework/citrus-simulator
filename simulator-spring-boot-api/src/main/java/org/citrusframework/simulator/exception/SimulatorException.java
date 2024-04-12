@@ -14,30 +14,37 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.correlation;
+package org.citrusframework.simulator.exception;
 
-import org.citrusframework.context.TestContext;
-import org.citrusframework.message.Message;
-import org.citrusframework.simulator.scenario.ScenarioEndpoint;
+public class SimulatorException extends RuntimeException {
 
-/**
- * @author Christoph Deppisch
- */
-public interface CorrelationHandler {
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Evaluates if handler is capable of handling given message
+     * Constructor using fields.
+     *
      * @param message
-     * @param context
-     * @return
      */
-    default boolean isHandlerFor(Message message, TestContext context) {
-        return false;
+    public SimulatorException(String message) {
+        super(message);
     }
 
     /**
-     * Gets the scenario endpoint that this handler is handling messages for.
-     * @return
+     * Constructor using fields.
+     *
+     * @param cause
      */
-    ScenarioEndpoint getScenarioEndpoint();
+    public SimulatorException(Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Constructor using fields.
+     *
+     * @param message
+     * @param cause
+     */
+    public SimulatorException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

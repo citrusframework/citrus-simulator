@@ -16,27 +16,21 @@
 
 package org.citrusframework.simulator.scenario;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.citrusframework.endpoint.AbstractEndpoint;
+import org.citrusframework.endpoint.EndpointConfiguration;
+import org.citrusframework.message.Message;
+import org.citrusframework.messaging.Consumer;
+import org.citrusframework.messaging.Producer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.concurrent.CompletableFuture;
 
-/**
- * @author Christoph Deppisch
- */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Component
-@Scope("prototype")
-public @interface Scenario {
+public abstract class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
-    /**
-     * The value indicates the logical scenario name.
-     *
-     * @return the suggested scenario name
-     */
-    String value();
+    public ScenarioEndpoint(EndpointConfiguration endpointConfiguration) {
+        super(endpointConfiguration);
+    }
+
+    public abstract void add(Message request, CompletableFuture<Message> responseFuture);
+
+    abstract void fail(Throwable error);
 }

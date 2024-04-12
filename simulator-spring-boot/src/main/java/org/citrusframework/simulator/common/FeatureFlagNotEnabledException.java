@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.scenario;
+package org.citrusframework.simulator.common;
 
-import org.citrusframework.endpoint.AbstractEndpointConfiguration;
+import lombok.Getter;
 
-/**
- * @author Christoph Deppisch
- */
-public class ScenarioEndpointConfiguration extends AbstractEndpointConfiguration {
+import static java.lang.String.format;
+
+@Getter
+public class FeatureFlagNotEnabledException extends Exception {
+
+    private final String flag;
+
+    public FeatureFlagNotEnabledException(String flag) {
+        super(format("Feature flag '%s' not enabeld!", flag));
+
+        this.flag = flag;
+    }
 }

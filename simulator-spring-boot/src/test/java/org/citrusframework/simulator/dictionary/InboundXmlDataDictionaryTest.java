@@ -39,12 +39,15 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class InboundXmlDataDictionaryTest {
 
-    private static final String MESSAGE_INPUT = String.format("<v1:TestRequest xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"false\" id=\"100\" name=\"string\">%n" +
-        "  <v1:name>string</v1:name>%n" +
-        "  <v1:id>100</v1:id>%n" +
-        "  <v1:flag>true</v1:flag>%n" +
-        "  <v1:restricted>stringstri</v1:restricted>%n" +
-        "</v1:TestRequest>");
+    private static final String MESSAGE_INPUT = """
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <v1:TestRequest xmlns:v1="http://www.citrusframework.org/schema/samples/TestService/v1" flag="false" id="100" name="string">
+          <v1:name>string</v1:name>
+          <v1:id>100</v1:id>
+          <v1:flag>true</v1:flag>
+          <v1:restricted>stringstri</v1:restricted>
+        </v1:TestRequest>
+        """;
 
     @Mock
     private TestContext testContextMock;
@@ -63,15 +66,18 @@ class InboundXmlDataDictionaryTest {
         doReturn(new NamespaceContextBuilder()).when(testContextMock).getNamespaceContextBuilder();
         doAnswer(invocation -> invocation.getArguments()[0]).when(testContextMock).replaceDynamicContentInString(anyString());
 
-        Message request = new DefaultMessage(MESSAGE_INPUT);
+        var request = new DefaultMessage(MESSAGE_INPUT);
+
         Message translated = fixture.transform(request, testContextMock);
 
-        assertEquals(translated.getPayload(String.class), String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<v1:TestRequest xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\" flag=\"@ignore@\" id=\"@ignore@\" name=\"@ignore@\">%n" +
-            "    <v1:name>@ignore@</v1:name>%n" +
-            "    <v1:id>@ignore@</v1:id>%n" +
-            "    <v1:flag>@ignore@</v1:flag>%n" +
-            "    <v1:restricted>@ignore@</v1:restricted>%n" +
-            "</v1:TestRequest>%n").replace("\r", ""));
+        assertEquals("""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <v1:TestRequest flag="@ignore@" id="@ignore@" name="@ignore@" xmlns:v1="http://www.citrusframework.org/schema/samples/TestService/v1">
+              <v1:name>@ignore@</v1:name>
+              <v1:id>@ignore@</v1:id>
+              <v1:flag>@ignore@</v1:flag>
+              <v1:restricted>@ignore@</v1:restricted>
+            </v1:TestRequest>
+            """, translated.getPayload(String.class));
     }
 }

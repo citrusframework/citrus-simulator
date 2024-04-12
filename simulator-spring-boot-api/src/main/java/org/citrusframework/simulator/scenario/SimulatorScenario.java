@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.scenario;
-
-import jakarta.annotation.Nullable;
+package org.citrusframework.simulator.scenario;import jakarta.annotation.Nullable;
 import org.citrusframework.DefaultTestCaseRunner;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.exceptions.CitrusRuntimeException;
