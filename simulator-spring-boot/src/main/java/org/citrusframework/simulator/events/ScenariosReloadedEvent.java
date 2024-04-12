@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.Set;
 
-public  final class ScenariosReloadedEvent extends ApplicationEvent {
+public final class ScenariosReloadedEvent extends ApplicationEvent {
 
     private final Set<String> scenarioNames;
     private final Set<String> scenarioStarterNames;
