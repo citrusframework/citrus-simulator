@@ -26,7 +26,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static org.springframework.aop.framework.AopProxyUtils.ultimateTargetClass;
 
 @NoArgsConstructor(access = PRIVATE)
-public class ScenarioUtils {
+public final class ScenarioUtils {
 
     /**
      * Retrieves the specified annotation from the class hierarchy of the given scenario object.

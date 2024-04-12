@@ -17,25 +17,23 @@
 package org.citrusframework.simulator.scenario;
 
 import jakarta.annotation.Nullable;
-import jakarta.annotation.PostConstruct;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
-import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
 
-public abstract class AbstractSimulatorScenario implements CorrelationHandler, SimulatorScenario {
+public abstract class SimpleInitializedSimulatorScenario implements CorrelationHandler, SimulatorScenarioWithEndpoint {
 
-    private ScenarioEndpoint scenarioEndpoint;
+    private @Nullable ScenarioEndpoint scenarioEndpoint;
 
     private @Nullable TestCaseRunner testCaseRunner;
 
-    @PostConstruct
-    public void init() {
-        scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
+    @Override
+    public @Nullable ScenarioEndpoint getScenarioEndpoint() {
+        return scenarioEndpoint;
     }
 
     @Override
-    public ScenarioEndpoint getScenarioEndpoint() {
-        return scenarioEndpoint;
+    public void setScenarioEndpoint(ScenarioEndpoint scenarioEndpoint) {
+        this.scenarioEndpoint = scenarioEndpoint;
     }
 
     @Override
@@ -46,12 +44,5 @@ public abstract class AbstractSimulatorScenario implements CorrelationHandler, S
     @Override
     public void setTestCaseRunner(TestCaseRunner testCaseRunner) {
         this.testCaseRunner = testCaseRunner;
-    }
-
-    /**
-     * Start new message correlation so scenario is provided with additional inbound messages.
-     */
-    public CorrelationHandlerBuilder correlation() {
-        return new CorrelationHandlerBuilder(scenarioEndpoint);
     }
 }
