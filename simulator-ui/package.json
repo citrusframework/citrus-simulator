@@ -101,7 +101,7 @@
     "webpack-notifier": "1.15.0"
   },
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=20.12.1"
   },
   "cacheDirectories": [
     "node_modules"
