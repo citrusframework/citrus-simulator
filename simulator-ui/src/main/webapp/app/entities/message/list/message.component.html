@@ -86,30 +86,23 @@
           <td>{{ message.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
             <div class="btn-group">
-              <button
-                type="button"
-                [routerLink]="['/message-header']"
-                [queryParams]="{ 'filter[messageId.in]': message.messageId }"
-                class="btn btn-info btn-sm"
-                data-cy="filterOtherEntityButton"
-              >
-                <fa-icon icon="heading"></fa-icon>
-                <span
-                  class="d-none d-md-inline"
-                  jhiTranslate="entity.action.show"
-                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
-                  >Show Message Header</span
-                >
-              </button>
-              <button
-                type="button"
-                [routerLink]="['/message', message.messageId, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
+              <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }">
+                <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
+                  <fa-icon icon="heading"></fa-icon>
+                  <span
+                    class="d-none d-md-inline"
+                    jhiTranslate="entity.action.show"
+                    [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
+                    >Show Message Header</span
+                  >
+                </button>
+              </a>
+              <a [routerLink]="['/message', message.messageId, 'view']">
+                <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                  <fa-icon icon="eye"></fa-icon>
+                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                </button>
+              </a>
             </div>
           </td>
         </tr>

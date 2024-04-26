@@ -79,30 +79,23 @@
                 <fa-icon icon="play"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenario.action.launch">Launch</span>
               </button>
-              <button
-                type="button"
-                [routerLink]="['/scenario-result']"
-                [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }"
-                class="btn btn-info btn-sm"
-                data-cy="scenarioExecutionsButton"
-              >
-                <fa-icon icon="square-poll-vertical"></fa-icon>
-                <span
-                  class="d-none d-md-inline"
-                  jhiTranslate="entity.action.show"
-                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
-                  >Show Scenario Executions</span
-                >
-              </button>
-              <button
-                type="button"
-                [routerLink]="['/scenario', scenario.name, scenario.type, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
+              <a [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }">
+                <button type="button" class="btn btn-info btn-sm" data-cy="scenarioExecutionsButton">
+                  <fa-icon icon="square-poll-vertical"></fa-icon>
+                  <span
+                    class="d-none d-md-inline"
+                    jhiTranslate="entity.action.show"
+                    [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
+                    >Show Scenario Executions</span
+                  >
+                </button>
+              </a>
+              <a [routerLink]="['/scenario', scenario.name, scenario.type, 'view']">
+                <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                  <fa-icon icon="eye"></fa-icon>
+                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                </button>
+              </a>
             </div>
           </td>
         </tr>
