@@ -15,6 +15,7 @@ import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
 @Component({
   standalone: true,
   selector: 'app-test-result-summary',
+  styleUrls: ['./test-result-summary.component.scss'],
   templateUrl: './test-result-summary.component.html',
   imports: [RouterModule, SharedModule],
 })
