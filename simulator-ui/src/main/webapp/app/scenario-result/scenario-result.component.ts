@@ -46,7 +46,7 @@ export default class ScenarioResultComponent implements AfterViewInit {
   protected pageSizeChanged(pageSize: number): void {
     if (this.scenarioExecutionComponent) {
       this.scenarioExecutionComponent.itemsPerPage = pageSize;
-      this.scenarioExecutionComponent.load();
+      this.scenarioExecutionComponent.navigateToWithComponentValues();
     }
   }
 

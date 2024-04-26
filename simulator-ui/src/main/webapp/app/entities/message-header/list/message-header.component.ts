@@ -1,5 +1,5 @@
 import { HttpHeaders } from '@angular/common/http';
-import { Component, Input, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 
@@ -19,6 +19,8 @@ import { EntityArrayResponseType, MessageHeaderService } from '../service/messag
 import { IMessageHeader } from '../message-header.model';
 
 import MessageHeaderTableComponent from './message-header-table.component';
+
+import { navigateToWithPagingInformation } from '../../navigation-util';
 
 @Component({
   standalone: true,
@@ -125,21 +127,16 @@ export class MessageHeaderComponent implements OnInit {
   }
 
   protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    const queryParamsObj: any = {
+    navigateToWithPagingInformation(
       page,
-      size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
-    };
-
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
-    });
-
-    this.ngZone.run(() =>
-      this.router.navigate(['./'], {
-        relativeTo: this.activatedRoute,
-        queryParams: queryParamsObj,
-      }),
+      this.itemsPerPage,
+      () => this.getSortQueryParam(predicate, ascending),
+      this.ngZone,
+      this.router,
+      this.activatedRoute,
+      predicate,
+      ascending,
+      filterOptions,
     );
   }
 

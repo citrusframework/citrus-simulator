@@ -7,15 +7,18 @@ import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
 import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+
 import SharedModule from 'app/shared/shared.module';
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { SortDirective, SortByDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, TestResultService } from '../service/test-result.service';
 import { ITestResult, ITestResultStatus } from '../test-result.model';
+
+import { navigateToWithPagingInformation } from '../../navigation-util';
 
 @Component({
   standalone: true,
@@ -131,21 +134,16 @@ export class TestResultComponent implements OnInit {
   }
 
   protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    const queryParamsObj: any = {
+    navigateToWithPagingInformation(
       page,
-      size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
-    };
-
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
-    });
-
-    this.ngZone.run(() =>
-      this.router.navigate(['./'], {
-        relativeTo: this.activatedRoute,
-        queryParams: queryParamsObj,
-      }),
+      this.itemsPerPage,
+      () => this.getSortQueryParam(predicate, ascending),
+      this.ngZone,
+      this.router,
+      this.activatedRoute,
+      predicate,
+      ascending,
+      filterOptions,
     );
   }
 

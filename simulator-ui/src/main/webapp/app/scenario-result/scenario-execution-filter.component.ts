@@ -1,20 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 
 import { debounceTime, Subscription } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
+
+import SharedModule from 'app/shared/shared.module';
+import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
+import { FilterOptions, IFilterOptions } from 'app/shared/filter';
+
 import {
   IScenarioExecutionStatus,
   scenarioExecutionStatusFromId,
   scenarioExecutionStatusFromName,
 } from 'app/entities/scenario-execution/scenario-execution.model';
-import SharedModule from 'app/shared/shared.module';
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterOptions, IFilterOptions } from 'app/shared/filter';
 
 type ScenarioExecutionFilter = {
   nameContains: string | undefined;
@@ -44,7 +46,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.queryParamMap.subscribe(params => this.initializeFilterOptionsFromActivatedRoute(params));
+    this.activatedRoute.queryParamMap.subscribe(params => this.initializeFilterOptionsFromActivatedRoute(params)).unsubscribe();
     this.automaticApplyOnFormValueChanges();
   }
 
@@ -53,18 +55,23 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
   }
 
   protected applyFilter(formValue = this.filterForm.value): void {
-    this.router
-      .navigate([], {
-        queryParams: {
-          ...this.getFilterQueryParameter({
-            nameContains: formValue.nameContains,
-            fromDate: formValue.fromDate ? dayjs(formValue.fromDate) : undefined,
-            toDate: formValue.toDate ? dayjs(formValue.toDate) : undefined,
-            statusIn: formValue.statusIn ? scenarioExecutionStatusFromName(formValue.statusIn) : undefined,
-          }),
-        },
+    this.activatedRoute.queryParams
+      .subscribe(queryParams => {
+        this.router
+          .navigate([], {
+            queryParams: this.mergeParamsRemoveUndefinedValues(
+              queryParams,
+              this.getFilterQueryParameter({
+                nameContains: formValue.nameContains,
+                fromDate: formValue.fromDate ? dayjs(formValue.fromDate) : undefined,
+                toDate: formValue.toDate ? dayjs(formValue.toDate) : undefined,
+                statusIn: formValue.statusIn ? scenarioExecutionStatusFromName(formValue.statusIn) : undefined,
+              }),
+            ),
+          })
+          .catch(() => location.reload());
       })
-      .catch(() => location.reload());
+      .unsubscribe();
   }
 
   protected resetFilter(): void {
@@ -112,7 +119,16 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
       'filter[scenarioName.contains]': nameContains ?? undefined,
       'filter[startDate.greaterThanOrEqual]': fromDate ? fromDate.toJSON() : undefined,
       'filter[endDate.lessThanOrEqual]': toDate ? toDate.toJSON() : undefined,
-      'filter[status.in]': statusIn?.id ?? undefined,
+      'filter[status.equals]': statusIn?.id ?? undefined,
     };
+  }
+
+  private mergeParamsRemoveUndefinedValues(queryParams: Params, filterQueryParams: { [id: string]: any }): { [id: string]: any } {
+    return Object.fromEntries(
+      Object.entries({
+        ...queryParams,
+        ...filterQueryParams,
+      }).filter(([_, value]) => !!value),
+    );
   }
 }

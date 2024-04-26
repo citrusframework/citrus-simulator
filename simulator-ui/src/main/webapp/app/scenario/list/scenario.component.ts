@@ -11,16 +11,18 @@ import { ASC, DEFAULT_SORT_DATA, DESC, EntityOrder, SORT, toEntityOrder } from '
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
-
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { AlertService } from 'app/core/util/alert.service';
+
+import SharedModule from 'app/shared/shared.module';
+import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { FilterComponent, IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
-import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioService } from '../service/scenario.service';
 import { IScenario } from '../scenario.model';
+
+import { navigateToWithPagingInformation } from '../../entities/navigation-util';
 
 type ScenarioFilter = {
   nameContains: string | undefined;
@@ -176,21 +178,16 @@ export class ScenarioComponent implements OnDestroy, OnInit {
   }
 
   protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    const queryParamsObj: any = {
+    navigateToWithPagingInformation(
       page,
-      size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
-    };
-
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
-    });
-
-    this.ngZone.run(() =>
-      this.router.navigate(['./'], {
-        relativeTo: this.activatedRoute,
-        queryParams: queryParamsObj,
-      }),
+      this.itemsPerPage,
+      () => this.getSortQueryParam(predicate, ascending),
+      this.ngZone,
+      this.router,
+      this.activatedRoute,
+      predicate,
+      ascending,
+      filterOptions,
     );
   }
 
