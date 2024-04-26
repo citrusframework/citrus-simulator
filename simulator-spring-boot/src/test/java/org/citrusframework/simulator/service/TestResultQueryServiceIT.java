@@ -161,6 +161,18 @@ class TestResultQueryServiceIT {
             assertThat(testResultPage.getContent()).hasSize(pageSize);
         }
 
+        @Test
+        void selectSecondPage() {
+            Page<TestResult> testResultPage = fixture.findByCriteria(
+                new TestResultCriteria(),
+                PageRequest.of(1, 1, Sort.by(ASC, TestResult_.ID))
+            );
+
+            assertThat(testResultPage.getTotalPages()).isEqualTo(3);
+            assertThat(testResultPage.getTotalElements()).isEqualTo(3L);
+            assertThat(testResultPage.getContent()).hasSize(1).first().isEqualTo(testResults.get(1));
+        }
+
         static Stream<Arguments> testSinglePropertySort() {
             return Stream.of(
                 arguments(
