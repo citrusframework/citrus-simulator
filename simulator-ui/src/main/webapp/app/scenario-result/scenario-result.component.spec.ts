@@ -93,7 +93,7 @@ describe('ScenarioResult Component', () => {
       component.pageSizeChanged(itemsPerPage);
 
       expect(scenarioExecutionComponent.itemsPerPage).toEqual(itemsPerPage);
-      expect(scenarioExecutionComponent.load).toHaveBeenCalled();
+      expect(scenarioExecutionComponent.navigateToWithComponentValues).toHaveBeenCalled();
     });
 
     it('does nothing if component does not exist', () => {

@@ -6,17 +6,19 @@ import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/r
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { ASC, DEFAULT_SORT_DATA, DESC, SORT } from 'app/config/navigation.constants';
 
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import SharedModule from 'app/shared/shared.module';
-import { SortDirective, SortByDirective } from 'app/shared/sort';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
+import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { ItemCountComponent } from 'app/shared/pagination';
+import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioExecutionService } from '../service/scenario-execution.service';
 import { IScenarioExecution, IScenarioExecutionStatus } from '../scenario-execution.model';
+
+import { navigateToWithPagingInformation } from '../../navigation-util';
 
 @Component({
   standalone: true,
@@ -67,7 +69,6 @@ export class ScenarioExecutionComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
-
     this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.predicate, this.ascending, filterOptions));
   }
 
@@ -107,8 +108,7 @@ export class ScenarioExecutionComponent implements OnInit {
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
-    const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.scenarioExecutions = dataFromBody;
+    this.scenarioExecutions = this.fillComponentAttributesFromResponseBody(response.body);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IScenarioExecution[] | null): IScenarioExecution[] {
@@ -132,28 +132,25 @@ export class ScenarioExecutionComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
+
     filterOptions?.forEach(filterOption => {
       queryObject[filterOption.name] = filterOption.values;
     });
+
     return this.scenarioExecutionService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
   protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    const queryParamsObj: any = {
+    navigateToWithPagingInformation(
       page,
-      size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
-    };
-
-    filterOptions?.forEach(filterOption => {
-      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
-    });
-
-    this.ngZone.run(() =>
-      this.router.navigate(['./'], {
-        relativeTo: this.activatedRoute,
-        queryParams: queryParamsObj,
-      }),
+      this.itemsPerPage,
+      () => this.getSortQueryParam(predicate, ascending),
+      this.ngZone,
+      this.router,
+      this.activatedRoute,
+      predicate,
+      ascending,
+      filterOptions,
     );
   }
 

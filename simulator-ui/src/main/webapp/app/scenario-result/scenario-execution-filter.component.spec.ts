@@ -31,7 +31,7 @@ describe('ScenarioExecution Filter Component', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: { queryParamMap: of(convertToParamMap({})) },
+          useValue: { queryParamMap: of(convertToParamMap({})), queryParams: of({}) },
         },
       ],
     })
@@ -54,7 +54,7 @@ describe('ScenarioExecution Filter Component', () => {
         convertToParamMap({
           'filter[scenarioName.contains]': nameContains,
           'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[status.equals]': STATUS_SUCCESS.id,
           'filter[endDate.lessThanOrEqual]': queryParamEndDate,
         }),
       );
@@ -110,7 +110,7 @@ describe('ScenarioExecution Filter Component', () => {
         queryParams: {
           'filter[scenarioName.contains]': nameContains,
           'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[status.equals]': STATUS_SUCCESS.id,
           'filter[endDate.lessThanOrEqual]': queryParamEndDate,
         },
       });
@@ -134,6 +134,7 @@ describe('ScenarioExecution Filter Component', () => {
       expect(filterFormValueChanges.unsubscribe).toHaveBeenCalled();
     });
   });
+
   describe('applyFilter', () => {
     it('should navigate with correct query parameters', () => {
       const nameContains = 'nameContains';
@@ -152,9 +153,52 @@ describe('ScenarioExecution Filter Component', () => {
         queryParams: {
           'filter[scenarioName.contains]': nameContains,
           'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-          'filter[status.in]': STATUS_SUCCESS.id,
+          'filter[status.equals]': STATUS_SUCCESS.id,
           'filter[endDate.lessThanOrEqual]': queryParamEndDate,
         },
+      });
+    });
+
+    it('should ignore undefined parameters', () => {
+      component.filterForm.controls['statusIn'].setValue(STATUS_SUCCESS.name);
+
+      // @ts-ignore: Access protected function for testing
+      component.applyFilter();
+
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        queryParams: {
+          'filter[status.equals]': STATUS_SUCCESS.id,
+        },
+      });
+    });
+
+    it('should merge with existing query params', () => {
+      const existing = 'some-value';
+      activatedRoute.queryParams = of({ existing });
+
+      component.filterForm.controls['statusIn'].setValue(STATUS_SUCCESS.name);
+
+      // @ts-ignore: Access protected function for testing
+      component.applyFilter();
+
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        queryParams: {
+          existing,
+          'filter[status.equals]': STATUS_SUCCESS.id,
+        },
+      });
+    });
+
+    it('undefined parameters override existing query params', () => {
+      activatedRoute.queryParams = of({ 'filter[scenarioName.contains]': 'drama queen' });
+
+      component.filterForm.controls['statusIn'].setValue(undefined);
+
+      // @ts-ignore: Access protected function for testing
+      component.applyFilter();
+
+      expect(router.navigate).toHaveBeenCalledWith([], {
+        queryParams: {},
       });
     });
   });
