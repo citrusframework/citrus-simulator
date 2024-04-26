@@ -26,15 +26,17 @@
             <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" [routerLink]="['/scenario-result']" class="btn btn-info btn-sm" data-cy="scenarioExecutionsButton">
-              <fa-icon icon="square-poll-vertical"></fa-icon>
-              <span
-                class="d-none d-md-inline"
-                jhiTranslate="entity.action.show"
-                [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
-                >Show Scenario Executions</span
-              >
-            </button>
+            <a [routerLink]="['/scenario-result']">
+              <button type="button" class="btn btn-info btn-sm" data-cy="scenarioExecutionsButton">
+                <fa-icon icon="square-poll-vertical"></fa-icon>
+                <span
+                  class="d-none d-md-inline"
+                  jhiTranslate="entity.action.show"
+                  [translateValues]="{ otherEntity: ('citrusSimulatorApp.scenario.scenarioExecutions' | translate) }"
+                  >Show Scenario Executions</span
+                >
+              </button>
+            </a>
           </div>
         </div>
       </ngb-alert>
@@ -50,17 +52,13 @@
             </h5>
           </div>
           <div class="col d-flex justify-content-end">
-            <button
-              type="button"
-              [routerLink]="['/scenario-result']"
-              [queryParams]="{ 'filter[status.equals]': statusSuccess.id }"
-              class="btn btn-success btn-sm"
-              data-cy="scenarioExecutionsButton"
-            >
-              <fa-icon icon="square-poll-vertical"></fa-icon>
-              <!--          <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>-->
-              <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Successful</span>
-            </button>
+            <a [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[status.equals]': statusSuccess.id }">
+              <button type="button" class="btn btn-success btn-sm" data-cy="scenarioExecutionsButton">
+                <fa-icon icon="square-poll-vertical"></fa-icon>
+                <!--          <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>-->
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Successful</span>
+              </button>
+            </a>
           </div>
         </div>
       </ngb-alert>
@@ -76,16 +74,12 @@
             </h5>
           </div>
           <div class="col d-flex justify-content-end">
-            <button
-              type="button"
-              [routerLink]="['/scenario-result']"
-              [queryParams]="{ 'filter[status.equals]': statusFailed.id }"
-              class="btn btn-danger btn-sm"
-              data-cy="scenarioExecutionsButton"
-            >
-              <fa-icon icon="square-poll-vertical"></fa-icon>
-              <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
-            </button>
+            <a [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[status.equals]': statusFailed.id }">
+              <button type="button" class="btn btn-danger btn-sm" data-cy="scenarioExecutionsButton">
+                <fa-icon icon="square-poll-vertical"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
+              </button>
+            </a>
           </div>
         </div>
       </ngb-alert>

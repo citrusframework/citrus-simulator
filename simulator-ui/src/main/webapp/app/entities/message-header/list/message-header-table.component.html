@@ -57,15 +57,12 @@
         <td *ngIf="standalone">{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group">
-            <button
-              type="button"
-              [routerLink]="['/message-header', messageHeader.headerId, 'view']"
-              class="btn btn-info btn-sm"
-              data-cy="entityDetailsButton"
-            >
-              <fa-icon icon="eye"></fa-icon>
-              <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-            </button>
+            <a [routerLink]="['/message-header', messageHeader.headerId, 'view']">
+              <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </a>
           </div>
         </td>
       </tr>
