@@ -16,11 +16,8 @@
 
 package org.citrusframework.simulator.service;
 
-import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.simulator.model.TestParameter_;
 import org.citrusframework.simulator.model.TestResult;
@@ -33,6 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+import static org.springframework.data.domain.Pageable.unpaged;
 
 /**
  * Service for executing complex queries for {@link TestResult} entities in the database.
@@ -73,7 +75,7 @@ public class TestResultQueryService extends QueryService<TestResult> {
         )
             .getResultList();
 
-        var testResults = testResultRepository.findAllWhereIdIn(testResultIds, page);
+        var testResults = testResultRepository.findAllWhereIdIn(testResultIds, unpaged(page.getSort()));
         return new PageImpl<>(testResults.getContent(), page, testResultRepository.count(specification));
     }
 

@@ -16,11 +16,8 @@
 
 package org.citrusframework.simulator.service;
 
-import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageHeader_;
@@ -34,6 +31,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+import static org.springframework.data.domain.Pageable.unpaged;
 
 /**
  * Service for executing complex queries for {@link Message} entities in the database.
@@ -74,7 +76,7 @@ public class MessageQueryService extends QueryService<Message> {
         )
             .getResultList();
 
-        var messages = messageRepository.findAllWhereIdIn(messageIds, page);
+        var messages = messageRepository.findAllWhereIdIn(messageIds, unpaged(page.getSort()));
         return new PageImpl<>(messages.getContent(), page, messageRepository.count(specification));
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.Message_;
+import org.citrusframework.simulator.model.TestResult_;
 import org.citrusframework.simulator.repository.MessageRepository;
 import org.citrusframework.simulator.service.criteria.MessageCriteria;
 import org.citrusframework.simulator.service.filter.LongFilter;
@@ -128,6 +129,18 @@ class MessageQueryServiceIT {
             assertThat(messagePage.getTotalPages()).isEqualTo(expectedTotalPages);
             assertThat(messagePage.getTotalElements()).isEqualTo(3L);
             assertThat(messagePage.getContent()).hasSize(pageSize);
+        }
+
+        @Test
+        void selectSecondPage() {
+            Page<Message> testResultPage = fixture.findByCriteria(
+                new MessageCriteria(),
+                PageRequest.of(1, 1, Sort.by(ASC, TestResult_.ID))
+            );
+
+            assertThat(testResultPage.getTotalPages()).isEqualTo(3);
+            assertThat(testResultPage.getTotalElements()).isEqualTo(3L);
+            assertThat(testResultPage.getContent()).hasSize(1).first().isEqualTo(messages.get(1));
         }
 
         static Stream<Arguments> testSinglePropertySort() {

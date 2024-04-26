@@ -7,6 +7,7 @@ import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.service.filter.LongFilter;
@@ -195,6 +196,18 @@ class ScenarioExecutionQueryServiceIT {
             assertThat(scenarioExecutionPage.getTotalPages()).isEqualTo(expectedTotalPages);
             assertThat(scenarioExecutionPage.getTotalElements()).isEqualTo(3L);
             assertThat(scenarioExecutionPage.getContent()).hasSize(pageSize);
+        }
+
+        @Test
+        void selectSecondPage() {
+            Page<ScenarioExecution> testResultPage = fixture.findByCriteria(
+                new ScenarioExecutionCriteria(),
+                PageRequest.of(1, 1, Sort.by(ASC, TestResult_.ID))
+            );
+
+            assertThat(testResultPage.getTotalPages()).isEqualTo(3);
+            assertThat(testResultPage.getTotalElements()).isEqualTo(3L);
+            assertThat(testResultPage.getContent()).hasSize(1).first().isEqualTo(scenarioExecutions.get(1));
         }
 
         static Stream<Arguments> testSinglePropertySort() {
