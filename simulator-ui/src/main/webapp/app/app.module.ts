@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import locale from '@angular/common/locales/en';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TitleStrategy } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
@@ -29,6 +30,7 @@ import MainModule from './layouts/main/main.module';
 @NgModule({
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     AppRoutingModule,
     // Set this to true to enable service worker (PWA)

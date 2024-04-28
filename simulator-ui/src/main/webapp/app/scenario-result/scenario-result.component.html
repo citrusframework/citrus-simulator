@@ -8,7 +8,7 @@
         [key]="USER_PREFERENCES_KEY"
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>
-      <button class="btn btn-info me-2" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
+      <button class="btn btn-info" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
         <fa-icon icon="sync" [spin]="scenarioExecutionComponent!.isLoading"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
       </button>
@@ -17,6 +17,23 @@
 
   <div class="mb-3">
     <app-scenario-execution-filter></app-scenario-execution-filter>
+  </div>
+
+  <div class="mb-3">
+    <div class="d-flex justify-content-end mt-3">
+      <div class="btn-group">
+        <button
+          [disabled]="scenarioExecutionFilterComponent?.filterForm?.pristine"
+          type="button"
+          class="btn btn-secondary"
+          (click)="resetFilter()"
+          data-cy="clearFilterButton"
+        >
+          <fa-icon icon="xmark"></fa-icon>
+          <span class="d-none d-md-inline" jhiTranslate="entity.filters.clear">Clear Filter</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <app-scenario-execution [hideTitle]="true" (sortChange)="updateUserPreferences($event)"></app-scenario-execution>

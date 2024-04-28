@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 
 import { debounceTime, Subscription } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
+
+import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
 
@@ -29,7 +31,8 @@ type ScenarioExecutionFilter = {
   standalone: true,
   selector: 'app-scenario-execution-filter',
   templateUrl: './scenario-execution-filter.component.html',
-  imports: [FormsModule, ReactiveFormsModule, SharedModule],
+  styleUrls: ['./scenario-execution-filter.component.scss'],
+  imports: [FormsModule, ReactiveFormsModule, SharedModule, MdbFormsModule],
 })
 export default class ScenarioExecutionFilterComponent implements OnInit, OnDestroy {
   filterForm: FormGroup = new FormGroup({
@@ -42,16 +45,24 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private changeDetector: ChangeDetectorRef,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(params => this.initializeFilterOptionsFromActivatedRoute(params)).unsubscribe();
     this.automaticApplyOnFormValueChanges();
+    this.changeDetector.detectChanges();
   }
 
   ngOnDestroy(): void {
     this.filterFormValueChanges?.unsubscribe();
+  }
+
+  resetFilter(): void {
+    this.filterForm.reset();
+    this.filterForm.markAsPristine();
+    this.applyFilter();
   }
 
   protected applyFilter(formValue = this.filterForm.value): void {
@@ -74,12 +85,6 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
       .unsubscribe();
   }
 
-  protected resetFilter(): void {
-    this.filterForm.reset();
-    this.filterForm.markAsPristine();
-    this.applyFilter();
-  }
-
   private initializeFilterOptionsFromActivatedRoute(params: ParamMap): void {
     let filters: IFilterOptions = new FilterOptions();
     filters.initializeFromParams(params);
@@ -89,21 +94,22 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
       switch (filterOption.name) {
         case 'scenarioName':
           this.filterForm.controls.nameContains.setValue(filterOption.values[0]);
+          this.filterForm.controls.nameContains.markAsDirty();
           break;
         case 'startDate':
           this.filterForm.controls.fromDate.setValue(filterOption.values[0]);
+          this.filterForm.controls.fromDate.markAsDirty();
           break;
         case 'endDate':
           this.filterForm.controls.toDate.setValue(filterOption.values[0]);
+          this.filterForm.controls.toDate.markAsDirty();
           break;
         case 'status':
           this.filterForm.controls.statusIn.setValue(scenarioExecutionStatusFromId(Number(filterOption.values[0])).name);
+          this.filterForm.controls.statusIn.markAsDirty();
           break;
       }
     });
-    if (filters.filterOptions.length > 0) {
-      this.filterForm.markAsDirty();
-    }
   }
 
   private automaticApplyOnFormValueChanges(): void {

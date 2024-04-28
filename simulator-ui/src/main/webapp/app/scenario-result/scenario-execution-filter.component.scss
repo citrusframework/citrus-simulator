@@ -1,0 +1,24 @@
+@use 'mdb-angular-ui-kit/assets/scss/mdb.scss';
+
+@import 'bootstrap/scss/functions';
+@import 'bootswatch/dist/yeti/variables';
+@import 'bootstrap/scss/variables';
+
+.col-md-6 {
+  width: 50% !important;
+}
+
+.form-outline {
+  .form-control {
+    border: 1px solid #bdbdbd !important;
+  }
+
+  .form-label {
+    padding-top: 0;
+  }
+
+  &:focus-within > .form-label,
+  .label-dirty-input {
+    background-color: $white;
+  }
+}
