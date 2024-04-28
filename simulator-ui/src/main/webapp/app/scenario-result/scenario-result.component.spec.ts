@@ -9,6 +9,7 @@ import { EntityOrder } from '../config/navigation.constants';
 import ScenarioResultComponent from './scenario-result.component';
 
 import SpyInstance = jest.SpyInstance;
+import ScenarioExecutionFilterComponent from './scenario-execution-filter.component';
 
 const itemsPerPage = 1234;
 
@@ -114,6 +115,19 @@ describe('ScenarioResult Component', () => {
 
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario-result', predicate);
       expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario-result', expectedEntityOrder);
+    });
+  });
+
+  describe('resetFilter', () => {
+    test('resets filter component if present', () => {
+      component.scenarioExecutionFilterComponent = {
+        resetFilter: jest.fn(),
+      } as unknown as ScenarioExecutionFilterComponent;
+
+      // @ts-ignore: Access protected function for testing
+      component.resetFilter();
+
+      expect(component.scenarioExecutionFilterComponent.resetFilter).toHaveBeenCalled();
     });
   });
 });

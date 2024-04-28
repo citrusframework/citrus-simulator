@@ -20,6 +20,9 @@ export default class ScenarioResultComponent implements AfterViewInit {
   @ViewChild(ScenarioExecutionComponent)
   scenarioExecutionComponent: ScenarioExecutionComponent | null = null;
 
+  @ViewChild(ScenarioExecutionFilterComponent)
+  scenarioExecutionFilterComponent: ScenarioExecutionFilterComponent | null = null;
+
   protected readonly USER_PREFERENCES_KEY = 'scenario-result';
 
   constructor(
@@ -54,5 +57,11 @@ export default class ScenarioResultComponent implements AfterViewInit {
     // eslint-disable-next-line
     this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
     this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
+  }
+
+  protected resetFilter(): void {
+    if (this.scenarioExecutionFilterComponent) {
+      this.scenarioExecutionFilterComponent.resetFilter();
+    }
   }
 }

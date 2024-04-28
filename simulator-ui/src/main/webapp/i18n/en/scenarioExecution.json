@@ -18,6 +18,7 @@
       "startDate": "Start Date",
       "endDate": "End Date",
       "status": "Status",
+      "statusAll": "All",
       "statusRunning": "Running",
       "statusSuccess": "Success",
       "statusFailed": "Failed",
