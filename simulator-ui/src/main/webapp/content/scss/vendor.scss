@@ -4,37 +4,40 @@
 Taking google fonts offline
 ****************************/
 
-/* open-sans-300italic - latin */
+/* open-sans-300 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
   font-family: 'Open Sans';
-  font-style: italic;
   font-weight: 300;
-  src: url('../fonts/open-sans-v40-latin-300italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('../fonts/open-sans-v40-latin-300.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
-/* open-sans-500italic - latin */
+/* open-sans-400 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
   font-family: 'Open Sans';
-  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/open-sans-v40-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* open-sans-500 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Open Sans';
   font-weight: 500;
-  src: url('../fonts/open-sans-v40-latin-500italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('../fonts/open-sans-v40-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
-/* open-sans-600italic - latin */
+/* open-sans-600 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
   font-family: 'Open Sans';
-  font-style: italic;
   font-weight: 600;
-  src: url('../fonts/open-sans-v40-latin-600italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('../fonts/open-sans-v40-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
-/* open-sans-700italic - latin */
+/* open-sans-700 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
   font-family: 'Open Sans';
-  font-style: italic;
   font-weight: 700;
-  src: url('../fonts/open-sans-v40-latin-700italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('../fonts/open-sans-v40-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /***************************
@@ -46,8 +49,8 @@ $web-font-path: false;
 
 @import 'bootswatch/dist/yeti/variables';
 // Override Bootstrap variables
-@import 'bootstrap-variables';
-// Import Bootstrap source files from node_modules
+@import './bootstrap-variables';
+// Import Bootstrap & theme
 @import 'bootstrap/scss/bootstrap';
 @import 'bootswatch/dist/yeti/bootswatch';
 
