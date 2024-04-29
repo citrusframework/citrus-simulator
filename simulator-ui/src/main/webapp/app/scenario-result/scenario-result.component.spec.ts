@@ -9,7 +9,7 @@ import { EntityOrder } from '../config/navigation.constants';
 import ScenarioResultComponent from './scenario-result.component';
 
 import SpyInstance = jest.SpyInstance;
-import ScenarioExecutionFilterComponent from './scenario-execution-filter.component';
+import ScenarioExecutionFilterComponent from './filter/scenario-execution-filter.component';
 
 const itemsPerPage = 1234;
 

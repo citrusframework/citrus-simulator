@@ -8,7 +8,7 @@ import { ScenarioExecutionComponent } from 'app/entities/scenario-execution/list
 
 import SharedModule from 'app/shared/shared.module';
 
-import ScenarioExecutionFilterComponent from './scenario-execution-filter.component';
+import ScenarioExecutionFilterComponent from './filter/scenario-execution-filter.component';
 
 @Component({
   standalone: true,

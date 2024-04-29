@@ -1,0 +1,135 @@
+<div>
+  <div class="modal-header">
+    <h4
+      class="modal-title"
+      data-cy="eventDeleteDialogHeading"
+      jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.title"
+    >
+      Filter Message Headers
+    </h4>
+    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true" (click)="cancel()"></button>
+  </div>
+
+  <div class="modal-body">
+    <app-alert-error></app-alert-error>
+
+    @for (headerFilter of headerFilters; track headerFilter; let i = $index) {
+      <div class="row align-items-center" [class.mb-3]="i < headerFilters.length - 1">
+        <div class="col-md-1">
+          <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.filter" [translateValues]="{ index: i }">
+            Filter {{ i }}
+          </span>
+        </div>
+        <div class="col-md-10">
+          <form name="headerFilterForm" [formGroup]="headerFilters[i]">
+            <fieldset>
+              <div class="card p-3">
+                <div class="row align-items-center mb-4">
+                  <div class="col-md-2 justify-content-center">
+                    <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.headerName">Header Name</span>
+                  </div>
+                  <div class="col-md-4">
+                    <select class="form-select" [id]="'header-' + i + 'comparator'" formControlName="keyComparator">
+                      <option value="=" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.equals">
+                        EQUALS
+                      </option>
+                      <option value="~" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.contains">
+                        CONTAINS
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <input type="text" class="form-control" [id]="'header-' + i" formControlName="key" />
+                  </div>
+                </div>
+
+                <div class="row align-items-center">
+                  <div class="col-md-2">
+                    <select class="form-select" [id]="'header-' + i + '-value-type'" formControlName="valueType">
+                      <option value="LITERAL">LITERAL</option>
+                      <option value="NUMERICAL">NUMERICAL</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 justify-content-center text-center">
+                    <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.headerValue">Header Value</span>
+                  </div>
+                  <div class="col-md-4">
+                    <select class="form-select" [id]="'header-' + i + '-value-comparator'" formControlName="valueComparator">
+                      <option value="=" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.equals">
+                        EQUALS
+                      </option>
+                      <option value="~" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.contains">
+                        CONTAINS
+                      </option>
+                      <option
+                        *ngIf="getHeaderValueInputType(i) === 'number'"
+                        value=">"
+                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThan"
+                      >
+                        GREATER THAN
+                      </option>
+                      <option
+                        *ngIf="getHeaderValueInputType(i) === 'number'"
+                        value=">="
+                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThanOrEqualTo"
+                      >
+                        GREATER THAN OR EQUAL TO
+                      </option>
+                      <option
+                        *ngIf="getHeaderValueInputType(i) === 'number'"
+                        value="<"
+                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThan"
+                      >
+                        LESS THAN
+                      </option>
+                      <option
+                        *ngIf="getHeaderValueInputType(i) === 'number'"
+                        value="<="
+                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThanOrEqualTo"
+                      >
+                        LESS THAN OR EQUAL TO
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <input
+                      [type]="getHeaderValueInputType(i)"
+                      class="form-control"
+                      [id]="'header-' + i + '-value'"
+                      formControlName="value"
+                    />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="col-md-1 text-center">
+          <button type="button" class="btn btn-danger btn-square-md" (click)="removeHeaderFilter(i)" [disabled]="i === 0">
+            <fa-icon icon="xmark"></fa-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="modal-footer">
+    <div class="btn-group">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="addNewHeaderFilter()">
+        <fa-icon icon="plus"></fa-icon>
+        &nbsp;
+        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.addAnother">Add Another</span>
+      </button>
+      <button type="button" class="btn btn-warning" data-dismiss="modal" (click)="cancel()">
+        <fa-icon icon="ban"></fa-icon>
+        &nbsp;
+        <span jhiTranslate="entity.action.cancel">Cancel</span>
+      </button>
+      <button id="jhi-confirm-delete-event" data-cy="entityConfirmDeleteButton" type="button" class="btn btn-info" (click)="submit()">
+        <fa-icon icon="times"></fa-icon>
+        &nbsp;
+        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.apply">Apply Filter</span>
+      </button>
+    </div>
+  </div>
+</div>
