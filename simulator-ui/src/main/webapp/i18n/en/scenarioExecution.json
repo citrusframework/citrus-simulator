@@ -12,7 +12,33 @@
       "filter": {
         "reset": "Reset Filter",
         "dateFrom": "From Date",
-        "dateTo": "To Date"
+        "dateTo": "To Date",
+        "headerDialog": {
+          "addAnother": "Add Another",
+          "apply": "Apply Filter",
+          "filter": "Filter {{ index }}",
+          "headerName": "Header Name",
+          "headerValue": "Header Value",
+          "open": "Dialog",
+          "title": "Filter Message Headers",
+          "comparator": {
+            "equals": "equals",
+            "contains": "contains",
+            "greaterThan": "greater than",
+            "greaterThanOrEqualTo": "greater than or equal to",
+            "lessThan": "less than",
+            "lessThanOrEqualTo": "less than or equal to"
+          }
+        },
+        "headerFilterPattern": "Filter scenario executions by message headers using fulltext search (searching within header values) or key-value expressions. Use the buttons to the right for help building your expression.",
+        "helpDialog": {
+          "headerFilterPatternSyntax": "Message header filtering uses a specific syntax.",
+          "headerFilterPatternNoKey": "If you don't specify a key or comparator, the filter will search for messages where <b>any</b> header value <b>contains</b> the provided string. (e.g., <span class=\"bg-secondary\">myValue</span>)",
+          "headerFilterPatternSpecificKey": "To filter based on a <b>specific key</b>, use key=value. (e.g., <span class=\"bg-secondary\">source=myApp</span>)",
+          "headerFilterPatternContainsValue": "You can also use the <b>CONTAINS</b> operator (<span class=\"bg-secondary\">~</span>) to search within a key's value. (e.g., <span class=\"bg-secondary\">name~something-like-this</span>)",
+          "headerFilterPatternNumeric": "For numeric keys, you can use comparison operators like <span class=\"bg-secondary\"><</span>, <span class=\"bg-secondary\"><=</span>, <span class=\"bg-secondary\">></span>, <span class=\"bg-secondary\">>=</span>. (e.g., <span class=\"bg-secondary\">priority<3</span>)",
+          "headerFilterPatternCombination": "<b>Combining multiple patterns:</b> Separate multiple filter expressions with a semicolon (<span class=\"bg-secondary\">;</span>). They will be combined using logical <b>AND</b> operators. (e.g., <span class=\"bg-secondary\">source=myApp; status=active</span>)"
+        }
       },
       "id": "ID",
       "startDate": "Start Date",

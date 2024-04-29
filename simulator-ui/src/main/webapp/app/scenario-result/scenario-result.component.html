@@ -1,10 +1,10 @@
 <div>
-  <h2 id="page-heading" data-cy="ScenarioExecutionHeading">
+  <h2 id="page-heading" data-cy="ScenarioExecutionHeading" class="mb-3">
     <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
 
     <div *ngIf="scenarioExecutionComponent" class="d-flex justify-content-end">
       <app-select-page-size
-        class="col-md-4 me-3"
+        class="col-md-4"
         [key]="USER_PREFERENCES_KEY"
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>

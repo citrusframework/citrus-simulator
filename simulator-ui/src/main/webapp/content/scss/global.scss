@@ -40,7 +40,7 @@ Generic styles
 
 /* other generic styles */
 
-.jh-card {
+.app-card {
   padding: 1.5%;
   margin-top: 20px;
   border: none;
@@ -207,4 +207,13 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
     }
   }
 }
+
+/* ==========================================================================
+custom "square" button styles
+========================================================================== */
+.btn-square-md {
+  height: 2.5em;
+  width: 2.5em;
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */

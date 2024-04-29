@@ -1,5 +1,5 @@
 <div>
-  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+  <form name="scenarioExecutionFilterForm" [formGroup]="filterForm" (ngSubmit)="applyFilter()">
     <fieldset>
       <div class="row mb-4">
         <div class="form-group col-md-6">
@@ -64,6 +64,47 @@
               >To Date</label
             >
           </mdb-form-control>
+        </div>
+      </div>
+
+      <div class="row align-items-center">
+        <div class="form-group col">
+          <mdb-form-control>
+            <input
+              mdbInput
+              type="text"
+              class="form-control"
+              id="headerFilter"
+              formControlName="headerFilter"
+              [class.is-invalid]="filterForm.get('headerFilter')?.invalid"
+            />
+            <label
+              mdbLabel
+              for="headerFilter"
+              class="form-label"
+              jhiTranslate="citrusSimulatorApp.messageHeader.home.title"
+              [class.label-dirty-input]="filterForm.get('headerFilter')?.dirty"
+            >
+              Message Headers
+            </label>
+            <div
+              class="form-helper"
+              jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerFilterPattern"
+              [class.text-color-warning]="filterForm.get('headerFilter')?.invalid"
+            >
+              See pattern documentation for help!
+            </div>
+          </mdb-form-control>
+        </div>
+        <div class="form-group col-auto d-md-flex justify-content-md-end">
+          <button type="button" class="btn btn-secondary me-3" (click)="openHelpModal()">
+            <fa-icon icon="circle-info"></fa-icon>
+          </button>
+          <button type="button" class="btn btn-info" (click)="openHeaderFilterModal()">
+            <fa-icon icon="window-maximize"></fa-icon>
+            &nbsp;
+            <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.open">Open Dialog</span>
+          </button>
         </div>
       </div>
     </fieldset>

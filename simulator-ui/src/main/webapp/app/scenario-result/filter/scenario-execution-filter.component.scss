@@ -1,16 +1,25 @@
-@use 'mdb-angular-ui-kit/assets/scss/mdb.scss';
+@use '../../../../../../node_modules/mdb-angular-ui-kit/assets/scss/mdb';
 
 @import 'bootstrap/scss/functions';
 @import 'bootswatch/dist/yeti/variables';
 @import 'bootstrap/scss/variables';
 
+// Bootstrap of Material overrides something in children of .row... therefore the forces
 .col-md-6 {
   width: 50% !important;
 }
+.col-auto {
+  width: auto !important;
+}
 
+// Custom styling
 .form-outline {
   .form-control {
     border: 1px solid #bdbdbd !important;
+
+    &.is-invalid {
+      border-color: $danger !important;
+    }
   }
 
   .form-label {
@@ -20,5 +29,10 @@
   &:focus-within > .form-label,
   .label-dirty-input {
     background-color: $white;
+    padding: 0 1% 0;
   }
+}
+
+.text-color-warning {
+  color: $danger;
 }
