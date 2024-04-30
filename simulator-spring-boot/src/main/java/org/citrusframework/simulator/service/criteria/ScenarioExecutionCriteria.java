@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
@@ -37,6 +39,8 @@ import java.util.Objects;
  * specific {@link org.citrusframework.simulator.service.filter.Filter} class are used, we need to use fix type
  * specific filters.
  */
+@Getter
+@Setter
 @ParameterObject
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ScenarioExecutionCriteria implements Serializable, Criteria {
@@ -61,6 +65,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private LongFilter scenarioParametersId;
 
+    private String headers;
+
     private Boolean distinct;
 
     public ScenarioExecutionCriteria() {
@@ -76,16 +82,13 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.scenarioActionsId = other.scenarioActionsId == null ? null : other.scenarioActionsId.copy();
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
         this.scenarioParametersId = other.scenarioParametersId == null ? null : other.scenarioParametersId.copy();
+        this.headers = other.headers;
         this.distinct = other.distinct;
     }
 
     @Override
     public ScenarioExecutionCriteria copy() {
         return new ScenarioExecutionCriteria(this);
-    }
-
-    public LongFilter getExecutionId() {
-        return executionId;
     }
 
     public LongFilter id() {
@@ -95,27 +98,11 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return executionId;
     }
 
-    public void setExecutionId(LongFilter executionId) {
-        this.executionId = executionId;
-    }
-
-    public InstantFilter getStartDate() {
-        return startDate;
-    }
-
     public InstantFilter startDate() {
         if (startDate == null) {
             startDate = new InstantFilter();
         }
         return startDate;
-    }
-
-    public void setStartDate(InstantFilter startDate) {
-        this.startDate = startDate;
-    }
-
-    public InstantFilter getEndDate() {
-        return endDate;
     }
 
     public InstantFilter endDate() {
@@ -125,27 +112,11 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return endDate;
     }
 
-    public void setEndDate(InstantFilter endDate) {
-        this.endDate = endDate;
-    }
-
-    public StringFilter getScenarioName() {
-        return scenarioName;
-    }
-
     public StringFilter scenarioName() {
         if (scenarioName == null) {
             scenarioName = new StringFilter();
         }
         return scenarioName;
-    }
-
-    public void setScenarioName(StringFilter scenarioName) {
-        this.scenarioName = scenarioName;
-    }
-
-    public IntegerFilter getStatus() {
-        return status;
     }
 
     public IntegerFilter status() {
@@ -155,27 +126,11 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return status;
     }
 
-    public void setStatus(IntegerFilter status) {
-        this.status = status;
-    }
-
-    public StringFilter getErrorMessage() {
-        return errorMessage;
-    }
-
     public StringFilter errorMessage() {
         if (errorMessage == null) {
             errorMessage = new StringFilter();
         }
         return errorMessage;
-    }
-
-    public void setErrorMessage(StringFilter errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public LongFilter getScenarioActionsId() {
-        return scenarioActionsId;
     }
 
     public LongFilter scenarioActionsId() {
@@ -185,14 +140,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return scenarioActionsId;
     }
 
-    public void setScenarioActionsId(LongFilter scenarioActionsId) {
-        this.scenarioActionsId = scenarioActionsId;
-    }
-
-    public LongFilter getScenarioMessagesId() {
-        return scenarioMessagesId;
-    }
-
     public LongFilter scenarioMessagesId() {
         if (scenarioMessagesId == null) {
             scenarioMessagesId = new LongFilter();
@@ -200,31 +147,11 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return scenarioMessagesId;
     }
 
-    public void setScenarioMessagesId(LongFilter scenarioMessagesId) {
-        this.scenarioMessagesId = scenarioMessagesId;
-    }
-
-    public LongFilter getScenarioParametersId() {
-        return scenarioParametersId;
-    }
-
     public LongFilter scenarioParametersId() {
         if (scenarioParametersId == null) {
             scenarioParametersId = new LongFilter();
         }
         return scenarioParametersId;
-    }
-
-    public void setScenarioParametersId(LongFilter scenarioParametersId) {
-        this.scenarioParametersId = scenarioParametersId;
-    }
-
-    public Boolean getDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(Boolean distinct) {
-        this.distinct = distinct;
     }
 
     @Override
@@ -246,13 +173,14 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
                 Objects.equals(scenarioActionsId, that.scenarioActionsId) &&
                 Objects.equals(scenarioMessagesId, that.scenarioMessagesId) &&
                 Objects.equals(scenarioParametersId, that.scenarioParametersId) &&
+                Objects.equals(headers, that.headers) &&
                 Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, scenarioParametersId, distinct);
+        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, scenarioParametersId, headers, distinct);
     }
 
     // prettier-ignore
@@ -268,6 +196,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             (scenarioActionsId != null ? "scenarioActionsId=" + scenarioActionsId + ", " : "") +
             (scenarioMessagesId != null ? "scenarioMessagesId=" + scenarioMessagesId + ", " : "") +
             (scenarioMessagesId != null ? "scenarioParametersId=" + scenarioParametersId + ", " : "") +
+            (headers != null ? "headers=" + headers + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

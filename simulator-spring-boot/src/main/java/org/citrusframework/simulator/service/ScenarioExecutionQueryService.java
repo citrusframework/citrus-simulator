@@ -18,7 +18,13 @@ package org.citrusframework.simulator.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.SetJoin;
 import lombok.extern.slf4j.Slf4j;
+import org.citrusframework.simulator.model.Message;
+import org.citrusframework.simulator.model.MessageHeader;
+import org.citrusframework.simulator.model.MessageHeader_;
 import org.citrusframework.simulator.model.Message_;
 import org.citrusframework.simulator.model.ScenarioAction_;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -26,6 +32,9 @@ import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.model.ScenarioParameter_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
+import org.citrusframework.simulator.service.filter.Filter;
+import org.citrusframework.simulator.service.filter.LongFilter;
+import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,9 +42,23 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
+import static java.lang.Long.parseLong;
+import static java.lang.String.format;
+import static java.util.Arrays.stream;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.regex.Pattern.compile;
 import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
+import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.MessageHeaderFilter.fromFilterPattern;
+import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.Operator.parseOperator;
+import static org.citrusframework.util.StringUtils.isEmpty;
 import static org.springframework.data.domain.Pageable.unpaged;
 
 /**
@@ -49,12 +72,19 @@ import static org.springframework.data.domain.Pageable.unpaged;
 @Transactional(readOnly = true)
 public class ScenarioExecutionQueryService extends QueryService<ScenarioExecution> {
 
+    private static final Pattern HEADER_FILTER_PATTERN = compile("^\\w?(([\\w-]+)[=~]?[ \\w,/.:()-]*|([\\w-]+)[<>]=?\\d+)$");
+    public static final String MULTIPLE_FILTER_EXPRESSION_SEPARATOR = "; |;";
+
     private final EntityManager entityManager;
     private final ScenarioExecutionRepository scenarioExecutionRepository;
 
     public ScenarioExecutionQueryService(EntityManager entityManager, ScenarioExecutionRepository scenarioExecutionRepository) {
         this.entityManager = entityManager;
         this.scenarioExecutionRepository = scenarioExecutionRepository;
+    }
+
+    static boolean isValidFilterPattern(String filterPattern) {
+        return HEADER_FILTER_PATTERN.matcher(filterPattern).matches();
     }
 
     /**
@@ -116,30 +146,30 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
      */
     protected Specification<ScenarioExecution> createSpecification(ScenarioExecutionCriteria criteria) {
         Specification<ScenarioExecution> specification = Specification.where(null);
-        if (criteria != null) {
+        if (nonNull(criteria)) {
             // This has to be called first, because the distinct method returns null
-            if (criteria.getDistinct() != null) {
+            if (nonNull(criteria.getDistinct())) {
                 specification = specification.and(distinct(criteria.getDistinct()));
             }
-            if (criteria.getExecutionId() != null) {
+            if (nonNull(criteria.getExecutionId())) {
                 specification = specification.and(buildRangeSpecification(criteria.getExecutionId(), ScenarioExecution_.executionId));
             }
-            if (criteria.getStartDate() != null) {
+            if (nonNull(criteria.getStartDate())) {
                 specification = specification.and(buildRangeSpecification(criteria.getStartDate(), ScenarioExecution_.startDate));
             }
-            if (criteria.getEndDate() != null) {
+            if (nonNull(criteria.getEndDate())) {
                 specification = specification.and(buildRangeSpecification(criteria.getEndDate(), ScenarioExecution_.endDate));
             }
-            if (criteria.getScenarioName() != null) {
+            if (nonNull(criteria.getScenarioName())) {
                 specification = specification.and(buildStringSpecification(criteria.getScenarioName(), ScenarioExecution_.scenarioName));
             }
-            if (criteria.getStatus() != null) {
+            if (nonNull(criteria.getStatus())) {
                 specification = specification.and(buildRangeSpecification(criteria.getStatus(), ScenarioExecution_.status));
             }
-            if (criteria.getErrorMessage() != null) {
+            if (nonNull(criteria.getErrorMessage())) {
                 specification = specification.and(buildStringSpecification(criteria.getErrorMessage(), ScenarioExecution_.errorMessage));
             }
-            if (criteria.getScenarioActionsId() != null) {
+            if (nonNull(criteria.getScenarioActionsId())) {
                 specification =
                     specification.and(
                         buildSpecification(
@@ -148,7 +178,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                         )
                     );
             }
-            if (criteria.getScenarioMessagesId() != null) {
+            if (nonNull(criteria.getScenarioMessagesId())) {
                 specification =
                     specification.and(
                         buildSpecification(
@@ -157,7 +187,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                         )
                     );
             }
-            if (criteria.getScenarioParametersId() != null) {
+            if (nonNull(criteria.getScenarioParametersId())) {
                 specification =
                     specification.and(
                         buildSpecification(
@@ -166,7 +196,135 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                         )
                     );
             }
+            if (nonNull(criteria.getHeaders())) {
+                var messageHeaderSpecifications = createMessageHeaderSpecifications(criteria.getHeaders());
+                for (var messageHeaderSpecification : messageHeaderSpecifications) {
+                    specification = specification.and(messageHeaderSpecification);
+                }
+            }
         }
         return specification;
+    }
+
+    private List<Specification<ScenarioExecution>> createMessageHeaderSpecifications(String headers) {
+        List<Specification<ScenarioExecution>> specifications = new ArrayList<>();
+
+        var filterPatterns = headers.split(MULTIPLE_FILTER_EXPRESSION_SEPARATOR);
+        for (var filterPattern : filterPatterns) {
+            newMessageHeaderFilterFromFilterPattern(filterPattern)
+                .map(this::createSpecificationFromMessageHeaderFilter)
+                .ifPresent(specifications::add);
+        }
+
+        return specifications;
+    }
+
+    private Optional<MessageHeaderFilter> newMessageHeaderFilterFromFilterPattern(String filterPattern) {
+        try {
+            return Optional.of(fromFilterPattern(filterPattern));
+        } catch (InvalidPatternException e) {
+            logger.warn("Ignoring invalid filter pattern: {}", filterPattern, e);
+            return Optional.empty();
+        }
+    }
+
+    private Specification<ScenarioExecution> createSpecificationFromMessageHeaderFilter(MessageHeaderFilter messageHeaderFilter) {
+        if (messageHeaderFilter.isValueFilterOnly()) {
+            return buildSpecification(
+                new StringFilter().setContains(messageHeaderFilter.value),
+                ScenarioExecutionQueryService::joinMessageHeadersAndGetValue);
+        }
+
+        Specification<ScenarioExecution> messageHeaderKeyEqualsSpecification = buildSpecification(
+            new StringFilter().setEquals(messageHeaderFilter.key),
+            root -> joinMessageHeaders(root).get(MessageHeader_.name));
+
+        var messageHeaderValueSpecification = switch (messageHeaderFilter.operator) {
+            case EQUALS, CONTAINS ->
+                buildMessageHeaderValueSpecification((StringFilter) messageHeaderFilter.operator.filter.apply(messageHeaderFilter.value));
+            case GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, LESS_THAN_OR_EQUAL_TO ->
+                buildMessageHeaderValueSpecification((LongFilter) messageHeaderFilter.operator.filter.apply(messageHeaderFilter.value));
+        };
+
+        return messageHeaderKeyEqualsSpecification.and(messageHeaderValueSpecification);
+    }
+
+    private Specification<ScenarioExecution> buildMessageHeaderValueSpecification(StringFilter stringFilter) {
+        return buildSpecification(stringFilter, ScenarioExecutionQueryService::joinMessageHeadersAndGetValue);
+    }
+
+    private Specification<ScenarioExecution> buildMessageHeaderValueSpecification(LongFilter longFilter) {
+        return buildSpecification(longFilter, root -> joinMessageHeadersAndGetValue(root).as(Long.class));
+    }
+
+    private static SetJoin<Message, MessageHeader> joinMessageHeaders(Root<ScenarioExecution> root) {
+        return root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT)
+            .join(Message_.headers);
+    }
+
+    private static Path<String> joinMessageHeadersAndGetValue(Root<ScenarioExecution> root) {
+        return joinMessageHeaders(root)
+            .get(MessageHeader_.value);
+    }
+
+    enum Operator {
+
+        EQUALS("=", value -> new StringFilter().setContains(value)),
+        CONTAINS("~", value -> new StringFilter().setContains(value)),
+        GREATER_THAN(">", value -> new LongFilter().setGreaterThan(parseLong(value))),
+        GREATER_THAN_OR_EQUAL_TO(">=", value -> new LongFilter().setGreaterThanOrEqual(parseLong(value))),
+        LESS_THAN("<", value -> new LongFilter().setLessThan(parseLong(value))),
+        LESS_THAN_OR_EQUAL_TO("<=", value -> new LongFilter().setLessThanOrEqual(parseLong(value)));
+
+        private final String stringOperator;
+        private final Function<String, Filter<?>> filter;
+
+        Operator(String stringOperator, Function<String, Filter<?>> filter) {
+            this.stringOperator = stringOperator;
+            this.filter = filter;
+        }
+
+        static Operator parseOperator(@Nonnull String operator) {
+            return stream(values())
+                .filter(value -> value.stringOperator.equals(operator.toUpperCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(format("Invalid operator '%s'!", operator)));
+        }
+
+        public StringFilter getOperator() {
+            return null;
+        }
+    }
+
+    record MessageHeaderFilter(String key, Operator operator, String value) {
+
+        static MessageHeaderFilter fromFilterPattern(String filterPattern) throws InvalidPatternException {
+            var parts = filterPattern.split("(?=[=~]|[<>]=?)|(?<=[=~]|[<>]=?)");
+            if (isEmpty(filterPattern)
+                || !isValidFilterPattern(filterPattern)) {
+                throw new InvalidPatternException(filterPattern);
+            }
+
+            if (parts.length == 1) {
+                return new MessageHeaderFilter(null, null, parts[0]);
+            } else if (parts.length == 2) {
+                return new MessageHeaderFilter(parts[0], parseOperator(parts[1]), "");
+            } else if (parts.length == 4) {
+                return new MessageHeaderFilter(parts[0], parseOperator(parts[1] + parts[2]), parts[3]);
+            } else {
+                return new MessageHeaderFilter(parts[0], parseOperator(parts[1]), parts[2]);
+            }
+        }
+
+        public boolean isValueFilterOnly() {
+            return isNull(key) && isNull(operator);
+        }
+    }
+
+    static class InvalidPatternException extends Exception {
+
+        public InvalidPatternException(String filterPattern) {
+            super(format("The header filter pattern '%s' does not comply with the regex '%s'!", filterPattern, HEADER_FILTER_PATTERN.pattern()));
+        }
     }
 }
