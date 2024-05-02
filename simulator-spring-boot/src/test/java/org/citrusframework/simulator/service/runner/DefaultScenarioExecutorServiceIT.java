@@ -18,6 +18,7 @@ package org.citrusframework.simulator.service.runner;
 
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.citrusframework.simulator.model.ScenarioExecution.Status.SUCCESS;
+import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
 
 @IntegrationTest
 class DefaultScenarioExecutorServiceIT {
@@ -65,7 +66,8 @@ class DefaultScenarioExecutorServiceIT {
         assertThat(scenarioExecutionRepository.findOneByExecutionId(executionId))
             .hasValueSatisfying(scenarioExecution -> assertThat(scenarioExecution)
                 .hasNoNullFieldsOrPropertiesExcept("errorMessage")
-                .extracting(ScenarioExecution::getStatus)
+                .extracting(ScenarioExecution::getTestResult)
+                .extracting(TestResult::getStatus)
                 .isEqualTo(SUCCESS));
     }
 

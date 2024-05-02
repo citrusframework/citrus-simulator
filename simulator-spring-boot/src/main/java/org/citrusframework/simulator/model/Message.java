@@ -86,7 +86,7 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     private Integer direction = Direction.UNKNOWN.getId();
 
     @Lob
-    @Column(columnDefinition = "CLOB", updatable = false)
+    @Column(columnDefinition = "TEXT", updatable = false)
     private String payload;
 
     @NotEmpty

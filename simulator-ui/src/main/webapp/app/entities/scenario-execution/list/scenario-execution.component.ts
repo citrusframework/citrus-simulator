@@ -16,9 +16,10 @@ import { ItemCountComponent } from 'app/shared/pagination';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioExecutionService } from '../service/scenario-execution.service';
-import { IScenarioExecution, IScenarioExecutionStatus } from '../scenario-execution.model';
+import { IScenarioExecution } from '../scenario-execution.model';
 
 import { navigateToWithPagingInformation } from '../../navigation-util';
+import { ITestResultStatus } from '../../test-result/test-result.model';
 
 @Component({
   standalone: true,
@@ -163,9 +164,9 @@ export class ScenarioExecutionComponent implements OnInit {
     }
   }
 
-  protected getStatusBadgeClass(status: IScenarioExecutionStatus): string {
+  protected getStatusBadgeClass(status: ITestResultStatus): string {
     switch (status.name) {
-      case 'FAILED':
+      case 'FAILURE':
         return 'bg-danger';
       case 'SUCCESS':
         return 'bg-success';

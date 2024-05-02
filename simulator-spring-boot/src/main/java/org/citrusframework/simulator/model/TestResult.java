@@ -17,21 +17,21 @@
 package org.citrusframework.simulator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -39,7 +39,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.REMOVE;
+import static jakarta.persistence.FetchType.EAGER;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.NONE;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 
 /**
  * Represents the persistent data model for a test result in the system. This class holds all information
@@ -63,6 +67,7 @@ import static lombok.AccessLevel.NONE;
     indexes = {
         @Index(name = "idx_failure_type", columnList = "failure_type"),
         @Index(name = "idx_test_result_class_name", columnList = "class_name"),
+        @Index(name = "idx_test_result_status", columnList = "status"),
         @Index(name = "idx_test_result_test_name", columnList = "test_name")
     }
 )
@@ -103,28 +108,33 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Optional test parameters
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "testResult", cascade = {CascadeType.REMOVE})
-    @JsonIgnoreProperties(value = { "testResult" }, allowSetters = true)
+    @OneToMany(fetch = EAGER, mappedBy = "testResult", cascade = {REMOVE})
+    @JsonIgnoreProperties(value = {"testResult"}, allowSetters = true)
     private final Set<TestParameter> testParameters = new HashSet<>();
 
     /**
      * Error message
      */
-    @Size(max = 1000)
-    @Column(length = 1000, updatable = false)
+    @Lob
+    @Column(columnDefinition = "TEXT", updatable = false)
     private String errorMessage;
 
     /**
      * Failure stack trace
      */
-    @Column(updatable = false)
-    private String failureStack;
+    @Lob
+    @Column(columnDefinition = "TEXT", updatable = false)
+    private String stackTrace;
 
     /**
      * Failure type information
      */
     @Column(updatable = false)
     private String failureType;
+
+    @ToString.Exclude
+    @OneToOne(mappedBy = "testResult")
+    private ScenarioExecution scenarioExecution;
 
     /**
      * This is an empty constructor, not intended for "manual" usage.
@@ -144,9 +154,12 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         testName = testResult.getTestName();
         className = testResult.getClassName();
         testResult.getParameters().forEach((key, value) -> testParameters.add(new TestParameter(key, value.toString(), this)));
-        // NOte that the cause will be dropped: testResult.getCause()
-        errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", testResult.getErrorMessage());
-        failureStack = testResult.getFailureStack();
+
+        if (nonNull(testResult.getCause())) {
+            errorMessage = getRootCause(testResult.getCause()).getMessage();
+            stackTrace = ExceptionUtils.getStackTrace(testResult.getCause());
+        }
+
         failureType = testResult.getFailureType();
     }
 
@@ -215,7 +228,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
 
         private final TestResult testResult = new TestResult();
 
-        private TestResultBuilder(){
+        private TestResultBuilder() {
             // Static access through entity
         }
 
@@ -240,12 +253,12 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
         }
 
         public TestResultBuilder errorMessage(String errorMessage) {
-            testResult.errorMessage = EntityUtils.truncateToColumnSize(TestResult.class, "errorMessage", errorMessage);
+            testResult.errorMessage = errorMessage;
             return this;
         }
 
-        public TestResultBuilder failureStack(String failureStack) {
-            testResult.failureStack = failureStack;
+        public TestResultBuilder stackTrace(String stackTrace) {
+            testResult.stackTrace = stackTrace;
             return this;
         }
 

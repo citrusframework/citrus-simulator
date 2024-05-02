@@ -44,7 +44,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.citrusframework.simulator.model.ScenarioExecution.Status.UNKNOWN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -97,7 +96,6 @@ class ScenarioActionServiceImplTest {
             .startDate(Instant.now())
             .endDate(Instant.now())
             .scenarioName("scenario-name")
-            .errorMessage("error-message")
             .build();
         scenarioAction.setScenarioExecution(scenarioExecution);
         scenarioActionWithScenarioExecution = spy(scenarioAction);
@@ -158,9 +156,10 @@ class ScenarioActionServiceImplTest {
                 "scenarioParameters",
                 "scenarioActions",
                 "scenarioMessages")
-            .hasFieldOrPropertyWithValue("executionId", expectedScenarioExecution.getExecutionId())
-            .hasFieldOrPropertyWithValue("scenarioName", expectedScenarioExecution.getScenarioName())
-            .hasFieldOrPropertyWithValue("status", UNKNOWN);
+            .satisfies(
+                s -> assertThat(s).extracting(ScenarioExecution::getExecutionId).isEqualTo(expectedScenarioExecution.getExecutionId()),
+                s -> assertThat(s).extracting(ScenarioExecution::getScenarioName).isEqualTo(expectedScenarioExecution.getScenarioName())
+            );
     }
 
     @Nested

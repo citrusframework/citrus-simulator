@@ -16,16 +16,9 @@
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://citrusframework.org/schemas/hello"
-    targetNamespace="http://citrusframework.org/schemas/hello"
+    xmlns="http://citrusframework.org/schemas/failure"
+    targetNamespace="http://citrusframework.org/schemas/failure"
     elementFormDefault="qualified">
 
-    <xs:element name="Hello" type="xs:string"/>
-    <xs:element name="HelloResponse" type="xs:string"/>
-
-    <xs:element name="GoodBye" type="xs:string"/>
-    <xs:element name="GoodByeResponse" type="xs:string"/>
-
-    <xs:element name="GoodNight" type="xs:string"/>
-    <xs:element name="GoodNightResponse" type="xs:string"/>
+    <xs:element name="Failure" type="xs:string"/>
 </xs:schema>

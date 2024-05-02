@@ -118,8 +118,8 @@ public class TestResultQueryService extends QueryService<TestResult> {
             if (criteria.getErrorMessage() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getErrorMessage(), TestResult_.errorMessage));
             }
-            if (criteria.getFailureStack() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getFailureStack(), TestResult_.failureStack));
+            if (criteria.getStackTrace() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getStackTrace(), TestResult_.stackTrace));
             }
             if (criteria.getFailureType() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getFailureType(), TestResult_.failureType));

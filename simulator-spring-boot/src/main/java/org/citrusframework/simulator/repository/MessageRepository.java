@@ -64,5 +64,5 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
 
     @Query("FROM Message WHERE messageId IN :messageIds")
     @EntityGraph(attributePaths = {"headers", "scenarioExecution"})
-    Page<Message> findAllWhereIdIn(@Param("messageIds") List<Long> messageIds, Pageable pageable);
+    Page<Message> findAllWhereMessageIdIn(@Param("messageIds") List<Long> messageIds, Pageable pageable);
 }

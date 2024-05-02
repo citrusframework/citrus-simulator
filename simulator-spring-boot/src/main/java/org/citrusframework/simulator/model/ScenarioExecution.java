@@ -17,20 +17,17 @@
 package org.citrusframework.simulator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -38,10 +35,11 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.NONE;
 
 /**
@@ -55,7 +53,6 @@ import static lombok.AccessLevel.NONE;
     indexes = {
         @Index(name = "idx_scenario_execution_scenario_name", columnList = "scenario_name"),
         @Index(name = "idx_scenario_execution_start_date", columnList = "start_date"),
-        @Index(name = "idx_scenario_execution_status", columnList = "status"),
     }
 )
 @ToString
@@ -81,31 +78,20 @@ public class ScenarioExecution implements Serializable {
     @Column(nullable = false, updatable = false)
     private String scenarioName;
 
-    /**
-     * Actual status as a numerical representation of {@link Status}
-     */
-    @NotNull
-    @Getter(NONE)
-    @Setter(NONE)
-    @Column(nullable = false)
-    private Integer status = Status.UNKNOWN.getId();
-
-    @Setter(NONE)
-    @Size(max = 1000)
-    @Column(length = 1000)
-    private String errorMessage;
+    @OneToOne(cascade = ALL)
+    private TestResult testResult;
 
     @OrderBy("name ASC")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"scenarioExecution"}, allowSetters = true)
     private final Set<ScenarioParameter> scenarioParameters = new HashSet<>();
 
     @OrderBy("actionId ASC")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     private final Set<ScenarioAction> scenarioActions = new HashSet<>();
 
     @OrderBy("messageId ASC")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scenarioExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
     private final Set<Message> scenarioMessages = new HashSet<>();
 
@@ -117,16 +103,10 @@ public class ScenarioExecution implements Serializable {
         this.executionId = executionId;
     }
 
-    public Status getStatus() {
-        return Status.fromId(status);
-    }
-
-    public void setStatus(Status status) {
-        this.status = status.id;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = EntityUtils.truncateToColumnSize(getClass(), "errorMessage", errorMessage);
+    public ScenarioExecution withTestResult(TestResult testResult) {
+        this.testResult = testResult;
+        testResult.setScenarioExecution(this);
+        return this;
     }
 
     public ScenarioExecution addScenarioParameter(ScenarioParameter scenarioParameter) {
@@ -163,25 +143,6 @@ public class ScenarioExecution implements Serializable {
         return getClass().hashCode();
     }
 
-    @Getter
-    public enum Status {
-
-        UNKNOWN(0), RUNNING(1), SUCCESS(2), FAILED(3);
-
-        private final int id;
-
-        Status(int id) {
-            this.id = id;
-        }
-
-        public static Status fromId(int id) {
-            return Arrays.stream(values())
-                .filter(status -> status.id == id)
-                .findFirst()
-                .orElse(Status.UNKNOWN);
-        }
-    }
-
     public static class ScenarioExecutionBuilder {
 
         private final ScenarioExecution scenarioExecution = new ScenarioExecution();
@@ -211,16 +172,6 @@ public class ScenarioExecution implements Serializable {
 
         public ScenarioExecutionBuilder scenarioName(String scenarioName) {
             scenarioExecution.setScenarioName(scenarioName);
-            return this;
-        }
-
-        public ScenarioExecutionBuilder status(Status status) {
-            scenarioExecution.setStatus(status);
-            return this;
-        }
-
-        public ScenarioExecutionBuilder errorMessage(String errorMessage) {
-            scenarioExecution.setErrorMessage(errorMessage);
             return this;
         }
     }

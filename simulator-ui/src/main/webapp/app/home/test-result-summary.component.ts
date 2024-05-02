@@ -5,12 +5,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { filter, map } from 'rxjs/operators';
 
-import { STATUS_FAILED, STATUS_SUCCESS } from 'app/entities/scenario-execution/scenario-execution.model';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
+
+import { STATUS_FAILURE, STATUS_SUCCESS } from 'app/entities/test-result/test-result.model';
 import { TestResultsByStatus, TestResultService } from 'app/entities/test-result/service/test-result.service';
+
 import SharedModule from 'app/shared/shared.module';
+
 import TestResultDeleteDialogComponent from './delete/test-result-delete-dialog.component';
-import { switchMap } from 'rxjs';
-import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
 
 @Component({
   standalone: true,
@@ -27,7 +29,7 @@ export default class TestResultSummaryComponent implements OnInit {
   failedPercentage = '0';
 
   statusSuccess = STATUS_SUCCESS;
-  statusFailed = STATUS_FAILED;
+  statusFailed = STATUS_FAILURE;
 
   constructor(
     private modalService: NgbModal,

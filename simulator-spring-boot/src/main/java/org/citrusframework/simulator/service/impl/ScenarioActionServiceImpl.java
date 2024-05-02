@@ -38,7 +38,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.citrusframework.simulator.service.impl.TestCaseUtil.getScenarioExecutionId;
+import static java.util.Collections.singletonList;
+import static org.citrusframework.simulator.service.TestCaseUtil.getScenarioExecutionId;
 
 /**
  * Service Implementation for managing {@link ScenarioAction}.
@@ -49,7 +50,7 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScenarioActionServiceImpl.class);
 
-    private static final List<String> IGNORE_TEST_ACTION_NAMES = List.of("create-variables");
+    private static final List<String> IGNORE_TEST_ACTION_NAMES = singletonList("create-variables");
 
     private final TimeProvider timeProvider = new TimeProvider();
 

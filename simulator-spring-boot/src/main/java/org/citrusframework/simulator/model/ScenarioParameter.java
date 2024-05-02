@@ -80,7 +80,7 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
 
     @Lob
     @NotEmpty
-    @Column(columnDefinition = "CLOB", name = "parameter_value", nullable = false, updatable = false)
+    @Column(columnDefinition = "TEXT", name = "parameter_value", nullable = false, updatable = false)
     private String value;
 
     @ManyToOne

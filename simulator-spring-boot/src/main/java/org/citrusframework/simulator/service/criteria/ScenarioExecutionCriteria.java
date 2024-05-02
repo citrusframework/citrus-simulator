@@ -61,8 +61,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private IntegerFilter status;
 
-    private StringFilter errorMessage;
-
     private LongFilter scenarioActionsId;
 
     private LongFilter scenarioMessagesId;
@@ -82,7 +80,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.endDate = other.endDate == null ? null : other.endDate.copy();
         this.scenarioName = other.scenarioName == null ? null : other.scenarioName.copy();
         this.status = other.status == null ? null : other.status.copy();
-        this.errorMessage = other.errorMessage == null ? null : other.errorMessage.copy();
         this.scenarioActionsId = other.scenarioActionsId == null ? null : other.scenarioActionsId.copy();
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
         this.scenarioParametersId = other.scenarioParametersId == null ? null : other.scenarioParametersId.copy();
@@ -130,13 +127,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         return status;
     }
 
-    public StringFilter errorMessage() {
-        if (errorMessage == null) {
-            errorMessage = new StringFilter();
-        }
-        return errorMessage;
-    }
-
     public LongFilter scenarioActionsId() {
         if (scenarioActionsId == null) {
             scenarioActionsId = new LongFilter();
@@ -170,7 +160,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(endDate, scenarioExecutionCriteria.endDate)
             .append(scenarioName, scenarioExecutionCriteria.scenarioName)
             .append(status, scenarioExecutionCriteria.status)
-            .append(errorMessage, scenarioExecutionCriteria.errorMessage)
             .append(scenarioActionsId, scenarioExecutionCriteria.scenarioActionsId)
             .append(scenarioMessagesId, scenarioExecutionCriteria.scenarioMessagesId)
             .append(scenarioParametersId, scenarioExecutionCriteria.scenarioParametersId)
@@ -186,7 +175,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(endDate)
             .append(scenarioName)
             .append(status)
-            .append(errorMessage)
             .append(scenarioActionsId)
             .append(scenarioMessagesId)
             .append(scenarioParametersId)

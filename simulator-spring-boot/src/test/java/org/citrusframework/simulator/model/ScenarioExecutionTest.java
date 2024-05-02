@@ -16,11 +16,63 @@
 
 package org.citrusframework.simulator.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class ScenarioExecutionTest {
+
+    private ScenarioExecution fixture;
+
+    @BeforeEach
+    void beforeEachSetup() {
+        fixture = new ScenarioExecution();
+    }
+
+    @Test
+    void withTestResult() {
+        var testResult = mock(TestResult.class);
+
+        fixture.withTestResult(testResult);
+
+        assertThat(fixture)
+            .extracting(ScenarioExecution::getTestResult)
+            .isEqualTo(testResult);
+        verify(testResult).setScenarioExecution(fixture);
+    }
+
+    @Test
+    void addScenarioParameter() {
+        var scenarioParameter = mock(ScenarioParameter.class);
+
+        fixture.addScenarioParameter(scenarioParameter);
+
+        assertThat(fixture.getScenarioParameters()).containsExactly(scenarioParameter);
+        verify(scenarioParameter).setScenarioExecution(fixture);
+    }
+
+    @Test
+    void addScenarioAction() {
+        var scenarioAction = mock(ScenarioAction.class);
+
+        fixture.addScenarioAction(scenarioAction);
+
+        assertThat(fixture.getScenarioActions()).containsExactly(scenarioAction);
+        verify(scenarioAction).setScenarioExecution(fixture);
+    }
+
+    @Test
+    void addScenarioMessage() {
+        var message = mock(Message.class);
+
+        fixture.addScenarioMessage(message);
+
+        assertThat(fixture.getScenarioMessages()).containsExactly(message);
+        verify(message).setScenarioExecution(fixture);
+    }
 
     @Test
     void equalsVerifier() throws Exception {

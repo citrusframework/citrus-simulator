@@ -28,13 +28,13 @@
         <dd>
           <span>{{ scenarioExecution.scenarioName }}</span>
         </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status</span></dt>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
         <dd>
-          <span>{{ scenarioExecution.status }}</span>
+          <span>{{ scenarioExecution.testResult?.status }}</span>
         </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.errorMessage">Error Message</span></dt>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
         <dd>
-          <span>{{ scenarioExecution.errorMessage }}</span>
+          <span>{{ scenarioExecution.testResult?.errorMessage }}</span>
         </dd>
       </dl>
 

@@ -89,16 +89,16 @@ class TestResultCriteriaTest {
     }
 
     @Test
-    void testFailureStack() {
-        assertNull(criteria.getFailureStack());
+    void testStackTrace() {
+        assertNull(criteria.getStackTrace());
 
-        StringFilter failureStackFilter = criteria.failureStack();
-        assertNotNull(failureStackFilter);
-        assertSame(failureStackFilter, criteria.getFailureStack());
+        StringFilter stackTraceFilter = criteria.stackTrace();
+        assertNotNull(stackTraceFilter);
+        assertSame(stackTraceFilter, criteria.getStackTrace());
 
         StringFilter mockFailureStackFilter = mock(StringFilter.class);
-        criteria.setFailureStack(mockFailureStackFilter);
-        assertSame(mockFailureStackFilter, criteria.failureStack());
+        criteria.setStackTrace(mockFailureStackFilter);
+        assertSame(mockFailureStackFilter, criteria.stackTrace());
     }
 
     @Test

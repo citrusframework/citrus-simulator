@@ -56,7 +56,7 @@
           </th>
           <th scope="col" jhiSortBy="failureStack">
             <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.failureStack">Failure Stack</span>
+              <span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span>
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
@@ -94,7 +94,7 @@
           <td>{{ testResult.testName }}</td>
           <td>{{ testResult.className }}</td>
           <td>{{ testResult.errorMessage }}</td>
-          <td>{{ testResult.failureStack }}</td>
+          <td>{{ testResult.stackTrace }}</td>
           <td>{{ testResult.failureType }}</td>
           <td>{{ testResult.createdDate | formatMediumDatetime }}</td>
           <td>{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>

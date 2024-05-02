@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -31,18 +30,6 @@ class TestResultServiceImplTest {
     @BeforeEach
     void beforeEachSetup() {
         fixture = new TestResultServiceImpl(testResultRepositoryMock);
-    }
-
-    @Test
-    void testTransformAndSave() {
-        org.citrusframework.TestResult citrusTestResult = org.citrusframework.TestResult.success("TestResult", TestResultServiceImpl.class.getSimpleName());
-
-        TestResult testResult = new TestResult(citrusTestResult);
-        doReturn(testResult).when(testResultRepositoryMock).save(any(TestResult.class));
-
-        TestResult result = fixture.transformAndSave(citrusTestResult);
-
-        assertEquals(testResult, result);
     }
 
     @Test

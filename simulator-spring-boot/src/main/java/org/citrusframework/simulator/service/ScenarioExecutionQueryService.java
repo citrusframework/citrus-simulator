@@ -30,6 +30,7 @@ import org.citrusframework.simulator.model.ScenarioAction_;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioExecution_;
 import org.citrusframework.simulator.model.ScenarioParameter_;
+import org.citrusframework.simulator.model.TestResult_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.service.filter.Filter;
@@ -58,6 +59,7 @@ import static java.util.regex.Pattern.compile;
 import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.MessageHeaderFilter.fromFilterPattern;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.Operator.parseOperator;
+import static org.citrusframework.simulator.service.ScenarioExecutionService.restrictToDtoProperties;
 import static org.citrusframework.util.StringUtils.isEmpty;
 import static org.springframework.data.domain.Pageable.unpaged;
 
@@ -121,8 +123,13 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
         )
             .getResultList();
 
-        var scenarioExecutions = scenarioExecutionRepository.findAllWhereIdIn(scenarioExecutionIds, unpaged(page.getSort()));
-        return new PageImpl<>(scenarioExecutions.getContent(), page, scenarioExecutionRepository.count(specification));
+        var scenarioExecutions = scenarioExecutionRepository.findAllWhereExecutionIdIn(scenarioExecutionIds, unpaged(page.getSort()));
+        return new PageImpl<>(
+            scenarioExecutions.stream()
+                .map(scenarioExecution -> restrictToDtoProperties(scenarioExecution, entityManager))
+                .toList(),
+            page,
+            scenarioExecutionRepository.count(specification));
     }
 
     /**
@@ -163,11 +170,14 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
             if (nonNull(criteria.getScenarioName())) {
                 specification = specification.and(buildStringSpecification(criteria.getScenarioName(), ScenarioExecution_.scenarioName));
             }
-            if (nonNull(criteria.getStatus())) {
-                specification = specification.and(buildRangeSpecification(criteria.getStatus(), ScenarioExecution_.status));
-            }
-            if (nonNull(criteria.getErrorMessage())) {
-                specification = specification.and(buildStringSpecification(criteria.getErrorMessage(), ScenarioExecution_.errorMessage));
+            if (criteria.getStatus() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.status(),
+                            root -> root.join(ScenarioExecution_.testResult, JoinType.LEFT).get(TestResult_.status)
+                        )
+                    );
             }
             if (nonNull(criteria.getScenarioActionsId())) {
                 specification =

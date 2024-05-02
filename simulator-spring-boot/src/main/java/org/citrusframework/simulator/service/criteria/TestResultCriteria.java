@@ -61,7 +61,7 @@ public class TestResultCriteria implements Serializable, Criteria {
 
     private StringFilter errorMessage;
 
-    private StringFilter failureStack;
+    private StringFilter stackTrace;
 
     private StringFilter failureType;
 
@@ -82,7 +82,7 @@ public class TestResultCriteria implements Serializable, Criteria {
         this.testName = other.testName == null ? null : other.testName.copy();
         this.className = other.className == null ? null : other.className.copy();
         this.errorMessage = other.errorMessage == null ? null : other.errorMessage.copy();
-        this.failureStack = other.failureStack == null ? null : other.failureStack.copy();
+        this.stackTrace = other.stackTrace == null ? null : other.stackTrace.copy();
         this.failureType = other.failureType == null ? null : other.failureType.copy();
         this.createdDate = other.createdDate == null ? null : other.createdDate.copy();
         this.lastModifiedDate = other.lastModifiedDate == null ? null : other.lastModifiedDate.copy();
@@ -130,11 +130,11 @@ public class TestResultCriteria implements Serializable, Criteria {
         return errorMessage;
     }
 
-    public StringFilter failureStack() {
-        if (failureStack == null) {
-            failureStack = new StringFilter();
+    public StringFilter stackTrace() {
+        if (stackTrace == null) {
+            stackTrace = new StringFilter();
         }
-        return failureStack;
+        return stackTrace;
     }
 
     public StringFilter failureType() {
@@ -177,7 +177,7 @@ public class TestResultCriteria implements Serializable, Criteria {
             .append(testName, testResultCriteria.testName)
             .append(className, testResultCriteria.className)
             .append(errorMessage, testResultCriteria.errorMessage)
-            .append(failureStack, testResultCriteria.failureStack)
+            .append(stackTrace, testResultCriteria.stackTrace)
             .append(failureType, testResultCriteria.failureType)
             .append(createdDate, testResultCriteria.createdDate)
             .append(lastModifiedDate, testResultCriteria.lastModifiedDate)
@@ -194,7 +194,7 @@ public class TestResultCriteria implements Serializable, Criteria {
             .append(testName)
             .append(className)
             .append(errorMessage)
-            .append(failureStack)
+            .append(stackTrace)
             .append(failureType)
             .append(createdDate)
             .append(lastModifiedDate)

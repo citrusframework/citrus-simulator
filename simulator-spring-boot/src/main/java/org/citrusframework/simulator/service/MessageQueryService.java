@@ -76,7 +76,7 @@ public class MessageQueryService extends QueryService<Message> {
         )
             .getResultList();
 
-        var messages = messageRepository.findAllWhereIdIn(messageIds, unpaged(page.getSort()));
+        var messages = messageRepository.findAllWhereMessageIdIn(messageIds, unpaged(page.getSort()));
         return new PageImpl<>(messages.getContent(), page, messageRepository.count(specification));
     }
 

@@ -16,11 +16,7 @@ import SharedModule from 'app/shared/shared.module';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { FilterOptions, IFilterOptions } from 'app/shared/filter';
 
-import {
-  IScenarioExecutionStatus,
-  scenarioExecutionStatusFromId,
-  scenarioExecutionStatusFromName,
-} from 'app/entities/scenario-execution/scenario-execution.model';
+import { ITestResultStatus, testResultStatusFromId, testResultStatusFromName } from 'app/entities/test-result/test-result.model';
 
 import HeaderFilterDialogComponent, { ComparatorType, HeaderFilter, ValueType } from './header-filter-dialog.component';
 import HeaderFilterHelpDialogComponent from './header-filter-help-dialog.component';
@@ -29,7 +25,7 @@ type ScenarioExecutionFilter = {
   nameContains: string | undefined;
   fromDate: dayjs.Dayjs | undefined;
   toDate: dayjs.Dayjs | undefined;
-  statusIn: IScenarioExecutionStatus | undefined;
+  statusIn: ITestResultStatus | undefined;
   headerFilter: string | undefined;
 };
 
@@ -165,7 +161,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
                 nameContains: formValue.nameContains,
                 fromDate: formValue.fromDate ? dayjs(formValue.fromDate) : undefined,
                 toDate: formValue.toDate ? dayjs(formValue.toDate) : undefined,
-                statusIn: formValue.statusIn ? scenarioExecutionStatusFromName(formValue.statusIn) : undefined,
+                statusIn: formValue.statusIn ? testResultStatusFromName(formValue.statusIn) : undefined,
                 headerFilter: formValue.headerFilter,
               }),
             ),
@@ -195,7 +191,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
           this.filterForm.controls.toDate.markAsDirty();
           break;
         case 'status':
-          this.filterForm.controls.statusIn.setValue(scenarioExecutionStatusFromId(Number(filterOption.values[0])).name);
+          this.filterForm.controls.statusIn.setValue(testResultStatusFromId(Number(filterOption.values[0])).name);
           this.filterForm.controls.statusIn.markAsDirty();
           break;
         case 'headers':

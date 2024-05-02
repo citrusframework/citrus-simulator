@@ -45,12 +45,6 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
     @Override
-    public TestResult transformAndSave(org.citrusframework.TestResult testResult) {
-        logger.debug("Request to save citrus TestResult : {}", testResult);
-        return save(new TestResult(testResult));
-    }
-
-    @Override
     public TestResult save(TestResult testResult) {
         logger.debug("Request to save TestResult : {}", testResult);
         return testResultRepository.save(testResult);

@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 /**
  * Service Implementation for managing {@link Message§}.
  */
@@ -94,7 +96,7 @@ public class MessageServiceImpl implements MessageService {
                     scenarioExecution.addScenarioMessage(message);
                     return scenarioExecution;
                 })
-                .orElseThrow(() -> new CitrusRuntimeException(String.format("Error while attaching Message to ScenarioExecution %s: Did not find corresponding ScenarioExecution!", scenarioExecutionId)))
+                .orElseThrow(() -> new CitrusRuntimeException(format("Error while attaching Message to ScenarioExecution %s: Did not find corresponding ScenarioExecution!", scenarioExecutionId)))
         );
 
         return message;
