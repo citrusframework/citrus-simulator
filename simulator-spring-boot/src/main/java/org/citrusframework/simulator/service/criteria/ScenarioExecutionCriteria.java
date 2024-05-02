@@ -18,14 +18,17 @@ package org.citrusframework.simulator.service.criteria;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.ScenarioExecution} entity. This class is used
@@ -41,10 +44,11 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@ToString
 @ParameterObject
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private LongFilter executionId;
@@ -156,48 +160,37 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ScenarioExecutionCriteria scenarioExecutionCriteria)) {
             return false;
         }
-        final ScenarioExecutionCriteria that = (ScenarioExecutionCriteria) o;
-        return (
-            Objects.equals(executionId, that.executionId) &&
-                Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(scenarioName, that.scenarioName) &&
-                Objects.equals(status, that.status) &&
-                Objects.equals(errorMessage, that.errorMessage) &&
-                Objects.equals(scenarioActionsId, that.scenarioActionsId) &&
-                Objects.equals(scenarioMessagesId, that.scenarioMessagesId) &&
-                Objects.equals(scenarioParametersId, that.scenarioParametersId) &&
-                Objects.equals(headers, that.headers) &&
-                Objects.equals(distinct, that.distinct)
-        );
+
+        return new EqualsBuilder()
+            .append(executionId, scenarioExecutionCriteria.executionId)
+            .append(startDate, scenarioExecutionCriteria.startDate)
+            .append(endDate, scenarioExecutionCriteria.endDate)
+            .append(scenarioName, scenarioExecutionCriteria.scenarioName)
+            .append(status, scenarioExecutionCriteria.status)
+            .append(errorMessage, scenarioExecutionCriteria.errorMessage)
+            .append(scenarioActionsId, scenarioExecutionCriteria.scenarioActionsId)
+            .append(scenarioMessagesId, scenarioExecutionCriteria.scenarioMessagesId)
+            .append(scenarioParametersId, scenarioExecutionCriteria.scenarioParametersId)
+            .append(distinct, scenarioExecutionCriteria.distinct)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(executionId, startDate, endDate, scenarioName, status, errorMessage, scenarioActionsId, scenarioMessagesId, scenarioParametersId, headers, distinct);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ScenarioExecutionCriteria{" +
-            (executionId != null ? "executionId=" + executionId + ", " : "") +
-            (startDate != null ? "startDate=" + startDate + ", " : "") +
-            (endDate != null ? "endDate=" + endDate + ", " : "") +
-            (scenarioName != null ? "scenarioName=" + scenarioName + ", " : "") +
-            (status != null ? "status=" + status + ", " : "") +
-            (errorMessage != null ? "errorMessage=" + errorMessage + ", " : "") +
-            (scenarioActionsId != null ? "scenarioActionsId=" + scenarioActionsId + ", " : "") +
-            (scenarioMessagesId != null ? "scenarioMessagesId=" + scenarioMessagesId + ", " : "") +
-            (scenarioMessagesId != null ? "scenarioParametersId=" + scenarioParametersId + ", " : "") +
-            (headers != null ? "headers=" + headers + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+        return new HashCodeBuilder()
+            .append(executionId)
+            .append(startDate)
+            .append(endDate)
+            .append(scenarioName)
+            .append(status)
+            .append(errorMessage)
+            .append(scenarioActionsId)
+            .append(scenarioMessagesId)
+            .append(scenarioParametersId)
+            .append(distinct)
+            .toHashCode();
     }
 }

@@ -16,13 +16,18 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.TestParameter} entity. This class is used
@@ -36,10 +41,13 @@ import java.util.Objects;
  * specific {@link org.citrusframework.simulator.service.filter.Filter} class are used, we need to use fix type specific
  * filters.
  */
+@Getter
+@Setter
+@ToString
 @ParameterObject
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class TestParameterCriteria implements Serializable, Criteria {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private StringFilter key;
@@ -54,7 +62,8 @@ public class TestParameterCriteria implements Serializable, Criteria {
 
     private Boolean distinct;
 
-    public TestParameterCriteria() {}
+    public TestParameterCriteria() {
+    }
 
     public TestParameterCriteria(TestParameterCriteria other) {
         this.key = other.key == null ? null : other.key.copy();
@@ -70,23 +79,11 @@ public class TestParameterCriteria implements Serializable, Criteria {
         return new TestParameterCriteria(this);
     }
 
-    public StringFilter getKey() {
-        return key;
-    }
-
     public StringFilter key() {
         if (key == null) {
             key = new StringFilter();
         }
         return key;
-    }
-
-    public void setKey(StringFilter key) {
-        this.key = key;
-    }
-
-    public StringFilter getValue() {
-        return value;
     }
 
     public StringFilter value() {
@@ -96,27 +93,11 @@ public class TestParameterCriteria implements Serializable, Criteria {
         return value;
     }
 
-    public void setValue(StringFilter value) {
-        this.value = value;
-    }
-
-    public InstantFilter getCreatedDate() {
-        return createdDate;
-    }
-
     public InstantFilter createdDate() {
         if (createdDate == null) {
             createdDate = new InstantFilter();
         }
         return createdDate;
-    }
-
-    public void setCreatedDate(InstantFilter createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public InstantFilter getLastModifiedDate() {
-        return lastModifiedDate;
     }
 
     public InstantFilter lastModifiedDate() {
@@ -126,14 +107,6 @@ public class TestParameterCriteria implements Serializable, Criteria {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(InstantFilter lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public LongFilter getTestResultId() {
-        return testResultId;
-    }
-
     public LongFilter testResultId() {
         if (testResultId == null) {
             testResultId = new LongFilter();
@@ -141,52 +114,31 @@ public class TestParameterCriteria implements Serializable, Criteria {
         return testResultId;
     }
 
-    public void setTestResultId(LongFilter testResultId) {
-        this.testResultId = testResultId;
-    }
-
-    public Boolean getDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(Boolean distinct) {
-        this.distinct = distinct;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof TestParameterCriteria testParameterCriteria)) {
             return false;
         }
-        final TestParameterCriteria that = (TestParameterCriteria) o;
-        return (
-            Objects.equals(key, that.key) &&
-            Objects.equals(value, that.value) &&
-            Objects.equals(createdDate, that.createdDate) &&
-            Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
-            Objects.equals(testResultId, that.testResultId) &&
-            Objects.equals(distinct, that.distinct)
-        );
+
+        return new EqualsBuilder()
+            .append(key, testParameterCriteria.key)
+            .append(value, testParameterCriteria.value)
+            .append(createdDate, testParameterCriteria.createdDate)
+            .append(lastModifiedDate, testParameterCriteria.lastModifiedDate)
+            .append(testResultId, testParameterCriteria.testResultId)
+            .append(distinct, testParameterCriteria.distinct)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, value, createdDate, lastModifiedDate, testResultId, distinct);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "TestParameterCriteria{" +
-            (key != null ? "key=" + key + ", " : "") +
-            (value != null ? "value=" + value + ", " : "") +
-            (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
-            (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
-            (testResultId != null ? "testResultId=" + testResultId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+        return new HashCodeBuilder()
+            .append(key)
+            .append(value)
+            .append(createdDate)
+            .append(lastModifiedDate)
+            .append(testResultId)
+            .append(distinct)
+            .toHashCode();
     }
 }

@@ -16,14 +16,19 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.Message} entity. This class is used
@@ -37,10 +42,13 @@ import java.util.Objects;
  * specific {@link org.citrusframework.simulator.service.filter.Filter} class are used, we need to use fix type specific
  * filters.
  */
+@Getter
+@Setter
+@ToString
 @ParameterObject
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class MessageCriteria implements Serializable, Criteria {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private LongFilter messageId;
@@ -81,23 +89,11 @@ public class MessageCriteria implements Serializable, Criteria {
         return new MessageCriteria(this);
     }
 
-    public LongFilter getMessageId() {
-        return messageId;
-    }
-
     public LongFilter messageId() {
         if (messageId == null) {
             messageId = new LongFilter();
         }
         return messageId;
-    }
-
-    public void setMessageId(LongFilter messageId) {
-        this.messageId = messageId;
-    }
-
-    public IntegerFilter getDirection() {
-        return direction;
     }
 
     public IntegerFilter direction() {
@@ -107,27 +103,11 @@ public class MessageCriteria implements Serializable, Criteria {
         return direction;
     }
 
-    public void setDirection(IntegerFilter direction) {
-        this.direction = direction;
-    }
-
-    public StringFilter getPayload() {
-        return payload;
-    }
-
     public StringFilter payload() {
         if (payload == null) {
             payload = new StringFilter();
         }
         return payload;
-    }
-
-    public void setPayload(StringFilter payload) {
-        this.payload = payload;
-    }
-
-    public StringFilter getCitrusMessageId() {
-        return citrusMessageId;
     }
 
     public StringFilter citrusMessageId() {
@@ -137,27 +117,11 @@ public class MessageCriteria implements Serializable, Criteria {
         return citrusMessageId;
     }
 
-    public void setCitrusMessageId(StringFilter citrusMessageId) {
-        this.citrusMessageId = citrusMessageId;
-    }
-
-    public LongFilter getHeadersId() {
-        return headersId;
-    }
-
     public LongFilter headersId() {
         if (headersId == null) {
             headersId = new LongFilter();
         }
         return headersId;
-    }
-
-    public void setHeadersId(LongFilter headersId) {
-        this.headersId = headersId;
-    }
-
-    public LongFilter getScenarioExecutionId() {
-        return scenarioExecutionId;
     }
 
     public LongFilter scenarioExecutionId() {
@@ -167,27 +131,11 @@ public class MessageCriteria implements Serializable, Criteria {
         return scenarioExecutionId;
     }
 
-    public void setScenarioExecutionId(LongFilter scenarioExecutionId) {
-        this.scenarioExecutionId = scenarioExecutionId;
-    }
-
-    public InstantFilter getCreatedDate() {
-        return createdDate;
-    }
-
     public InstantFilter createdDate() {
         if (createdDate == null) {
             createdDate = new InstantFilter();
         }
         return createdDate;
-    }
-
-    public void setCreatedDate(InstantFilter createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public InstantFilter getLastModifiedDate() {
-        return lastModifiedDate;
     }
 
     public InstantFilter lastModifiedDate() {
@@ -197,58 +145,37 @@ public class MessageCriteria implements Serializable, Criteria {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(InstantFilter lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public Boolean getDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(Boolean distinct) {
-        this.distinct = distinct;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof MessageCriteria messageCriteria)) {
             return false;
         }
-        final MessageCriteria that = (MessageCriteria) o;
-        return (
-            Objects.equals(messageId, that.messageId) &&
-                Objects.equals(direction, that.direction) &&
-                Objects.equals(payload, that.payload) &&
-                Objects.equals(citrusMessageId, that.citrusMessageId) &&
-                Objects.equals(headersId, that.headersId) &&
-                Objects.equals(scenarioExecutionId, that.scenarioExecutionId) &&
-                Objects.equals(createdDate, that.createdDate) &&
-                Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
-                Objects.equals(distinct, that.distinct)
-        );
+
+        return new EqualsBuilder()
+            .append(messageId, messageCriteria.messageId)
+            .append(direction, messageCriteria.messageId)
+            .append(payload, messageCriteria.payload)
+            .append(citrusMessageId, messageCriteria.citrusMessageId)
+            .append(headersId, messageCriteria.headersId)
+            .append(scenarioExecutionId, messageCriteria.scenarioExecutionId)
+            .append(createdDate, messageCriteria.createdDate)
+            .append(lastModifiedDate, messageCriteria.lastModifiedDate)
+            .append(distinct, messageCriteria.distinct)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(messageId, direction, payload, citrusMessageId, headersId, scenarioExecutionId, createdDate, lastModifiedDate, distinct);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "MessageCriteria{" +
-            (messageId != null ? "messageId=" + messageId + ", " : "") +
-            (direction != null ? "direction=" + direction + ", " : "") +
-            (payload != null ? "payload=" + payload + ", " : "") +
-            (citrusMessageId != null ? "citrusMessageId=" + citrusMessageId + ", " : "") +
-            (headersId != null ? "headersId=" + headersId + ", " : "") +
-            (scenarioExecutionId != null ? "scenarioExecutionId=" + scenarioExecutionId + ", " : "") +
-            (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
-            (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+        return new HashCodeBuilder()
+            .append(messageId)
+            .append(direction)
+            .append(payload)
+            .append(citrusMessageId)
+            .append(headersId)
+            .append(scenarioExecutionId)
+            .append(createdDate)
+            .append(lastModifiedDate)
+            .append(distinct)
+            .toHashCode();
     }
 }

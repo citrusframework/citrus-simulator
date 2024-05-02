@@ -16,13 +16,18 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.MessageHeader} entity. This class is used
@@ -36,10 +41,13 @@ import java.util.Objects;
  * specific {@link org.citrusframework.simulator.service.filter.Filter} class are used, we need to use fix type specific
  * filters.
  */
+@Getter
+@Setter
+@ToString
 @ParameterObject
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class MessageHeaderCriteria implements Serializable, Criteria {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private LongFilter headerId;
@@ -56,7 +64,8 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
 
     private Boolean distinct;
 
-    public MessageHeaderCriteria() {}
+    public MessageHeaderCriteria() {
+    }
 
     public MessageHeaderCriteria(MessageHeaderCriteria other) {
         this.headerId = other.headerId == null ? null : other.headerId.copy();
@@ -73,23 +82,11 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         return new MessageHeaderCriteria(this);
     }
 
-    public LongFilter getHeaderId() {
-        return headerId;
-    }
-
     public LongFilter headerId() {
         if (headerId == null) {
             headerId = new LongFilter();
         }
         return headerId;
-    }
-
-    public void setHeaderId(LongFilter headerId) {
-        this.headerId = headerId;
-    }
-
-    public StringFilter getName() {
-        return name;
     }
 
     public StringFilter name() {
@@ -99,27 +96,11 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         return name;
     }
 
-    public void setName(StringFilter name) {
-        this.name = name;
-    }
-
-    public StringFilter getValue() {
-        return value;
-    }
-
     public StringFilter value() {
         if (value == null) {
             value = new StringFilter();
         }
         return value;
-    }
-
-    public void setValue(StringFilter value) {
-        this.value = value;
-    }
-
-    public InstantFilter getCreatedDate() {
-        return createdDate;
     }
 
     public InstantFilter createdDate() {
@@ -129,27 +110,11 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         return createdDate;
     }
 
-    public void setCreatedDate(InstantFilter createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public InstantFilter getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
     public InstantFilter lastModifiedDate() {
         if (lastModifiedDate == null) {
             lastModifiedDate = new InstantFilter();
         }
         return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(InstantFilter lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public LongFilter getMessageId() {
-        return messageId;
     }
 
     public LongFilter messageId() {
@@ -159,54 +124,33 @@ public class MessageHeaderCriteria implements Serializable, Criteria {
         return messageId;
     }
 
-    public void setMessageId(LongFilter messageId) {
-        this.messageId = messageId;
-    }
-
-    public Boolean getDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(Boolean distinct) {
-        this.distinct = distinct;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof MessageHeaderCriteria messageHeaderCriteria)) {
             return false;
         }
-        final MessageHeaderCriteria that = (MessageHeaderCriteria) o;
-        return (
-            Objects.equals(headerId, that.headerId) &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(value, that.value) &&
-            Objects.equals(createdDate, that.createdDate) &&
-            Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
-            Objects.equals(messageId, that.messageId) &&
-            Objects.equals(distinct, that.distinct)
-        );
+
+        return new EqualsBuilder()
+            .append(headerId, messageHeaderCriteria.headerId)
+            .append(name, messageHeaderCriteria.name)
+            .append(value, messageHeaderCriteria.value)
+            .append(createdDate, messageHeaderCriteria.createdDate)
+            .append(lastModifiedDate, messageHeaderCriteria.lastModifiedDate)
+            .append(messageId, messageHeaderCriteria.messageId)
+            .append(distinct, messageHeaderCriteria.distinct)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(headerId, name, value, createdDate, lastModifiedDate, messageId, distinct);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "MessageHeaderCriteria{" +
-            (headerId != null ? "headerId=" + headerId + ", " : "") +
-            (name != null ? "name=" + name + ", " : "") +
-            (value != null ? "value=" + value + ", " : "") +
-            (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
-            (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
-            (messageId != null ? "messageId=" + messageId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+        return new HashCodeBuilder()
+            .append(headerId)
+            .append(name)
+            .append(value)
+            .append(createdDate)
+            .append(lastModifiedDate)
+            .append(messageId)
+            .append(distinct)
+            .toHashCode();
     }
 }
