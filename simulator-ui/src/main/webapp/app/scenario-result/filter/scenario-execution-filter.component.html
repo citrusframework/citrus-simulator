@@ -20,16 +20,16 @@
         <div class="form-group col-md-6">
           <mdb-form-control>
             <select mdbInput class="form-control form-select" id="statusIn" formControlName="statusIn">
-              <option value="" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusAll">All</option>
-              <option value="RUNNING" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusRunning">RUNNING</option>
-              <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusSuccess">SUCCESS</option>
-              <option value="FAILED" jhiTranslate="citrusSimulatorApp.scenarioExecution.statusFailed">FAILED</option>
+              <option value="" jhiTranslate="citrusSimulatorApp.testResult.statusAll">All</option>
+              <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.testResult.statusSuccess">SUCCESS</option>
+              <option value="FAILURE" jhiTranslate="citrusSimulatorApp.testResult.statusFailure">FAILURE</option>
+              <option value="SKIP" jhiTranslate="citrusSimulatorApp.testResult.statusSkip">SKIP</option>
             </select>
             <label
               mdbLabel
               for="statusIn"
               class="form-label"
-              jhiTranslate="citrusSimulatorApp.scenarioExecution.status"
+              jhiTranslate="citrusSimulatorApp.testResult.status"
               [class.label-dirty-input]="filterForm.get('statusIn')?.dirty"
               >Status</label
             >

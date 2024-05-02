@@ -50,8 +50,6 @@ class ScenarioExecutionCriteriaTest {
         assertSame(mockStartDateFilter, fixture.startDate());
     }
 
-    // Add more test methods following the same pattern for all the other attributes...
-
     @Test
     void testScenarioName() {
         assertNull(fixture.getScenarioName());
@@ -76,19 +74,6 @@ class ScenarioExecutionCriteriaTest {
         IntegerFilter mockStatusFilter = mock(IntegerFilter.class);
         fixture.setStatus(mockStatusFilter);
         assertSame(mockStatusFilter, fixture.status());
-    }
-
-    @Test
-    void testErrorMessage() {
-        assertNull(fixture.getErrorMessage());
-
-        StringFilter errorMessageFilter = fixture.errorMessage();
-        assertNotNull(errorMessageFilter);
-        assertSame(errorMessageFilter, fixture.getErrorMessage());
-
-        StringFilter mockErrorMessageFilter = mock(StringFilter.class);
-        fixture.setErrorMessage(mockErrorMessageFilter);
-        assertSame(mockErrorMessageFilter, fixture.errorMessage());
     }
 
     @Test

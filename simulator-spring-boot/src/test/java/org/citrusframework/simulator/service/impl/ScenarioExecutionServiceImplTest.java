@@ -16,10 +16,11 @@
 
 package org.citrusframework.simulator.service.impl;
 
-import org.citrusframework.TestCase;
+import jakarta.persistence.EntityManager;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -34,28 +35,32 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.String.format;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.data.domain.Pageable.unpaged;
 
 @ExtendWith(MockitoExtension.class)
 class ScenarioExecutionServiceImplTest {
 
     @Mock
+    private EntityManager entityManagerMock;
+
+    @Mock
     private ScenarioExecutionRepository scenarioExecutionRepositoryMock;
 
     @Mock
-    TimeProvider timeProviderMock;
+    private TimeProvider timeProviderMock;
 
     private ScenarioExecution sampleScenarioExecution;
 
@@ -65,7 +70,7 @@ class ScenarioExecutionServiceImplTest {
     void beforeEachSetup() {
         sampleScenarioExecution = new ScenarioExecution();
 
-        fixture = new ScenarioExecutionServiceImpl(scenarioExecutionRepositoryMock);
+        fixture = new ScenarioExecutionServiceImpl(entityManagerMock, scenarioExecutionRepositoryMock);
         ReflectionTestUtils.setField(fixture, "timeProvider", timeProviderMock, TimeProvider.class);
     }
 
@@ -129,7 +134,6 @@ class ScenarioExecutionServiceImplTest {
 
         assertEquals(scenarioName, result.getScenarioName());
         assertEquals(now, result.getStartDate());
-        assertEquals(ScenarioExecution.Status.RUNNING, result.getStatus());
         assertThat(result.getScenarioParameters())
             .hasSize(1)
             .containsExactly(scenarioParameter);
@@ -142,65 +146,41 @@ class ScenarioExecutionServiceImplTest {
         private final Instant now = Instant.now();
 
         @Mock
-        private TestCase testCaseMock;
-
-        @BeforeEach
-        void beforeEachSetup() {
-            Map<String, String> variableDefinitions = Map.of(ScenarioExecution.EXECUTION_ID, String.valueOf(scenarioExecutionId));
-            doReturn(variableDefinitions).when(testCaseMock).getVariableDefinitions();
-        }
+        private TestResult testResultMock;
 
         @Test
-        void successful() {
-            preparePersistenceLayerMocks();
-
-            ScenarioExecution result = fixture.completeScenarioExecutionSuccess(testCaseMock);
-
-            assertEquals(ScenarioExecution.Status.SUCCESS, result.getStatus());
-            assertEquals(now, result.getEndDate());
-            assertNull(result.getErrorMessage());
-        }
-
-        @Test
-        void successfulWithNoScenarioExecutionFound() {
-            String testName = "testCase";
-            doReturn(testName).when(testCaseMock).getName();
-
-            doReturn(Optional.empty()).when(scenarioExecutionRepositoryMock).findOneByExecutionId(scenarioExecutionId);
-
-            CitrusRuntimeException exception = assertThrows(CitrusRuntimeException.class, () -> fixture.completeScenarioExecutionSuccess(testCaseMock));
-            assertEquals(String.format("Error while completing ScenarioExecution for test %s", testName), exception.getMessage());
-        }
-
-        @Test
-        void failed() {
-            preparePersistenceLayerMocks();
-
-            Throwable cause = new RuntimeException("Failure cause");
-            ScenarioExecution result = fixture.completeScenarioExecutionFailure(testCaseMock, cause);
-
-            assertEquals(ScenarioExecution.Status.FAILED, result.getStatus());
-            assertEquals(now, result.getEndDate());
-            assertTrue(result.getErrorMessage().startsWith("java.lang.RuntimeException: Failure cause"), "Error message must contain cause!");
-
-            verify(scenarioExecutionRepositoryMock).save(result);
-        }
-
-        @Test
-        void failedWithNoScenarioExecutionFound() {
-            String testName = "testCase";
-            doReturn(testName).when(testCaseMock).getName();
-
-            doReturn(Optional.empty()).when(scenarioExecutionRepositoryMock).findOneByExecutionId(scenarioExecutionId);
-
-            CitrusRuntimeException exception = assertThrows(CitrusRuntimeException.class, () -> fixture.completeScenarioExecutionFailure(testCaseMock, new RuntimeException("Failure cause")));
-            assertEquals(String.format("Error while completing ScenarioExecution for test %s", testName), exception.getMessage());
-        }
-
-        private void preparePersistenceLayerMocks() {
+        void withTestResult() {
             doReturn(Optional.of(sampleScenarioExecution)).when(scenarioExecutionRepositoryMock).findOneByExecutionId(scenarioExecutionId);
             doReturn(sampleScenarioExecution).when(scenarioExecutionRepositoryMock).save(sampleScenarioExecution);
             doReturn(now).when(timeProviderMock).getTimeNow();
+
+            var result = fixture.completeScenarioExecution(scenarioExecutionId, testResultMock);
+
+            assertEquals(testResultMock, result.getTestResult());
+            assertEquals(now, result.getEndDate());
+        }
+
+        @Test
+        void withNoScenarioExecutionFound() {
+            String testName = "testCase";
+            doReturn(testName).when(testResultMock).getTestName();
+
+            doReturn(empty()).when(scenarioExecutionRepositoryMock).findOneByExecutionId(scenarioExecutionId);
+
+            assertThatThrownBy(() -> fixture.completeScenarioExecution(scenarioExecutionId, testResultMock))
+                .isInstanceOf(CitrusRuntimeException.class)
+                .hasMessage(format("Error while completing ScenarioExecution for test %s", testName));
+        }
+
+        @Test
+        void withScenarioExecutionThatHasAlreadyBeenEnded() {
+            sampleScenarioExecution.setEndDate(now);
+            doReturn(Optional.of(sampleScenarioExecution)).when(scenarioExecutionRepositoryMock).findOneByExecutionId(scenarioExecutionId);
+
+            assertDoesNotThrow(() -> fixture.completeScenarioExecution(scenarioExecutionId, testResultMock));
+
+            verifyNoInteractions(testResultMock);
+            verifyNoInteractions(timeProviderMock);
         }
     }
 }

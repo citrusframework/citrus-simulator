@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
 
-import { STATUS_SUCCESS } from 'app/entities/scenario-execution/scenario-execution.model';
+import { STATUS_SUCCESS } from 'app/entities/test-result/test-result.model';
 
 import SharedModule from 'app/shared/shared.module';
 

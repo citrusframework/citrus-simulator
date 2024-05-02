@@ -17,14 +17,17 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
-import org.citrusframework.TestCase;
+import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Service Interface for managing {@link ScenarioExecution}.
@@ -73,19 +76,35 @@ public interface ScenarioExecutionService {
     ScenarioExecution createAndSaveExecutionScenario(String scenarioName, @Nullable List<ScenarioParameter> scenarioParameters);
 
     /**
-     * Mark a {@link ScenarioExecution} as completed successfully.
+     * Complete a {@link ScenarioExecution} with the given {@link TestResult}.
      *
-     * @param testCase the testcase identifying the entity.
+     * @param scenarioExecutionId the id of the entity.
+     * @param testResult          the result of the execution.
      * @return the updated entity.
      */
-    ScenarioExecution completeScenarioExecutionSuccess(TestCase testCase);
+    ScenarioExecution completeScenarioExecution(long scenarioExecutionId, TestResult testResult);
 
     /**
-     * Mark a {@link ScenarioExecution} as failed.
+     * Function that converts the {@link ScenarioExecution} to its "DTO-form": It especially cuts
+     * any constraints from the contained {@link TestResult}.
      *
-     * @param testCase the testcase identifying the entity.
-     * @param cause    the reason the test case failed.
-     * @return the updated entity.
+     * @param scenarioExecution The entity which should be returned
+     * @param entityManager     Entity manager that is currently managing the entity
+     * @return the entity with prepared {@link TestResult}
      */
-    ScenarioExecution completeScenarioExecutionFailure(TestCase testCase, Throwable cause);
+    static ScenarioExecution restrictToDtoProperties(ScenarioExecution scenarioExecution, EntityManager entityManager) {
+        var testResult = scenarioExecution.getTestResult();
+
+        if (nonNull(testResult)) {
+            entityManager.detach(scenarioExecution);
+            scenarioExecution.setTestResult(
+                TestResult.builder()
+                    .status(testResult.getStatus())
+                    .errorMessage(testResult.getErrorMessage())
+                    .stackTrace(testResult.getStackTrace())
+                    .build());
+        }
+
+        return scenarioExecution;
+    }
 }

@@ -11,11 +11,13 @@ import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.TestResult_;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
+import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.web.rest.MessageResourceIT;
 import org.citrusframework.simulator.web.rest.ScenarioActionResourceIT;
 import org.citrusframework.simulator.web.rest.ScenarioExecutionResourceIT;
 import org.citrusframework.simulator.web.rest.ScenarioParameterResourceIT;
+import org.citrusframework.simulator.web.rest.TestResultResourceIT;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +39,7 @@ import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -94,6 +97,7 @@ class ScenarioExecutionQueryServiceIT {
                 .startDate(now.minus(2, MINUTES))
                 .endDate(now.minus(1, MINUTES))
                 .build()
+                .withTestResult(TestResultResourceIT.createEntity(entityManager))
                 .addScenarioAction(ScenarioActionResourceIT.createEntity(entityManager))
                 .addScenarioMessage(
                     MessageResourceIT.createEntityBuilder(entityManager)
@@ -113,6 +117,7 @@ class ScenarioExecutionQueryServiceIT {
                 .startDate(now.minus(4, MINUTES))
                 .endDate(now)
                 .build()
+                .withTestResult(TestResultResourceIT.createEntity(entityManager))
                 .addScenarioAction(ScenarioActionResourceIT.createEntity(entityManager))
                 .addScenarioMessage(message)
                 .addScenarioParameter(
@@ -125,6 +130,7 @@ class ScenarioExecutionQueryServiceIT {
                 .startDate(now)
                 .endDate(now.minus(1, MINUTES))
                 .build()
+                .withTestResult(TestResultResourceIT.createUpdatedEntity(entityManager))
                 .addScenarioAction(scenarioAction)
                 .addScenarioMessage(
                     MessageResourceIT.createEntityBuilder(entityManager)
@@ -211,6 +217,14 @@ class ScenarioExecutionQueryServiceIT {
             scenarioExecutionCriteria.setScenarioParametersId((LongFilter) new LongFilter().setEquals(scenarioParameter.getParameterId()));
 
             assertThatScenarioExecutionAtIndexSelectedByCriteria(scenarioExecutionCriteria, 0);
+        }
+
+        @Test
+        void selectWithJoinToTestResult() {
+            var scenarioExecutionCriteria = new ScenarioExecutionCriteria();
+            scenarioExecutionCriteria.setStatus((IntegerFilter) new IntegerFilter().setEquals(FAILURE.getId()));
+
+            assertThatScenarioExecutionAtIndexSelectedByCriteria(scenarioExecutionCriteria, 2);
         }
 
         public static Stream<Arguments> selectWithJoinToMessageHeader() {

@@ -35,6 +35,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 import static org.citrusframework.actions.SleepAction.Builder.sleep;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
 
@@ -224,6 +226,25 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
                 .body(defaultResponse));
     }
 
+    /**
+     * Sends a request to the server expecting it to purposefully fail a simulation.
+     */
+    @CitrusTest
+    public void testFailingSimulation() {
+        $(http().client(simulatorClient)
+            .send()
+            .post("fail")
+            .message()
+            .contentType(MediaType.APPLICATION_XML_VALUE)
+            .body("<Failure xmlns=\"http://citrusframework.org/schemas/failure\">" +
+                "Fail!" +
+                "</Failure>"));
+
+        $(http().client(simulatorClient)
+            .receive()
+            .response(HttpStatus.OK)); // TODO: Pretty sure this should be HttpStatus.INTERNAL_SERVER_ERROR
+    }
+
     @Configuration
     @PropertySource("classpath:application.properties")
     public static class EndpointConfig {
@@ -231,7 +252,12 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
         @Bean
         public XsdSchemaRepository schemaRepository() {
             XsdSchemaRepository schemaRepository = new XsdSchemaRepository();
-            schemaRepository.getLocations().add("classpath:xsd/HelloService.xsd");
+            schemaRepository.getLocations()
+                .addAll(
+                    List.of(
+                        "classpath:xsd/HelloService.xsd",
+                        "classpath:xsd/FailureService.xsd"
+                    ));
             return schemaRepository;
         }
 

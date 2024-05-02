@@ -7,6 +7,7 @@ import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioExecution.ScenarioExecutionBuilder;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
+import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -43,11 +46,8 @@ public class ScenarioExecutionResourceIT {
     private static final String DEFAULT_SCENARIO_NAME = "AAAAAAAAAA";
     private static final String UPDATED_SCENARIO_NAME = "BBBBBBBBBB";
 
-    private static final ScenarioExecution.Status DEFAULT_STATUS = ScenarioExecution.Status.RUNNING; // Integer value: 1
-    private static final ScenarioExecution.Status UPDATED_STATUS = ScenarioExecution.Status.SUCCESS; // Integer value: 2
-
-    private static final String DEFAULT_ERROR_MESSAGE = "AAAAAAAAAA";
-    private static final String UPDATED_ERROR_MESSAGE = "BBBBBBBBBB";
+    private static final TestResult.Status DEFAULT_STATUS = SUCCESS; // Integer value: 1
+    private static final TestResult.Status UPDATED_STATUS = FAILURE; // Integer value: 2
 
     private static final String ENTITY_API_URL = "/api/scenario-executions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -67,9 +67,7 @@ public class ScenarioExecutionResourceIT {
         return ScenarioExecution.builder()
             .startDate(DEFAULT_START_DATE)
             .endDate(DEFAULT_END_DATE)
-            .scenarioName(DEFAULT_SCENARIO_NAME)
-            .status(DEFAULT_STATUS)
-            .errorMessage(DEFAULT_ERROR_MESSAGE);
+            .scenarioName(DEFAULT_SCENARIO_NAME);
     }
 
     /**
@@ -94,14 +92,15 @@ public class ScenarioExecutionResourceIT {
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
             .scenarioName(UPDATED_SCENARIO_NAME)
-            .status(UPDATED_STATUS)
-            .errorMessage(UPDATED_ERROR_MESSAGE)
             .build();
     }
 
     @BeforeEach
-    void beforeEachSetup()  {
-        scenarioExecution = createEntity(entityManager);
+    void beforeEachSetup() {
+        var testResult = TestResultResourceIT.createEntity(entityManager);
+
+        scenarioExecution = createEntity(entityManager)
+            .withTestResult(testResult);
     }
 
     @Test
@@ -119,8 +118,7 @@ public class ScenarioExecutionResourceIT {
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
             .andExpect(jsonPath("$.[*].scenarioName").value(hasItem(DEFAULT_SCENARIO_NAME)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].errorMessage").value(hasItem(DEFAULT_ERROR_MESSAGE)));
+            .andExpect(jsonPath("$.[*].testResult.status").value(SUCCESS.toString()));
     }
 
     @Test
@@ -138,8 +136,7 @@ public class ScenarioExecutionResourceIT {
             .andExpect(jsonPath("$.startDate").value(DEFAULT_START_DATE.toString()))
             .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()))
             .andExpect(jsonPath("$.scenarioName").value(DEFAULT_SCENARIO_NAME))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-            .andExpect(jsonPath("$.errorMessage").value(DEFAULT_ERROR_MESSAGE));
+            .andExpect(jsonPath("$.testResult.status").value(DEFAULT_STATUS.toString()));
     }
 
     @Test
@@ -396,71 +393,6 @@ public class ScenarioExecutionResourceIT {
 
     @Test
     @Transactional
-    void getAllScenarioExecutionsByErrorMessageIsEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
-        // Get all the scenarioExecutionList where errorMessage equals to DEFAULT_ERROR_MESSAGE
-        defaultScenarioExecutionShouldBeFound("errorMessage.equals=" + DEFAULT_ERROR_MESSAGE);
-
-        // Get all the scenarioExecutionList where errorMessage equals to UPDATED_ERROR_MESSAGE
-        defaultScenarioExecutionShouldNotBeFound("errorMessage.equals=" + UPDATED_ERROR_MESSAGE);
-    }
-
-    @Test
-    @Transactional
-    void getAllScenarioExecutionsByErrorMessageIsInShouldWork() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
-        // Get all the scenarioExecutionList where errorMessage in DEFAULT_ERROR_MESSAGE or UPDATED_ERROR_MESSAGE
-        defaultScenarioExecutionShouldBeFound("errorMessage.in=" + DEFAULT_ERROR_MESSAGE + "," + UPDATED_ERROR_MESSAGE);
-
-        // Get all the scenarioExecutionList where errorMessage equals to UPDATED_ERROR_MESSAGE
-        defaultScenarioExecutionShouldNotBeFound("errorMessage.in=" + UPDATED_ERROR_MESSAGE);
-    }
-
-    @Test
-    @Transactional
-    void getAllScenarioExecutionsByErrorMessageIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
-        // Get all the scenarioExecutionList where errorMessage is not null
-        defaultScenarioExecutionShouldBeFound("errorMessage.specified=true");
-
-        // Get all the scenarioExecutionList where errorMessage is null
-        defaultScenarioExecutionShouldNotBeFound("errorMessage.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllScenarioExecutionsByErrorMessageContainsSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
-        // Get all the scenarioExecutionList where errorMessage contains DEFAULT_ERROR_MESSAGE
-        defaultScenarioExecutionShouldBeFound("errorMessage.contains=" + DEFAULT_ERROR_MESSAGE);
-
-        // Get all the scenarioExecutionList where errorMessage contains UPDATED_ERROR_MESSAGE
-        defaultScenarioExecutionShouldNotBeFound("errorMessage.contains=" + UPDATED_ERROR_MESSAGE);
-    }
-
-    @Test
-    @Transactional
-    void getAllScenarioExecutionsByErrorMessageNotContainsSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
-        // Get all the scenarioExecutionList where errorMessage does not contain DEFAULT_ERROR_MESSAGE
-        defaultScenarioExecutionShouldNotBeFound("errorMessage.doesNotContain=" + DEFAULT_ERROR_MESSAGE);
-
-        // Get all the scenarioExecutionList where errorMessage does not contain UPDATED_ERROR_MESSAGE
-        defaultScenarioExecutionShouldBeFound("errorMessage.doesNotContain=" + UPDATED_ERROR_MESSAGE);
-    }
-
-    @Test
-    @Transactional
     void getAllScenarioExecutionsByScenarioActionIsEqualToSomething() throws Exception {
         ScenarioAction scenarioAction;
         if (TestUtil.findAll(entityManager, ScenarioAction.class).isEmpty()) {
@@ -537,8 +469,7 @@ public class ScenarioExecutionResourceIT {
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
             .andExpect(jsonPath("$.[*].scenarioName").value(hasItem(DEFAULT_SCENARIO_NAME)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].errorMessage").value(hasItem(DEFAULT_ERROR_MESSAGE)));
+            .andExpect(jsonPath("$.[*].testResult.status").value(DEFAULT_STATUS.toString()));
 
         // Check, that the count call also returns 1
         mockMvc

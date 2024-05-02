@@ -50,13 +50,13 @@
           </th>
           <th scope="col" jhiSortBy="status">
             <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status</span>
+              <span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span>
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
           <th scope="col" jhiSortBy="errorMessage">
             <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioExecution.errorMessage">Error Message</span>
+              <span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span>
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
@@ -72,11 +72,11 @@
           <td>{{ scenarioExecution.startDate | formatMediumDatetime }}</td>
           <td>{{ scenarioExecution.endDate | formatMediumDatetime }}</td>
           <td>
-            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: scenarioExecution.status ?? 'UNKNOWN' })">{{
-              scenarioExecution.status
+            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: scenarioExecution.testResult?.status ?? 'UNKNOWN' })">{{
+              scenarioExecution.testResult?.status
             }}</span>
           </td>
-          <td>{{ scenarioExecution.errorMessage }}</td>
+          <td>{{ scenarioExecution.testResult?.errorMessage }}</td>
           <td class="text-end">
             <div class="btn-group">
               <a [routerLink]="['/scenario-action']" [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }">

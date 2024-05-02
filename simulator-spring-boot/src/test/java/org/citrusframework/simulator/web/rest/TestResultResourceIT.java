@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @IntegrationTest
 @AutoConfigureMockMvc
-class TestResultResourceIT {
+public class TestResultResourceIT {
 
     private static final TestResult.Status DEFAULT_STATUS = TestResult.Status.SUCCESS; // Integer value: 1
     private static final TestResult.Status UPDATED_STATUS = TestResult.Status.FAILURE; // Integer value: 2
@@ -47,8 +47,8 @@ class TestResultResourceIT {
     private static final String DEFAULT_ERROR_MESSAGE = "AAAAAAAAAA";
     private static final String UPDATED_ERROR_MESSAGE = "BBBBBBBBBB";
 
-    private static final String DEFAULT_FAILURE_STACK = "AAAAAAAAAA";
-    private static final String UPDATED_FAILURE_STACK = "BBBBBBBBBB";
+    private static final String DEFAULT_STACK_TRACE = "AAAAAAAAAA";
+    private static final String UPDATED_STACK_TRACE = "BBBBBBBBBB";
 
     private static final String DEFAULT_FAILURE_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_FAILURE_TYPE = "BBBBBBBBBB";
@@ -87,7 +87,7 @@ class TestResultResourceIT {
             .testName(DEFAULT_TEST_NAME)
             .className(DEFAULT_CLASS_NAME)
             .errorMessage(DEFAULT_ERROR_MESSAGE)
-            .failureStack(DEFAULT_FAILURE_STACK)
+            .stackTrace(DEFAULT_STACK_TRACE)
             .failureType(DEFAULT_FAILURE_TYPE)
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE)
@@ -106,7 +106,7 @@ class TestResultResourceIT {
             .testName(UPDATED_TEST_NAME)
             .className(UPDATED_CLASS_NAME)
             .errorMessage(UPDATED_ERROR_MESSAGE)
-            .failureStack(UPDATED_FAILURE_STACK)
+            .stackTrace(UPDATED_STACK_TRACE)
             .failureType(UPDATED_FAILURE_TYPE)
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE)
@@ -134,7 +134,7 @@ class TestResultResourceIT {
             .andExpect(jsonPath("$.[*].testName").value(hasItem(DEFAULT_TEST_NAME)))
             .andExpect(jsonPath("$.[*].className").value(hasItem(DEFAULT_CLASS_NAME)))
             .andExpect(jsonPath("$.[*].errorMessage").value(hasItem(DEFAULT_ERROR_MESSAGE)))
-            .andExpect(jsonPath("$.[*].failureStack").value(hasItem(DEFAULT_FAILURE_STACK)))
+            .andExpect(jsonPath("$.[*].stackTrace").value(hasItem(DEFAULT_STACK_TRACE)))
             .andExpect(jsonPath("$.[*].failureType").value(hasItem(DEFAULT_FAILURE_TYPE)))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
@@ -156,7 +156,7 @@ class TestResultResourceIT {
             .andExpect(jsonPath("$.testName").value(DEFAULT_TEST_NAME))
             .andExpect(jsonPath("$.className").value(DEFAULT_CLASS_NAME))
             .andExpect(jsonPath("$.errorMessage").value(DEFAULT_ERROR_MESSAGE))
-            .andExpect(jsonPath("$.failureStack").value(DEFAULT_FAILURE_STACK))
+            .andExpect(jsonPath("$.stackTrace").value(DEFAULT_STACK_TRACE))
             .andExpect(jsonPath("$.failureType").value(DEFAULT_FAILURE_TYPE))
             .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
             .andExpect(jsonPath("$.lastModifiedDate").value(sameInstant(DEFAULT_LAST_MODIFIED_DATE)));
@@ -416,67 +416,67 @@ class TestResultResourceIT {
 
     @Test
     @Transactional
-    void getAllTestResultsByFailureStackIsEqualToSomething() throws Exception {
+    void getAllTestResultsByStackTraceIsEqualToSomething() throws Exception {
         // Initialize the database
         testResultRepository.saveAndFlush(testResult);
 
-        // Get all the testResultList where failureStack equals to DEFAULT_FAILURE_STACK
-        defaultTestResultShouldBeFound("failureStack.equals=" + DEFAULT_FAILURE_STACK);
+        // Get all the testResultList where stackTrace equals to DEFAULT_FAILURE_STACK
+        defaultTestResultShouldBeFound("stackTrace.equals=" + DEFAULT_STACK_TRACE);
 
-        // Get all the testResultList where failureStack equals to UPDATED_FAILURE_STACK
-        defaultTestResultShouldNotBeFound("failureStack.equals=" + UPDATED_FAILURE_STACK);
+        // Get all the testResultList where stackTrace equals to UPDATED_FAILURE_STACK
+        defaultTestResultShouldNotBeFound("stackTrace.equals=" + UPDATED_STACK_TRACE);
     }
 
     @Test
     @Transactional
-    void getAllTestResultsByFailureStackIsInShouldWork() throws Exception {
+    void getAllTestResultsByStackTraceIsInShouldWork() throws Exception {
         // Initialize the database
         testResultRepository.saveAndFlush(testResult);
 
-        // Get all the testResultList where failureStack in DEFAULT_FAILURE_STACK or UPDATED_FAILURE_STACK
-        defaultTestResultShouldBeFound("failureStack.in=" + DEFAULT_FAILURE_STACK + "," + UPDATED_FAILURE_STACK);
+        // Get all the testResultList where stackTrace in DEFAULT_FAILURE_STACK or UPDATED_FAILURE_STACK
+        defaultTestResultShouldBeFound("stackTrace.in=" + DEFAULT_STACK_TRACE + "," + UPDATED_STACK_TRACE);
 
-        // Get all the testResultList where failureStack equals to UPDATED_FAILURE_STACK
-        defaultTestResultShouldNotBeFound("failureStack.in=" + UPDATED_FAILURE_STACK);
+        // Get all the testResultList where stackTrace equals to UPDATED_FAILURE_STACK
+        defaultTestResultShouldNotBeFound("stackTrace.in=" + UPDATED_STACK_TRACE);
     }
 
     @Test
     @Transactional
-    void getAllTestResultsByFailureStackIsNullOrNotNull() throws Exception {
+    void getAllTestResultsByStackTraceIsNullOrNotNull() throws Exception {
         // Initialize the database
         testResultRepository.saveAndFlush(testResult);
 
-        // Get all the testResultList where failureStack is not null
-        defaultTestResultShouldBeFound("failureStack.specified=true");
+        // Get all the testResultList where stackTrace is not null
+        defaultTestResultShouldBeFound("stackTrace.specified=true");
 
-        // Get all the testResultList where failureStack is null
-        defaultTestResultShouldNotBeFound("failureStack.specified=false");
+        // Get all the testResultList where stackTrace is null
+        defaultTestResultShouldNotBeFound("stackTrace.specified=false");
     }
 
     @Test
     @Transactional
-    void getAllTestResultsByFailureStackContainsSomething() throws Exception {
+    void getAllTestResultsByStackTraceContainsSomething() throws Exception {
         // Initialize the database
         testResultRepository.saveAndFlush(testResult);
 
-        // Get all the testResultList where failureStack contains DEFAULT_FAILURE_STACK
-        defaultTestResultShouldBeFound("failureStack.contains=" + DEFAULT_FAILURE_STACK);
+        // Get all the testResultList where stackTrace contains DEFAULT_FAILURE_STACK
+        defaultTestResultShouldBeFound("stackTrace.contains=" + DEFAULT_STACK_TRACE);
 
-        // Get all the testResultList where failureStack contains UPDATED_FAILURE_STACK
-        defaultTestResultShouldNotBeFound("failureStack.contains=" + UPDATED_FAILURE_STACK);
+        // Get all the testResultList where stackTrace contains UPDATED_FAILURE_STACK
+        defaultTestResultShouldNotBeFound("stackTrace.contains=" + UPDATED_STACK_TRACE);
     }
 
     @Test
     @Transactional
-    void getAllTestResultsByFailureStackNotContainsSomething() throws Exception {
+    void getAllTestResultsByStackTraceNotContainsSomething() throws Exception {
         // Initialize the database
         testResultRepository.saveAndFlush(testResult);
 
-        // Get all the testResultList where failureStack does not contain DEFAULT_FAILURE_STACK
-        defaultTestResultShouldNotBeFound("failureStack.doesNotContain=" + DEFAULT_FAILURE_STACK);
+        // Get all the testResultList where stackTrace does not contain DEFAULT_FAILURE_STACK
+        defaultTestResultShouldNotBeFound("stackTrace.doesNotContain=" + DEFAULT_STACK_TRACE);
 
-        // Get all the testResultList where failureStack does not contain UPDATED_FAILURE_STACK
-        defaultTestResultShouldBeFound("failureStack.doesNotContain=" + UPDATED_FAILURE_STACK);
+        // Get all the testResultList where stackTrace does not contain UPDATED_FAILURE_STACK
+        defaultTestResultShouldBeFound("stackTrace.doesNotContain=" + UPDATED_STACK_TRACE);
     }
 
     @Test
@@ -782,7 +782,7 @@ class TestResultResourceIT {
             .andExpect(jsonPath("$.[*].testName").value(hasItem(DEFAULT_TEST_NAME)))
             .andExpect(jsonPath("$.[*].className").value(hasItem(DEFAULT_CLASS_NAME)))
             .andExpect(jsonPath("$.[*].errorMessage").value(hasItem(DEFAULT_ERROR_MESSAGE)))
-            .andExpect(jsonPath("$.[*].failureStack").value(hasItem(DEFAULT_FAILURE_STACK)))
+            .andExpect(jsonPath("$.[*].stackTrace").value(hasItem(DEFAULT_STACK_TRACE)))
             .andExpect(jsonPath("$.[*].failureType").value(hasItem(DEFAULT_FAILURE_TYPE)))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));

@@ -26,7 +26,6 @@ import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
 import org.citrusframework.simulator.service.ScenarioActionService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
-import org.citrusframework.simulator.service.TestResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.citrusframework.TestResult.failed;
 import static org.citrusframework.TestResult.success;
+import static org.citrusframework.simulator.service.TestCaseUtil.getScenarioExecutionId;
 import static org.citrusframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
@@ -62,12 +62,9 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     private final ScenarioActionService scenarioActionService;
     private final ScenarioExecutionService scenarioExecutionService;
 
-    private final TestResultService testResultService;
-
-    public SimulatorStatusListener(ScenarioActionService scenarioActionService, ScenarioExecutionService scenarioExecutionService, TestResultService testResultService) {
+    public SimulatorStatusListener(ScenarioActionService scenarioActionService, ScenarioExecutionService scenarioExecutionService) {
         this.scenarioActionService = scenarioActionService;
         this.scenarioExecutionService = scenarioExecutionService;
-        this.testResultService = testResultService;
     }
 
     @Override
@@ -85,45 +82,42 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
     }
 
     @Override
-    public void onTestSuccess(TestCase test) {
-        TestResult result;
-        if (test instanceof DefaultTestCase defaultTestCase) {
-            result = success(test.getName(), test.getTestClass().getSimpleName(), defaultTestCase.getParameters());
+    public void onTestSuccess(TestCase testCase) {
+        TestResult testResult;
+        if (testCase instanceof DefaultTestCase defaultTestCase) {
+            testResult = success(testCase.getName(), testCase.getTestClass().getSimpleName(), defaultTestCase.getParameters());
         } else {
-            result = success(test.getName(), test.getTestClass().getSimpleName());
+            testResult = success(testCase.getName(), testCase.getTestClass().getSimpleName());
         }
 
-        testResultService.transformAndSave(result);
-        scenarioExecutionService.completeScenarioExecutionSuccess(test);
+        scenarioExecutionService.completeScenarioExecution(getScenarioExecutionId(testCase), new org.citrusframework.simulator.model.TestResult(testResult));
 
-        logger.info(result.toString());
+        logger.info("Test succeeded: {}", testResult);
     }
 
     @Override
-    public void onTestFailure(TestCase test, Throwable cause) {
-        TestResult result;
-        if (test instanceof DefaultTestCase defaultTestCase) {
-            result = failed(test.getName(), test.getTestClass().getSimpleName(), cause, defaultTestCase.getParameters());
+    public void onTestFailure(TestCase testCase, Throwable cause) {
+        TestResult testResult;
+        if (testCase instanceof DefaultTestCase defaultTestCase) {
+            testResult = failed(testCase.getName(), testCase.getTestClass().getSimpleName(), cause, defaultTestCase.getParameters());
         } else {
-            result = failed(test.getName(), test.getTestClass().getSimpleName(), cause);
+            testResult = failed(testCase.getName(), testCase.getTestClass().getSimpleName(), cause);
         }
 
-        testResultService.transformAndSave(result);
-        scenarioExecutionService.completeScenarioExecutionFailure(test, cause);
+        scenarioExecutionService.completeScenarioExecution(getScenarioExecutionId(testCase), new org.citrusframework.simulator.model.TestResult(testResult));
 
-        logger.info(result.toString());
-        logger.info(result.getFailureType());
+        logger.info("Test failed: {}", testResult);
     }
 
     @Override
     public void onTestActionStart(TestCase testCase, TestAction testAction) {
         if (!ignoreTestAction(testAction)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(testCase.getName() + "(" +
-                    arrayToCommaDelimitedString(getParameters(testCase)) + ") - " +
-                    testAction.getName() +
-                    (testAction instanceof Described described && hasText(described.getDescription()) ? ": " + described.getDescription() : ""));
-            }
+            logger.debug("{} ({}) - {}{}",
+                testCase.getName(),
+                arrayToCommaDelimitedString(getParameters(testCase)),
+                testAction.getName(),
+                (testAction instanceof Described described && hasText(described.getDescription()) ? ": " + described.getDescription() : "")
+            );
 
             scenarioActionService.createForScenarioExecutionAndSave(testCase, testAction);
         }

@@ -17,7 +17,7 @@ export const sampleWithPartialData: ITestResult = {
   testName: 'zowie',
   className: 'regarding openly',
   errorMessage: 'toward',
-  failureStack: 'whose',
+  stackTrace: 'whose',
   createdDate: dayjs('2023-09-26T13:39'),
   lastModifiedDate: dayjs('2023-09-26T15:03'),
 };
@@ -28,7 +28,7 @@ export const sampleWithFullData: ITestResult = {
   testName: 'peruse probable display',
   className: 'dining',
   errorMessage: 'reproachfully better what',
-  failureStack: 'flugelhorn over',
+  stackTrace: 'flugelhorn over',
   failureType: 'aha',
   createdDate: dayjs('2023-09-26T07:09'),
   lastModifiedDate: dayjs('2023-09-26T09:18'),

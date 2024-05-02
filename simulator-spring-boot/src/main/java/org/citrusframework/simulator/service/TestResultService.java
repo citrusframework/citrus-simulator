@@ -29,15 +29,6 @@ import java.util.Optional;
 public interface TestResultService {
 
     /**
-     * Save a citrus testResult.
-     *
-     * @param testResult the entity to save.
-     * @return the persisted entity.
-     * @see org.citrusframework.TestResult
-     */
-    TestResult transformAndSave(org.citrusframework.TestResult testResult);
-
-    /**
      * Save a testResult.
      *
      * @param testResult the entity to save.
