@@ -16,14 +16,19 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.citrusframework.simulator.service.filter.InstantFilter;
 import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Criteria class for the {@link org.citrusframework.simulator.model.ScenarioParameter} entity. This class is used
@@ -37,10 +42,13 @@ import java.util.Objects;
  * specific {@link org.citrusframework.simulator.service.filter.Filter} class are used, we need to use fix type
  * specific filters.
  */
+@Getter
+@Setter
+@ToString
 @ParameterObject
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ScenarioParameterCriteria implements Serializable, Criteria {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private LongFilter parameterId;
@@ -78,23 +86,11 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
         return new ScenarioParameterCriteria(this);
     }
 
-    public LongFilter getParameterId() {
-        return parameterId;
-    }
-
     public LongFilter id() {
         if (parameterId == null) {
             parameterId = new LongFilter();
         }
         return parameterId;
-    }
-
-    public void setParameterId(LongFilter parameterId) {
-        this.parameterId = parameterId;
-    }
-
-    public StringFilter getName() {
-        return name;
     }
 
     public StringFilter name() {
@@ -104,27 +100,11 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
         return name;
     }
 
-    public void setName(StringFilter name) {
-        this.name = name;
-    }
-
-    public IntegerFilter getControlType() {
-        return controlType;
-    }
-
     public IntegerFilter controlType() {
         if (controlType == null) {
             controlType = new IntegerFilter();
         }
         return controlType;
-    }
-
-    public void setControlType(IntegerFilter controlType) {
-        this.controlType = controlType;
-    }
-
-    public StringFilter getValue() {
-        return value;
     }
 
     public StringFilter value() {
@@ -134,27 +114,11 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
         return value;
     }
 
-    public void setValue(StringFilter value) {
-        this.value = value;
-    }
-
-    public InstantFilter getCreatedDate() {
-        return createdDate;
-    }
-
     public InstantFilter createdDate() {
         if (createdDate == null) {
             createdDate = new InstantFilter();
         }
         return createdDate;
-    }
-
-    public void setCreatedDate(InstantFilter createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public InstantFilter getLastModifiedDate() {
-        return lastModifiedDate;
     }
 
     public InstantFilter lastModifiedDate() {
@@ -164,14 +128,6 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(InstantFilter lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public LongFilter getScenarioExecutionId() {
-        return scenarioExecutionId;
-    }
-
     public LongFilter scenarioExecutionId() {
         if (scenarioExecutionId == null) {
             scenarioExecutionId = new LongFilter();
@@ -179,56 +135,35 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
         return scenarioExecutionId;
     }
 
-    public void setScenarioExecutionId(LongFilter scenarioExecutionId) {
-        this.scenarioExecutionId = scenarioExecutionId;
-    }
-
-    public Boolean getDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(Boolean distinct) {
-        this.distinct = distinct;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ScenarioParameterCriteria scenarioParameterCriteria)) {
             return false;
         }
-        final ScenarioParameterCriteria that = (ScenarioParameterCriteria) o;
-        return (
-            Objects.equals(parameterId, that.parameterId) &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(controlType, that.controlType) &&
-            Objects.equals(value, that.value) &&
-            Objects.equals(createdDate, that.createdDate) &&
-            Objects.equals(lastModifiedDate, that.lastModifiedDate) &&
-            Objects.equals(scenarioExecutionId, that.scenarioExecutionId) &&
-            Objects.equals(distinct, that.distinct)
-        );
+
+        return new EqualsBuilder()
+            .append(parameterId, scenarioParameterCriteria.parameterId)
+            .append(name, scenarioParameterCriteria.name)
+            .append(controlType, scenarioParameterCriteria.controlType)
+            .append(value, scenarioParameterCriteria.value)
+            .append(createdDate, scenarioParameterCriteria.createdDate)
+            .append(lastModifiedDate, scenarioParameterCriteria.lastModifiedDate)
+            .append(scenarioExecutionId, scenarioParameterCriteria.scenarioExecutionId)
+            .append(distinct, scenarioParameterCriteria.distinct)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parameterId, name, controlType, value, createdDate, lastModifiedDate, scenarioExecutionId, distinct);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ScenarioParameterCriteria{" +
-            (parameterId != null ? "parameterId=" + parameterId + ", " : "") +
-            (name != null ? "name=" + name + ", " : "") +
-            (controlType != null ? "controlType=" + controlType + ", " : "") +
-            (value != null ? "value=" + value + ", " : "") +
-            (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
-            (lastModifiedDate != null ? "lastModifiedDate=" + lastModifiedDate + ", " : "") +
-            (scenarioExecutionId != null ? "scenarioExecutionId=" + scenarioExecutionId + ", " : "") +
-            (distinct != null ? "distinct=" + distinct + ", " : "") +
-            "}";
+        return new HashCodeBuilder()
+            .append(parameterId)
+            .append(name)
+            .append(controlType)
+            .append(value)
+            .append(createdDate)
+            .append(lastModifiedDate)
+            .append(scenarioExecutionId)
+            .append(distinct)
+            .toHashCode();
     }
 }
