@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.simulator.model.ScenarioAction;
@@ -86,13 +87,21 @@ public interface ScenarioActionService {
      * because of a possible {@link org.hibernate.LazyInitializationException}).
      *
      * @param scenarioAction The entity, which should be returned
+     * @param entityManager  Entity manager that is currently managing the entity
      * @return the entity with prepared {@link ScenarioExecution}
      */
-    static ScenarioAction restrictToDtoProperties(ScenarioAction scenarioAction) {
+    static ScenarioAction restrictToDtoProperties(ScenarioAction scenarioAction, EntityManager entityManager) {
         ScenarioExecution scenarioExecution = scenarioAction.getScenarioExecution();
+
         if (nonNull(scenarioExecution)) {
-            scenarioAction.setScenarioExecution(ScenarioExecution.builder().executionId(scenarioExecution.getExecutionId()).scenarioName(scenarioExecution.getScenarioName()).build());
+            entityManager.detach(scenarioAction);
+            scenarioAction.setScenarioExecution(
+                ScenarioExecution.builder()
+                    .executionId(scenarioExecution.getExecutionId())
+                    .scenarioName(scenarioExecution.getScenarioName())
+                    .build());
         }
+
         return scenarioAction;
     }
 }

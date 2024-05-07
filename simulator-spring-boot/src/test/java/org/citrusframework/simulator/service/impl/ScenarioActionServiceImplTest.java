@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.exceptions.CitrusRuntimeException;
@@ -47,7 +48,6 @@ import static org.citrusframework.simulator.model.ScenarioExecution.Status.UNKNO
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
@@ -59,6 +59,9 @@ import static org.springframework.data.domain.Pageable.unpaged;
 
 @ExtendWith(MockitoExtension.class)
 class ScenarioActionServiceImplTest {
+
+    @Mock
+    private EntityManager entityManagerMock;
 
     @Mock
     private ScenarioActionRepository scenarioActionRepositoryMock;
@@ -87,7 +90,7 @@ class ScenarioActionServiceImplTest {
     }
 
     @BeforeEach
-    void beforeEachSetup()  {
+    void beforeEachSetup() {
         ScenarioAction scenarioAction = new ScenarioAction();
         ScenarioExecution scenarioExecution = ScenarioExecution.builder()
             .executionId(1234L)
@@ -99,7 +102,7 @@ class ScenarioActionServiceImplTest {
         scenarioAction.setScenarioExecution(scenarioExecution);
         scenarioActionWithScenarioExecution = spy(scenarioAction);
 
-        fixture = new ScenarioActionServiceImpl(scenarioActionRepositoryMock, scenarioExecutionServiceMock);
+        fixture = new ScenarioActionServiceImpl(entityManagerMock, scenarioActionRepositoryMock, scenarioExecutionServiceMock);
         ReflectionTestUtils.setField(fixture, "timeProvider", timeProviderMock, TimeProvider.class);
     }
 

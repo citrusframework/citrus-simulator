@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -52,10 +53,12 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
 
     private final TimeProvider timeProvider = new TimeProvider();
 
+    private final EntityManager entityManager;
     private final ScenarioActionRepository scenarioActionRepository;
     private final ScenarioExecutionService scenarioExecutionService;
 
-    public ScenarioActionServiceImpl(ScenarioActionRepository scenarioActionRepository, ScenarioExecutionService scenarioExecutionService) {
+    public ScenarioActionServiceImpl(EntityManager entityManager, ScenarioActionRepository scenarioActionRepository, ScenarioExecutionService scenarioExecutionService) {
+        this.entityManager = entityManager;
         this.scenarioActionRepository = scenarioActionRepository;
         this.scenarioExecutionService = scenarioExecutionService;
     }
@@ -75,7 +78,7 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
     public Page<ScenarioAction> findAll(Pageable pageable) {
         logger.debug("Request to get all ScenarioActions with eager relationships");
         return scenarioActionRepository.findAllWithToOneRelationships(pageable)
-            .map(ScenarioActionService::restrictToDtoProperties);
+            .map(scenarioAction -> ScenarioActionService.restrictToDtoProperties(scenarioAction, entityManager));
     }
 
     @Override
@@ -83,7 +86,7 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
     public Optional<ScenarioAction> findOne(Long id) {
         logger.debug("Request to get ScenarioAction with eager relationships: {}", id);
         return scenarioActionRepository.findOneWithEagerRelationships(id)
-            .map(ScenarioActionService::restrictToDtoProperties);
+            .map(scenarioAction -> ScenarioActionService.restrictToDtoProperties(scenarioAction, entityManager));
     }
 
     @Override
