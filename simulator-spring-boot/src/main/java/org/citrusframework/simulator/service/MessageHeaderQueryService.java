@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.model.MessageHeader_;
@@ -44,9 +45,11 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHeaderQueryService.class);
 
+    private final EntityManager entityManager;
     private final MessageHeaderRepository messageHeaderRepository;
 
-    public MessageHeaderQueryService(MessageHeaderRepository messageHeaderRepository) {
+    public MessageHeaderQueryService(EntityManager entityManager, MessageHeaderRepository messageHeaderRepository) {
+        this.entityManager = entityManager;
         this.messageHeaderRepository = messageHeaderRepository;
     }
 
@@ -75,7 +78,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<MessageHeader> specification = createSpecification(criteria);
         return messageHeaderRepository.findAll(specification, page)
-            .map(MessageHeaderService::restrictToDtoProperties);
+            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
     }
 
     /**

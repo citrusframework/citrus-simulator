@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.repository.MessageHeaderRepository;
 import org.citrusframework.simulator.service.MessageHeaderService;
@@ -37,9 +38,11 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHeaderServiceImpl.class);
 
+    private final EntityManager entityManager;
     private final MessageHeaderRepository messageHeaderRepository;
 
-    public MessageHeaderServiceImpl(MessageHeaderRepository messageHeaderRepository) {
+    public MessageHeaderServiceImpl(EntityManager entityManager, MessageHeaderRepository messageHeaderRepository) {
+        this.entityManager = entityManager;
         this.messageHeaderRepository = messageHeaderRepository;
     }
 
@@ -54,7 +57,7 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     public Page<MessageHeader> findAll(Pageable pageable) {
         logger.debug("Request to get all MessageHeaders with eager relationships");
         return messageHeaderRepository.findAllWithEagerRelationships(pageable)
-            .map(MessageHeaderService::restrictToDtoProperties);
+            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
     }
 
     @Override
@@ -62,6 +65,6 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     public Optional<MessageHeader> findOne(Long headerId) {
         logger.debug("Request to get MessageHeader : {}", headerId);
         return messageHeaderRepository.findOneWithEagerRelationships(headerId)
-            .map(MessageHeaderService::restrictToDtoProperties);
+            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
     }
 }

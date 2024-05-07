@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.repository.MessageHeaderRepository;
@@ -43,6 +44,9 @@ import static org.springframework.data.domain.Pageable.unpaged;
 class MessageHeaderServiceImplTest {
 
     @Mock
+    private EntityManager entityManagerMock;
+
+    @Mock
     private MessageHeaderRepository messageHeaderRepositoryMock;
 
     private MessageHeader messageHeaderWithMessage;
@@ -59,7 +63,7 @@ class MessageHeaderServiceImplTest {
         messageHeader.setMessage(message);
         messageHeaderWithMessage = spy(messageHeader);
 
-        fixture = new MessageHeaderServiceImpl(messageHeaderRepositoryMock);
+        fixture = new MessageHeaderServiceImpl(entityManagerMock, messageHeaderRepositoryMock);
     }
 
     @Test
