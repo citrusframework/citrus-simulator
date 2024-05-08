@@ -10,9 +10,9 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
 
-import { IMessageHeader, NewMessageHeader } from '../message-header.model';
+import { IMessageHeader } from '../message-header.model';
 
-type RestOf<T extends IMessageHeader | NewMessageHeader> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
+type RestOf<T extends IMessageHeader> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
   createdDate?: string | null;
   lastModifiedDate?: string | null;
 };

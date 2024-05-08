@@ -9,9 +9,9 @@ import dayjs from 'dayjs/esm';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { ITestResult, NewTestResult } from '../test-result.model';
+import { ITestResult } from '../test-result.model';
 
-type RestOf<T extends ITestResult | NewTestResult> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
+type RestOf<T extends ITestResult> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
   createdDate?: string | null;
   lastModifiedDate?: string | null;
 };

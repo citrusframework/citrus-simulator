@@ -8,5 +8,3 @@ export interface ITestParameter {
   lastModifiedDate?: dayjs.Dayjs | null;
   testResult: Pick<ITestResult, 'id'>;
 }
-
-export type NewTestParameter = ITestParameter;

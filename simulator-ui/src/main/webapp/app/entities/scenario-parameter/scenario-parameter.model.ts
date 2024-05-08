@@ -10,5 +10,3 @@ export interface IScenarioParameter {
   lastModifiedDate?: dayjs.Dayjs | null;
   scenarioExecution?: Pick<IScenarioExecution, 'executionId' | 'scenarioName'> | null;
 }
-
-export type NewScenarioParameter = Omit<IScenarioParameter, 'parameterId'> & { parameterId: null };

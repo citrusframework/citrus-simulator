@@ -11,9 +11,9 @@ import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
 import { MessageHeaderService, RestMessageHeader } from 'app/entities/message-header/service/message-header.service';
 
-import { IMessage, NewMessage } from '../message.model';
+import { IMessage } from '../message.model';
 
-type RestOf<T extends IMessage | NewMessage> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
+type RestOf<T extends IMessage> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
   createdDate?: string | null;
   lastModifiedDate?: string | null;
 };

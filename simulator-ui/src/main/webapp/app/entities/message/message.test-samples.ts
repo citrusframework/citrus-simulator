@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { IMessage, NewMessage } from './message.model';
+import { IMessage } from './message.model';
 
 export const sampleWithRequiredData: IMessage = {
   messageId: 4989,
@@ -27,15 +27,6 @@ export const sampleWithFullData: IMessage = {
   lastModifiedDate: dayjs('2023-10-13T06:42'),
 };
 
-export const sampleWithNewData: NewMessage = {
-  direction: 'UNKNOWN',
-  citrusMessageId: 'cheap put',
-  createdDate: dayjs('2023-10-12T23:44'),
-  lastModifiedDate: dayjs('2023-10-13T00:54'),
-  messageId: null,
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

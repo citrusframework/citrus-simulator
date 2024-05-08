@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { ITestResult, NewTestResult } from './test-result.model';
+import { ITestResult } from './test-result.model';
 
 export const sampleWithRequiredData: ITestResult = {
   id: 22758,
@@ -34,16 +34,6 @@ export const sampleWithFullData: ITestResult = {
   lastModifiedDate: dayjs('2023-09-26T09:18'),
 };
 
-export const sampleWithNewData: NewTestResult = {
-  status: 'UNKNOWN',
-  testName: 'um finally',
-  className: 'supporter vastly',
-  createdDate: dayjs('2023-09-25T22:19'),
-  lastModifiedDate: dayjs('2023-09-26T03:16'),
-  id: null,
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

@@ -9,9 +9,9 @@ import dayjs from 'dayjs/esm';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { IScenarioAction, NewScenarioAction } from '../scenario-action.model';
+import { IScenarioAction } from '../scenario-action.model';
 
-type RestOf<T extends IScenarioAction | NewScenarioAction> = Omit<T, 'startDate' | 'endDate'> & {
+type RestOf<T extends IScenarioAction> = Omit<T, 'startDate' | 'endDate'> & {
   startDate?: string | null;
   endDate?: string | null;
 };

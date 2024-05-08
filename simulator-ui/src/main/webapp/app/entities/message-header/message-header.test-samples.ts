@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { IMessageHeader, NewMessageHeader } from './message-header.model';
+import { IMessageHeader } from './message-header.model';
 
 export const sampleWithRequiredData: IMessageHeader = {
   headerId: 29874,
@@ -26,15 +26,6 @@ export const sampleWithFullData: IMessageHeader = {
   lastModifiedDate: dayjs('2023-10-18T15:28'),
 };
 
-export const sampleWithNewData: NewMessageHeader = {
-  name: 'whether',
-  value: 'highly',
-  createdDate: dayjs('2023-10-17T17:51'),
-  lastModifiedDate: dayjs('2023-10-18T03:56'),
-  headerId: null,
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);
