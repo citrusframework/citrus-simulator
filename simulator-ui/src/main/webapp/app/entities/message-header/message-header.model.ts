@@ -9,5 +9,3 @@ export interface IMessageHeader {
   createdDate?: dayjs.Dayjs | null;
   lastModifiedDate?: dayjs.Dayjs | null;
 }
-
-export type NewMessageHeader = Omit<IMessageHeader, 'headerId'> & { headerId: null };

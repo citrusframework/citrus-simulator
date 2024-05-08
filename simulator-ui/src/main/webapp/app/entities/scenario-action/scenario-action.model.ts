@@ -8,5 +8,3 @@ export interface IScenarioAction {
   endDate?: dayjs.Dayjs | null;
   scenarioExecution?: Pick<IScenarioExecution, 'executionId' | 'scenarioName'> | null;
 }
-
-export type NewScenarioAction = Omit<IScenarioAction, 'actionId'> & { actionId: null };

@@ -9,7 +9,7 @@ import dayjs from 'dayjs/esm';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { ITestParameter, NewTestParameter } from '../test-parameter.model';
+import { ITestParameter } from '../test-parameter.model';
 
 type RestOf<T extends ITestParameter> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
   createdDate?: string | null;

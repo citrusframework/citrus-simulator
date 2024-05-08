@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { ITestParameter, NewTestParameter } from './test-parameter.model';
+import { ITestParameter } from './test-parameter.model';
 
 export const sampleWithRequiredData: ITestParameter = {
   key: 'indeed on chance',
@@ -32,17 +32,6 @@ export const sampleWithFullData: ITestParameter = {
   },
 };
 
-export const sampleWithNewData: NewTestParameter = {
-  key: 'righteously yet likewise',
-  value: 'memorable',
-  createdDate: dayjs('2023-09-26T11:57'),
-  lastModifiedDate: dayjs('2023-09-26T17:27'),
-  testResult: {
-    id: 84692,
-  },
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

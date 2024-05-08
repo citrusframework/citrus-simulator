@@ -9,9 +9,9 @@ import dayjs from 'dayjs/esm';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { IScenarioParameter, NewScenarioParameter } from '../scenario-parameter.model';
+import { IScenarioParameter } from '../scenario-parameter.model';
 
-type RestOf<T extends IScenarioParameter | NewScenarioParameter> = Omit<T, 'lastModifiedDate'> & {
+type RestOf<T extends IScenarioParameter> = Omit<T, 'lastModifiedDate'> & {
   lastModifiedDate?: string | null;
 };
 

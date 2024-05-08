@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { IScenarioAction, NewScenarioAction } from './scenario-action.model';
+import { IScenarioAction } from './scenario-action.model';
 
 export const sampleWithRequiredData: IScenarioAction = {
   actionId: 11639,
@@ -21,13 +21,6 @@ export const sampleWithFullData: IScenarioAction = {
   endDate: dayjs('2023-10-25T18:11'),
 };
 
-export const sampleWithNewData: NewScenarioAction = {
-  name: 'dearly',
-  startDate: dayjs('2023-10-26T11:00'),
-  actionId: null,
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

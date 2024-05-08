@@ -11,5 +11,3 @@ export interface IScenarioExecution {
   testResult?: ITestResult | null;
   scenarioMessages?: IMessage[] | null;
 }
-
-export type NewScenarioExecution = Omit<IScenarioExecution, 'executionId'> & { executionId: null };

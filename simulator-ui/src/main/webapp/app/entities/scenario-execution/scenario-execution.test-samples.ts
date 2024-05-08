@@ -1,6 +1,6 @@
 import dayjs from 'dayjs/esm';
 
-import { IScenarioExecution, NewScenarioExecution } from './scenario-execution.model';
+import { IScenarioExecution } from './scenario-execution.model';
 
 export const sampleWithRequiredData: IScenarioExecution = {
   executionId: 28068,
@@ -21,13 +21,6 @@ export const sampleWithFullData: IScenarioExecution = {
   scenarioName: 'midst',
 };
 
-export const sampleWithNewData: NewScenarioExecution = {
-  startDate: dayjs('2023-10-18T16:49'),
-  scenarioName: 'robotics',
-  executionId: null,
-};
-
-Object.freeze(sampleWithNewData);
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

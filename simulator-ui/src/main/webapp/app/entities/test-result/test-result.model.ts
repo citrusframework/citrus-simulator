@@ -12,8 +12,6 @@ export interface ITestResult {
   lastModifiedDate?: dayjs.Dayjs | null;
 }
 
-export type NewTestResult = Omit<ITestResult, 'id'> & { id: null };
-
 export interface ITestResultStatus {
   id: number;
   name: 'UNKNOWN' | 'SUCCESS' | 'FAILURE' | 'SKIP';
