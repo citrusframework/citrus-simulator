@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.service.impl;
 
-import jakarta.persistence.EntityManager;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
@@ -54,9 +53,6 @@ import static org.springframework.data.domain.Pageable.unpaged;
 class ScenarioExecutionServiceImplTest {
 
     @Mock
-    private EntityManager entityManagerMock;
-
-    @Mock
     private ScenarioExecutionRepository scenarioExecutionRepositoryMock;
 
     @Mock
@@ -70,7 +66,7 @@ class ScenarioExecutionServiceImplTest {
     void beforeEachSetup() {
         sampleScenarioExecution = new ScenarioExecution();
 
-        fixture = new ScenarioExecutionServiceImpl(entityManagerMock, scenarioExecutionRepositoryMock);
+        fixture = new ScenarioExecutionServiceImpl(scenarioExecutionRepositoryMock);
         ReflectionTestUtils.setField(fixture, "timeProvider", timeProviderMock, TimeProvider.class);
     }
 

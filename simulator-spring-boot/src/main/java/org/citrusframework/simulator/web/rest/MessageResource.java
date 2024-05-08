@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.service.MessageQueryService;
 import org.citrusframework.simulator.service.MessageService;
 import org.citrusframework.simulator.service.criteria.MessageCriteria;
+import org.citrusframework.simulator.web.rest.dto.MessageDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.MessageMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,12 +50,14 @@ public class MessageResource {
     private static final Logger logger = LoggerFactory.getLogger(MessageResource.class);
 
     private final MessageService messageService;
-
     private final MessageQueryService messageQueryService;
 
-    public MessageResource(MessageService messageService, MessageQueryService messageQueryService) {
+    private final MessageMapper messageMapper;
+
+    public MessageResource(MessageService messageService, MessageQueryService messageQueryService, MessageMapper messageMapper) {
         this.messageService = messageService;
         this.messageQueryService = messageQueryService;
+        this.messageMapper = messageMapper;
     }
 
     /**
@@ -64,12 +68,12 @@ public class MessageResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of messages in body.
      */
     @GetMapping("/messages")
-    public ResponseEntity<List<Message>> getAllMessages(MessageCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<MessageDTO>> getAllMessages(MessageCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get Messages by criteria: {}", criteria);
 
         Page<Message> page = messageQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(messageMapper::toDto).toList());
     }
 
     /**
@@ -91,9 +95,9 @@ public class MessageResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the message, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/messages/{id}")
-    public ResponseEntity<Message> getMessage(@PathVariable("id") Long id) {
+    public ResponseEntity<MessageDTO> getMessage(@PathVariable("id") Long id) {
         logger.debug("REST request to get Message : {}", id);
         Optional<Message> message = messageService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(message);
+        return ResponseUtil.wrapOrNotFound(message.map(messageMapper::toDto));
     }
 }

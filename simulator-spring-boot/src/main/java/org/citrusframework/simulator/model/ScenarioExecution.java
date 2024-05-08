@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.NONE;
 
 /**
@@ -82,16 +81,16 @@ public class ScenarioExecution implements Serializable {
     private TestResult testResult;
 
     @OrderBy("name ASC")
-    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"scenarioExecution"}, allowSetters = true)
     private final Set<ScenarioParameter> scenarioParameters = new HashSet<>();
 
     @OrderBy("actionId ASC")
-    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     private final Set<ScenarioAction> scenarioActions = new HashSet<>();
 
     @OrderBy("messageId ASC")
-    @OneToMany(fetch = LAZY, mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scenarioExecution", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"headers", "scenarioExecution"}, allowSetters = true)
     private final Set<Message> scenarioMessages = new HashSet<>();
 

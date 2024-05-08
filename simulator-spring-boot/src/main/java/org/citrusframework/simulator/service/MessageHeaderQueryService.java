@@ -77,8 +77,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
     public Page<MessageHeader> findByCriteria(MessageHeaderCriteria criteria, Pageable page) {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<MessageHeader> specification = createSpecification(criteria);
-        return messageHeaderRepository.findAll(specification, page)
-            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
+        return messageHeaderRepository.findAll(specification, page);
     }
 
     /**

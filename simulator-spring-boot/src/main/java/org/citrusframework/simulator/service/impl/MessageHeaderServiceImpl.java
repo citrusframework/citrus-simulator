@@ -56,15 +56,13 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
     @Transactional(readOnly = true)
     public Page<MessageHeader> findAll(Pageable pageable) {
         logger.debug("Request to get all MessageHeaders with eager relationships");
-        return messageHeaderRepository.findAllWithEagerRelationships(pageable)
-            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
+        return messageHeaderRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<MessageHeader> findOne(Long headerId) {
         logger.debug("Request to get MessageHeader : {}", headerId);
-        return messageHeaderRepository.findOneWithEagerRelationships(headerId)
-            .map(messageHeader -> MessageHeaderService.restrictToDtoProperties(messageHeader, entityManager));
+        return messageHeaderRepository.findOneWithEagerRelationships(headerId);
     }
 }

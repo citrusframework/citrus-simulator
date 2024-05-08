@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.REMOVE;
-import static jakarta.persistence.FetchType.EAGER;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.NONE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
@@ -108,7 +107,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Optional test parameters
      */
-    @OneToMany(fetch = EAGER, mappedBy = "testResult", cascade = {REMOVE})
+    @OneToMany(mappedBy = "testResult", cascade = {REMOVE})
     @JsonIgnoreProperties(value = {"testResult"}, allowSetters = true)
     private final Set<TestParameter> testParameters = new HashSet<>();
 

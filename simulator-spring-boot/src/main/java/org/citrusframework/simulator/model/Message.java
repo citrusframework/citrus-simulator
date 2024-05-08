@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -95,11 +94,11 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
 
     @OrderBy("name ASC")
     @JsonIgnoreProperties(value = { "message" }, allowSetters = true)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<MessageHeader> headers = new HashSet<>();
 
+    @ManyToOne
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 

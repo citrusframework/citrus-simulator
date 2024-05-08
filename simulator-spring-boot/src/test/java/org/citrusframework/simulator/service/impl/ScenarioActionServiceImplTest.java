@@ -28,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -47,7 +46,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -122,8 +120,6 @@ class ScenarioActionServiceImplTest {
         Page<ScenarioAction> result = fixture.findAll(pageable);
 
         assertEquals(page, result);
-
-        verifyDtoPreparations();
     }
 
     @Test
@@ -137,29 +133,6 @@ class ScenarioActionServiceImplTest {
         assertThat(maybeScenarioAction)
             .isPresent()
             .containsSame(scenarioActionWithScenarioExecution);
-
-        verifyDtoPreparations();
-    }
-
-    private void verifyDtoPreparations() {
-        ArgumentCaptor<ScenarioExecution> scenarioExecutionArgumentCaptor = captor();
-        verify(scenarioActionWithScenarioExecution).setScenarioExecution(scenarioExecutionArgumentCaptor.capture());
-
-        ScenarioExecution expectedScenarioExecution = scenarioActionWithScenarioExecution.getScenarioExecution();
-        ScenarioExecution capturedScenarioExecution = scenarioExecutionArgumentCaptor.getValue();
-
-        assertThat(capturedScenarioExecution)
-            .hasAllNullFieldsOrPropertiesExcept(
-                "executionId",
-                "scenarioName",
-                "status",
-                "scenarioParameters",
-                "scenarioActions",
-                "scenarioMessages")
-            .satisfies(
-                s -> assertThat(s).extracting(ScenarioExecution::getExecutionId).isEqualTo(expectedScenarioExecution.getExecutionId()),
-                s -> assertThat(s).extracting(ScenarioExecution::getScenarioName).isEqualTo(expectedScenarioExecution.getScenarioName())
-            );
     }
 
     @Nested

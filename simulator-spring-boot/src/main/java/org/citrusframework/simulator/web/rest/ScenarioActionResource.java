@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.service.ScenarioActionQueryService;
 import org.citrusframework.simulator.service.ScenarioActionService;
 import org.citrusframework.simulator.service.criteria.ScenarioActionCriteria;
+import org.citrusframework.simulator.web.rest.dto.ScenarioActionDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioActionMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,12 +50,14 @@ public class ScenarioActionResource {
     private static final Logger logger = LoggerFactory.getLogger(ScenarioActionResource.class);
 
     private final ScenarioActionService scenarioActionService;
-
     private final ScenarioActionQueryService scenarioActionQueryService;
 
-    public ScenarioActionResource(ScenarioActionService scenarioActionService, ScenarioActionQueryService scenarioActionQueryService) {
+    private final ScenarioActionMapper scenarioActionMapper;
+
+    public ScenarioActionResource(ScenarioActionService scenarioActionService, ScenarioActionQueryService scenarioActionQueryService, ScenarioActionMapper scenarioActionMapper) {
         this.scenarioActionService = scenarioActionService;
         this.scenarioActionQueryService = scenarioActionQueryService;
+        this.scenarioActionMapper = scenarioActionMapper;
     }
 
     /**
@@ -64,12 +68,12 @@ public class ScenarioActionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioActions in body.
      */
     @GetMapping("/scenario-actions")
-    public ResponseEntity<List<ScenarioAction>> getAllScenarioActions(ScenarioActionCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ScenarioActionDTO>> getAllScenarioActions(ScenarioActionCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get ScenarioActions by criteria: {}", criteria);
 
         Page<ScenarioAction> page = scenarioActionQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(scenarioActionMapper::toDto).toList());
     }
 
     /**
@@ -91,9 +95,9 @@ public class ScenarioActionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the scenarioAction, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/scenario-actions/{id}")
-    public ResponseEntity<ScenarioAction> getScenarioAction(@PathVariable("id") Long id) {
+    public ResponseEntity<ScenarioActionDTO> getScenarioAction(@PathVariable("id") Long id) {
         logger.debug("REST request to get ScenarioAction : {}", id);
         Optional<ScenarioAction> scenarioAction = scenarioActionService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(scenarioAction);
+        return ResponseUtil.wrapOrNotFound(scenarioAction.map(scenarioActionMapper::toDto));
     }
 }

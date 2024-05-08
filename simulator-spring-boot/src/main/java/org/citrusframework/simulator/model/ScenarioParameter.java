@@ -88,10 +88,6 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     @JsonIgnoreProperties(value = {"scenarioParameters", "scenarioActions", "scenarioMessages"}, allowSetters = true)
     private ScenarioExecution scenarioExecution;
 
-    private boolean required;
-
-    private String label;
-
     @Transient
     private List<ScenarioParameterOption> options = new ArrayList<>();
 
@@ -182,21 +178,6 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
 
         public ScenarioParameterBuilder value(String value) {
             scenarioParameter.value = value;
-            return this;
-        }
-
-        public ScenarioParameterBuilder required() {
-            scenarioParameter.required = true;
-            return this;
-        }
-
-        public ScenarioParameterBuilder optional() {
-            scenarioParameter.required = false;
-            return this;
-        }
-
-        public ScenarioParameterBuilder label(String label) {
-            scenarioParameter.label = label;
             return this;
         }
 

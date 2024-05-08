@@ -80,8 +80,6 @@ public class CalculateStarter extends AbstractScenarioStarter {
         // bank account (text box)
         scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.ACCOUNT.name())
-                .label("Bank Account")
-                .required()
                 .textbox()
                 .value("6219653")
                 .build());
@@ -89,8 +87,6 @@ public class CalculateStarter extends AbstractScenarioStarter {
         // sort code (text box)
         scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.SORT_CODE.name())
-                .label("Sort Code")
-                .required()
                 .textbox()
                 .value("12345670")
                 .build());

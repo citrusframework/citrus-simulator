@@ -39,8 +39,6 @@ public class StatusMessage {
     public ScenarioParameter asScenarioParameter() {
         ScenarioParameter.ScenarioParameterBuilder statusMessageParameterBuilder = ScenarioParameter.builder()
                 .name(STATUS_MESSAGE_VAR)
-                .label("Status Message")
-                .optional()
                 .textbox()
                 .value(statusMessage);
         return statusMessageParameterBuilder.build();

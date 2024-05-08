@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.service.MessageHeaderQueryService;
 import org.citrusframework.simulator.service.MessageHeaderService;
 import org.citrusframework.simulator.service.criteria.MessageHeaderCriteria;
+import org.citrusframework.simulator.web.rest.dto.MessageHeaderDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.MessageHeaderMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,12 +50,14 @@ public class MessageHeaderResource {
     private static final Logger logger = LoggerFactory.getLogger(MessageHeaderResource.class);
 
     private final MessageHeaderService messageHeaderService;
-
     private final MessageHeaderQueryService messageHeaderQueryService;
 
-    public MessageHeaderResource(MessageHeaderService messageHeaderService, MessageHeaderQueryService messageHeaderQueryService) {
+    private final MessageHeaderMapper messageHeaderMapper;
+
+    public MessageHeaderResource(MessageHeaderService messageHeaderService, MessageHeaderQueryService messageHeaderQueryService, MessageHeaderMapper messageHeaderMapper) {
         this.messageHeaderService = messageHeaderService;
         this.messageHeaderQueryService = messageHeaderQueryService;
+        this.messageHeaderMapper = messageHeaderMapper;
     }
 
     /**
@@ -64,12 +68,12 @@ public class MessageHeaderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of messageHeaders in body.
      */
     @GetMapping("/message-headers")
-    public ResponseEntity<List<MessageHeader>> getAllMessageHeaders(MessageHeaderCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<MessageHeaderDTO>> getAllMessageHeaders(MessageHeaderCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get MessageHeaders by criteria: {}", criteria);
 
         Page<MessageHeader> page = messageHeaderQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(messageHeaderMapper::toDto).toList());
     }
 
     /**
@@ -91,9 +95,9 @@ public class MessageHeaderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the messageHeader, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/message-headers/{id}")
-    public ResponseEntity<MessageHeader> getMessageHeader(@PathVariable("id") Long id) {
+    public ResponseEntity<MessageHeaderDTO> getMessageHeader(@PathVariable("id") Long id) {
         logger.debug("REST request to get MessageHeader : {}", id);
         Optional<MessageHeader> messageHeader = messageHeaderService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(messageHeader);
+        return ResponseUtil.wrapOrNotFound(messageHeader.map(messageHeaderMapper::toDto));
     }
 }

@@ -83,28 +83,4 @@ public interface ScenarioExecutionService {
      * @return the updated entity.
      */
     ScenarioExecution completeScenarioExecution(long scenarioExecutionId, TestResult testResult);
-
-    /**
-     * Function that converts the {@link ScenarioExecution} to its "DTO-form": It especially cuts
-     * any constraints from the contained {@link TestResult}.
-     *
-     * @param scenarioExecution The entity which should be returned
-     * @param entityManager     Entity manager that is currently managing the entity
-     * @return the entity with prepared {@link TestResult}
-     */
-    static ScenarioExecution restrictToDtoProperties(ScenarioExecution scenarioExecution, EntityManager entityManager) {
-        var testResult = scenarioExecution.getTestResult();
-
-        if (nonNull(testResult)) {
-            entityManager.detach(scenarioExecution);
-            scenarioExecution.setTestResult(
-                TestResult.builder()
-                    .status(testResult.getStatus())
-                    .errorMessage(testResult.getErrorMessage())
-                    .stackTrace(testResult.getStackTrace())
-                    .build());
-        }
-
-        return scenarioExecution;
-    }
 }

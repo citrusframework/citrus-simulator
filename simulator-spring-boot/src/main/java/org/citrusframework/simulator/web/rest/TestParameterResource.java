@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.TestParameter;
 import org.citrusframework.simulator.service.TestParameterQueryService;
 import org.citrusframework.simulator.service.TestParameterService;
 import org.citrusframework.simulator.service.criteria.TestParameterCriteria;
+import org.citrusframework.simulator.web.rest.dto.TestParameterDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.TestParameterMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,12 +50,14 @@ public class TestParameterResource {
     private static final Logger logger = LoggerFactory.getLogger(TestParameterResource.class);
 
     private final TestParameterService testParameterService;
-
     private final TestParameterQueryService testParameterQueryService;
 
-    public TestParameterResource(TestParameterService testParameterService, TestParameterQueryService testParameterQueryService) {
+    private final TestParameterMapper testParameterMapper;
+
+    public TestParameterResource(TestParameterService testParameterService, TestParameterQueryService testParameterQueryService, TestParameterMapper testParameterMapper) {
         this.testParameterService = testParameterService;
         this.testParameterQueryService = testParameterQueryService;
+        this.testParameterMapper = testParameterMapper;
     }
 
     /**
@@ -64,12 +68,12 @@ public class TestParameterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of testParameters in body.
      */
     @GetMapping("/test-parameters")
-    public ResponseEntity<List<TestParameter>> getAllTestParameters(TestParameterCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<TestParameterDTO>> getAllTestParameters(TestParameterCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get TestParameters by criteria: {}", criteria);
 
         Page<TestParameter> page = testParameterQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(testParameterMapper::toDto).toList());
     }
 
     /**
@@ -87,13 +91,14 @@ public class TestParameterResource {
     /**
      * {@code GET  /test-parameters/:id} : get the "id" testParameter.
      *
-     * @param id the id of the testParameter to retrieve.
+     * @param testResultId the id of the test result which the parameter belongs to.
+     * @param key          the id of the test parameter to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the testParameter, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/test-parameters/{testResultId}/{key}")
-    public ResponseEntity<TestParameter> getTestParameter(@PathVariable("testResultId") Long testResultId, @PathVariable("key") String key) {
+    public ResponseEntity<TestParameterDTO> getTestParameter(@PathVariable("testResultId") Long testResultId, @PathVariable("key") String key) {
         logger.debug("REST request to get TestParameter '{}' of TestResult: {}", key, testResultId);
         Optional<TestParameter> testParameter = testParameterService.findOne(testResultId, key);
-        return ResponseUtil.wrapOrNotFound(testParameter);
+        return ResponseUtil.wrapOrNotFound(testParameter.map(testParameterMapper::toDto));
     }
 }

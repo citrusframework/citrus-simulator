@@ -45,8 +45,6 @@ public class ReferenceId {
     public ScenarioParameter asScenarioParameter() {
         return ScenarioParameter.builder()
                 .name(REFERENCE_ID_VAR)
-                .label("Reference Id")
-                .required()
                 .textbox()
                 .value(referenceId)
                 .build();

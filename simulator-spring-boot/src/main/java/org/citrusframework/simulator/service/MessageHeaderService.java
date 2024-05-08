@@ -16,15 +16,11 @@
 
 package org.citrusframework.simulator.service;
 
-import jakarta.persistence.EntityManager;
-import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
-
-import static java.util.Objects.nonNull;
 
 /**
  * Service Interface for managing {@link MessageHeader}.
@@ -54,28 +50,4 @@ public interface MessageHeaderService {
      * @return the entity.
      */
     Optional<MessageHeader> findOne(Long headerId);
-
-    /**
-     * Function that converts the {@link MessageHeader} to its "DTO-form": It may only contain the {@code messageId}
-     * and {@code citrusMessageId} of the related {@link Message}, no further attributes. That is especially true for
-     * relationships, because of a possible {@link org.hibernate.LazyInitializationException}).
-     *
-     * @param messageHeader The entity, which should be returned
-     * @param entityManager Entity manager that is currently managing the entity
-     * @return the entity with prepared {@link Message}
-     */
-    static MessageHeader restrictToDtoProperties(MessageHeader messageHeader, EntityManager entityManager) {
-        var message = messageHeader.getMessage();
-
-        if (nonNull(message)) {
-            entityManager.detach(messageHeader);
-            messageHeader.setMessage(
-                Message.builder()
-                    .messageId(message.getMessageId())
-                    .citrusMessageId(message.getCitrusMessageId())
-                    .build());
-        }
-
-        return messageHeader;
-    }
 }

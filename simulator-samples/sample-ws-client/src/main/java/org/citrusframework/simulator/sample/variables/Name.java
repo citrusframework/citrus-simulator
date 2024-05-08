@@ -45,8 +45,6 @@ public class Name {
     public ScenarioParameter asScenarioParameter() {
         return ScenarioParameter.builder()
                 .name(NAME_VAR)
-                .label("Enter your name")
-                .required()
                 .textbox()
                 .value(name)
                 .build();
