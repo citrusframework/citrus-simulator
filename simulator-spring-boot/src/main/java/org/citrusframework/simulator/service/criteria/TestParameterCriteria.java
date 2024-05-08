@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,17 +51,17 @@ public class TestParameterCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private StringFilter key;
+    private @Nullable StringFilter key;
 
-    private StringFilter value;
+    private @Nullable StringFilter value;
 
-    private InstantFilter createdDate;
+    private @Nullable InstantFilter createdDate;
 
-    private InstantFilter lastModifiedDate;
+    private @Nullable InstantFilter lastModifiedDate;
 
-    private LongFilter testResultId;
+    private @Nullable LongFilter testResultId;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public TestParameterCriteria() {
     }
@@ -77,41 +78,6 @@ public class TestParameterCriteria implements Serializable, Criteria {
     @Override
     public TestParameterCriteria copy() {
         return new TestParameterCriteria(this);
-    }
-
-    public StringFilter key() {
-        if (key == null) {
-            key = new StringFilter();
-        }
-        return key;
-    }
-
-    public StringFilter value() {
-        if (value == null) {
-            value = new StringFilter();
-        }
-        return value;
-    }
-
-    public InstantFilter createdDate() {
-        if (createdDate == null) {
-            createdDate = new InstantFilter();
-        }
-        return createdDate;
-    }
-
-    public InstantFilter lastModifiedDate() {
-        if (lastModifiedDate == null) {
-            lastModifiedDate = new InstantFilter();
-        }
-        return lastModifiedDate;
-    }
-
-    public LongFilter testResultId() {
-        if (testResultId == null) {
-            testResultId = new LongFilter();
-        }
-        return testResultId;
     }
 
     @Override

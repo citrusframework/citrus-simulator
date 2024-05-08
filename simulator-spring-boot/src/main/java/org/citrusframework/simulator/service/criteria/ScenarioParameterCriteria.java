@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -51,21 +52,21 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private LongFilter parameterId;
+    private @Nullable LongFilter parameterId;
 
-    private StringFilter name;
+    private @Nullable StringFilter name;
 
-    private IntegerFilter controlType;
+    private @Nullable IntegerFilter controlType;
 
-    private StringFilter value;
+    private @Nullable StringFilter value;
 
-    private InstantFilter createdDate;
+    private @Nullable InstantFilter createdDate;
 
-    private InstantFilter lastModifiedDate;
+    private @Nullable InstantFilter lastModifiedDate;
 
-    private LongFilter scenarioExecutionId;
+    private @Nullable LongFilter scenarioExecutionId;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public ScenarioParameterCriteria() {
     }
@@ -84,55 +85,6 @@ public class ScenarioParameterCriteria implements Serializable, Criteria {
     @Override
     public ScenarioParameterCriteria copy() {
         return new ScenarioParameterCriteria(this);
-    }
-
-    public LongFilter id() {
-        if (parameterId == null) {
-            parameterId = new LongFilter();
-        }
-        return parameterId;
-    }
-
-    public StringFilter name() {
-        if (name == null) {
-            name = new StringFilter();
-        }
-        return name;
-    }
-
-    public IntegerFilter controlType() {
-        if (controlType == null) {
-            controlType = new IntegerFilter();
-        }
-        return controlType;
-    }
-
-    public StringFilter value() {
-        if (value == null) {
-            value = new StringFilter();
-        }
-        return value;
-    }
-
-    public InstantFilter createdDate() {
-        if (createdDate == null) {
-            createdDate = new InstantFilter();
-        }
-        return createdDate;
-    }
-
-    public InstantFilter lastModifiedDate() {
-        if (lastModifiedDate == null) {
-            lastModifiedDate = new InstantFilter();
-        }
-        return lastModifiedDate;
-    }
-
-    public LongFilter scenarioExecutionId() {
-        if (scenarioExecutionId == null) {
-            scenarioExecutionId = new LongFilter();
-        }
-        return scenarioExecutionId;
     }
 
     @Override

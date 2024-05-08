@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -51,27 +52,27 @@ public class TestResultCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private LongFilter id;
+    private @Nullable LongFilter id;
 
-    private IntegerFilter status;
+    private @Nullable IntegerFilter status;
 
-    private StringFilter testName;
+    private @Nullable StringFilter testName;
 
-    private StringFilter className;
+    private @Nullable StringFilter className;
 
-    private StringFilter errorMessage;
+    private @Nullable StringFilter errorMessage;
 
-    private StringFilter stackTrace;
+    private @Nullable StringFilter stackTrace;
 
-    private StringFilter failureType;
+    private @Nullable StringFilter failureType;
 
-    private InstantFilter createdDate;
+    private @Nullable InstantFilter createdDate;
 
-    private InstantFilter lastModifiedDate;
+    private @Nullable InstantFilter lastModifiedDate;
 
-    private StringFilter testParameterKey;
+    private @Nullable StringFilter testParameterKey;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public TestResultCriteria() {
     }
@@ -93,76 +94,6 @@ public class TestResultCriteria implements Serializable, Criteria {
     @Override
     public TestResultCriteria copy() {
         return new TestResultCriteria(this);
-    }
-
-    public LongFilter id() {
-        if (id == null) {
-            id = new LongFilter();
-        }
-        return id;
-    }
-
-    public IntegerFilter status() {
-        if (status == null) {
-            status = new IntegerFilter();
-        }
-        return status;
-    }
-
-    public StringFilter testName() {
-        if (testName == null) {
-            testName = new StringFilter();
-        }
-        return testName;
-    }
-
-    public StringFilter className() {
-        if (className == null) {
-            className = new StringFilter();
-        }
-        return className;
-    }
-
-    public StringFilter errorMessage() {
-        if (errorMessage == null) {
-            errorMessage = new StringFilter();
-        }
-        return errorMessage;
-    }
-
-    public StringFilter stackTrace() {
-        if (stackTrace == null) {
-            stackTrace = new StringFilter();
-        }
-        return stackTrace;
-    }
-
-    public StringFilter failureType() {
-        if (failureType == null) {
-            failureType = new StringFilter();
-        }
-        return failureType;
-    }
-
-    public InstantFilter createdDate() {
-        if (createdDate == null) {
-            createdDate = new InstantFilter();
-        }
-        return createdDate;
-    }
-
-    public InstantFilter lastModifiedDate() {
-        if (lastModifiedDate == null) {
-            lastModifiedDate = new InstantFilter();
-        }
-        return lastModifiedDate;
-    }
-
-    public StringFilter testParameterId() {
-        if (testParameterKey == null) {
-            testParameterKey = new StringFilter();
-        }
-        return testParameterKey;
     }
 
     @Override

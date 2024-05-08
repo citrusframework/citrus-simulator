@@ -174,7 +174,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                 specification =
                     specification.and(
                         buildSpecification(
-                            criteria.status(),
+                            criteria.getStatus(),
                             root -> root.join(ScenarioExecution_.testResult, JoinType.LEFT).get(TestResult_.status)
                         )
                     );

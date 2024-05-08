@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -51,25 +52,25 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private LongFilter executionId;
+    private @Nullable LongFilter executionId;
 
-    private InstantFilter startDate;
+    private @Nullable InstantFilter startDate;
 
-    private InstantFilter endDate;
+    private @Nullable InstantFilter endDate;
 
-    private StringFilter scenarioName;
+    private @Nullable StringFilter scenarioName;
 
-    private IntegerFilter status;
+    private @Nullable IntegerFilter status;
 
-    private LongFilter scenarioActionsId;
+    private @Nullable LongFilter scenarioActionsId;
 
-    private LongFilter scenarioMessagesId;
+    private @Nullable LongFilter scenarioMessagesId;
 
-    private LongFilter scenarioParametersId;
+    private @Nullable LongFilter scenarioParametersId;
 
-    private String headers;
+    private @Nullable String headers;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public ScenarioExecutionCriteria() {
     }
@@ -90,62 +91,6 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
     @Override
     public ScenarioExecutionCriteria copy() {
         return new ScenarioExecutionCriteria(this);
-    }
-
-    public LongFilter id() {
-        if (executionId == null) {
-            executionId = new LongFilter();
-        }
-        return executionId;
-    }
-
-    public InstantFilter startDate() {
-        if (startDate == null) {
-            startDate = new InstantFilter();
-        }
-        return startDate;
-    }
-
-    public InstantFilter endDate() {
-        if (endDate == null) {
-            endDate = new InstantFilter();
-        }
-        return endDate;
-    }
-
-    public StringFilter scenarioName() {
-        if (scenarioName == null) {
-            scenarioName = new StringFilter();
-        }
-        return scenarioName;
-    }
-
-    public IntegerFilter status() {
-        if (status == null) {
-            status = new IntegerFilter();
-        }
-        return status;
-    }
-
-    public LongFilter scenarioActionsId() {
-        if (scenarioActionsId == null) {
-            scenarioActionsId = new LongFilter();
-        }
-        return scenarioActionsId;
-    }
-
-    public LongFilter scenarioMessagesId() {
-        if (scenarioMessagesId == null) {
-            scenarioMessagesId = new LongFilter();
-        }
-        return scenarioMessagesId;
-    }
-
-    public LongFilter scenarioParametersId() {
-        if (scenarioParametersId == null) {
-            scenarioParametersId = new LongFilter();
-        }
-        return scenarioParametersId;
     }
 
     @Override
