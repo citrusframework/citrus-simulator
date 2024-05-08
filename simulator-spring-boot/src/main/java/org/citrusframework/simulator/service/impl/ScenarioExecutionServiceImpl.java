@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.EntityManager;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
@@ -49,11 +48,9 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
 
     private final TimeProvider timeProvider = new TimeProvider();
 
-    private final EntityManager entityManager;
     private final ScenarioExecutionRepository scenarioExecutionRepository;
 
-    public ScenarioExecutionServiceImpl(EntityManager entityManager, ScenarioExecutionRepository scenarioExecutionRepository) {
-        this.entityManager = entityManager;
+    public ScenarioExecutionServiceImpl(ScenarioExecutionRepository scenarioExecutionRepository) {
         this.scenarioExecutionRepository = scenarioExecutionRepository;
     }
 
@@ -67,16 +64,14 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
     @Transactional(readOnly = true)
     public Page<ScenarioExecution> findAll(Pageable pageable) {
         logger.debug("Request to get all ScenarioExecutions with eager relationships");
-        return scenarioExecutionRepository.findAll(pageable)
-            .map(scenarioExecution -> ScenarioExecutionService.restrictToDtoProperties(scenarioExecution, entityManager));
+        return scenarioExecutionRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioExecution> findOne(Long id) {
         logger.debug("Request to get ScenarioExecution with eager relationships : {}", id);
-        return scenarioExecutionRepository.findOneByExecutionId(id)
-            .map(scenarioExecution -> ScenarioExecutionService.restrictToDtoProperties(scenarioExecution, entityManager));
+        return scenarioExecutionRepository.findOneByExecutionId(id);
     }
 
     @Override

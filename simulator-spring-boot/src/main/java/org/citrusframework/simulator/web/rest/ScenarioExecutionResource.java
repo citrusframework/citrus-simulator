@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.service.ScenarioExecutionQueryService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
+import org.citrusframework.simulator.web.rest.dto.ScenarioExecutionDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioExecutionMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,15 +50,17 @@ public class ScenarioExecutionResource {
     private static final Logger logger = LoggerFactory.getLogger(ScenarioExecutionResource.class);
 
     private final ScenarioExecutionService scenarioExecutionService;
-
     private final ScenarioExecutionQueryService scenarioExecutionQueryService;
+
+    private final ScenarioExecutionMapper scenarioExecutionMapper;
 
     public ScenarioExecutionResource(
         ScenarioExecutionService scenarioExecutionService,
-        ScenarioExecutionQueryService scenarioExecutionQueryService
+        ScenarioExecutionQueryService scenarioExecutionQueryService, ScenarioExecutionMapper scenarioExecutionMapper
     ) {
         this.scenarioExecutionService = scenarioExecutionService;
         this.scenarioExecutionQueryService = scenarioExecutionQueryService;
+        this.scenarioExecutionMapper = scenarioExecutionMapper;
     }
 
     /**
@@ -67,12 +71,12 @@ public class ScenarioExecutionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioExecutions in body.
      */
     @GetMapping("/scenario-executions")
-    public ResponseEntity<List<ScenarioExecution>> getAllScenarioExecutions(ScenarioExecutionCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ScenarioExecutionDTO>> getAllScenarioExecutions(ScenarioExecutionCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get ScenarioExecutions by criteria: {}", criteria);
 
         Page<ScenarioExecution> page = scenarioExecutionQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(scenarioExecutionMapper::toDto).toList());
     }
 
     /**
@@ -94,9 +98,9 @@ public class ScenarioExecutionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the scenarioExecution, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/scenario-executions/{id}")
-    public ResponseEntity<ScenarioExecution> getScenarioExecution(@PathVariable("id") Long id) {
+    public ResponseEntity<ScenarioExecutionDTO> getScenarioExecution(@PathVariable("id") Long id) {
         logger.debug("REST request to get ScenarioExecution : {}", id);
         Optional<ScenarioExecution> scenarioExecution = scenarioExecutionService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(scenarioExecution);
+        return ResponseUtil.wrapOrNotFound(scenarioExecution.map(scenarioExecutionMapper::toDto));
     }
 }

@@ -59,7 +59,6 @@ import static java.util.regex.Pattern.compile;
 import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.MessageHeaderFilter.fromFilterPattern;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.Operator.parseOperator;
-import static org.citrusframework.simulator.service.ScenarioExecutionService.restrictToDtoProperties;
 import static org.citrusframework.util.StringUtils.isEmpty;
 import static org.springframework.data.domain.Pageable.unpaged;
 
@@ -125,9 +124,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
 
         var scenarioExecutions = scenarioExecutionRepository.findAllWhereExecutionIdIn(scenarioExecutionIds, unpaged(page.getSort()));
         return new PageImpl<>(
-            scenarioExecutions.stream()
-                .map(scenarioExecution -> restrictToDtoProperties(scenarioExecution, entityManager))
-                .toList(),
+            scenarioExecutions.getContent(),
             page,
             scenarioExecutionRepository.count(specification));
     }

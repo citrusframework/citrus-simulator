@@ -38,8 +38,6 @@ public class Status {
     public ScenarioParameter asScenarioParameter() {
         ScenarioParameter.ScenarioParameterBuilder statusParameterBuilder = ScenarioParameter.builder()
                 .name(Variables.STATUS_VAR)
-                .label("Fax Status")
-                .required()
                 .dropdown()
                 .value(status.value());
 

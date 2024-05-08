@@ -77,8 +77,6 @@ public class ValidateStarter extends AbstractScenarioStarter {
         // iban (text box)
         scenarioParameters.add(ScenarioParameter.builder()
                 .name(Variable.IBAN.name())
-                .label("IBAN")
-                .required()
                 .dropdown()
                 .addOption("DE92123456700006219653", "DE92123456700006219653") // Valid IBAN
                 .addOption("DE00123456700006219653", "DE00123456700006219653") // Invalid IBAN

@@ -78,16 +78,14 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
     @Transactional(readOnly = true)
     public Page<ScenarioAction> findAll(Pageable pageable) {
         logger.debug("Request to get all ScenarioActions with eager relationships");
-        return scenarioActionRepository.findAllWithToOneRelationships(pageable)
-            .map(scenarioAction -> ScenarioActionService.restrictToDtoProperties(scenarioAction, entityManager));
+        return scenarioActionRepository.findAllWithToOneRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ScenarioAction> findOne(Long id) {
         logger.debug("Request to get ScenarioAction with eager relationships: {}", id);
-        return scenarioActionRepository.findOneWithEagerRelationships(id)
-            .map(scenarioAction -> ScenarioActionService.restrictToDtoProperties(scenarioAction, entityManager));
+        return scenarioActionRepository.findOneWithEagerRelationships(id);
     }
 
     @Override

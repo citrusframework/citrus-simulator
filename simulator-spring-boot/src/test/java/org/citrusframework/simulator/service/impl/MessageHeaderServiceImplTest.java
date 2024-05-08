@@ -23,7 +23,6 @@ import org.citrusframework.simulator.repository.MessageHeaderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.springframework.data.domain.Pageable.unpaged;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,8 +84,6 @@ class MessageHeaderServiceImplTest {
         Page<MessageHeader> result = fixture.findAll(pageable);
 
         assertEquals(page, result);
-
-        verifyDtoPreparations();
     }
 
     @Test
@@ -100,18 +96,5 @@ class MessageHeaderServiceImplTest {
 
         assertTrue(maybeMessageHeader.isPresent());
         assertEquals(messageHeaderWithMessage, maybeMessageHeader.get());
-
-        verifyDtoPreparations();
-    }
-
-    private void verifyDtoPreparations() {
-        ArgumentCaptor<Message> messageHeaderArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(messageHeaderWithMessage).setMessage(messageHeaderArgumentCaptor.capture());
-
-        Message expectedMessage = messageHeaderWithMessage.getMessage();
-        Message capturedMessage = messageHeaderArgumentCaptor.getValue();
-
-        assertEquals(expectedMessage.getMessageId(), capturedMessage.getMessageId());
-        assertEquals(expectedMessage.getCitrusMessageId(), capturedMessage.getCitrusMessageId());
     }
 }

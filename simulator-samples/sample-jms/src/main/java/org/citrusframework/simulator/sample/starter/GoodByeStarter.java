@@ -50,8 +50,6 @@ public class GoodByeStarter extends AbstractScenarioStarter {
         // payload (text area)
         scenarioParameter.add(ScenarioParameter.builder()
                 .name("payload")
-                .label("Payload")
-                .required()
                 .textarea()
                 .value(templateService.getXmlMessageTemplate("Goodbye"))
                 .build());

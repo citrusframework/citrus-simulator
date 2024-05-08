@@ -20,6 +20,8 @@ import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioParameterQueryService;
 import org.citrusframework.simulator.service.ScenarioParameterService;
 import org.citrusframework.simulator.service.criteria.ScenarioParameterCriteria;
+import org.citrusframework.simulator.web.rest.dto.ScenarioParameterDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioParameterMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -48,15 +50,17 @@ public class ScenarioParameterResource {
     private static final Logger logger = LoggerFactory.getLogger(ScenarioParameterResource.class);
 
     private final ScenarioParameterService scenarioParameterService;
-
     private final ScenarioParameterQueryService scenarioParameterQueryService;
+
+    private final ScenarioParameterMapper scenarioParameterMapper;
 
     public ScenarioParameterResource(
         ScenarioParameterService scenarioParameterService,
-        ScenarioParameterQueryService scenarioParameterQueryService
+        ScenarioParameterQueryService scenarioParameterQueryService, ScenarioParameterMapper scenarioParameterMapper
     ) {
         this.scenarioParameterService = scenarioParameterService;
         this.scenarioParameterQueryService = scenarioParameterQueryService;
+        this.scenarioParameterMapper = scenarioParameterMapper;
     }
 
     /**
@@ -67,12 +71,12 @@ public class ScenarioParameterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioParameters in body.
      */
     @GetMapping("/scenario-parameters")
-    public ResponseEntity<List<ScenarioParameter>> getAllScenarioParameters(ScenarioParameterCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ScenarioParameterDTO>> getAllScenarioParameters(ScenarioParameterCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get ScenarioParameters by criteria: {}", criteria);
 
         Page<ScenarioParameter> page = scenarioParameterQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(scenarioParameterMapper::toDto).toList());
     }
 
     /**
@@ -94,9 +98,9 @@ public class ScenarioParameterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the scenarioParameter, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/scenario-parameters/{id}")
-    public ResponseEntity<ScenarioParameter> getScenarioParameter(@PathVariable("id") Long id) {
+    public ResponseEntity<ScenarioParameterDTO> getScenarioParameter(@PathVariable("id") Long id) {
         logger.debug("REST request to get ScenarioParameter : {}", id);
         Optional<ScenarioParameter> scenarioParameter = scenarioParameterService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(scenarioParameter);
+        return ResponseUtil.wrapOrNotFound(scenarioParameter.map(scenarioParameterMapper::toDto));
     }
 }

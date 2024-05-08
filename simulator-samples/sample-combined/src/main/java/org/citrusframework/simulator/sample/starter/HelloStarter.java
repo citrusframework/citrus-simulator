@@ -50,8 +50,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // name (text box)
         scenarioParameters.add(ScenarioParameter.builder()
                 .name("greeting")
-                .label("Greeting Text")
-                .required()
                 .textbox()
                 .value("Hi there!")
                 .build());
@@ -59,8 +57,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // greeting (text area)
         scenarioParameters.add(ScenarioParameter.builder()
                 .name("payload")
-                .label("Payload")
-                .required()
                 .textarea()
                 .value(templateService.getXmlMessageTemplate("Hello"))
                 .build());

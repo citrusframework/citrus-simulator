@@ -21,6 +21,8 @@ import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
+import org.citrusframework.simulator.web.rest.dto.ScenarioParameterDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioParameterMapper;
 import org.citrusframework.simulator.web.rest.pagination.ScenarioComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +65,14 @@ public class ScenarioResource {
     private final ScenarioExecutorService scenarioExecutorService;
     private final ScenarioLookupService scenarioLookupService;
 
+    private final ScenarioParameterMapper scenarioParameterMapper;
+
     private final List<Scenario> scenarioCache = new ArrayList<>();
 
-    public ScenarioResource(ScenarioExecutorService scenarioExecutorService, ScenarioLookupService scenarioLookupService) {
+    public ScenarioResource(ScenarioExecutorService scenarioExecutorService, ScenarioLookupService scenarioLookupService, ScenarioParameterMapper scenarioParameterMapper) {
         this.scenarioExecutorService = scenarioExecutorService;
         this.scenarioLookupService = scenarioLookupService;
+        this.scenarioParameterMapper = scenarioParameterMapper;
 
         evictAndReloadScenarioCache(scenarioLookupService.getScenarioNames(), scenarioLookupService.getStarterNames());
     }
@@ -120,9 +125,9 @@ public class ScenarioResource {
      * @return the {@link ScenarioParameter}'s, if any are defined, or an empty list
      */
     @GetMapping("/scenarios/{scenarioName}/parameters")
-    public Collection<ScenarioParameter> getScenarioParameters(@PathVariable("scenarioName") String scenarioName) {
+    public Collection<ScenarioParameterDTO> getScenarioParameters(@PathVariable("scenarioName") String scenarioName) {
         logger.debug("REST request get Parameters of Scenario: {}", scenarioName);
-        return scenarioLookupService.lookupScenarioParameters(scenarioName);
+        return scenarioLookupService.lookupScenarioParameters(scenarioName).stream().map(scenarioParameterMapper::toDto).toList();
     }
 
     /**
@@ -133,9 +138,9 @@ public class ScenarioResource {
      * @param scenarioName the name of the launched {@link Scenario}
      */
     @PostMapping("scenarios/{scenarioName}/launch")
-    public Long launchScenario(@NotEmpty @PathVariable("scenarioName") String scenarioName, @RequestBody(required = false) List<ScenarioParameter> scenarioParameters) {
+    public Long launchScenario(@NotEmpty @PathVariable("scenarioName") String scenarioName, @RequestBody(required = false) List<ScenarioParameterDTO> scenarioParameters) {
         logger.debug("REST request to launch Scenario '{}' with Parameters: {}", scenarioName, scenarioParameters);
-        return scenarioExecutorService.run(scenarioName, scenarioParameters);
+        return scenarioExecutorService.run(scenarioName, scenarioParameters.stream().map(scenarioParameterMapper::toEntity).toList());
     }
 
     public record Scenario(String name, ScenarioResource.Scenario.ScenarioType type) {

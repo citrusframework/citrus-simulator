@@ -44,8 +44,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // title (dropdown)
         scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("title")
-                .label("Title")
-                .required()
                 .dropdown()
                 .addOption("Mr", "Mr.")
                 .addOption("Mrs", "Mrs.")
@@ -56,8 +54,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // firstname (text box)
         scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("firstname")
-                .label("First Name")
-                .required()
                 .textbox()
                 .value("Mickey")
                 .build());
@@ -65,8 +61,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // lastname (text box)
         scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("lastname")
-                .label("Last Name")
-                .required()
                 .textbox()
                 .value("Mouse")
                 .build());
@@ -75,8 +69,6 @@ public class HelloStarter extends AbstractScenarioStarter {
         // greeting (text area)
         scenarioParameter.add(new ScenarioParameterBuilder()
                 .name("greeting")
-                .label("Greeting")
-                .required()
                 .textarea()
                 .value("Hey there Mini")
                 .build());

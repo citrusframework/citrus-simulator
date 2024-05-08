@@ -21,6 +21,8 @@ import org.citrusframework.simulator.service.TestResultQueryService;
 import org.citrusframework.simulator.service.TestResultService;
 import org.citrusframework.simulator.service.criteria.TestResultCriteria;
 import org.citrusframework.simulator.service.dto.TestResultByStatus;
+import org.citrusframework.simulator.web.rest.dto.TestResultDTO;
+import org.citrusframework.simulator.web.rest.dto.mapper.TestResultMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
 import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -50,12 +52,14 @@ public class TestResultResource {
     private static final Logger logger = LoggerFactory.getLogger(TestResultResource.class);
 
     private final TestResultService testResultService;
-
     private final TestResultQueryService testResultQueryService;
 
-    public TestResultResource(TestResultService testResultService, TestResultQueryService testResultQueryService) {
+    private final TestResultMapper testResultMapper;
+
+    public TestResultResource(TestResultService testResultService, TestResultQueryService testResultQueryService, TestResultMapper testResultMapper) {
         this.testResultService = testResultService;
         this.testResultQueryService = testResultQueryService;
+        this.testResultMapper = testResultMapper;
     }
 
     /**
@@ -66,12 +70,12 @@ public class TestResultResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of testResults in body.
      */
     @GetMapping("/test-results")
-    public ResponseEntity<List<TestResult>> getAllTestResults(TestResultCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<TestResultDTO>> getAllTestResults(TestResultCriteria criteria, @ParameterObject Pageable pageable) {
         logger.debug("REST request to get TestResults by criteria: {}", criteria);
 
         Page<TestResult> page = testResultQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(testResultMapper::toDto).toList());
     }
 
     /**
@@ -116,9 +120,9 @@ public class TestResultResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the testResult, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/test-results/{id}")
-    public ResponseEntity<TestResult> getTestResult(@PathVariable("id") Long id) {
+    public ResponseEntity<TestResultDTO> getTestResult(@PathVariable("id") Long id) {
         logger.debug("REST request to get TestResult : {}", id);
         Optional<TestResult> testResult = testResultService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(testResult);
+        return ResponseUtil.wrapOrNotFound(testResult.map(testResultMapper::toDto));
     }
 }
