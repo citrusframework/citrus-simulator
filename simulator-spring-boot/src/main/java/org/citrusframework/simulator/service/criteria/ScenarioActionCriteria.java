@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,17 +51,17 @@ public class ScenarioActionCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private LongFilter actionId;
+    private @Nullable LongFilter actionId;
 
-    private StringFilter name;
+    private @Nullable StringFilter name;
 
-    private InstantFilter startDate;
+    private @Nullable InstantFilter startDate;
 
-    private InstantFilter endDate;
+    private @Nullable InstantFilter endDate;
 
-    private LongFilter scenarioExecutionId;
+    private @Nullable LongFilter scenarioExecutionId;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public ScenarioActionCriteria() {
     }
@@ -77,41 +78,6 @@ public class ScenarioActionCriteria implements Serializable, Criteria {
     @Override
     public ScenarioActionCriteria copy() {
         return new ScenarioActionCriteria(this);
-    }
-
-    public LongFilter id() {
-        if (actionId == null) {
-            actionId = new LongFilter();
-        }
-        return actionId;
-    }
-
-    public StringFilter name() {
-        if (name == null) {
-            name = new StringFilter();
-        }
-        return name;
-    }
-
-    public InstantFilter startDate() {
-        if (startDate == null) {
-            startDate = new InstantFilter();
-        }
-        return startDate;
-    }
-
-    public InstantFilter endDate() {
-        if (endDate == null) {
-            endDate = new InstantFilter();
-        }
-        return endDate;
-    }
-
-    public LongFilter scenarioExecutionId() {
-        if (scenarioExecutionId == null) {
-            scenarioExecutionId = new LongFilter();
-        }
-        return scenarioExecutionId;
     }
 
     @Override

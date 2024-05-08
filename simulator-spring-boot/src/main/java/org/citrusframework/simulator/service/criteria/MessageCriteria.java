@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service.criteria;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -51,23 +52,23 @@ public class MessageCriteria implements Serializable, Criteria {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private LongFilter messageId;
+    private @Nullable LongFilter messageId;
 
-    private IntegerFilter direction;
+    private @Nullable IntegerFilter direction;
 
-    private StringFilter payload;
+    private @Nullable StringFilter payload;
 
-    private StringFilter citrusMessageId;
+    private @Nullable StringFilter citrusMessageId;
 
-    private LongFilter headersId;
+    private @Nullable LongFilter headersId;
 
-    private LongFilter scenarioExecutionId;
+    private @Nullable LongFilter scenarioExecutionId;
 
-    private InstantFilter createdDate;
+    private @Nullable InstantFilter createdDate;
 
-    private InstantFilter lastModifiedDate;
+    private @Nullable InstantFilter lastModifiedDate;
 
-    private Boolean distinct;
+    private @Nullable Boolean distinct;
 
     public MessageCriteria() {
     }
@@ -87,62 +88,6 @@ public class MessageCriteria implements Serializable, Criteria {
     @Override
     public MessageCriteria copy() {
         return new MessageCriteria(this);
-    }
-
-    public LongFilter messageId() {
-        if (messageId == null) {
-            messageId = new LongFilter();
-        }
-        return messageId;
-    }
-
-    public IntegerFilter direction() {
-        if (direction == null) {
-            direction = new IntegerFilter();
-        }
-        return direction;
-    }
-
-    public StringFilter payload() {
-        if (payload == null) {
-            payload = new StringFilter();
-        }
-        return payload;
-    }
-
-    public StringFilter citrusMessageId() {
-        if (citrusMessageId == null) {
-            citrusMessageId = new StringFilter();
-        }
-        return citrusMessageId;
-    }
-
-    public LongFilter headersId() {
-        if (headersId == null) {
-            headersId = new LongFilter();
-        }
-        return headersId;
-    }
-
-    public LongFilter scenarioExecutionId() {
-        if (scenarioExecutionId == null) {
-            scenarioExecutionId = new LongFilter();
-        }
-        return scenarioExecutionId;
-    }
-
-    public InstantFilter createdDate() {
-        if (createdDate == null) {
-            createdDate = new InstantFilter();
-        }
-        return createdDate;
-    }
-
-    public InstantFilter lastModifiedDate() {
-        if (lastModifiedDate == null) {
-            lastModifiedDate = new InstantFilter();
-        }
-        return lastModifiedDate;
     }
 
     @Override
