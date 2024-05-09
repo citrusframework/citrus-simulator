@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
@@ -54,12 +53,10 @@ public class ScenarioActionServiceImpl implements ScenarioActionService {
 
     private final TimeProvider timeProvider = new TimeProvider();
 
-    private final EntityManager entityManager;
     private final ScenarioActionRepository scenarioActionRepository;
     private final ScenarioExecutionService scenarioExecutionService;
 
-    public ScenarioActionServiceImpl(EntityManager entityManager, ScenarioActionRepository scenarioActionRepository, ScenarioExecutionService scenarioExecutionService) {
-        this.entityManager = entityManager;
+    public ScenarioActionServiceImpl(ScenarioActionRepository scenarioActionRepository, ScenarioExecutionService scenarioExecutionService) {
         this.scenarioActionRepository = scenarioActionRepository;
         this.scenarioExecutionService = scenarioExecutionService;
     }

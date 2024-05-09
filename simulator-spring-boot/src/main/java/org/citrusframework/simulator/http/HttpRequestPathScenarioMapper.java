@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
     private List<HttpOperationScenario> scenarioList = new ArrayList<>();
 
     /** Request path matcher */
-    private PathMatcher pathMatcher = new AntPathMatcher();
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected String getMappingKey(Message request) {
