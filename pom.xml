@@ -28,7 +28,7 @@
 
     <spring-boot.version>3.2.4</spring-boot.version>
     <spring.version>6.1.6</spring.version>
-    <testng.version>7.9.0</testng.version>
+    <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
     <xstream.version>1.4.20</xstream.version>
