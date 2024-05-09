@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import org.citrusframework.simulator.scenario.ScenarioEndpoint;
  */
 public class MessageTypeCorrelationHandler extends AbstractCorrelationHandler {
 
-    private XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
+    private final XPathPayloadMappingKeyExtractor xPathPayloadMappingKeyExtractor = new XPathPayloadMappingKeyExtractor();
+
     private final String value;
 
     /**
@@ -37,6 +38,7 @@ public class MessageTypeCorrelationHandler extends AbstractCorrelationHandler {
      */
     public MessageTypeCorrelationHandler(ScenarioEndpoint scenarioEndpoint, String value) {
         super(scenarioEndpoint);
+
         this.value = value;
     }
 

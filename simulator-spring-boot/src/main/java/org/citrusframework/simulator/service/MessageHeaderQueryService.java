@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.model.MessageHeader_;
@@ -45,11 +44,9 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHeaderQueryService.class);
 
-    private final EntityManager entityManager;
     private final MessageHeaderRepository messageHeaderRepository;
 
-    public MessageHeaderQueryService(EntityManager entityManager, MessageHeaderRepository messageHeaderRepository) {
-        this.entityManager = entityManager;
+    public MessageHeaderQueryService(MessageHeaderRepository messageHeaderRepository) {
         this.messageHeaderRepository = messageHeaderRepository;
     }
 

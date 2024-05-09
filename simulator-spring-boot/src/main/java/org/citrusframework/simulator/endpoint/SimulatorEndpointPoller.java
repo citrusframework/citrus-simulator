@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.endpoint;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.Setter;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.Endpoint;
@@ -45,20 +46,13 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author Christoph Deppisch
  */
+@Setter
 public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean, ApplicationListener<ContextClosedEvent> {
 
     /**
      * Logger
      */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
-
-    @Autowired
-    private TestContextFactory testContextFactory;
-
-    /**
-     * Endpoint destination that is constantly polled for new messages.
-     */
-    private Endpoint inboundEndpoint;
 
     private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
             .setDaemon(true)
@@ -68,17 +62,25 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     /**
      * Thread running the server
      */
-    private ExecutorService taskExecutor = Executors.newSingleThreadExecutor(threadFactory);
+    private final ExecutorService taskExecutor = Executors.newSingleThreadExecutor(threadFactory);
+
+    /**
+     * Running flag
+     */
+    private final CompletableFuture<Boolean> running = new CompletableFuture<>();
+
+    @Autowired
+    private TestContextFactory testContextFactory;
+
+    /**
+     * Endpoint destination that is constantly polled for new messages.
+     */
+    private Endpoint inboundEndpoint;
 
     /**
      * Message handler for incoming simulator request messages
      */
     private EndpointAdapter endpointAdapter;
-
-    /**
-     * Running flag
-     */
-    private CompletableFuture<Boolean> running = new CompletableFuture<>();
 
     /**
      * Should automatically start on system load
@@ -200,51 +202,6 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     @Override
     public void destroy() {
         stop();
-    }
-
-    /**
-     * Sets the target inbound endpoint to read messages from.
-     *
-     * @param inboundEndpoint
-     */
-    public void setInboundEndpoint(Endpoint inboundEndpoint) {
-        this.inboundEndpoint = inboundEndpoint;
-    }
-
-    /**
-     * Sets the endpoint adapter to delegate messages to.
-     *
-     * @param endpointAdapter
-     */
-    public void setEndpointAdapter(EndpointAdapter endpointAdapter) {
-        this.endpointAdapter = endpointAdapter;
-    }
-
-    /**
-     * Enable/disable auto start.
-     *
-     * @param autoStart
-     */
-    public void setAutoStart(boolean autoStart) {
-        this.autoStart = autoStart;
-    }
-
-    /**
-     * Sets the exceptionDelay.
-     *
-     * @param exceptionDelay
-     */
-    public void setExceptionDelay(long exceptionDelay) {
-        this.exceptionDelay = exceptionDelay;
-    }
-
-    /**
-     * Gets the exceptionDelay.
-     *
-     * @return
-     */
-    public long getExceptionDelay() {
-        return exceptionDelay;
     }
 
     @Override

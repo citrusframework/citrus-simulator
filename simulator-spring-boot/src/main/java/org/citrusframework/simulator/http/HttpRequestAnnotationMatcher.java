@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2023 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class HttpRequestAnnotationMatcher {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequestAnnotationMatcher.class);
 
     /** Request path matcher */
-    private PathMatcher pathMatcher = new AntPathMatcher();
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     /**
      * Prevent instantiation other that using factory method

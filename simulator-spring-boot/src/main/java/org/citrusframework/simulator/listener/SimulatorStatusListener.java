@@ -57,7 +57,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
      * <p>
      * TODO: Replace with metric.
      */
-    private Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
+    private final Map<String, TestResult> runningTests = new ConcurrentHashMap<>();
 
     private final ScenarioActionService scenarioActionService;
     private final ScenarioExecutionService scenarioExecutionService;

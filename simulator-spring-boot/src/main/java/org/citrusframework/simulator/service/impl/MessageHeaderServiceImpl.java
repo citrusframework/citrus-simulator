@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.service.impl;
 
-import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.model.MessageHeader;
 import org.citrusframework.simulator.repository.MessageHeaderRepository;
 import org.citrusframework.simulator.service.MessageHeaderService;
@@ -38,11 +37,9 @@ public class MessageHeaderServiceImpl implements MessageHeaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHeaderServiceImpl.class);
 
-    private final EntityManager entityManager;
     private final MessageHeaderRepository messageHeaderRepository;
 
-    public MessageHeaderServiceImpl(EntityManager entityManager, MessageHeaderRepository messageHeaderRepository) {
-        this.entityManager = entityManager;
+    public MessageHeaderServiceImpl(MessageHeaderRepository messageHeaderRepository) {
         this.messageHeaderRepository = messageHeaderRepository;
     }
 
