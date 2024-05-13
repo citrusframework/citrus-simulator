@@ -20,7 +20,6 @@ public class TestApplication {
     @Bean("DEFAULT_SCENARIO")
     public SimulatorScenario defaultScenario() {
         return new AbstractSimulatorScenario() {
-
         };
     }
 }

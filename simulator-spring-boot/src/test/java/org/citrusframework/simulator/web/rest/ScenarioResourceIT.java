@@ -123,7 +123,7 @@ class ScenarioResourceIT {
             .perform(get(ENTITY_API_URL + "?nameContains=Simulator"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.length()").value(equalTo(1)))
+            .andExpect(jsonPath("$.length()").value(equalTo(4)))
             .andExpect(jsonPath("$.[*]", hasItem(
                 allOf(
                     hasEntry("name", SCENARIO_NAME),

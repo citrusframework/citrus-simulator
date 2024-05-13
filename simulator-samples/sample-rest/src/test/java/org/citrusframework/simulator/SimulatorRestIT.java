@@ -227,22 +227,51 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     }
 
     /**
-     * Sends a request to the server expecting it to purposefully fail a simulation.
+     * Sends a request to the server, expecting it to purposefully fail a simulation. The response code must therefore
+     * be {@link HttpStatus#OK}.
+     *
+     * @see org.citrusframework.simulator.sample.scenario.FailScenario
      */
     @CitrusTest
-    public void testFailingSimulation() {
+    public void testSimulationFailingExpectantly() {
         $(http().client(simulatorClient)
             .send()
-            .post("fail")
-            .message()
-            .contentType(MediaType.APPLICATION_XML_VALUE)
-            .body("<Failure xmlns=\"http://citrusframework.org/schemas/failure\">" +
-                "Fail!" +
-                "</Failure>"));
+            .get("fail"));
 
         $(http().client(simulatorClient)
             .receive()
-            .response(HttpStatus.OK)); // TODO: Pretty sure this should be HttpStatus.INTERNAL_SERVER_ERROR
+            .response(HttpStatus.OK));
+    }
+
+    /**
+     * Sends a request to the server, expecting it to execute a simulation. The response should indicate the unexpected
+     * error, returning a {@link HttpStatus#INTERNAL_SERVER_ERROR}.
+     *
+     * @see org.citrusframework.simulator.sample.scenario.ThrowScenario
+     */
+    @CitrusTest
+    public void testSimulationWithUnexpectedError() {
+        $(http().client(simulatorClient)
+            .send()
+            .get("throw")
+            .message()
+            .accept(MediaType.APPLICATION_JSON_VALUE));
+
+        $(http().client(simulatorClient)
+            .receive()
+            .response(HttpStatus.INTERNAL_SERVER_ERROR)
+            .message()
+            .body(
+                // language=json
+                """
+                    {
+                      "timestamp":"@ignore@",
+                      "status":555,
+                      "error":"Http Status 555",
+                      "path":"/services/rest/simulator/throw"
+                    }
+                    """
+            ));
     }
 
     @Configuration

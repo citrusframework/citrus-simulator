@@ -16,11 +16,10 @@
 
 package org.citrusframework.simulator.service.impl;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.scenario.AbstractSimulatorTestScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioStarter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.Starter;
@@ -159,34 +158,19 @@ public class ScenarioLookupServiceImplTest {
     }
 
     @Scenario(SCENARIO_NAME)
-    private static class TestSimulatorScenario implements SimulatorScenario {
-
-        @Override
-        public ScenarioEndpoint getScenarioEndpoint() {
-            throw new NotImplementedException();
-        }
+    private static class TestSimulatorScenario extends AbstractSimulatorTestScenario {
     }
 
     @Starter(STARTER_NAME)
-    private static class TetsScenarioStarter implements ScenarioStarter {
+    private static class TetsScenarioStarter extends AbstractSimulatorTestScenario implements ScenarioStarter {
 
         @Override
         public List<ScenarioParameter> getScenarioParameters() {
             return List.of(SCENARIO_PARAMETER);
         }
-
-        @Override
-        public ScenarioEndpoint getScenarioEndpoint() {
-            throw new NotImplementedException();
-        }
     }
 
     @Starter("ScenarioLookupServiceImplTest#invalidTestScenarioStarter")
-    private static class InvalidTestSimulatorScenario implements SimulatorScenario {
-
-        @Override
-        public ScenarioEndpoint getScenarioEndpoint() {
-            throw new NotImplementedException();
-        }
+    private static class InvalidTestSimulatorScenario extends AbstractSimulatorTestScenario {
     }
 }

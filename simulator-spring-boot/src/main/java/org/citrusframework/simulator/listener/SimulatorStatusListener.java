@@ -41,9 +41,6 @@ import static org.citrusframework.simulator.service.TestCaseUtil.getScenarioExec
 import static org.citrusframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
-/**
- * @author Christoph Deppisch
- */
 @Component
 public class SimulatorStatusListener extends AbstractTestListener implements TestActionListener {
 
@@ -92,7 +89,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
         scenarioExecutionService.completeScenarioExecution(getScenarioExecutionId(testCase), new org.citrusframework.simulator.model.TestResult(testResult));
 
-        logger.info("Test succeeded: {}", testResult);
+        logger.info("Scenario succeeded: {}", testResult);
     }
 
     @Override
@@ -106,7 +103,7 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
         scenarioExecutionService.completeScenarioExecution(getScenarioExecutionId(testCase), new org.citrusframework.simulator.model.TestResult(testResult));
 
-        logger.info("Test failed: {}", testResult);
+        logger.info("Scenario failed: {}", testResult);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,17 @@ import org.citrusframework.message.Message;
 import org.citrusframework.messaging.Consumer;
 import org.citrusframework.messaging.Producer;
 import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
+import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
 import org.citrusframework.simulator.exception.SimulatorException;
 
 import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-/**
- * @author Christoph Deppisch
- */
+import static java.lang.Thread.currentThread;
+import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
     /**
@@ -81,14 +82,17 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     @Override
     public Message receive(TestContext context, long timeout) {
         try {
-            Message message = channel.poll(timeout, TimeUnit.MILLISECONDS);
-            if (message == null) {
+            Message message = channel.poll(timeout, MILLISECONDS);
+
+            if (isNull(message)) {
                 throw new SimulatorException("Failed to receive scenario inbound message");
             }
+
             messageReceived(message, context);
+
             return message;
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            currentThread().interrupt();
             throw new SimulatorException(e);
         }
     }
@@ -96,8 +100,16 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     @Override
     public void send(Message message, TestContext context) {
         messageSent(message, context);
+        completeNextResponseFuture(message);
+    }
+
+    void fail(Throwable e) {
+        completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e));
+    }
+
+    private void completeNextResponseFuture(Message message) {
         if (responseFutures.isEmpty()) {
-            throw new SimulatorException("Failed to process scenario response message - missing response consumer");
+            throw new SimulatorException("Failed to process scenario response message - missing response consumer!");
         } else {
             responseFutures.pop().complete(message);
         }

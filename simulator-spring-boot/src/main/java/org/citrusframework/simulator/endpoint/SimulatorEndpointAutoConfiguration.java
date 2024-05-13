@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,52 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import jakarta.annotation.Nullable;
 import org.citrusframework.channel.ChannelSyncEndpoint;
 import org.citrusframework.channel.ChannelSyncEndpointConfiguration;
+import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.Endpoint;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
+import org.citrusframework.simulator.ws.SoapMessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @author Christoph Deppisch
- */
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 @Configuration
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.endpoint", value = "enabled", havingValue = "true")
 public class SimulatorEndpointAutoConfiguration {
 
-    @Autowired(required = false)
-    private SimulatorEndpointComponentConfigurer configurer;
+    private static final String SIMULATOR_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorEndpointAdapter";
 
-    @Autowired
-    private SimulatorConfigurationProperties simulatorConfiguration;
+    private final ApplicationContext applicationContext;
+    private final SimulatorConfigurationProperties simulatorConfiguration;
+
+    private @Nullable SimulatorEndpointComponentConfigurer configurer;
+
+    public SimulatorEndpointAutoConfiguration(ApplicationContext applicationContext, SimulatorConfigurationProperties simulatorConfiguration, @Autowired(required = false) @Nullable SimulatorEndpointComponentConfigurer configurer) {
+        this.applicationContext = applicationContext;
+        this.simulatorConfiguration = simulatorConfiguration;
+        this.configurer = configurer;
+    }
+
 
     @Bean
-    protected Endpoint simulatorEndpoint(ApplicationContext applicationContext) {
+    protected Endpoint simulatorEndpoint() {
         if (configurer != null) {
             return configurer.endpoint(applicationContext);
         } else {
@@ -59,9 +73,9 @@ public class SimulatorEndpointAutoConfiguration {
         }
     }
 
-    @Bean
-    public SimulatorEndpointAdapter simulatorEndpointAdapter() {
-        return new SimulatorEndpointAdapter();
+    @Bean(SIMULATOR_ENDPOINT_ADAPTER_BEAN_NAME)
+    public SimulatorEndpointAdapter simulatorEndpointAdapter(CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, configuration);
     }
 
     @Bean
@@ -74,31 +88,33 @@ public class SimulatorEndpointAutoConfiguration {
     }
 
     @Bean
-    public SimulatorEndpointPoller simulatorEndpointPoller(ApplicationContext applicationContext) {
+    public SimulatorEndpointPoller simulatorEndpointPoller(@Qualifier(SIMULATOR_ENDPOINT_ADAPTER_BEAN_NAME) SimulatorEndpointAdapter simulatorEndpointAdapter, TestContextFactory testContextFactory, @Autowired(required = false) @Nullable SoapMessageHelper soapMessageHelper) {
         SimulatorEndpointPoller endpointPoller;
 
         if (configurer != null && configurer.useSoapEnvelope()) {
-            endpointPoller = new SimulatorSoapEndpointPoller();
+            if (isNull(soapMessageHelper)) {
+                throw new IllegalArgumentException("JMS support with SOAP requires a bean of %s".formatted(SoapMessageHelper.class));
+            }
+
+            endpointPoller = new SimulatorSoapEndpointPoller(testContextFactory, soapMessageHelper);
         } else {
-            endpointPoller = new SimulatorEndpointPoller();
+            endpointPoller = new SimulatorEndpointPoller(testContextFactory);
         }
 
-        endpointPoller.setInboundEndpoint(simulatorEndpoint(applicationContext));
-        SimulatorEndpointAdapter endpointAdapter = simulatorEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
+        endpointPoller.setInboundEndpoint(simulatorEndpoint());
+        simulatorEndpointAdapter.setMappingKeyExtractor(simulatorScenarioMapper());
+        simulatorEndpointAdapter.setFallbackEndpointAdapter(simulatorFallbackEndpointAdapter());
 
         endpointPoller.setExceptionDelay(exceptionDelay());
 
-        endpointPoller.setEndpointAdapter(endpointAdapter);
+        endpointPoller.setEndpointAdapter(simulatorEndpointAdapter);
 
         return endpointPoller;
     }
 
     @Bean
     public EndpointAdapter simulatorFallbackEndpointAdapter() {
-        if (configurer != null) {
+        if (nonNull(configurer)) {
             return configurer.fallbackEndpointAdapter();
         }
 
@@ -110,7 +126,7 @@ public class SimulatorEndpointAutoConfiguration {
      * @return
      */
     protected Long exceptionDelay() {
-        if (configurer != null) {
+        if (nonNull(configurer)) {
             return configurer.exceptionDelay(simulatorConfiguration);
         }
 

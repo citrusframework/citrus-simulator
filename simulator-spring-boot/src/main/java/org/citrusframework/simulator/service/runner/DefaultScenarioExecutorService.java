@@ -19,6 +19,7 @@ package org.citrusframework.simulator.service.runner;
 import jakarta.annotation.Nullable;
 import org.citrusframework.Citrus;
 import org.citrusframework.context.TestContext;
+import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.citrusframework.annotations.CitrusAnnotations.injectAll;
 import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
 
@@ -109,13 +111,11 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
 
     protected void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         logger.info("Starting scenario : {}", name);
-        try {
-            var context = createTestContext();
-            createAndRunScenarioRunner(context, executionId, name, scenario, scenarioParameters);
-            logger.debug("Scenario completed: {}", name);
-        } catch (Exception e) {
-            logger.error("Scenario completed with error: {}!", name, e);
-        }
+
+        var context = createTestContext();
+        createAndRunScenarioRunner(context, executionId, name, scenario, scenarioParameters);
+
+        logger.debug("Scenario completed: {}", name);
     }
 
     /**
@@ -137,13 +137,20 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
         }
 
         runner.variable(EXECUTION_ID, executionId);
-        runner.name(String.format("Scenario(%s)", name));
+        runner.name(format("Scenario(%s)", name));
 
-        injectAll(scenario, citrus, context);
+        injectAll(scenario, citrus);
 
         try {
             runner.start();
+            scenario.setTestCaseRunner(runner.getTestCaseRunner());
             scenario.run(runner);
+        } catch (TestCaseFailedException e) {
+            logger.error("Registered forced failure of scenario: {}!", name, e);
+        } catch (Exception e) {
+            logger.error("Scenario completed with error: {}!", name, e);
+            scenario.registerException(e);
+            throw e;
         } finally {
             runner.stop();
         }

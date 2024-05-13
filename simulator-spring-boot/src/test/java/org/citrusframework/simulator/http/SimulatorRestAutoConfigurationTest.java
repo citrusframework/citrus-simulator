@@ -1,14 +1,13 @@
 package org.citrusframework.simulator.http;
 
 import org.citrusframework.report.MessageListeners;
+import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
@@ -19,6 +18,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.util.ReflectionTestUtils.invokeMethod;
 
 /**
  * @author Thorsten Schlathoelter
@@ -27,22 +27,22 @@ import static org.mockito.Mockito.doReturn;
 class SimulatorRestAutoConfigurationTest {
 
     @Mock
-    SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
+    private MessageListeners messageListeners;
 
     @Mock
-    SimulatorRestAdapter simulatorRestAdapter;
+    private SimulatorEndpointAdapter simulatorRestEndpointAdapter;
 
     @Mock
-    MessageListeners messageListeners;
+    private SimulatorMessageListener simulatorMessageListener;
 
     @Mock
-    SimulatorMessageListener simulatorMessageListener;
+    private SimulatorRestAdapter simulatorRestAdapter;
 
     @Mock
-    ApplicationContext applicationContext;
+    private SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
 
     @InjectMocks
-    SimulatorRestAutoConfiguration simulatorRestAutoConfiguration;
+    private SimulatorRestAutoConfiguration simulatorRestAutoConfiguration;
 
     @Test
     void shouldHandleSingleUrlMappings() {
@@ -52,28 +52,24 @@ class SimulatorRestAutoConfigurationTest {
 
         doReturn(new HandlerInterceptor[] {}).when(simulatorRestAdapter).interceptors();
 
-        assertEquals(List.of("/services/rest/**"),
-            ReflectionTestUtils.invokeMethod(simulatorRestAutoConfiguration, "getUrlMappings"));
+        assertEquals(List.of("/services/rest/**"), invokeMethod(simulatorRestAutoConfiguration, "getUrlMappings"));
         assertEquals("[/services/rest/*]", simulatorRestAutoConfiguration.requestCachingFilter().getUrlPatterns().toString());
 
-        Map<String, ?> simulatorRestHandlerMapping =
-            ((SimpleUrlHandlerMapping) simulatorRestAutoConfiguration.simulatorRestHandlerMapping(applicationContext, messageListeners, simulatorMessageListener)).getUrlMap();
+        Map<String, ?> simulatorRestHandlerMapping = ((SimpleUrlHandlerMapping) simulatorRestAutoConfiguration.simulatorRestHandlerMapping(messageListeners, simulatorRestEndpointAdapter, simulatorMessageListener)).getUrlMap();
         assertThat(simulatorRestHandlerMapping).containsOnlyKeys("/services/rest/**");
     }
 
     @Test
     void shouldHandleMultipleUrlMappings() {
-        doReturn(List.of("/services/rest1/**", "/services/rest2/**")).when(simulatorRestAdapter)
+        doReturn(List.of("/services/rest1/**", "/services/rest2/**"))
+            .when(simulatorRestAdapter)
             .urlMappings(simulatorRestConfigurationProperties);
 
         doReturn(new HandlerInterceptor[] {}).when(simulatorRestAdapter).interceptors();
-        assertEquals(List.of("/services/rest1/**", "/services/rest2/**"),
-            ReflectionTestUtils.invokeMethod(simulatorRestAutoConfiguration, "getUrlMappings"));
-        assertEquals(
-            Set.of("/services/rest1/*", "/services/rest2/*"), simulatorRestAutoConfiguration.requestCachingFilter().getUrlPatterns());
+        assertEquals(List.of("/services/rest1/**", "/services/rest2/**"), invokeMethod(simulatorRestAutoConfiguration, "getUrlMappings"));
+        assertEquals(Set.of("/services/rest1/*", "/services/rest2/*"), simulatorRestAutoConfiguration.requestCachingFilter().getUrlPatterns());
 
-        Map<String, ?> simulatorRestHandlerMapping =
-            ((SimpleUrlHandlerMapping) simulatorRestAutoConfiguration.simulatorRestHandlerMapping(applicationContext, messageListeners, simulatorMessageListener)).getUrlMap();
+        Map<String, ?> simulatorRestHandlerMapping = ((SimpleUrlHandlerMapping) simulatorRestAutoConfiguration.simulatorRestHandlerMapping(messageListeners, simulatorRestEndpointAdapter, simulatorMessageListener)).getUrlMap();
         assertThat(simulatorRestHandlerMapping).containsOnlyKeys("/services/rest1/**", "/services/rest2/**");
     }
 }

@@ -72,8 +72,8 @@
           <td>{{ scenarioExecution.startDate | formatMediumDatetime }}</td>
           <td>{{ scenarioExecution.endDate | formatMediumDatetime }}</td>
           <td>
-            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: scenarioExecution.testResult?.status ?? 'UNKNOWN' })">{{
-              scenarioExecution.testResult?.status
+            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: scenarioExecution.testResult?.status ?? 'RUNNING' })">{{
+              scenarioExecution.testResult?.status ?? 'RUNNING'
             }}</span>
           </td>
           <td>{{ scenarioExecution.testResult?.errorMessage }}</td>

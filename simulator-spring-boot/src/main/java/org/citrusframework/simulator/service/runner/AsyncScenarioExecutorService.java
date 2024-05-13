@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
@@ -122,7 +123,8 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
      * @param scenarioParameters   the list of parameters to pass to the scenario when starting
      */
     private void startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        executorService.submit(() -> super.startScenario(executionId, name, scenario, scenarioParameters));
+       runAsync(() -> super.startScenario(executionId, name, scenario, scenarioParameters), executorService)
+           .exceptionally(scenario::registerException);
     }
 
     private void shutdownExecutor() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package org.citrusframework.simulator.jms;
 
+import jakarta.annotation.Nullable;
 import jakarta.jms.ConnectionFactory;
+import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.jms.endpoint.JmsEndpoint;
@@ -25,12 +27,16 @@ import org.citrusframework.jms.endpoint.JmsSyncEndpoint;
 import org.citrusframework.jms.endpoint.JmsSyncEndpointConfiguration;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointPoller;
 import org.citrusframework.simulator.endpoint.SimulatorSoapEndpointPoller;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
+import org.citrusframework.simulator.ws.SoapMessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,20 +47,26 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.util.StringUtils;
 
+import static java.util.Objects.isNull;
+
 @Configuration
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
 @EnableConfigurationProperties(SimulatorJmsConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.jms", value = "enabled", havingValue = "true")
 public class SimulatorJmsAutoConfiguration {
 
-    @Autowired(required = false)
-    private SimulatorJmsConfigurer configurer;
+    private static final String JMS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorJmsEndpointAdapter";
 
-    @Autowired
-    private SimulatorJmsConfigurationProperties simulatorJmsConfiguration;
+    private final SimulatorConfigurationProperties simulatorConfiguration;
+    private final SimulatorJmsConfigurationProperties simulatorJmsConfiguration;
 
-    @Autowired
-    private SimulatorConfigurationProperties simulatorConfiguration;
+    private @Nullable SimulatorJmsConfigurer configurer;
+
+    public SimulatorJmsAutoConfiguration(SimulatorConfigurationProperties simulatorConfiguration, SimulatorJmsConfigurationProperties simulatorJmsConfiguration, @Autowired(required = false) @Nullable SimulatorJmsConfigurer configurer) {
+        this.simulatorConfiguration = simulatorConfiguration;
+        this.simulatorJmsConfiguration = simulatorJmsConfiguration;
+        this.configurer = configurer;
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -91,9 +103,9 @@ public class SimulatorJmsAutoConfiguration {
         }
     }
 
-    @Bean
-    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter() {
-        return new SimulatorEndpointAdapter();
+    @Bean(JMS_ENDPOINT_ADAPTER_BEAN_NAME)
+    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, configuration);
     }
 
     @Bean
@@ -106,30 +118,31 @@ public class SimulatorJmsAutoConfiguration {
     }
 
     @Bean
-    public SimulatorEndpointPoller simulatorJmsEndpointPoller(ApplicationContext applicationContext,
-                                                  ConnectionFactory connectionFactory) {
+    public SimulatorEndpointPoller simulatorJmsEndpointPoller(ConnectionFactory connectionFactory, @Qualifier(JMS_ENDPOINT_ADAPTER_BEAN_NAME) SimulatorEndpointAdapter simulatorJmsEndpointAdapter, TestContextFactory testContextFactory, @Autowired(required = false) @Nullable SoapMessageHelper soapMessageHelper) {
         SimulatorEndpointPoller endpointPoller;
 
         if (useSoap()) {
-            endpointPoller = new SimulatorSoapEndpointPoller();
+            if (isNull(soapMessageHelper)) {
+                throw new IllegalArgumentException("JMS support with SOAP requires a bean of %s".formatted(SoapMessageHelper.class));
+            }
+
+            endpointPoller = new SimulatorSoapEndpointPoller(testContextFactory, soapMessageHelper);
         } else {
-            endpointPoller = new SimulatorEndpointPoller();
+            endpointPoller = new SimulatorEndpointPoller(testContextFactory);
         }
 
         endpointPoller.setInboundEndpoint(simulatorJmsInboundEndpoint(connectionFactory));
 
-        SimulatorEndpointAdapter endpointAdapter = simulatorJmsEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorJmsScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorJmsFallbackEndpointAdapter());
+        simulatorJmsEndpointAdapter.setMappingKeyExtractor(simulatorJmsScenarioMapper());
+        simulatorJmsEndpointAdapter.setFallbackEndpointAdapter(simulatorJmsFallbackEndpointAdapter());
 
         if (!isSynchronous()) {
-            endpointAdapter.setHandleResponse(false);
+            simulatorJmsEndpointAdapter.setHandleResponse(false);
         }
 
         endpointPoller.setExceptionDelay(exceptionDelay(simulatorConfiguration));
 
-        endpointPoller.setEndpointAdapter(endpointAdapter);
+        endpointPoller.setEndpointAdapter(simulatorJmsEndpointAdapter);
 
         return endpointPoller;
     }

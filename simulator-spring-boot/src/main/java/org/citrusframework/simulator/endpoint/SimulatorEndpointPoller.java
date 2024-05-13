@@ -38,20 +38,16 @@ import org.springframework.context.event.ContextClosedEvent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * @author Christoph Deppisch
- */
+import static java.lang.Thread.currentThread;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+
 @Setter
 public class SimulatorEndpointPoller implements InitializingBean, Runnable, DisposableBean, ApplicationListener<ContextClosedEvent> {
 
-    /**
-     * Logger
-     */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorEndpointPoller.class);
 
     private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
@@ -60,17 +56,16 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
             .build();
 
     /**
-     * Thread running the server
+     * Thread running the server.
      */
-    private final ExecutorService taskExecutor = Executors.newSingleThreadExecutor(threadFactory);
+    private final ExecutorService taskExecutor = newSingleThreadExecutor(threadFactory);
 
     /**
      * Running flag
      */
     private final CompletableFuture<Boolean> running = new CompletableFuture<>();
 
-    @Autowired
-    private TestContextFactory testContextFactory;
+    private final TestContextFactory testContextFactory;
 
     /**
      * Endpoint destination that is constantly polled for new messages.
@@ -78,19 +73,23 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
     private Endpoint inboundEndpoint;
 
     /**
-     * Message handler for incoming simulator request messages
+     * Message handler for incoming simulator request messages.
      */
     private EndpointAdapter endpointAdapter;
 
     /**
-     * Should automatically start on system load
+     * Flag indicating if the poller should automatically start on system startup.
      */
     private boolean autoStart = true;
 
     /**
      * Polling delay after uncategorized exception occurred.
      */
-    private long exceptionDelay = 10000L;
+    private long exceptionDelay = 5000L;
+
+    public SimulatorEndpointPoller(TestContextFactory testContextFactory) {
+        this.testContextFactory = testContextFactory;
+    }
 
     @Override
     public void run() {
@@ -181,11 +180,14 @@ public class SimulatorEndpointPoller implements InitializingBean, Runnable, Disp
         running.complete(false);
 
         try {
-            taskExecutor.awaitTermination(exceptionDelay, TimeUnit.MILLISECONDS);
-            logger.info("Simulator endpoint poller termination complete");
+            if (!taskExecutor.awaitTermination(exceptionDelay, TimeUnit.MILLISECONDS)) {
+                logger.error("Could not terminate endpoint poller in timeout of {} ms!", exceptionDelay);
+            } else {
+                logger.info("Simulator endpoint poller termination complete");
+            }
         } catch (InterruptedException e) {
             logger.error("Error while waiting termination of endpoint poller", e);
-            Thread.currentThread().interrupt();
+            currentThread().interrupt();
             throw new SimulatorException(e);
         } finally {
             taskExecutor.shutdownNow();

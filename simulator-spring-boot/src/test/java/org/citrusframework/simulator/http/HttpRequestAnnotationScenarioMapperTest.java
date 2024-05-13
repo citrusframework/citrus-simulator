@@ -1,19 +1,3 @@
-/*
- * Copyright 2024 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.citrusframework.simulator.http;
 
 import jakarta.annotation.Nonnull;
@@ -31,7 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,9 +25,6 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
-/**
- * @author Christoph Deppisch
- */
 @ExtendWith(MockitoExtension.class)
 class HttpRequestAnnotationScenarioMapperTest {
 
@@ -62,16 +43,18 @@ class HttpRequestAnnotationScenarioMapperTest {
 
     @Test
     void testGetMappingKey() {
-        fixture.setScenarioList(Arrays.asList(new IssueScenario(),
-            new FooScenario(),
-            new SubclassedFooScenario(),
-            new GetFooScenario(),
-            new PutFooScenario(),
-            new OtherScenario()));
+        fixture.setScenarioList(
+            List.of(
+                new IssueScenario(),
+                new FooScenario(),
+                new SubclassedFooScenario(),
+                new GetFooScenario(),
+                new PutFooScenario(),
+                new OtherScenario()));
 
         assertEquals("FooScenario", mappingKeyFor(fixture, "/issues/foo"));
         assertEquals("GetFooScenario", mappingKeyFor(fixture, "/issues/foo", GET));
-        assertEquals("PutFooScenario", mappingKeyFor(fixture, "/issues/foo",PUT));
+        assertEquals("PutFooScenario", mappingKeyFor(fixture, "/issues/foo", PUT));
         assertEquals("FooScenario", mappingKeyFor(fixture, "/issues/foo/sub", POST));
         assertEquals("OtherScenario", mappingKeyFor(fixture, "/issues/other"));
         assertEquals("IssueScenario", mappingKeyFor(fixture, "/issues/bar", GET));
@@ -92,7 +75,7 @@ class HttpRequestAnnotationScenarioMapperTest {
         return mapper.getMappingKey(new HttpMessage().path(path));
     }
 
-    private String mappingKeyFor(HttpRequestAnnotationScenarioMapper mapper, String path, @Nonnull  HttpMethod method) {
+    private String mappingKeyFor(HttpRequestAnnotationScenarioMapper mapper, String path, @Nonnull HttpMethod method) {
         return mapper.getMappingKey(new HttpMessage().path(path).method(method));
     }
 

@@ -2,6 +2,8 @@ package org.citrusframework.simulator.service.runner;
 
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusContext;
+import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.TestCaseRunner;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.report.TestListeners;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -10,21 +12,25 @@ import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
-import org.junit.jupiter.api.Assertions;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 abstract class ScenarioExecutorServiceTest {
 
     protected static ScenarioEndpoint scenarioEndpointMock;
 
-    private static AtomicBoolean customScenarioExecuted;
+    @Mock
+    protected ApplicationContext applicationContextMock;
 
     @Mock
     protected Citrus citrusMock;
@@ -44,13 +50,23 @@ abstract class ScenarioExecutorServiceTest {
             .build()
     );
 
-    protected void beforeEachSetup() {
-        scenarioEndpointMock = mock(ScenarioEndpoint.class);
-        customScenarioExecuted = new AtomicBoolean(false);
+    protected static SimulatorScenario getSimulatorScenarioMock() {
+        var simulatorScenarioMock = mock(SimulatorScenario.class);
+        doReturn(scenarioEndpointMock).when(simulatorScenarioMock).getScenarioEndpoint();
+        return simulatorScenarioMock;
     }
 
-    protected boolean isCustomScenarioExecuted() {
-        return customScenarioExecuted.get();
+    protected static void verifyTestCaseRunnerHasBeenConfigured(SimulatorScenario simulatorScenarioMock) {
+        ArgumentCaptor<TestCaseRunner> runnerArgumentCaptor = captor();
+        verify(simulatorScenarioMock).setTestCaseRunner(runnerArgumentCaptor.capture());
+
+        assertThat(runnerArgumentCaptor.getValue())
+            .isInstanceOf(DefaultTestCaseRunner.class)
+            .hasNoNullFieldsOrProperties();
+    }
+
+    protected void beforeEachSetup() {
+        scenarioEndpointMock = mock(ScenarioEndpoint.class);
     }
 
     protected Long mockScenarioExecutionCreation() {
@@ -72,24 +88,15 @@ abstract class ScenarioExecutorServiceTest {
         return testContextMock;
     }
 
-    protected static class BaseCustomSimulatorScenario implements SimulatorScenario {
+    protected void verifyScenarioHasBeenRunWithScenarioRunner(SimulatorScenario simulatorScenarioMock) {
+        ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = captor();
+        verify(simulatorScenarioMock).run(scenarioRunnerArgumentCaptor.capture());
 
-        @Override
-        public ScenarioEndpoint getScenarioEndpoint() {
-            return scenarioEndpointMock;
-        }
-
-        @Override
-        public void run(ScenarioRunner runner) {
-            Assertions.fail("This method should never be called");
-        }
-    }
-
-    protected static class CustomSimulatorScenario extends BaseCustomSimulatorScenario {
-
-        @Override
-        public void run(ScenarioRunner runner) {
-            customScenarioExecuted.set(true);
-        }
+        assertThat(scenarioRunnerArgumentCaptor.getValue())
+            .hasNoNullFieldsOrProperties()
+            .satisfies(
+                r -> assertThat(r.getScenarioEndpoint()).isEqualTo(scenarioEndpointMock),
+                r -> assertThat(r.getApplicationContext()).isEqualTo(applicationContextMock)
+            );
     }
 }
