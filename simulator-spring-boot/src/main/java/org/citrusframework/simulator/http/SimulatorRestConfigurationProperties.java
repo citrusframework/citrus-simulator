@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import static java.util.Collections.unmodifiableList;
 @ConfigurationProperties(prefix = "citrus.simulator.rest")
 public class SimulatorRestConfigurationProperties implements InitializingBean {
 
-    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorRestConfigurationProperties.class);
 
     /**

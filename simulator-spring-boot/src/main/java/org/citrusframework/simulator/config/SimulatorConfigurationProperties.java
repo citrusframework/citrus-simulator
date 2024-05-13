@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2024 the original author or authors.
+ * Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.springframework.core.env.Environment;
 @ConfigurationProperties(prefix = "citrus.simulator")
 public class SimulatorConfigurationProperties implements EnvironmentAware, InitializingBean {
 
-    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
 
     private static final String SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY = "citrus.simulator.inbound.xml.dictionary.location";
