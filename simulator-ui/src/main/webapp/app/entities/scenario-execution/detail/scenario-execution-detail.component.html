@@ -58,7 +58,7 @@
       </h3>
 
       <app-scenario-parameters-table
-        [scenarioParameters]="scenarioExecution.scenarioParameters ?? []"
+        [parameters]="scenarioExecution.scenarioParameters ?? []"
         predicate="createdDate"
       ></app-scenario-parameters-table>
 
@@ -72,6 +72,12 @@
         [messages]="scenarioExecution.scenarioMessages ?? []"
         predicate="createdDate"
       ></app-scenario-messages-table>
+
+      <h3 class="mb-3">
+        <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.title">Scenario Actions</span>
+      </h3>
+
+      <app-scenario-actions-table [actions]="scenarioExecution.scenarioActions ?? []" predicate="createdDate"></app-scenario-actions-table>
 
       <button type="button" (click)="previousState()" class="btn btn-info mt-3">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>

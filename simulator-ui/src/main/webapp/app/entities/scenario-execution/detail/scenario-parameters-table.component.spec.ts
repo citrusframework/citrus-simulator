@@ -45,7 +45,7 @@ describe('Message Table Component', () => {
     it('sets the parameter list and calls sort', () => {
       const parameters = [{ parameterId: 1234 }] as IScenarioParameter[];
 
-      component.scenarioParameters = parameters;
+      component.parameters = parameters;
 
       expect(component.sortedParameters).toEqual(parameters);
       expect(sortSpy).toHaveBeenCalledWith(parameters, 'parameterId', true);
@@ -58,7 +58,7 @@ describe('Message Table Component', () => {
 
   const expectSortBeingCalled = (whenFunction: () => void): void => {
     const parameters = [{ parameterId: 1234 }] as IScenarioParameter[];
-    component.scenarioParameters = parameters;
+    component.parameters = parameters;
 
     whenFunction();
 
