@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author or authors.
+ * Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "citrus.simulator.jms")
 public class SimulatorJmsConfigurationProperties implements InitializingBean {
 
-    /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorJmsConfigurationProperties.class);
 
     /**
