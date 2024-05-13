@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.scenario;
 
+import lombok.Getter;
 import org.citrusframework.DefaultTestCaseRunner;
 import org.citrusframework.GherkinTestActionRunner;
 import org.citrusframework.TestAction;
@@ -39,35 +40,17 @@ public class ScenarioRunner implements GherkinTestActionRunner {
 
     private final TestCaseRunner delegate;
 
-    /**
-     * Scenario direct endpoint
-     */
+    @Getter
     private final ScenarioEndpoint scenarioEndpoint;
 
-    /** Spring bean application context */
+    @Getter
     private final ApplicationContext applicationContext;
 
-    /**
-     * Default constructor using fields.
-     *
-     * @param scenarioEndpoint
-     * @param applicationContext
-     * @param context
-     */
     public ScenarioRunner(ScenarioEndpoint scenarioEndpoint, ApplicationContext applicationContext, TestContext context) {
         this.scenarioEndpoint = scenarioEndpoint;
         this.applicationContext = applicationContext;
 
         this.delegate = new DefaultTestCaseRunner(context);
-    }
-
-    /**
-     * Gets the scenario inbound endpoint.
-     *
-     * @return
-     */
-    public ScenarioEndpoint scenarioEndpoint() {
-        return scenarioEndpoint;
     }
 
     public SendMessageAction.Builder send() {

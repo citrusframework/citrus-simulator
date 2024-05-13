@@ -16,14 +16,16 @@
 
 package org.citrusframework.simulator.scenario;
 
+import jakarta.annotation.Nullable;
+import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.TestCaseRunner;
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.exception.SimulatorException;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.citrusframework.simulator.scenario.ScenarioUtils.getAnnotationFromClassHierarchy;
 
-/**
- * @author Christoph Deppisch
- */
 public interface SimulatorScenario {
 
     /**
@@ -41,21 +43,36 @@ public interface SimulatorScenario {
         return getNameFromScenarioAnnotation();
     }
 
+    @Nullable
+    TestCaseRunner getTestCaseRunner();
+
+    void setTestCaseRunner(TestCaseRunner testCaseRunner);
+
+    default Void registerException(Throwable e) {
+        if (nonNull(getTestCaseRunner()) && getTestCaseRunner() instanceof DefaultTestCaseRunner defaultTestCaseRunner) {
+            defaultTestCaseRunner.getContext().addException(new CitrusRuntimeException(e));
+        }
+
+        getScenarioEndpoint().fail(e);
+
+        return null;
+    }
+
     /**
      * Retrieves the name of a scenario from its {@link Scenario} annotation.
      *
      * @return the name of the scenario as specified by the {@link Scenario} annotation's value.
-     * @throws CitrusRuntimeException if the {@link Scenario} annotation is not found on this
-     *                                scenario, its proxied objects or superclasses.
+     * @throws SimulatorException if the {@link Scenario} annotation is not found on this scenario, its proxied objects or superclasses.
      */
     private String getNameFromScenarioAnnotation() {
         Scenario scenarioAnnotation = getAnnotationFromClassHierarchy(this, Scenario.class);
 
         if (scenarioAnnotation == null) {
-            throw new CitrusRuntimeException(
-                format("Missing scenario annotation at class: %s - even searched class hierarchy", getClass())
+            throw new SimulatorException(
+                format("Missing scenario annotation at class: %s - even searched class hierarchy!", getClass())
             );
         }
+
         return scenarioAnnotation.value();
     }
 }

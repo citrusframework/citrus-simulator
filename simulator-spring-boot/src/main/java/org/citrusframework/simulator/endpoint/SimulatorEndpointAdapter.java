@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.citrusframework.endpoint.adapter.RequestDispatchingEndpointAdapter;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
@@ -26,130 +28,108 @@ import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * @author Christoph Deppisch
- */
-public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter implements ApplicationContextAware {
+import static java.lang.Thread.currentThread;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException.EXCEPTION_TYPE;
+import static org.citrusframework.util.StringUtils.hasText;
+
+public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SimulatorEndpointAdapter.class);
 
-    @Autowired
-    private CorrelationHandlerRegistry handlerRegistry;
+    private final ApplicationContext applicationContext;
+    private final CorrelationHandlerRegistry handlerRegistry;
+    private final ScenarioExecutorService scenarioExecutorService;
+    private final SimulatorConfigurationProperties configuration;
 
-    @Autowired
-    private SimulatorConfigurationProperties configuration;
-
-    @Autowired
-    private ScenarioExecutorService scenarioExecutorService;
-
-    /**
-     * Spring application context
-     */
-    private ApplicationContext applicationContext;
-
-    /**
-     * When adapter is asynchronous response handling is skipped
-     */
+    @Getter
+    @Setter
     private boolean handleResponse = true;
 
-    @Override
-    protected Message handleMessageInternal(Message request) {
-        CorrelationHandler handler = handlerRegistry.findHandlerFor(request);
-        if (handler != null) {
-            CompletableFuture<Message> responseFuture = new CompletableFuture<>();
-            handler.getScenarioEndpoint().add(request, responseFuture);
+    public SimulatorEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+        this.applicationContext = applicationContext;
+        this.handlerRegistry = handlerRegistry;
+        this.scenarioExecutorService = scenarioExecutorService;
+        this.configuration = configuration;
+    }
 
-            try {
-                if (handleResponse) {
-                    return responseFuture.get(configuration.getDefaultTimeout(), TimeUnit.MILLISECONDS);
-                } else {
-                    return null;
-                }
-            } catch (TimeoutException e) {
-                logger.warn(String.format("No response for scenario '%s'", handler.getScenarioEndpoint().getName()));
-                return null;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new SimulatorException(e);
-            } catch (ExecutionException e) {
-                throw new SimulatorException(e);
-            }
-        } else {
-            return super.handleMessageInternal(request);
-        }
+    private static ResponseStatusException getResponseStatusException(Throwable e) {
+        return new ResponseStatusException(555, "Simulation failed with an Exception!", e);
     }
 
     @Override
-    public Message dispatchMessage(Message request, String mappingName) {
-        String scenarioName = mappingName;
-        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
-        SimulatorScenario scenario;
-        if (StringUtils.hasText(scenarioName) && applicationContext.containsBean(scenarioName)) {
-            scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
+    protected Message handleMessageInternal(Message message) {
+        CorrelationHandler handler = handlerRegistry.findHandlerFor(message);
+
+        if (nonNull(handler)) {
+            return handleMessageWithCorrelation(message, handler);
         } else {
-            scenarioName = configuration.getDefaultScenario();
-            logger.info("Unable to find scenario for mapping '{}' - " +
-                    "using default scenario '{}'", mappingName, scenarioName);
-            scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
+            return super.handleMessageInternal(message);
         }
+    }
+
+    private Message handleMessageWithCorrelation(Message request, CorrelationHandler handler) {
+        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
+        handler.getScenarioEndpoint().add(request, responseFuture);
+
+        return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName());
+    }
+
+    @Override
+    public Message dispatchMessage(Message message, String mappingName) {
+        String scenarioName = mappingName;
+
+        SimulatorScenario scenario;
+        if (!hasText(scenarioName) || !applicationContext.containsBean(scenarioName)) {
+            scenarioName = configuration.getDefaultScenario();
+            logger.info("Unable to find scenario for mapping '{}' - using default scenario '{}'", mappingName, scenarioName);
+        }
+        scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
 
         scenario.getScenarioEndpoint().setName(scenarioName);
-        scenario.getScenarioEndpoint().add(request, responseFuture);
-        scenarioExecutorService.run(scenario, scenarioName, Collections.emptyList());
+
+        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
+        scenario.getScenarioEndpoint().add(message, responseFuture);
 
         try {
+            scenarioExecutorService.run(scenario, scenarioName, emptyList());
+        } catch (Exception e) {
+            throw getResponseStatusException(e);
+        }
+
+        return awaitResponseOrThrowException(responseFuture, scenarioName);
+    }
+
+    private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName) {
+        try {
             if (handleResponse) {
-                return responseFuture.get(configuration.getDefaultTimeout(), TimeUnit.MILLISECONDS);
+                var message = responseFuture.get(configuration.getDefaultTimeout(), MILLISECONDS);
+
+                if (EXCEPTION_TYPE.equals(message.getType())) {
+                    throw getResponseStatusException(message.getPayload(Throwable.class));
+                }
+
+                return message;
             } else {
                 return null;
             }
         } catch (TimeoutException e) {
-            logger.warn(String.format("No response for scenario '%s'", scenarioName));
+            logger.warn("No response for scenario '{}'", scenarioName);
             return null;
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            currentThread().interrupt();
             throw new SimulatorException(e);
         } catch (ExecutionException e) {
             throw new SimulatorException(e);
         }
-    }
-
-    /**
-     * Sets the applicationContext.
-     *
-     * @param applicationContext
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    /**
-     * Gets the handleResponse.
-     *
-     * @return
-     */
-    public boolean isHandleResponse() {
-        return handleResponse;
-    }
-
-    /**
-     * Sets the handleResponse.
-     *
-     * @param handleResponse
-     */
-    public void setHandleResponse(boolean handleResponse) {
-        this.handleResponse = handleResponse;
     }
 }

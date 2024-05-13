@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.doReturn;
 
 class HttpRequestAnnotationMatcherTest {
@@ -36,170 +37,170 @@ class HttpRequestAnnotationMatcherTest {
 
     static Stream<Arguments> checkRequestPathSupported() {
         return Stream.of(
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_NAME,
                 setupHttpMessage("/path/name", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_NAME,
                 setupHttpMessage("/path/name", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_NAME,
                 setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_NAME,
                 setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_VALUE,
                 setupHttpMessage("/path/value", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_VALUE,
                 setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_VALUE,
                 setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PLACEHOLDER,
                 setupHttpMessage("/path/place-holder/123", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PLACEHOLDER,
                 setupHttpMessage("/path/place-holder/123", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PLACEHOLDER,
                 setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PLACEHOLDER,
                 setupHttpMessage("/path/wrong-path", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("/path/pattern/match-me", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("/path/pattern/match-me", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("/path/wrong-pattern", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("/path/wrong-pattern", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PATH_PATTERN,
                 setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                 false,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PUT_METHOD,
                 setupHttpMessage("/any-path", RequestMethod.PUT, Collections.emptyMap()),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_PUT_METHOD,
                 setupHttpMessage("", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_QUERY_PARAMS,
                 setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_QUERY_PARAMS,
                 setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("a", Collections.emptySet())),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_QUERY_PARAMS,
                 setupHttpMessage("/any-path", RequestMethod.GET, Stream.of("a=1", "b=2").map(item -> item.split("=")).collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> Collections.singleton(keyValuePair[1])))),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_QUERY_PARAMS,
                 setupHttpMessage("/any-path", RequestMethod.GET, Collections.singletonMap("c", Collections.singleton("3"))),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_QUERY_PARAMS,
                 setupHttpMessage("/any-path", RequestMethod.GET, Collections.emptyMap()),
                 true,
                 false
             ),
 
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                 setupHttpMessage("/path/value", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                 true,
                 true
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                 setupHttpMessage("/wrong-path", RequestMethod.GET, Collections.singletonMap("a", Collections.singleton("1"))),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                 setupHttpMessage("/path/value", RequestMethod.PUT, Collections.singletonMap("a", Collections.singleton("1"))),
                 true,
                 false
             ),
-            Arguments.of(
+            arguments(
                 REQ_MAP_WITH_ALL_SUPPORTED_RESTRICTIONS,
                 setupHttpMessage("/path/value", RequestMethod.GET, Collections.emptyMap()),
                 true,

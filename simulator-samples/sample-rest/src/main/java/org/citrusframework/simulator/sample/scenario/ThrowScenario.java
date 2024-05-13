@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.sample.scenario;
 
+import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
@@ -24,19 +25,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
-import static org.citrusframework.actions.FailAction.Builder.fail;
 
 /**
- * This scenario fails expectantly, using the {@link org.citrusframework.actions.FailAction.Builder#fail(String)}
- * method. From the view point of a {@link SimulatorScenario}, there is nothing wrong with it. It should therefore be
- * viewed as a "successful simulation".
+ * This scenario fails at runtime, unexpectedly. It must therefore be reported as failed {@link SimulatorScenario}.
  * <p>
- * In contrary to this, the {@link ThrowScenario} does fail in an "uncontrolled" manner (by throwing an exception at
- * runtime), therefore results in a "failed simulation".
+ * On the other hand, if a simulation fails on purpose, see {@link FailScenario}, it must be a "successful simulation".
  */
-@Scenario("Fail")
-@RequestMapping(value = "/services/rest/simulator/fail", method = RequestMethod.GET)
-public class FailScenario extends AbstractSimulatorScenario {
+@Scenario("Throw")
+@RequestMapping(value = "/services/rest/simulator/throw", method = RequestMethod.GET)
+public class ThrowScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
@@ -44,8 +41,8 @@ public class FailScenario extends AbstractSimulatorScenario {
             .receive()
             .get());
 
-        scenario.$(echo("Careful - I am gonna fail successfully (:"));
+        scenario.$(echo("Careful - I am gonna fail (:"));
 
-        scenario.$(fail("It is the courage to continue that counts."));
+        throw new CitrusRuntimeException("Every failure is a step to success.");
     }
 }

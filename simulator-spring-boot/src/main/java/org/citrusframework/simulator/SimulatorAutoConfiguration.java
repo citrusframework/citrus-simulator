@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator;
 
+import lombok.Getter;
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusSpringContextProvider;
 import org.citrusframework.config.CitrusSpringConfig;
@@ -74,12 +75,10 @@ import java.util.Properties;
 @ConditionalOnProperty(prefix = "citrus.simulator", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorAutoConfiguration {
 
-    /**
-     * Logger
-     */
     private static final Logger logger = LoggerFactory.getLogger(SimulatorAutoConfiguration.class);
 
     /** Application version */
+    @Getter
     private static String version;
 
     @Autowired
@@ -95,15 +94,6 @@ public class SimulatorAutoConfiguration {
             logger.warn("Unable to read application version information", e);
             version = "";
         }
-    }
-
-    /**
-     * Gets the version.
-     *
-     * @return
-     */
-    public static String getVersion() {
-        return version;
     }
 
     @Bean

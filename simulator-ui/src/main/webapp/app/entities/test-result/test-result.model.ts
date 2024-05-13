@@ -14,15 +14,16 @@ export interface ITestResult {
 
 export interface ITestResultStatus {
   id: number;
-  name: 'UNKNOWN' | 'SUCCESS' | 'FAILURE' | 'SKIP';
+  name: 'UNKNOWN' | 'RUNNING' | 'SUCCESS' | 'FAILURE' | 'SKIP';
 }
 
+export const STATUS_RUNNING: ITestResultStatus = { id: -1, name: 'RUNNING' };
 export const STATUS_UNKNOWN: ITestResultStatus = { id: 0, name: 'UNKNOWN' };
 export const STATUS_SUCCESS: ITestResultStatus = { id: 1, name: 'SUCCESS' };
 export const STATUS_FAILURE: ITestResultStatus = { id: 2, name: 'FAILURE' };
 export const STATUS_SKIP: ITestResultStatus = { id: 3, name: 'SKIP' };
 
-const ALL_STATUS = [STATUS_UNKNOWN, STATUS_SUCCESS, STATUS_FAILURE, STATUS_SKIP];
+const ALL_STATUS = [STATUS_UNKNOWN, STATUS_RUNNING, STATUS_SUCCESS, STATUS_FAILURE, STATUS_SKIP];
 
 export const testResultStatusFromName = (name: string): ITestResultStatus => ALL_STATUS.find(v => v.name === name) ?? STATUS_UNKNOWN;
 

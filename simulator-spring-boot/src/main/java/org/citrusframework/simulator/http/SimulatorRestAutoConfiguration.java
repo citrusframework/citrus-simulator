@@ -16,14 +16,10 @@
 
 package org.citrusframework.simulator.http;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
@@ -32,10 +28,14 @@ import org.citrusframework.http.message.DelegatingHttpEntityMessageConverter;
 import org.citrusframework.http.servlet.RequestCachingServletFilter;
 import org.citrusframework.report.MessageListeners;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.listener.SimulatorMessageListener;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -55,9 +55,12 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-/**
- * @author Christoph Deppisch
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -65,16 +68,23 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorRestAutoConfiguration {
 
-    @Autowired(required = false)
-    private SimulatorRestConfigurer configurer;
+    private static final String REST_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorRestEndpointAdapter";
 
-    @Autowired
-    private SimulatorRestConfigurationProperties simulatorRestConfiguration;
+    private final ApplicationContext applicationContext;
+    private final SimulatorRestConfigurationProperties simulatorRestConfiguration;
+
+    private @Nullable SimulatorRestConfigurer configurer;
 
     /**
      * Target Citrus Http controller
      */
     private HttpMessageController restController;
+
+    public SimulatorRestAutoConfiguration(ApplicationContext applicationContext, SimulatorRestConfigurationProperties simulatorRestConfiguration, @Autowired(required = false) @Nullable SimulatorRestConfigurer configurer) {
+        this.applicationContext = applicationContext;
+        this.simulatorRestConfiguration = simulatorRestConfiguration;
+        this.configurer = configurer;
+    }
 
     @Bean
     public FilterRegistrationBean<RequestCachingServletFilter> requestCachingFilter() {
@@ -94,13 +104,13 @@ public class SimulatorRestAutoConfiguration {
     }
 
     @Bean
-    public HandlerMapping simulatorRestHandlerMapping(ApplicationContext applicationContext, MessageListeners messageListeners, SimulatorMessageListener simulatorMessageListener) {
+    public HandlerMapping simulatorRestHandlerMapping(MessageListeners messageListeners, @Qualifier(REST_ENDPOINT_ADAPTER_BEAN_NAME) SimulatorEndpointAdapter simulatorRestEndpointAdapter, SimulatorMessageListener simulatorMessageListener) {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         handlerMapping.setAlwaysUseFullPath(true);
 
         Map<String, Object> mappings = new HashMap<>();
-        HttpMessageController controller = createRestController(applicationContext);
+        HttpMessageController controller = createRestController(simulatorRestEndpointAdapter);
         getUrlMappings().forEach(urlMapping -> mappings.put(urlMapping, controller));
 
         handlerMapping.setUrlMap(mappings);
@@ -110,8 +120,8 @@ public class SimulatorRestAutoConfiguration {
     }
 
     @Bean
-    public HandlerAdapter simulatorRestHandlerAdapter(final ApplicationContext applicationContext, RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
-        final RequestMappingHandlerMapping handlerMapping = getRequestMappingHandlerMapping(applicationContext);
+    public HandlerAdapter simulatorRestHandlerAdapter(RequestMappingHandlerAdapter requestMappingHandlerAdapter, @Qualifier(REST_ENDPOINT_ADAPTER_BEAN_NAME) SimulatorEndpointAdapter simulatorRestEndpointAdapter) {
+        final RequestMappingHandlerMapping handlerMapping = getRequestMappingHandlerMapping(simulatorRestEndpointAdapter);
 
         requestMappingHandlerAdapter.getMessageConverters().add(0, new SimulatorHttpMessageConverter());
         requestMappingHandlerAdapter.getMessageConverters().add(new DelegatingHttpEntityMessageConverter());
@@ -131,12 +141,12 @@ public class SimulatorRestAutoConfiguration {
         };
     }
 
-    private RequestMappingHandlerMapping getRequestMappingHandlerMapping(ApplicationContext applicationContext) {
+    private RequestMappingHandlerMapping getRequestMappingHandlerMapping(SimulatorEndpointAdapter simulatorRestEndpointAdapter) {
         final RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping() {
 
             @Override
             protected void initHandlerMethods() {
-                detectHandlerMethods(createRestController(applicationContext));
+                detectHandlerMethods(createRestController(simulatorRestEndpointAdapter));
                 super.initHandlerMethods();
             }
 
@@ -152,9 +162,9 @@ public class SimulatorRestAutoConfiguration {
         return handlerMapping;
     }
 
-    @Bean
-    public SimulatorEndpointAdapter simulatorRestEndpointAdapter() {
-        return new SimulatorEndpointAdapter();
+    @Bean(name = REST_ENDPOINT_ADAPTER_BEAN_NAME)
+    public SimulatorEndpointAdapter simulatorRestEndpointAdapter(CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, configuration);
     }
 
     @Bean
@@ -168,20 +178,15 @@ public class SimulatorRestAutoConfiguration {
 
     /**
      * Gets the Citrus Http REST controller.
-     *
-     * @param applicationContext
-     * @return
      */
-    protected HttpMessageController createRestController(ApplicationContext applicationContext) {
+    protected HttpMessageController createRestController(SimulatorEndpointAdapter simulatorRestEndpointAdapter) {
         if (restController == null) {
             restController = new HttpMessageController();
 
-            SimulatorEndpointAdapter endpointAdapter = simulatorRestEndpointAdapter();
-            endpointAdapter.setApplicationContext(applicationContext);
-            endpointAdapter.setMappingKeyExtractor(simulatorRestScenarioMapper());
-            endpointAdapter.setFallbackEndpointAdapter(simulatorRestFallbackEndpointAdapter());
+            simulatorRestEndpointAdapter.setMappingKeyExtractor(simulatorRestScenarioMapper());
+            simulatorRestEndpointAdapter.setFallbackEndpointAdapter(simulatorRestFallbackEndpointAdapter());
 
-            restController.setEndpointAdapter(endpointAdapter);
+            restController.setEndpointAdapter(simulatorRestEndpointAdapter);
         }
 
         return restController;
@@ -198,7 +203,7 @@ public class SimulatorRestAutoConfiguration {
 
     @Bean
     protected HandlerInterceptor httpInterceptor(MessageListeners messageListeners,
-        SimulatorMessageListener simulatorMessageListener) {
+                                                 SimulatorMessageListener simulatorMessageListener) {
         messageListeners.addMessageListener(simulatorMessageListener);
         return new InterceptorHttp(messageListeners);
     }

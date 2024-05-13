@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,42 @@
 
 package org.citrusframework.simulator.scenario;
 
+import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
+import org.citrusframework.TestCaseRunner;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
 
-/**
- * @author Christoph Deppisch
- */
-public abstract class AbstractSimulatorScenario implements SimulatorScenario, CorrelationHandler {
+public abstract class AbstractSimulatorScenario implements CorrelationHandler, SimulatorScenario {
 
-    /**
-     * Scenario endpoint
-     */
     private ScenarioEndpoint scenarioEndpoint;
+
+    private @Nullable TestCaseRunner testCaseRunner;
 
     @PostConstruct
     public void init() {
         scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
     }
 
-    /**
-     * Start new message correlation so scenario is provided with additional inbound messages.
-     *
-     * @return
-     */
-    public CorrelationHandlerBuilder correlation() {
-        return new CorrelationHandlerBuilder(scenarioEndpoint);
-    }
-
     @Override
     public ScenarioEndpoint getScenarioEndpoint() {
         return scenarioEndpoint;
+    }
+
+    @Override
+    public @Nullable TestCaseRunner getTestCaseRunner() {
+        return testCaseRunner;
+    }
+
+    @Override
+    public void setTestCaseRunner(TestCaseRunner testCaseRunner) {
+        this.testCaseRunner = testCaseRunner;
+    }
+
+    /**
+     * Start new message correlation so scenario is provided with additional inbound messages.
+     */
+    public CorrelationHandlerBuilder correlation() {
+        return new CorrelationHandlerBuilder(scenarioEndpoint);
     }
 }

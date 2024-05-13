@@ -1,7 +1,9 @@
 package org.citrusframework.simulator.service.runner;
 
+import jakarta.annotation.Nullable;
 import org.citrusframework.TestCase;
 import org.citrusframework.report.TestListeners;
+import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
@@ -10,19 +12,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
+import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -30,8 +30,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
-    @Mock
-    private ApplicationContext applicationContextMock;
 
     private DefaultScenarioExecutorService fixture;
 
@@ -50,7 +48,7 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
     @Test
     void runSimulatorScenarioByName() {
-        var simulatorScenarioMock = mock(SimulatorScenario.class);
+        var simulatorScenarioMock = getSimulatorScenarioMock();
         doReturn(simulatorScenarioMock).when(applicationContextMock).getBean(scenarioName, SimulatorScenario.class);
 
         Long executionId = mockScenarioExecutionCreation();
@@ -61,8 +59,8 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         Long result = fixture.run(scenarioName, parameters);
         assertEquals(executionId, result);
 
-        verify(simulatorScenarioMock).getScenarioEndpoint();
-        verify(simulatorScenarioMock).run(any(ScenarioRunner.class));
+        verifyTestCaseRunnerHasBeenConfigured(simulatorScenarioMock);
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
         verifyNoMoreInteractions(simulatorScenarioMock);
     }
 
@@ -70,48 +68,50 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
     void runScenarioDirectly() {
         Long executionId = mockScenarioExecutionCreation();
 
-        var simulatorScenario = spy(new CustomSimulatorScenario());
+        var simulatorScenarioMock = getSimulatorScenarioMock();
 
         var testContextMock = mockCitrusTestContext();
         var testListenersMock = mock(TestListeners.class);
         doReturn(testListenersMock).when(testContextMock).getTestListeners();
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        Long result = fixture.run(simulatorScenario, scenarioName, parameters);
-        verifyScenarioExecution(executionId, result, simulatorScenario, testListenersMock);
+        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters);
+        verifyScenarioExecution(executionId, result, simulatorScenarioMock, testListenersMock);
 
-        assertTrue(isCustomScenarioExecuted());
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
     }
 
     @Test
-    void exceptionDuringExecutionWillBeCatched() {
+    void exceptionDuringExecutionWillBeCaught() {
         Long executionId = mockScenarioExecutionCreation();
 
-        var simulatorScenario = spy(new CustomSimulatorScenario());
+        var simulatorScenarioMock = getSimulatorScenarioMock();
 
         var testContextMock = mockCitrusTestContext();
         var testListenersMock = mock(TestListeners.class);
         doReturn(testListenersMock).when(testContextMock).getTestListeners();
 
         // Invoke exception
-        doThrow(new IllegalArgumentException()).when(simulatorScenario).run(any(ScenarioRunner.class));
+        var cause = mock(SimulatorException.class);
+        doThrow(cause).when(simulatorScenarioMock).run(any(ScenarioRunner.class));
 
-        // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        // This method-invocation may not throw, despite the above exception!
-        Long result = fixture.run(simulatorScenario, scenarioName, parameters);
-        verifyScenarioExecution(executionId, result, simulatorScenario, testListenersMock);
+        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters))
+            .isEqualTo(cause);
+        verifyScenarioExecution(executionId, null, simulatorScenarioMock, testListenersMock);
 
-        assertFalse(isCustomScenarioExecuted());
+        verify(simulatorScenarioMock).registerException(cause);
     }
 
-    private void verifyScenarioExecution(Long executionId, Long result, CustomSimulatorScenario simulatorScenario, TestListeners testListenersMock) {
-        assertEquals(executionId, result);
+    private void verifyScenarioExecution(Long executionId, @Nullable Long result, SimulatorScenario simulatorScenario, TestListeners testListenersMock) {
+        if (!isNull(result)) {
+            assertEquals(executionId, result);
+        }
 
-        ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = ArgumentCaptor.forClass(ScenarioRunner.class);
+        ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = captor();
         verify(simulatorScenario, times(1)).run(scenarioRunnerArgumentCaptor.capture());
 
         var scenarioRunner = scenarioRunnerArgumentCaptor.getValue();
-        assertEquals(scenarioEndpointMock, scenarioRunner.scenarioEndpoint());
+        assertEquals(scenarioEndpointMock, scenarioRunner.getScenarioEndpoint());
         assertEquals(executionId, scenarioRunner.getTestCaseRunner().getTestCase().getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID));
 
         verify(testListenersMock).onTestStart(any(TestCase.class));

@@ -16,18 +16,19 @@
 
 package org.citrusframework.simulator.ws;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.endpoint.SimulatorEndpointAdapter;
 import org.citrusframework.simulator.scenario.mapper.ContentBasedXPathScenarioMapper;
 import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.ws.interceptor.LoggingEndpointInterceptor;
 import org.citrusframework.ws.server.WebServiceEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,9 +48,10 @@ import org.springframework.ws.server.endpoint.adapter.MessageEndpointAdapter;
 import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 
-/**
- * @author Christoph Deppisch
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -57,6 +59,8 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 @EnableConfigurationProperties(SimulatorWebServiceConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "citrus.simulator.ws", value = "enabled", havingValue = "true")
 public class SimulatorWebServiceAutoConfiguration {
+
+    private static final String WS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorWsEndpointAdapter";
 
     @Autowired(required = false)
     private SimulatorWebServiceConfigurer configurer;
@@ -81,32 +85,30 @@ public class SimulatorWebServiceAutoConfiguration {
     }
 
     @Bean
-    public EndpointMapping simulatorWsEndpointMapping(ApplicationContext applicationContext) {
+    public EndpointMapping simulatorWsEndpointMapping(MessageEndpoint simulatorWsEndpoint) {
         UriEndpointMapping endpointMapping = new UriEndpointMapping();
         endpointMapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
-        endpointMapping.setDefaultEndpoint(simulatorWsEndpoint(applicationContext));
+        endpointMapping.setDefaultEndpoint(simulatorWsEndpoint);
         endpointMapping.setInterceptors(interceptors());
 
         return endpointMapping;
     }
 
     @Bean
-    public MessageEndpoint simulatorWsEndpoint(ApplicationContext applicationContext) {
+    public MessageEndpoint simulatorWsEndpoint(@Qualifier(WS_ENDPOINT_ADAPTER_BEAN_NAME) SimulatorEndpointAdapter simulatorWsEndpointAdapter) {
         WebServiceEndpoint webServiceEndpoint = new WebServiceEndpoint();
-        SimulatorEndpointAdapter endpointAdapter = simulatorWsEndpointAdapter();
-        endpointAdapter.setApplicationContext(applicationContext);
-        endpointAdapter.setMappingKeyExtractor(simulatorWsScenarioMapper());
-        endpointAdapter.setFallbackEndpointAdapter(simulatorWsFallbackEndpointAdapter());
+        simulatorWsEndpointAdapter.setMappingKeyExtractor(simulatorWsScenarioMapper());
+        simulatorWsEndpointAdapter.setFallbackEndpointAdapter(simulatorWsFallbackEndpointAdapter());
 
-        webServiceEndpoint.setEndpointAdapter(endpointAdapter);
+        webServiceEndpoint.setEndpointAdapter(simulatorWsEndpointAdapter);
 
         return webServiceEndpoint;
     }
 
-    @Bean
-    public SimulatorEndpointAdapter simulatorWsEndpointAdapter() {
-        return new SimulatorEndpointAdapter();
+    @Bean(name = WS_ENDPOINT_ADAPTER_BEAN_NAME)
+    public SimulatorEndpointAdapter simulatorWsEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, configuration);
     }
 
     @Bean
@@ -134,7 +136,6 @@ public class SimulatorWebServiceAutoConfiguration {
      * (enabled).
      *
      * @return a default web service configuration support
-     *
      * @see <a href="https://github.com/citrusframework/citrus-simulator/issues/210">Combined Sample of REST and WS</a>
      */
     @Bean

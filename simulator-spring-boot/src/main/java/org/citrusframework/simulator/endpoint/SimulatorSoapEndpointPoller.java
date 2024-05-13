@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,21 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.ws.SoapMessageHelper;
 import org.citrusframework.ws.message.SoapMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @author Christoph Deppisch
- */
 public class SimulatorSoapEndpointPoller extends SimulatorEndpointPoller {
 
-    @Autowired
-    private SoapMessageHelper soapMessageHelper;
+    private final SoapMessageHelper soapMessageHelper;
+
+    public SimulatorSoapEndpointPoller(TestContextFactory testContextFactory, SoapMessageHelper soapMessageHelper) {
+        super(testContextFactory);
+
+        this.soapMessageHelper = soapMessageHelper;
+    }
 
     @Override
     protected Message processRequestMessage(Message request) {
