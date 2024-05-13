@@ -38,6 +38,19 @@
         </dd>
       </dl>
 
+      <div ngbAccordion class="mb-3">
+        <div ngbAccordionItem>
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Stacktrace</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>{{ scenarioExecution.testResult?.stackTrace }}</ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <h3 data-cy="messageDetailsHeading">
         <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
       </h3>
