@@ -14,11 +14,11 @@ import SortByDirective from 'app/shared/sort/sort-by.directive';
 
 @Component({
   standalone: true,
-  selector: 'app-message-table',
-  templateUrl: './message-table.component.html',
+  selector: 'app-scenario-messages-table',
+  templateUrl: './scenario-messages-table.component.html',
   imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
 })
-export class MessageTableComponent implements OnInit {
+export class ScenarioMessagesTableComponent implements OnInit {
   @Input()
   ascending = true;
 

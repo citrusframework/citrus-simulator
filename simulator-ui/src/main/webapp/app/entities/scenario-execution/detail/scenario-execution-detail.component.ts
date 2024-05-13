@@ -4,7 +4,8 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
 
-import { MessageTableComponent } from './message-table.component';
+import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
+import { ScenarioParametersTableComponent } from './scenario-parameters-table.component';
 
 import { IScenarioExecution } from '../scenario-execution.model';
 
@@ -12,7 +13,15 @@ import { IScenarioExecution } from '../scenario-execution.model';
   standalone: true,
   selector: 'app-scenario-execution-detail',
   templateUrl: './scenario-execution-detail.component.html',
-  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, MessageTableComponent],
+  imports: [
+    SharedModule,
+    RouterModule,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    ScenarioMessagesTableComponent,
+    ScenarioParametersTableComponent,
+  ],
 })
 export class ScenarioExecutionDetailComponent {
   @Input() scenarioExecution: IScenarioExecution | null = null;

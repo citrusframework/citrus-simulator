@@ -4,35 +4,31 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import * as operators from 'app/core/util/operators';
 
-import { MessageService } from 'app/entities/message/service/message.service';
+import { IMessage } from 'app/entities/message/message.model';
 
-import { MessageTableComponent } from './message-table.component';
+import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
 
 import SpyInstance = jest.SpyInstance;
-import { IMessageHeader } from '../../message-header/message-header.model';
-import { IMessage } from '../../message/message.model';
 
 describe('Message Table Component', () => {
   let sortSpy: SpyInstance;
 
-  let service: MessageService;
-
-  let fixture: ComponentFixture<MessageTableComponent>;
-  let component: MessageTableComponent;
+  let fixture: ComponentFixture<ScenarioMessagesTableComponent>;
+  let component: ScenarioMessagesTableComponent;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([{ path: 'message', component: MessageTableComponent }]),
+        RouterTestingModule.withRoutes([{ path: 'message', component: ScenarioMessagesTableComponent }]),
         HttpClientTestingModule,
-        MessageTableComponent,
+        ScenarioMessagesTableComponent,
       ],
       providers: [],
     })
-      .overrideTemplate(MessageTableComponent, '')
+      .overrideTemplate(ScenarioMessagesTableComponent, '')
       .compileComponents();
 
-    fixture = TestBed.createComponent(MessageTableComponent);
+    fixture = TestBed.createComponent(ScenarioMessagesTableComponent);
     component = fixture.componentInstance;
 
     sortSpy = jest.spyOn(operators, 'sort');
@@ -41,7 +37,7 @@ describe('Message Table Component', () => {
 
   describe('ngOnInit', () => {
     it('sorts messages', () => {
-      extracted(() => component.ngOnInit());
+      expectSortBeingCalled(() => component.ngOnInit());
     });
   });
 
@@ -57,10 +53,10 @@ describe('Message Table Component', () => {
   });
 
   it('sorts messages', () => {
-    extracted(() => component.sortMessages());
+    expectSortBeingCalled(() => component.sortMessages());
   });
 
-  const extracted = (whenFunction: () => void): void => {
+  const expectSortBeingCalled = (whenFunction: () => void): void => {
     const messages = [{ messageId: 1234 }] as IMessage[];
     component.sortedMessages = messages;
 

@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <div *ngIf="scenarioExecution">
-      <h2 data-cy="scenarioExecutionDetailsHeading">
+      <h2>
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.detail.title">Scenario Execution</span>
       </h2>
 
@@ -51,15 +51,29 @@
         </div>
       </div>
 
-      <h3 data-cy="messageDetailsHeading">
-        <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
+      <hr />
+
+      <h3 class="mb-3">
+        <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.title">Parameters</span>
       </h3>
+
+      <app-scenario-parameters-table
+        [scenarioParameters]="scenarioExecution.scenarioParameters ?? []"
+        predicate="createdDate"
+      ></app-scenario-parameters-table>
 
       <hr />
 
-      <app-message-table [messages]="scenarioExecution.scenarioMessages ?? []" predicate="createdDate"></app-message-table>
+      <h3 class="mb-3">
+        <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
+      </h3>
 
-      <button type="button" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <app-scenario-messages-table
+        [messages]="scenarioExecution.scenarioMessages ?? []"
+        predicate="createdDate"
+      ></app-scenario-messages-table>
+
+      <button type="button" (click)="previousState()" class="btn btn-info mt-3">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>
     </div>
