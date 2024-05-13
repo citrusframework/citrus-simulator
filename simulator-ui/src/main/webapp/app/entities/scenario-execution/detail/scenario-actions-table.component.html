@@ -1,0 +1,59 @@
+<div class="table-responsive table-entities" id="entities" *ngIf="sortedActions && sortedActions.length > 0; else noParameters">
+  <table class="table table-striped" aria-describedby="page-heading">
+    <thead>
+      <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortActions()">
+        <th scope="col" jhiSortBy="actionId">
+          <div class="d-flex">
+            <span jhiTranslate="global.field.id">ID</span>
+            <fa-icon class="p-1" icon="sort"></fa-icon>
+          </div>
+        </th>
+        <th scope="col" jhiSortBy="name">
+          <div class="d-flex">
+            <span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span>
+            <fa-icon class="p-1" icon="sort"></fa-icon>
+          </div>
+        </th>
+        <th scope="col" jhiSortBy="startDate">
+          <div class="d-flex">
+            <span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span>
+            <fa-icon class="p-1" icon="sort"></fa-icon>
+          </div>
+        </th>
+        <th scope="col" jhiSortBy="endDate">
+          <div class="d-flex">
+            <span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span>
+            <fa-icon class="p-1" icon="sort"></fa-icon>
+          </div>
+        </th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let scenarioAction of sortedActions; trackBy: trackId" data-cy="entityTable">
+        <td>
+          <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">{{ scenarioAction.actionId }}</a>
+        </td>
+        <td>{{ scenarioAction.name }}</td>
+        <td>{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+        <td>{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+        <td class="text-end">
+          <div class="btn-group">
+            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
+              <button type="submit" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #noParameters>
+  <div class="alert alert-warning" id="no-result">
+    <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.notFound">No Scenario Actions found</span>
+  </div>
+</ng-template>

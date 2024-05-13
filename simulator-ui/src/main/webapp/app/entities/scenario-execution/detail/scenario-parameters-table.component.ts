@@ -33,7 +33,7 @@ export class ScenarioParametersTableComponent implements OnInit {
     this.sortParameters();
   }
 
-  @Input() set scenarioParameters(parameters: IScenarioParameter[] | null) {
+  @Input() set parameters(parameters: IScenarioParameter[] | null) {
     this.sortedParameters = parameters ? parameters.slice() : [];
     this.sortParameters();
   }
