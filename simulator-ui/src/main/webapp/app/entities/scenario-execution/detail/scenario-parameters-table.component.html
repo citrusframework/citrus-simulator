@@ -1,0 +1,57 @@
+<div class="table-responsive table-entities" id="entities" *ngIf="sortedParameters && sortedParameters.length > 0; else noParameters">
+  <table class="table table-striped" aria-describedby="page-heading">
+    <thead>
+      <th scope="col" jhiSortBy="parameterId">
+        <div class="d-flex">
+          <span jhiTranslate="global.field.id">ID</span>
+          <fa-icon class="p-1" icon="sort"></fa-icon>
+        </div>
+      </th>
+      <th scope="col" jhiSortBy="name">
+        <div class="d-flex">
+          <span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span>
+          <fa-icon class="p-1" icon="sort"></fa-icon>
+        </div>
+      </th>
+      <th scope="col" jhiSortBy="controlType">
+        <div class="d-flex">
+          <span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span>
+          <fa-icon class="p-1" icon="sort"></fa-icon>
+        </div>
+      </th>
+      <th scope="col" jhiSortBy="value">
+        <div class="d-flex">
+          <span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span>
+          <fa-icon class="p-1" icon="sort"></fa-icon>
+        </div>
+      </th>
+      <th scope="col"></th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let scenarioParameter of sortedParameters; trackBy: trackId">
+        <td>
+          <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">{{ scenarioParameter.parameterId }}</a>
+        </td>
+        <td>{{ scenarioParameter.name }}</td>
+        <td>{{ scenarioParameter.controlType }}</td>
+        <td>{{ scenarioParameter.value }}</td>
+        <td class="text-end">
+          <div class="btn-group">
+            <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">
+              <button type="button" class="btn btn-info btn-sm">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #noParameters>
+  <div class="alert alert-warning" id="no-result">
+    <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.notFound">No Scenario Parameters found</span>
+  </div>
+</ng-template>

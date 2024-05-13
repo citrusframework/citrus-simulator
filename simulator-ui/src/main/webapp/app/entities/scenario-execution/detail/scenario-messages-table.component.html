@@ -1,4 +1,4 @@
-<div class="table-responsive table-entities" id="entities" *ngIf="sortedMessages && sortedMessages.length > 0">
+<div class="table-responsive table-entities" id="entities" *ngIf="sortedMessages && sortedMessages.length > 0; else noMessages">
   <table class="table table-striped" aria-describedby="page-heading">
     <thead>
       <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortMessages()">
@@ -26,28 +26,21 @@
             <fa-icon class="p-1" icon="sort"></fa-icon>
           </div>
         </th>
-        <th scope="col" jhiSortBy="lastModifiedDate">
-          <div class="d-flex">
-            <span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span>
-            <fa-icon class="p-1" icon="sort"></fa-icon>
-          </div>
-        </th>
         <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let message of sortedMessages; trackBy: trackId" data-cy="entityTable">
+      <tr *ngFor="let message of sortedMessages; trackBy: trackId">
         <td>
           <a [routerLink]="['/message', message.messageId, 'view']">{{ message.messageId }}</a>
         </td>
         <td>{{ message.direction }}</td>
         <td>{{ message.payload }}</td>
         <td>{{ message.createdDate | formatMediumDatetime }}</td>
-        <td>{{ message.lastModifiedDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group">
             <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }">
-              <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
+              <button type="button" class="btn btn-info btn-sm">
                 <fa-icon icon="heading"></fa-icon>
                 <span
                   class="d-none d-md-inline"
@@ -58,7 +51,7 @@
               </button>
             </a>
             <a [routerLink]="['/message', message.messageId, 'view']">
-              <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+              <button type="button" class="btn btn-info btn-sm">
                 <fa-icon icon="eye"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
               </button>
@@ -69,3 +62,9 @@
     </tbody>
   </table>
 </div>
+
+<ng-template #noMessages>
+  <div class="alert alert-warning" id="no-result">
+    <span jhiTranslate="citrusSimulatorApp.message.home.notFound">No Messages found</span>
+  </div>
+</ng-template>
