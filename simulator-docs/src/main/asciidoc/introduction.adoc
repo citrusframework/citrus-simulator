@@ -20,9 +20,10 @@ However, it is important to note that certain experimental features are included
 These features are introduced with "feature flags" and are still in the developmental phase:
 
 .Experimental Features
+
 *WSDL Generated Scenarios*: Automatically create simulator scenarios from a WSDL file.
+
 *Swagger Generated Scenarios*: Automatically create simulator scenarios from a Swagger API file.
-*Combined Simulator*: Operate multiple message transports within a single simulator instance.
 
 These features are evolving, and with the valuable insights we receive from our community, we are optimistic that they will achieve stability in due course.
 
