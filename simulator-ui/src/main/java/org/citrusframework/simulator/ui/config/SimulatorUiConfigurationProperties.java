@@ -43,7 +43,7 @@ public class SimulatorUiConfigurationProperties {
 
     public static class Security {
 
-        private static final String DEFAULT_CONTENT_SECURITY_POLICY = "default-src 'self'; frame-src 'self' data:;";
+        private static final String DEFAULT_CONTENT_SECURITY_POLICY = "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:";
         private String contentSecurityPolicy = DEFAULT_CONTENT_SECURITY_POLICY;
 
         public String getContentSecurityPolicy() {
