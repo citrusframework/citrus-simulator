@@ -68,7 +68,7 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "citrus.simulator.rest", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SimulatorRestAutoConfiguration {
 
-    private static final String REST_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorRestEndpointAdapter";
+    public static final String REST_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorRestEndpointAdapter";
 
     private final ApplicationContext applicationContext;
     private final SimulatorRestConfigurationProperties simulatorRestConfiguration;
