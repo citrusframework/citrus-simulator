@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static jakarta.persistence.CascadeType.REMOVE;
+import static jakarta.persistence.CascadeType.ALL;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.NONE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
@@ -107,7 +107,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Optional test parameters
      */
-    @OneToMany(mappedBy = "testResult", cascade = {REMOVE})
+    @OneToMany(mappedBy = "testResult", cascade = ALL)
     @JsonIgnoreProperties(value = {"testResult"}, allowSetters = true)
     private final Set<TestParameter> testParameters = new HashSet<>();
 
