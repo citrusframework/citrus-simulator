@@ -20,7 +20,6 @@ However, it is important to note that certain experimental features are included
 These features are introduced with "feature flags" and are still in the developmental phase:
 
 .Experimental Features
-
 *WSDL Generated Scenarios*: Automatically create simulator scenarios from a WSDL file.
 
 *Swagger Generated Scenarios*: Automatically create simulator scenarios from a Swagger API file.
@@ -55,3 +54,17 @@ This UI is best accessed through a web browser .
 It’s important to note that we do not perform cross-browser testing during our pipeline.
 Thus, we cannot guarantee compatibility in all browsers.
 Development and testing are primarily done on Chrome and Firefox, which are likely to yield the best experience.
+
+[[compatibility-matrix]]
+=== Compatibility Matrix
+
+The below table depicts the compatible version ranges of the https://github.com/citrusframework/citrus-simulator[`citrus-simulator`^], the https://github.com/citrusframework/citrus-simulator[citrusframework^] and https://spring.io/projects/spring-boot[Spring Boot^].
+
+The compatible java version is derived from the combination of the underlying frameworks.
+
+[cols="1,1,1,1"]
+|===
+| Simulator | Citrus | Spring-Boot | Java
+| `v3.0.0` | > `v4.2.0` | > `v3.2.5` | 17 to 21
+| `v2.1.1` | < `v3.4.0` | < `v3.0.0` | 8 to 11
+|===
