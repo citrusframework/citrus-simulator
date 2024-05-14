@@ -60,7 +60,7 @@ import java.util.List;
 @ConditionalOnProperty(prefix = "citrus.simulator.ws", value = "enabled", havingValue = "true")
 public class SimulatorWebServiceAutoConfiguration {
 
-    private static final String WS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorWsEndpointAdapter";
+    public static final String WS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorWsEndpointAdapter";
 
     @Autowired(required = false)
     private SimulatorWebServiceConfigurer configurer;

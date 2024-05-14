@@ -55,7 +55,7 @@ import static java.util.Objects.isNull;
 @ConditionalOnProperty(prefix = "citrus.simulator.jms", value = "enabled", havingValue = "true")
 public class SimulatorJmsAutoConfiguration {
 
-    private static final String JMS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorJmsEndpointAdapter";
+    public static final String JMS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorJmsEndpointAdapter";
 
     private final SimulatorConfigurationProperties simulatorConfiguration;
     private final SimulatorJmsConfigurationProperties simulatorJmsConfiguration;
