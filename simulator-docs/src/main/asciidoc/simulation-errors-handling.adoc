@@ -1,0 +1,47 @@
+[[simulations-error-handling]]
+== Simulation Errors Handling
+
+It might be possible that unexpected errors occur during simulations.
+But how would you know that this is the case, you might ask yourself?
+It could as well be, that someone just **wanted** this simulation to respond with an HTTP 500 code.
+
+That's why we've invented the custom HTTP 555 status code: Simulation failed with an Exception!
+
+The error can be asserted from the client side, the body containing more detailed information.
+
+[source,java]
+----
+class SimulatorRestIT {
+
+    /**
+     * Sends a request to the server, expecting it to execute a simulation. The response should indicate the unexpected
+     * error, returning a {@link HttpStatus#INTERNAL_SERVER_ERROR}.
+     *
+     * @see org.citrusframework.simulator.sample.scenario.ThrowScenario
+     */
+    @CitrusTest
+    public void testSimulationWithUnexpectedError() {
+        $(http().client(simulatorClient)
+            .send()
+            .get("throw")
+            .message()
+            .accept(MediaType.APPLICATION_JSON_VALUE));
+
+        $(http().client(simulatorClient)
+            .receive()
+            .response(HttpStatus.INTERNAL_SERVER_ERROR)
+            .message()
+            .body(
+                // language=json
+                """
+                    {
+                      "timestamp":"@ignore@",
+                      "status":555,
+                      "error":"Http Status 555",
+                      "path":"/services/rest/simulator/throw"
+                    }
+                    """
+            ));
+    }
+}
+----
