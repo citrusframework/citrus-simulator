@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.ws;
 
+import jakarta.annotation.Nullable;
+import lombok.Getter;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.simulator.SimulatorAutoConfiguration;
@@ -49,8 +51,11 @@ import org.springframework.ws.server.endpoint.mapping.UriEndpointMapping;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.addAll;
+import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PROTECTED;
 
 @Configuration
 @ConditionalOnWebApplication
@@ -62,14 +67,20 @@ public class SimulatorWebServiceAutoConfiguration {
 
     public static final String WS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorWsEndpointAdapter";
 
-    @Autowired(required = false)
-    private SimulatorWebServiceConfigurer configurer;
+    @Getter(PROTECTED)
+    private final LoggingEndpointInterceptor loggingEndpointInterceptor;
 
-    @Autowired
-    private LoggingEndpointInterceptor loggingEndpointInterceptor;
+    @Getter(PROTECTED)
+    private final SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration;
 
-    @Autowired
-    private SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration;
+    @Getter(PROTECTED)
+    private final @Nullable SimulatorWebServiceConfigurer configurer;
+
+    public SimulatorWebServiceAutoConfiguration(LoggingEndpointInterceptor loggingEndpointInterceptor, SimulatorWebServiceConfigurationProperties simulatorWebServiceConfiguration, @Autowired(required = false) @Nullable SimulatorWebServiceConfigurer configurer) {
+        this.loggingEndpointInterceptor = loggingEndpointInterceptor;
+        this.simulatorWebServiceConfiguration = simulatorWebServiceConfiguration;
+        this.configurer = configurer;
+    }
 
     @Bean
     public MessageEndpointAdapter messageEndpointAdapter() {
@@ -113,7 +124,7 @@ public class SimulatorWebServiceAutoConfiguration {
 
     @Bean
     public ScenarioMapper simulatorWsScenarioMapper() {
-        if (configurer != null) {
+        if (nonNull(configurer)) {
             return configurer.scenarioMapper();
         }
 
@@ -122,7 +133,7 @@ public class SimulatorWebServiceAutoConfiguration {
 
     @Bean
     public EndpointAdapter simulatorWsFallbackEndpointAdapter() {
-        if (configurer != null) {
+        if (nonNull(configurer)) {
             return configurer.fallbackEndpointAdapter();
         }
 
@@ -154,11 +165,9 @@ public class SimulatorWebServiceAutoConfiguration {
     /**
      * Gets the web service message dispatcher servlet mapping. Clients must use this
      * context path in order to access the web service support on the simulator.
-     *
-     * @return
      */
     protected String[] getServletMapping() {
-        if (configurer != null) {
+        if (nonNull(configurer)) {
             return configurer.servletMappings(simulatorWebServiceConfiguration).toArray(new String[0]);
         }
 
@@ -167,13 +176,11 @@ public class SimulatorWebServiceAutoConfiguration {
 
     /**
      * Provides list of endpoint interceptors.
-     *
-     * @return
      */
     protected EndpointInterceptor[] interceptors() {
         List<EndpointInterceptor> interceptors = new ArrayList<>();
-        if (configurer != null) {
-            Collections.addAll(interceptors, configurer.interceptors());
+        if (nonNull(configurer)) {
+            addAll(interceptors, configurer.interceptors());
         }
         interceptors.add(loggingEndpointInterceptor);
         return interceptors.toArray(new EndpointInterceptor[0]);

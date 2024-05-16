@@ -49,17 +49,17 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
     private final ApplicationContext applicationContext;
     private final CorrelationHandlerRegistry handlerRegistry;
     private final ScenarioExecutorService scenarioExecutorService;
-    private final SimulatorConfigurationProperties configuration;
+    private final SimulatorConfigurationProperties simulatorConfiguration;
 
     @Getter
     @Setter
     private boolean handleResponse = true;
 
-    public SimulatorEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
+    public SimulatorEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties simulatorConfiguration) {
         this.applicationContext = applicationContext;
         this.handlerRegistry = handlerRegistry;
         this.scenarioExecutorService = scenarioExecutorService;
-        this.configuration = configuration;
+        this.simulatorConfiguration = simulatorConfiguration;
     }
 
     private static ResponseStatusException getResponseStatusException(Throwable e) {
@@ -90,7 +90,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
         SimulatorScenario scenario;
         if (!hasText(scenarioName) || !applicationContext.containsBean(scenarioName)) {
-            scenarioName = configuration.getDefaultScenario();
+            scenarioName = simulatorConfiguration.getDefaultScenario();
             logger.info("Unable to find scenario for mapping '{}' - using default scenario '{}'", mappingName, scenarioName);
         }
         scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
@@ -112,7 +112,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
     private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName) {
         try {
             if (handleResponse) {
-                var message = responseFuture.get(configuration.getDefaultTimeout(), MILLISECONDS);
+                var message = responseFuture.get(simulatorConfiguration.getDefaultTimeout(), MILLISECONDS);
 
                 if (EXCEPTION_TYPE.equals(message.getType())) {
                     throw getResponseStatusException(message.getPayload(Throwable.class));
