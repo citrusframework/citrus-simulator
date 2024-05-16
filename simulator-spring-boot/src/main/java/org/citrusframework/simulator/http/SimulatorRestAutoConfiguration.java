@@ -20,6 +20,7 @@ import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
@@ -61,6 +62,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.addAll;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PROTECTED;
+
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -70,20 +76,24 @@ public class SimulatorRestAutoConfiguration {
 
     public static final String REST_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorRestEndpointAdapter";
 
+    @Getter(PROTECTED)
     private final ApplicationContext applicationContext;
+
+    @Getter(PROTECTED)
     private final SimulatorRestConfigurationProperties simulatorRestConfiguration;
 
-    private @Nullable SimulatorRestConfigurer configurer;
+    @Getter(PROTECTED)
+    private final @Nullable SimulatorRestConfigurer restConfigurer;
 
     /**
      * Target Citrus Http controller
      */
     private HttpMessageController restController;
 
-    public SimulatorRestAutoConfiguration(ApplicationContext applicationContext, SimulatorRestConfigurationProperties simulatorRestConfiguration, @Autowired(required = false) @Nullable SimulatorRestConfigurer configurer) {
+    public SimulatorRestAutoConfiguration(ApplicationContext applicationContext, SimulatorRestConfigurationProperties simulatorRestConfiguration, @Autowired(required = false) @Nullable SimulatorRestConfigurer restConfigurer) {
         this.applicationContext = applicationContext;
         this.simulatorRestConfiguration = simulatorRestConfiguration;
-        this.configurer = configurer;
+        this.restConfigurer = restConfigurer;
     }
 
     @Bean
@@ -169,8 +179,8 @@ public class SimulatorRestAutoConfiguration {
 
     @Bean
     public EndpointAdapter simulatorRestFallbackEndpointAdapter() {
-        if (configurer != null) {
-            return configurer.fallbackEndpointAdapter();
+        if (nonNull(restConfigurer)) {
+            return restConfigurer.fallbackEndpointAdapter();
         }
 
         return new EmptyResponseEndpointAdapter();
@@ -180,7 +190,7 @@ public class SimulatorRestAutoConfiguration {
      * Gets the Citrus Http REST controller.
      */
     protected HttpMessageController createRestController(SimulatorEndpointAdapter simulatorRestEndpointAdapter) {
-        if (restController == null) {
+        if (isNull(restController)) {
             restController = new HttpMessageController();
 
             simulatorRestEndpointAdapter.setMappingKeyExtractor(simulatorRestScenarioMapper());
@@ -194,8 +204,8 @@ public class SimulatorRestAutoConfiguration {
 
     @Bean
     public ScenarioMapper simulatorRestScenarioMapper() {
-        if (configurer != null) {
-            return configurer.scenarioMapper();
+        if (nonNull(restConfigurer)) {
+            return restConfigurer.scenarioMapper();
         }
 
         return new HttpRequestAnnotationScenarioMapper();
@@ -218,13 +228,11 @@ public class SimulatorRestAutoConfiguration {
     /**
      * Gets the url pattern to map this Http rest controller to. Clients must use this
      * context path in order to access the Http REST support on the simulator.
-     *
-     * @return
      */
     @NotNull
     protected List<String> getUrlMappings() {
-        if (configurer != null) {
-            List<String> configuredUrls = configurer.urlMappings(simulatorRestConfiguration);
+        if (nonNull(restConfigurer)) {
+            List<String> configuredUrls = restConfigurer.urlMappings(simulatorRestConfiguration);
             return configuredUrls != null ? configuredUrls : Collections.emptyList();
         }
 
@@ -233,13 +241,11 @@ public class SimulatorRestAutoConfiguration {
 
     /**
      * Provides list of endpoint interceptors.
-     *
-     * @return
      */
     protected HandlerInterceptor[] interceptors(MessageListeners messageListeners, SimulatorMessageListener simulatorMessageListener) {
         List<HandlerInterceptor> interceptors = new ArrayList<>();
-        if (configurer != null) {
-            Collections.addAll(interceptors, configurer.interceptors());
+        if (nonNull(restConfigurer)) {
+            addAll(interceptors, restConfigurer.interceptors());
         }
         interceptors.add(new LoggingHandlerInterceptor());
         interceptors.add(httpInterceptor(messageListeners, simulatorMessageListener));

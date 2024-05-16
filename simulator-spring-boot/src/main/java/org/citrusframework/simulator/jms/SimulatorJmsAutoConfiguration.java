@@ -18,6 +18,7 @@ package org.citrusframework.simulator.jms;
 
 import jakarta.annotation.Nullable;
 import jakarta.jms.ConnectionFactory;
+import lombok.Getter;
 import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
@@ -48,6 +49,8 @@ import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.util.StringUtils;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PROTECTED;
 
 @Configuration
 @AutoConfigureAfter(SimulatorAutoConfiguration.class)
@@ -57,22 +60,26 @@ public class SimulatorJmsAutoConfiguration {
 
     public static final String JMS_ENDPOINT_ADAPTER_BEAN_NAME = "simulatorJmsEndpointAdapter";
 
+    @Getter(PROTECTED)
     private final SimulatorConfigurationProperties simulatorConfiguration;
+
+    @Getter(PROTECTED)
     private final SimulatorJmsConfigurationProperties simulatorJmsConfiguration;
 
-    private @Nullable SimulatorJmsConfigurer configurer;
+    @Getter(PROTECTED)
+    private final @Nullable SimulatorJmsConfigurer jmsConfigurer;
 
-    public SimulatorJmsAutoConfiguration(SimulatorConfigurationProperties simulatorConfiguration, SimulatorJmsConfigurationProperties simulatorJmsConfiguration, @Autowired(required = false) @Nullable SimulatorJmsConfigurer configurer) {
+    public SimulatorJmsAutoConfiguration(SimulatorConfigurationProperties simulatorConfiguration, SimulatorJmsConfigurationProperties simulatorJmsConfiguration, @Autowired(required = false) @Nullable SimulatorJmsConfigurer jmsConfigurer) {
         this.simulatorConfiguration = simulatorConfiguration;
         this.simulatorJmsConfiguration = simulatorJmsConfiguration;
-        this.configurer = configurer;
+        this.jmsConfigurer = jmsConfigurer;
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ConnectionFactory connectionFactory() {
-        if (configurer != null) {
-            return configurer.connectionFactory();
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.connectionFactory();
         }
 
         return new SingleConnectionFactory();
@@ -104,14 +111,14 @@ public class SimulatorJmsAutoConfiguration {
     }
 
     @Bean(JMS_ENDPOINT_ADAPTER_BEAN_NAME)
-    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService, SimulatorConfigurationProperties configuration) {
-        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, configuration);
+    public SimulatorEndpointAdapter simulatorJmsEndpointAdapter(ApplicationContext applicationContext, CorrelationHandlerRegistry handlerRegistry, ScenarioExecutorService scenarioExecutorService) {
+        return new SimulatorEndpointAdapter(applicationContext, handlerRegistry, scenarioExecutorService, getSimulatorConfiguration());
     }
 
     @Bean
     public ScenarioMapper simulatorJmsScenarioMapper() {
-        if (configurer != null) {
-            return configurer.scenarioMapper();
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.scenarioMapper();
         }
 
         return new ContentBasedXPathScenarioMapper().addXPathExpression("local-name(/*)");
@@ -149,8 +156,8 @@ public class SimulatorJmsAutoConfiguration {
 
     @Bean
     public EndpointAdapter simulatorJmsFallbackEndpointAdapter() {
-        if (configurer != null) {
-            return configurer.fallbackEndpointAdapter();
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.fallbackEndpointAdapter();
         }
 
         return new EmptyResponseEndpointAdapter();
@@ -158,12 +165,10 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Gets the destination name to receive messages from.
-     *
-     * @return
      */
     protected String getInboundDestination() {
-        if (configurer != null) {
-            return configurer.inboundDestination(simulatorJmsConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.inboundDestination(simulatorJmsConfiguration);
         }
 
         return simulatorJmsConfiguration.getInboundDestination();
@@ -171,12 +176,10 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Gets the destination name to send messages to.
-     *
-     * @return
      */
     protected String getReplyDestination() {
-        if (configurer != null) {
-            return configurer.replyDestination(simulatorJmsConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.replyDestination(simulatorJmsConfiguration);
         }
 
         return simulatorJmsConfiguration.getReplyDestination();
@@ -184,11 +187,10 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Should the endpoint use synchronous reply communication.
-     * @return
      */
     protected boolean isSynchronous() {
-        if (configurer != null) {
-            return configurer.synchronous(simulatorJmsConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.synchronous(simulatorJmsConfiguration);
         }
 
         return simulatorJmsConfiguration.isSynchronous();
@@ -196,23 +198,21 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Should the endpoint use SOAP envelope handling.
-     * @return
      */
     protected boolean useSoap() {
-        if (configurer != null) {
-            return configurer.useSoap(simulatorJmsConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.useSoap(simulatorJmsConfiguration);
         }
 
         return simulatorJmsConfiguration.isUseSoap();
     }
 
     /**
-     * Should the endpoint use pub sub domain.
-     * @return
+     * Should the endpoint use pub-sub domain.
      */
     protected boolean isPubSubDomain() {
-        if (configurer != null) {
-            return configurer.pubSubDomain(simulatorJmsConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.pubSubDomain(simulatorJmsConfiguration);
         }
 
         return simulatorJmsConfiguration.isPubSubDomain();
@@ -220,12 +220,10 @@ public class SimulatorJmsAutoConfiguration {
 
     /**
      * Gets the endpoint polling exception delay.
-     * @param simulatorConfiguration
-     * @return
      */
     protected Long exceptionDelay(SimulatorConfigurationProperties simulatorConfiguration) {
-        if (configurer != null) {
-            return configurer.exceptionDelay(simulatorConfiguration);
+        if (nonNull(jmsConfigurer)) {
+            return jmsConfigurer.exceptionDelay(simulatorConfiguration);
         }
 
         return simulatorConfiguration.getExceptionDelay();
