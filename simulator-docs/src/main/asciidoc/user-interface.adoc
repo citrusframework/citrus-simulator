@@ -53,10 +53,26 @@ Every execution of a scenario within the simulator is meticulously recorded, wit
 
 image:scenario-executions.png[Overview of scenario executions,showing a list with statuses and key details]
 
+This view also provides rich filter possibilities, by name, status and so on. Even by headers of recorded messages.
+
+.Message Header Filtering
+
+Message header filtering uses a specific syntax.
+
+* If you don't specify a key or comparator, the filter will search for messages where *any* header value *contains* the provided string. (e.g., `myValue`)
+* To filter based on a *specific key*, use `key=value`. (e.g., `source=myApp`)
+* You can also use the *CONTAINS* operator (`~`) to search within a key's value. (e.g., `name~something-like-this`)
+* For numeric keys, you can use comparison operators like `<, `<=`, `>`, `>=`. (e.g., `priority<3`)
+
+Combining multiple patterns: Separate multiple filter expressions with a semicolon (`;`). They will be combined using logical `AND` operators. (e.g., `source=myApp; status=active`)
+
+There is a helping dialog available to the right of the message-header input field.
+
 [[ui-scenario-results]]
 === Viewing Execution Results
 
 The results of each scenario execution provide a comprehensive overview, including the outcome (such as Passed, Failed, or Errored), execution duration, and the parameters and data utilized during the execution.
+You can even see full stacktraces to debug your scenario failures.
 To access the detailed results of a specific execution, simply select the desired entry from the list.
 
 image:scenario-execution-details.png[Detailed view of a scenario execution,including request/response data and any logged messages or errors]
@@ -65,9 +81,9 @@ image:scenario-execution-details.png[Detailed view of a scenario execution,inclu
 
 Upon opening an execution entry, you will be presented with a detailed account of the scenario's activity, including:
 
-* Request and Response Messages: The exact data sent and received, allowing for a detailed inspection of the scenario's external interactions.
-* Log Entries: Custom log messages or system-generated logs that were recorded during the execution, providing context and additional insights.
 * Error Details: In cases of failure, detailed error information, including stack traces, is provided to aid in diagnosing and resolving issues.
+* Request and Response Messages: The exact data sent and received, allowing for a detailed inspection of the scenario's external interactions.
+* Actions: All actions that were recorded during execution, provides additional information about the course of the scenario.
 
 *Navigation and Analysis*
 
