@@ -53,7 +53,7 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
     Optional<Message> findOneWithToOneRelationships(@Param("messageId") Long messageId);
 
     @Override
-    @EntityGraph(attributePaths = {"headers", "scenarioExecution"})
+    @EntityGraph(attributePaths = {"headers", "scenarioExecution", "scenarioExecution.testResult"})
     Page<Message> findAll(Specification<Message> spec, Pageable pageable);
 
     default List<Message> findAllForScenarioExecution(Long scenarioExecutionId, String citrusMessageId, Message.Direction direction) {
@@ -63,6 +63,6 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
     List<Message> findAllByScenarioExecutionExecutionIdEqualsAndCitrusMessageIdEqualsIgnoreCaseAndDirectionEquals(@Param("scenarioExecutionId") Long scenarioExecutionId, @Param("citrusMessageId") String citrusMessageId, @Param("direction") Integer direction);
 
     @Query("FROM Message WHERE messageId IN :messageIds")
-    @EntityGraph(attributePaths = {"headers", "scenarioExecution"})
+    @EntityGraph(attributePaths = {"headers", "scenarioExecution", "scenarioExecution.testResult"})
     Page<Message> findAllWhereMessageIdIn(@Param("messageIds") List<Long> messageIds, Pageable pageable);
 }
