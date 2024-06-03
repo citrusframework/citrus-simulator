@@ -1,0 +1,12 @@
+th[jhisortby='status'],
+th[jhisortby='errorMessage'] {
+  pointer-events: none;
+
+  :hover {
+    cursor: default;
+  }
+
+  fa-icon {
+    visibility: hidden;
+  }
+}

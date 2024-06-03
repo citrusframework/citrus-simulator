@@ -25,6 +25,7 @@ import { ITestResultStatus } from '../../test-result/test-result.model';
   standalone: true,
   selector: 'app-scenario-execution',
   templateUrl: './scenario-execution.component.html',
+  styleUrls: ['./scenario-execution.component.scss'],
   imports: [
     RouterModule,
     FormsModule,
