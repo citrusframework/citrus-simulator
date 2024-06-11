@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-oxm</artifactId>
-      <version>${spring.version}</version>
+      <version>6.1.8</version>
     </dependency>
 
     <!-- Test scoped dependencies -->
