@@ -24,7 +24,7 @@
     <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <lombok.version>1.18.30</lombok.version>
-    <citrus.version>4.2.1</citrus.version>
+    <citrus.version>4.3.0-SNAPSHOT</citrus.version>
 
     <spring-boot.version>3.3.0</spring-boot.version>
     <spring.version>6.3.0</spring.version>

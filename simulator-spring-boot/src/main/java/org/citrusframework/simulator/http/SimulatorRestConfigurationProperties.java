@@ -16,21 +16,25 @@
 
 package org.citrusframework.simulator.http;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.citrusframework.simulator.config.OpenApiScenarioIdGenerationMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
 /**
  * @author Christoph Deppisch
  */
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "citrus.simulator.rest")
 public class SimulatorRestConfigurationProperties implements InitializingBean {
 
@@ -47,25 +51,15 @@ public class SimulatorRestConfigurationProperties implements InitializingBean {
      */
     private List<String> urlMappings =  List.of("/services/rest/**");
 
-    private Swagger swagger = new Swagger();
+    /**
+     * The scenario id generation mode for open api scenario generation.
+     */
+    private OpenApiScenarioIdGenerationMode openApiScenarioIdGenerationMode = OpenApiScenarioIdGenerationMode.FULL_PATH;
 
     /**
-     * Gets the enabled.
-     *
-     * @return
+     * The OpenApi used by the simulator to simulate OpenApi operations.
      */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Sets the enabled.
-     *
-     * @param enabled
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    private OpenApi openApi = new OpenApi();
 
     /**
      * Gets the urlMappings.
@@ -86,14 +80,6 @@ public class SimulatorRestConfigurationProperties implements InitializingBean {
         this.urlMappings = urlMappings != null ? unmodifiableList(urlMappings) : emptyList();
     }
 
-    public Swagger getSwagger() {
-        return swagger;
-    }
-
-    public void setSwagger(Swagger swagger) {
-        this.swagger = swagger;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.info("Using the simulator configuration: {}", this);
@@ -107,34 +93,12 @@ public class SimulatorRestConfigurationProperties implements InitializingBean {
             .toString();
     }
 
-    public static class Swagger {
 
+    @Getter
+    @Setter
+    public static class OpenApi {
         private String api;
         private String contextPath;
         private boolean enabled = false;
-
-        public String getApi() {
-            return api;
-        }
-
-        public void setApi(String api) {
-            this.api = api;
-        }
-
-        public String getContextPath() {
-            return contextPath;
-        }
-
-        public void setContextPath(String contextPath) {
-            this.contextPath = contextPath;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 }
