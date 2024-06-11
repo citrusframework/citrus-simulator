@@ -31,7 +31,7 @@
             </button>
 
             <button class="btn btn-info" (click)="load()" [disabled]="isLoading">
-              <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+              <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
               <span jhiTranslate="citrusSimulatorApp.scenario.home.refreshListLabel">Refresh List</span>
             </button>
           </div>

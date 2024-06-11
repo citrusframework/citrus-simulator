@@ -9,7 +9,7 @@
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>
       <button class="btn btn-info" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
-        <fa-icon icon="sync" [spin]="scenarioExecutionComponent!.isLoading"></fa-icon>
+        <fa-icon icon="sync" [animation]="scenarioExecutionComponent!.isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
       </button>
     </div>
