@@ -40,6 +40,8 @@ import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
 import java.util.Collections;
 
+import static java.lang.String.format;
+
 /**
  * @author Christoph Deppisch
  */
@@ -56,14 +58,14 @@ public class EndpointConfig {
     @Bean
     public HttpClient simulatorRESTClient() {
         return CitrusEndpoints.http().client()
-                .requestUrl(String.format("http://localhost:%s/services/rest/simulator", 8080))
-                .build();
+            .requestUrl(format("http://localhost:%s/services/rest/simulator", 8080))
+            .build();
     }
 
     @Bean
     public WebServiceClient simulatorWSClient(LoggingClientInterceptor loggingClientInterceptor, SaajSoapMessageFactory messageFactory) {
         return CitrusEndpoints.soap().client()
-            .defaultUri(String.format("http://localhost:%s/services/ws/simulator", 8080))
+            .defaultUri(format("http://localhost:%s/services/ws/simulator", 8080))
             .interceptor(loggingClientInterceptor)
             .messageFactory(messageFactory)
             .faultStrategy(ErrorHandlingStrategy.PROPAGATE)
@@ -98,11 +100,11 @@ public class EndpointConfig {
     @Bean
     public JmsSyncEndpoint simulatorEndpoint() {
         return CitrusEndpoints.jms()
-                .synchronous()
-                .connectionFactory(connectionFactory())
-                .destination("Citrus.Simulator.Inbound")
-                .timeout(10000L)
-                .build();
+            .synchronous()
+            .connectionFactory(connectionFactory())
+            .destination("Citrus.Simulator.Inbound")
+            .timeout(10000L)
+            .build();
     }
 
     @Bean

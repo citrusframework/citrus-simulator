@@ -40,7 +40,9 @@ import static org.citrusframework.actions.SendMessageAction.Builder.send;
 @ContextConfiguration(classes = SimulatorMailIT.EndpointConfig.class)
 public class SimulatorMailIT extends TestNGCitrusSpringSupport {
 
-    /** Test mail client */
+    /**
+     * Test mail client
+     */
     @Autowired
     private MailClient simulatorMailClient;
 
@@ -50,18 +52,18 @@ public class SimulatorMailIT extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void testHelloRequest() {
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Hello</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Hello!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>Hello</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say Hello!</content>" +
+                "</body>" +
+                "</mail-message>"));
     }
 
     /**
@@ -70,18 +72,18 @@ public class SimulatorMailIT extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void testGoodByeRequest() {
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>GoodBye</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say GoodBye!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>GoodBye</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say GoodBye!</content>" +
+                "</body>" +
+                "</mail-message>"));
     }
 
     /**
@@ -90,18 +92,18 @@ public class SimulatorMailIT extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void testDefaultRequest() {
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Default</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Default!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>Default</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say Default!</content>" +
+                "</body>" +
+                "</mail-message>"));
     }
 
     /**
@@ -110,60 +112,60 @@ public class SimulatorMailIT extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void testInterveningRequest() {
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>GoodNight</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say GoodNight!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>GoodNight</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say GoodNight!</content>" +
+                "</body>" +
+                "</mail-message>"));
 
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Intervening</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Intervening!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>Intervening</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say Intervening!</content>" +
+                "</body>" +
+                "</mail-message>"));
 
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Intervening</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Intervening!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>Intervening</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say Intervening!</content>" +
+                "</body>" +
+                "</mail-message>"));
 
         $(send(simulatorMailClient)
-                .message()
-                .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
-                            "<from>user@citrusframework.org</from>" +
-                            "<to>citrus@citrusframework.org</to>" +
-                            "<cc></cc>" +
-                            "<bcc></bcc>" +
-                            "<subject>Intervening</subject>" +
-                            "<body>" +
-                                "<contentType>text/plain; charset=utf-8</contentType>" +
-                                "<content>Say Intervening!</content>" +
-                            "</body>" +
-                        "</mail-message>"));
+            .message()
+            .body("<mail-message xmlns=\"http://www.citrusframework.org/schema/mail/message\">" +
+                "<from>user@citrusframework.org</from>" +
+                "<to>citrus@citrusframework.org</to>" +
+                "<cc></cc>" +
+                "<bcc></bcc>" +
+                "<subject>Intervening</subject>" +
+                "<body>" +
+                "<contentType>text/plain; charset=utf-8</contentType>" +
+                "<content>Say Intervening!</content>" +
+                "</body>" +
+                "</mail-message>"));
     }
 
     @Configuration
@@ -172,9 +174,9 @@ public class SimulatorMailIT extends TestNGCitrusSpringSupport {
         @Bean
         public MailClient simulatorMailClient() {
             return CitrusEndpoints.mail().client()
-                    .host("localhost")
-                    .port(2222)
-                    .build();
+                .host("localhost")
+                .port(2222)
+                .build();
         }
 
         @Bean

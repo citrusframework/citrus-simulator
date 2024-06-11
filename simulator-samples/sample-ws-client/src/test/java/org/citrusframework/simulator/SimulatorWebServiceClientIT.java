@@ -16,8 +16,6 @@
 
 package org.citrusframework.simulator;
 
-import java.util.Arrays;
-
 import org.citrusframework.annotations.CitrusTest;
 import org.citrusframework.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
@@ -36,15 +34,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.integration.support.json.Jackson2JsonObjectMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+
+import static java.lang.String.format;
 import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Verifies that the webservice client is working properly.
@@ -75,7 +76,7 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
             .send()
             .post("/api/scenarios/HelloStarter/launch")
             .message()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(APPLICATION_JSON_VALUE)
             .body(asJson(name.asScenarioParameter())));
 
         $(http()
@@ -86,15 +87,15 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
         $(receive(soapServer)
             .message()
             .body("<Hello xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    name.getValue() +
-                    "</Hello>")
+                name.getValue() +
+                "</Hello>")
             .header("citrus_soap_action", "Hello"));
 
         $(send(soapServer)
             .message()
             .body("<HelloResponse xmlns=\"http://citrusframework.org/schemas/hello\">" +
-                    "Hi there " + name.getValue() +
-                    "</HelloResponse>"));
+                "Hi there " + name.getValue() +
+                "</HelloResponse>"));
 
     }
 
@@ -120,19 +121,19 @@ public class SimulatorWebServiceClientIT extends TestNGCitrusSpringSupport {
         @Bean
         public WebServiceServer testSoapServer() {
             return CitrusEndpoints.soap().server()
-                    .autoStart(true)
-                    .port(8090)
-                    .timeout(5000L)
-                    .build();
+                .autoStart(true)
+                .port(8090)
+                .timeout(5000L)
+                .build();
         }
 
         @Bean
         public HttpClient simulatorRestEndpoint() {
             return CitrusEndpoints.http()
-                    .client()
-                    .requestUrl(String.format("http://localhost:%s", 8080))
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .build();
+                .client()
+                .requestUrl(format("http://localhost:%s", 8080))
+                .contentType(APPLICATION_JSON_VALUE)
+                .build();
         }
 
         @Bean

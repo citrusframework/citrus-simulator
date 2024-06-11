@@ -41,6 +41,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import static java.lang.String.format;
+
 @Configuration
 public class HttpClientConfig {
 
@@ -62,32 +64,33 @@ public class HttpClientConfig {
     @Bean
     public HttpClient simulatorHttpClientEndpoint() {
         return CitrusEndpoints.http()
-                .client()
-                .timeout(simulatorConfigurationProperties.getDefaultTimeout())
-                .requestUrl(String.format("https://localhost:%s/", port))
-                .requestFactory(sslRequestFactory())
-                .build();
+            .client()
+            .timeout(simulatorConfigurationProperties.getDefaultTimeout())
+            .requestUrl(format("https://localhost:%s/", port))
+            .requestFactory(sslRequestFactory())
+            .build();
     }
 
     @Bean
     public CloseableHttpClient httpClient() {
         try {
             SSLContext sslcontext = SSLContexts.custom()
-                    .loadTrustMaterial(keyStore, keyStorePassword.toCharArray(),
-                            new TrustSelfSignedStrategy())
-                    .build();
+                .loadTrustMaterial(keyStore, keyStorePassword.toCharArray(),
+                    new TrustSelfSignedStrategy())
+                .build();
 
             SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                    sslcontext, NoopHostnameVerifier.INSTANCE);
+                sslcontext, NoopHostnameVerifier.INSTANCE);
 
             PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-                    .setSSLSocketFactory(sslSocketFactory)
-                    .build();
+                .setSSLSocketFactory(sslSocketFactory)
+                .build();
 
             return HttpClients.custom()
-                    .setConnectionManager(connectionManager)
-                    .build();
-        } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
+                .setConnectionManager(connectionManager)
+                .build();
+        } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException |
+                 KeyManagementException e) {
             throw new BeanCreationException("Failed to create http client for ssl connection", e);
         }
     }

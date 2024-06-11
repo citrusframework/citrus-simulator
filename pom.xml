@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.citrusframework</groupId>
@@ -51,9 +51,12 @@
       <name>The Apache License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>manual</distribution>
-      <comments>Citrus is published free of charge under Apache License, Version 2.0. You are allowed to use Citrus to test any kind of software
-        (also commercial applications). If you do this, we kindly ask you to tell us about it so that we can add you to our references
-        list. You may also use our "Tested using Citrus" logo in your online or printed documentation.</comments>
+      <comments>Citrus is published free of charge under Apache License, Version 2.0. You are allowed to use
+        Citrus to test any kind of software
+        (also commercial applications). If you do this, we kindly ask you to tell us about it so that we can add
+        you to our references
+        list. You may also use our "Tested using Citrus" logo in your online or printed documentation.
+      </comments>
     </license>
   </licenses>
 
@@ -402,21 +405,21 @@
           <artifactId>maven-gpg-plugin</artifactId>
           <version>${maven.gpg.plugin.version}</version>
           <executions>
-              <execution>
-                  <id>sign-artifacts</id>
-                  <phase>verify</phase>
-                  <goals>
-                      <goal>sign</goal>
-                  </goals>
-              </execution>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
           </executions>
           <configuration>
-              <useAgent>true</useAgent>
-              <keyname>dev@citrusframework.org</keyname>
-              <skip>${skip.gpg}</skip>
-              <gpgArguments>
-                  <arg>--allow-weak-digest-algos</arg>
-              </gpgArguments>
+            <useAgent>true</useAgent>
+            <keyname>dev@citrusframework.org</keyname>
+            <skip>${skip.gpg}</skip>
+            <gpgArguments>
+              <arg>--allow-weak-digest-algos</arg>
+            </gpgArguments>
           </configuration>
         </plugin>
 
@@ -478,48 +481,47 @@
   <profiles>
     <!-- Distribution Management -->
     <profile>
-        <id>release-central</id>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                </plugin>
+      <id>release-central</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
 
-                <!-- Deploy using the sonatype nexus staging maven plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                </plugin>
+          <!-- Deploy using the sonatype nexus staging maven plugin -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
 
-                <plugin>
-                    <groupId>org.sonatype.central</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <publishingServerId>sonatype-central</publishingServerId>
-                        <excludeArtifacts>
-                            <artifact>citrus-simulator-samples</artifact>
-                            <artifact>citrus-simulator-sample-bank-service</artifact>
-                            <artifact>citrus-simulator-sample-combined</artifact>
-                            <artifact>citrus-simulator-sample-jms</artifact>
-                            <artifact>citrus-simulator-sample-jms-fax</artifact>
-                            <artifact>citrus-simulator-sample-mail</artifact>
-                            <artifact>citrus-simulator-sample-rest</artifact>
-                            <artifact>citrus-simulator-sample-swagger</artifact>
-                            <artifact>citrus-simulator-sample-ws</artifact>
-                            <artifact>citrus-simulator-sample-ws-client</artifact>
-                            <artifact>citrus-simulator-sample-wsdl</artifact>
-                            <artifact>citrus-simulator-docs</artifact>
-                        </excludeArtifacts>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>sonatype-central</publishingServerId>
+              <excludeArtifacts>
+                <artifact>citrus-simulator-samples</artifact>
+                <artifact>citrus-simulator-sample-bank-service</artifact>
+                <artifact>citrus-simulator-sample-combined</artifact>
+                <artifact>citrus-simulator-sample-jms</artifact>
+                <artifact>citrus-simulator-sample-jms-fax</artifact>
+                <artifact>citrus-simulator-sample-mail</artifact>
+                <artifact>citrus-simulator-sample-rest</artifact>
+                <artifact>citrus-simulator-sample-swagger</artifact>
+                <artifact>citrus-simulator-sample-ws</artifact>
+                <artifact>citrus-simulator-sample-ws-client</artifact>
+                <artifact>citrus-simulator-sample-wsdl</artifact>
+                <artifact>citrus-simulator-docs</artifact>
+              </excludeArtifacts>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
-
   </profiles>
 </project>
