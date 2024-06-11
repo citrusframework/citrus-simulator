@@ -132,6 +132,10 @@
     </dependency>
     <dependency>
       <groupId>org.citrusframework</groupId>
+      <artifactId>citrus-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-ws</artifactId>
       <scope>provided</scope>
       <optional>true</optional>

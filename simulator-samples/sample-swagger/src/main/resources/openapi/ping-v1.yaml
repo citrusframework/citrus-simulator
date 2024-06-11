@@ -1,0 +1,112 @@
+openapi: 3.0.1
+info:
+    title: Ping API
+    description: Provides ping and pong endpoints for testing
+    version: 1.0
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+    - url: http://localhost:9000/pingapi/v1
+
+paths:
+    /ping/{id}:
+        put:
+            tags:
+                - ping
+            summary: Puts a ping
+            operationId: doPing
+            parameters:
+                - name: id
+                  in: path
+                  description: Id to ping
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Ping data
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PingRequest'
+            responses:
+                200:
+                    description: Successful operation
+                    headers:
+                        Ping-Time:
+                            description: Response time
+                            required: true
+                            schema:
+                                type: integer
+                                format: int64
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PingResponse'
+                400:
+                    $ref: '#/components/responses/Status400Response'
+    /pong/{id}:
+        get:
+            tags:
+                - pong
+            summary: Get a pong
+            operationId: doPong
+            parameters:
+                - name: id
+                  in: path
+                  description: The id to pong
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PongResponse'
+                400:
+                    $ref: '#/components/responses/Status400Response'
+components:
+    responses:
+        Status400Response:
+            description: Invalid id supplied
+            content:
+                text/plain:
+                    schema:
+                        type: string
+    schemas:
+        PingRequest:
+            type: object
+            properties:
+                server:
+                    type: string
+            required:
+                - server
+        PingResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                pingCount:
+                    type: integer
+                    format: int64
+            required:
+                - id
+                - pingCount
+        PongResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                pongTime:
+                    type: string
+                    format: date-time
+            required:
+                - id
+                - pongTime

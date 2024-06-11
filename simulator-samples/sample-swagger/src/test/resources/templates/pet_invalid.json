@@ -1,0 +1,14 @@
+{
+  "id": citrus:randomNumber(10),
+  "category": {
+    "id": citrus:randomNumber(10),
+    "name": "${category}"
+  },
+  "tags": [
+    {
+      "id": citrus:randomNumber(10),
+      "name": "${tags}"
+    }
+  ],
+  "status": "${status}"
+}

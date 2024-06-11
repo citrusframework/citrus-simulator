@@ -16,7 +16,10 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import io.swagger.models.Operation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationPropertiesAware;
 import org.citrusframework.simulator.http.HttpOperationScenario;
@@ -27,11 +30,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Scenario mapper chain goes through a list of mappers to find best match of extracted mapping keys. When no suitable
@@ -67,8 +65,8 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
     public String getMappingKey(Message message) {
         return scenarioMapperList.stream()
                 .map(mapper -> {
-                    if (mapper instanceof AbstractScenarioMapper) {
-                        ((AbstractScenarioMapper) mapper).setUseDefaultMapping(false);
+                    if (mapper instanceof AbstractScenarioMapper abstractScenarioMapper) {
+                        abstractScenarioMapper.setUseDefaultMapping(false);
                     }
 
                     try {
@@ -82,11 +80,8 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
                 .filter(StringUtils::hasLength)
                 .filter(key -> scenarioList.parallelStream()
                         .anyMatch(scenario -> {
-                            if (scenario instanceof HttpOperationScenario) {
-                                return Optional.ofNullable(((HttpOperationScenario) scenario).getOperation())
-                                                .map(Operation::getOperationId)
-                                                .orElse("")
-                                                .equals(key);
+                            if (scenario instanceof HttpOperationScenario httpOperationScenario) {
+                                return key.equals(httpOperationScenario.getScenarioId());
                             }
 
                             return Optional.ofNullable(AnnotationUtils.findAnnotation(scenario.getClass(), Scenario.class))
@@ -101,13 +96,13 @@ public class ScenarioMappers extends AbstractScenarioMapper implements ScenarioL
     @Override
     public void afterPropertiesSet() {
         scenarioMapperList.stream()
-                .filter(mapper -> mapper instanceof ScenarioListAware)
-                .map(mapper -> (ScenarioListAware) mapper)
+                .filter(ScenarioListAware.class::isInstance)
+                .map(ScenarioListAware.class::cast)
                 .forEach(mapper -> mapper.setScenarioList(scenarioList));
 
         scenarioMapperList.stream()
-                .filter(mapper -> mapper instanceof SimulatorConfigurationPropertiesAware)
-                .map(mapper -> (SimulatorConfigurationPropertiesAware) mapper)
+                .filter(SimulatorConfigurationPropertiesAware.class::isInstance)
+                .map(SimulatorConfigurationPropertiesAware.class::cast)
                 .forEach(mapper -> mapper.setSimulatorConfigurationProperties(getSimulatorConfigurationProperties()));
     }
 
