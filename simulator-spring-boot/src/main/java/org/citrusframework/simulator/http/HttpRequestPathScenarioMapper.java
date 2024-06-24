@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.http;
 
+import java.util.Objects;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
@@ -44,23 +45,19 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
 
     @Override
     protected String getMappingKey(Message request) {
-        if (request instanceof HttpMessage) {
-            String requestPath = ((HttpMessage) request).getPath();
+        if (request instanceof HttpMessage httpMessage) {
+            String requestPath = httpMessage.getPath();
 
             if (requestPath != null) {
                 for (HttpOperationScenario scenario : scenarioList) {
-                    if (scenario.getPath().equals(requestPath)) {
-                        if (scenario.getMethod().name().equals(((HttpMessage) request).getRequestMethod().name())) {
-                            return scenario.getOperation().getOperationId();
-                        }
+                    if (Objects.equals(scenario.getMethod(), ((HttpMessage) request).getRequestMethod().name()) && Objects.equals(requestPath, scenario.getPath())) {
+                        return scenario.getScenarioId();
                     }
                 }
 
                 for (HttpOperationScenario scenario : scenarioList) {
-                    if (pathMatcher.match(scenario.getPath(), requestPath)) {
-                        if (scenario.getMethod().name().equals(((HttpMessage) request).getRequestMethod().name())) {
-                            return scenario.getOperation().getOperationId();
-                        }
+                    if (Objects.equals(scenario.getMethod(), ((HttpMessage) request).getRequestMethod().name()) && pathMatcher.match(scenario.getPath(), requestPath)) {
+                        return scenario.getScenarioId();
                     }
                 }
             }
@@ -90,8 +87,8 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
     @Override
     public void setScenarioList(List<SimulatorScenario> scenarioList) {
         this.scenarioList = scenarioList.stream()
-                                        .filter(scenario -> scenario instanceof HttpOperationScenario)
-                                        .map(scenario -> (HttpOperationScenario) scenario)
+                                        .filter(HttpOperationScenario.class::isInstance)
+                                        .map(HttpOperationScenario.class::cast)
                                         .toList();
     }
 
