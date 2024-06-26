@@ -83,8 +83,6 @@ class HttpRequestPathScenarioMapperTest {
             fail("Unexpected version: "+ version);
         }
 
-        doReturn(oasDocument).when(openApiSpecificationMock).getOpenApiDoc(null);
-
         fixture.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos",
                 FOO_LIST_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
             new HttpOperationScenario("/issues/foos", FOO_LIST_POST_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.POST), null),

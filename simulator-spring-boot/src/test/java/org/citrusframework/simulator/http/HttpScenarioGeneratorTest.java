@@ -169,7 +169,6 @@ class HttpScenarioGeneratorTest {
     }
 
     private void mockBeanFactory(BeanFactory beanFactory) {
-        doReturn(new SimulatorRestConfigurationProperties()).when(beanFactory).getBean(SimulatorRestConfigurationProperties.class);
         doThrow(new BeansException("No such bean") {
         }).when(beanFactory).getBean(HttpResponseActionBuilderProvider.class);
     }

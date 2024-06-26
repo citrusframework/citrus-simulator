@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.http;
 
+import static org.citrusframework.util.StringUtils.appendSegmentToUrlPath;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 
 import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
@@ -25,10 +26,10 @@ import io.apicurio.datamodels.openapi.models.OasPathItem;
 import io.apicurio.datamodels.openapi.models.OasPaths;
 import jakarta.annotation.Nonnull;
 import java.util.Map;
+import lombok.Getter;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.openapi.OpenApiSpecification;
 import org.citrusframework.openapi.model.OasModelHelper;
-import org.citrusframework.simulator.config.OpenApiScenarioIdGenerationMode;
 import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.spi.Resource;
 import org.slf4j.Logger;
@@ -58,7 +59,14 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
     /**
      * Optional context path
      */
+    @Getter
     private String contextPath = "";
+
+    @Getter
+    private boolean requestValidationEnabled = true;
+
+    @Getter
+    private boolean responseValidationEnabled = true;
 
     /**
      * Constructor using Spring environment.
@@ -86,73 +94,44 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
         this.openApiSpecification = openApiSpecification;
     }
 
+    public void setRequestValidationEnabled(boolean enabled) {
+        this.requestValidationEnabled = enabled;
+        if (openApiSpecification != null) {
+            openApiSpecification.setRequestValidationEnabled(enabled);
+        }
+    }
+
+    public void setResponseValidationEnabled(boolean enabled) {
+        this.responseValidationEnabled = enabled;
+        if (openApiSpecification != null) {
+            openApiSpecification.setResponseValidationEnabled(enabled);
+        }
+    }
+
     @Override
     public void postProcessBeanFactory(@Nonnull ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
         if (openApiSpecification == null) {
-            Assert.notNull(openApiResource,
-                """
-                    Failed to load OpenAPI specification. No OpenAPI specification was provided.
-                    To load a specification, ensure that either the 'openApiResource' property is set
-                    or the 'swagger.api' system property is configured to specify the location of the OpenAPI resource.""");
-            openApiSpecification = OpenApiSpecification.from(openApiResource);
-            openApiSpecification.setRootContextPath(contextPath);
+            initOpenApiSpecification();
         }
-
-        HttpResponseActionBuilderProvider httpResponseActionBuilderProvider = retrieveOptionalBuilderProvider(
-            beanFactory);
-
-        OpenApiScenarioIdGenerationMode openApiScenarioIdGenerationMode = beanFactory.getBean(
-            SimulatorRestConfigurationProperties.class).getOpenApiScenarioIdGenerationMode();
 
         TestContext testContext = new TestContext();
         OasDocument openApiDocument = openApiSpecification.getOpenApiDoc(testContext);
         if (openApiDocument != null && openApiDocument.paths != null) {
-            openApiDocument.paths.accept(new CombinedVisitorAdapter() {
-
-                @Override
-                public void visitPaths(OasPaths oasPaths) {
-                    oasPaths.getPathItems().forEach(oasPathItem -> oasPathItem.accept(this));
-                }
-
-                @Override
-                public void visitPathItem(OasPathItem oasPathItem) {
-                    String path = oasPathItem.getPath();
-                    for (Map.Entry<String, OasOperation> operationEntry : OasModelHelper.getOperationMap(
-                        oasPathItem).entrySet()) {
-
-                        String fullPath = contextPath + OasModelHelper.getBasePath(openApiDocument) + path;
-                        OasOperation oasOperation = operationEntry.getValue();
-
-                        String scenarioId = HttpOperationScenario.getUniqueScenarioId(openApiScenarioIdGenerationMode, OasModelHelper.getBasePath(openApiDocument) + path, oasOperation);
-
-                        if (beanFactory instanceof BeanDefinitionRegistry beanDefinitionRegistry) {
-                            logger.info("Register auto generated scenario as bean definition: {}", fullPath);
-
-                            BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(HttpOperationScenario.class)
-                                .addConstructorArgValue(fullPath)
-                                .addConstructorArgValue(scenarioId)
-                                .addConstructorArgValue(openApiSpecification)
-                                .addConstructorArgValue(oasOperation)
-                                .addConstructorArgValue(httpResponseActionBuilderProvider);
-
-                            if (beanFactory.containsBeanDefinition("inboundJsonDataDictionary")) {
-                                beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundJsonDataDictionary");
-                            }
-
-                            if (beanFactory.containsBeanDefinition("outboundJsonDataDictionary")) {
-                                beanDefinitionBuilder.addPropertyReference("outboundDataDictionary", "outboundJsonDataDictionary");
-                            }
-
-                            beanDefinitionRegistry.registerBeanDefinition(scenarioId, beanDefinitionBuilder.getBeanDefinition());
-                        } else {
-                            logger.info("Register auto generated scenario as singleton: {}", scenarioId);
-                            beanFactory.registerSingleton(scenarioId, createScenario(fullPath, scenarioId, openApiSpecification, oasOperation, httpResponseActionBuilderProvider));
-                        }
-                    }
-                }
-            });
+            openApiDocument.paths.accept(new ScenarioRegistrar(beanFactory));
         }
+    }
+
+    private void initOpenApiSpecification() {
+        Assert.notNull(openApiResource,
+            """
+                Failed to load OpenAPI specification. No OpenAPI specification was provided.
+                To load a specification, ensure that either the 'openApiResource' property is set
+                or the 'swagger.api' system property is configured to specify the location of the OpenAPI resource.""");
+        openApiSpecification = OpenApiSpecification.from(openApiResource);
+        openApiSpecification.setRootContextPath(contextPath);
+        openApiSpecification.setResponseValidationEnabled(responseValidationEnabled);
+        openApiSpecification.setRequestValidationEnabled(requestValidationEnabled);
     }
 
     private static HttpResponseActionBuilderProvider retrieveOptionalBuilderProvider(
@@ -180,15 +159,67 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
         return new HttpOperationScenario(path, scenarioId, openApiSpecification, operation, httpResponseActionBuilderProvider);
     }
 
-    public String getContextPath() {
-        return contextPath;
-    }
-
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
 
         if (openApiSpecification != null) {
             openApiSpecification.setRootContextPath(contextPath);
+        }
+    }
+
+    private class ScenarioRegistrar extends CombinedVisitorAdapter {
+
+        private final ConfigurableListableBeanFactory beanFactory;
+
+        private ScenarioRegistrar(ConfigurableListableBeanFactory beanFactory) {
+            this.beanFactory = beanFactory;
+        }
+
+        @Override
+        public void visitPaths(OasPaths oasPaths) {
+            oasPaths.getPathItems().forEach(oasPathItem -> oasPathItem.accept(this));
+        }
+
+        @Override
+        public void visitPathItem(OasPathItem oasPathItem) {
+
+            HttpResponseActionBuilderProvider httpResponseActionBuilderProvider = retrieveOptionalBuilderProvider(
+                beanFactory);
+
+            OasDocument oasDocument = openApiSpecification.getOpenApiDoc(null);
+            String path = oasPathItem.getPath();
+            for (Map.Entry<String, OasOperation> operationEntry : OasModelHelper.getOperationMap(
+                oasPathItem).entrySet()) {
+
+                String fullPath = appendSegmentToUrlPath(appendSegmentToUrlPath(openApiSpecification.getRootContextPath(), OasModelHelper.getBasePath(oasDocument)), path);
+                OasOperation oasOperation = operationEntry.getValue();
+
+                String scenarioId = openApiSpecification.getUniqueId(oasOperation);
+
+                if (beanFactory instanceof BeanDefinitionRegistry beanDefinitionRegistry) {
+                    logger.info("Register auto generated scenario as bean definition: {}", fullPath);
+
+                    BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(HttpOperationScenario.class)
+                        .addConstructorArgValue(fullPath)
+                        .addConstructorArgValue(scenarioId)
+                        .addConstructorArgValue(openApiSpecification)
+                        .addConstructorArgValue(oasOperation)
+                        .addConstructorArgValue(httpResponseActionBuilderProvider);
+
+                    if (beanFactory.containsBeanDefinition("inboundJsonDataDictionary")) {
+                        beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundJsonDataDictionary");
+                    }
+
+                    if (beanFactory.containsBeanDefinition("outboundJsonDataDictionary")) {
+                        beanDefinitionBuilder.addPropertyReference("outboundDataDictionary", "outboundJsonDataDictionary");
+                    }
+
+                    beanDefinitionRegistry.registerBeanDefinition(scenarioId, beanDefinitionBuilder.getBeanDefinition());
+                } else {
+                    logger.info("Register auto generated scenario as singleton: {}", scenarioId);
+                    beanFactory.registerSingleton(scenarioId, createScenario(fullPath, scenarioId, openApiSpecification, oasOperation, httpResponseActionBuilderProvider));
+                }
+            }
         }
     }
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.citrusframework.simulator.config.OpenApiScenarioIdGenerationMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,11 +49,6 @@ public class SimulatorRestConfigurationProperties implements InitializingBean {
      * context path in order to access the web service support on the simulator.
      */
     private List<String> urlMappings =  List.of("/services/rest/**");
-
-    /**
-     * The scenario id generation mode for open api scenario generation.
-     */
-    private OpenApiScenarioIdGenerationMode openApiScenarioIdGenerationMode = OpenApiScenarioIdGenerationMode.FULL_PATH;
 
     /**
      * The OpenApi used by the simulator to simulate OpenApi operations.
@@ -93,12 +87,12 @@ public class SimulatorRestConfigurationProperties implements InitializingBean {
             .toString();
     }
 
-
     @Getter
     @Setter
     public static class OpenApi {
         private String api;
         private String contextPath;
         private boolean enabled = false;
+        private String alias;
     }
 }

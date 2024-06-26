@@ -16,17 +16,13 @@
 
 package org.citrusframework.simulator.config;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
@@ -37,7 +33,7 @@ import org.springframework.core.env.Environment;
 @Setter
 @ToString
 @ConfigurationProperties(prefix = "citrus.simulator")
-public class SimulatorConfigurationProperties implements ApplicationContextAware, EnvironmentAware, InitializingBean {
+public class SimulatorConfigurationProperties implements EnvironmentAware, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(SimulatorConfigurationProperties.class);
 
@@ -49,8 +45,6 @@ public class SimulatorConfigurationProperties implements ApplicationContextAware
     private static final String SIMULATOR_INBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_INBOUND_JSON_DICTIONARY_LOCATION";
     private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_PROPERTY = "citrus.simulator.outbound.json.dictionary.location";
     private static final String SIMULATOR_OUTBOUND_JSON_DICTIONARY_ENV = "CITRUS_SIMULATOR_OUTBOUND_JSON_DICTIONARY_LOCATION";
-
-    private static ApplicationContext applicationContext;
 
     /**
      * Global option to enable/disable simulator support, default is true.
@@ -108,17 +102,6 @@ public class SimulatorConfigurationProperties implements ApplicationContextAware
      */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
-    private SimulationResults simulationResults = new SimulationResults();
-
-    public static ApplicationContext getApplicationContext() {
-        if (applicationContext == null) {
-            throw new IllegalStateException("Application context has not been initialized. This bean needs to be instantiated by Spring in order to function properly!");
-        }
-        return applicationContext;
-    }
-
-
-
     @Override
     public void setEnvironment(Environment environment) {
         inboundXmlDictionary = environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
@@ -130,26 +113,6 @@ public class SimulatorConfigurationProperties implements ApplicationContextAware
     @Override
     public void afterPropertiesSet() {
         logger.info("Using the simulator configuration: {}", this);
-    }
-
-    @Override
-    public void setApplicationContext(@Nonnull ApplicationContext context) throws BeansException {
-        initStaticApplicationContext(context);
-    }
-
-    private static void initStaticApplicationContext(ApplicationContext context) {
-        applicationContext = context;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class SimulationResults {
-
-        /**
-         * Specifies whether the test results shall be deletable or not. If you're working with a long-lived citrus-simulator and disable this, make sure to manually take care of housekeeping!
-         */
-        private boolean resetEnabled = true;
     }
 
 }

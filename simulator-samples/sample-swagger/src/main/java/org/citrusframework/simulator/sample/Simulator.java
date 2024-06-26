@@ -21,13 +21,15 @@ import org.citrusframework.endpoint.EndpointAdapter;
 import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
-import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
-import org.citrusframework.simulator.scenario.mapper.ScenarioMappers;
+import org.citrusframework.openapi.OpenApiRepository;
 import org.citrusframework.simulator.http.HttpRequestAnnotationScenarioMapper;
 import org.citrusframework.simulator.http.HttpRequestPathScenarioMapper;
+import org.citrusframework.simulator.http.HttpResponseActionBuilderProvider;
 import org.citrusframework.simulator.http.HttpScenarioGenerator;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
+import org.citrusframework.simulator.scenario.mapper.ScenarioMapper;
+import org.citrusframework.simulator.scenario.mapper.ScenarioMappers;
 import org.citrusframework.spi.Resources;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -47,12 +49,13 @@ public class Simulator extends SimulatorRestAdapter {
     @Override
     public ScenarioMapper scenarioMapper() {
         return ScenarioMappers.of(new HttpRequestPathScenarioMapper(),
-                                  new HttpRequestAnnotationScenarioMapper());
+            new HttpRequestAnnotationScenarioMapper());
     }
 
     @Override
-    public List<String> urlMappings(SimulatorRestConfigurationProperties simulatorRestConfiguration) {
-        return List.of("/petstore/v2/**");
+    public List<String> urlMappings(
+        SimulatorRestConfigurationProperties simulatorRestConfiguration) {
+        return List.of("/petstore/v2/**", "/petstore/api/v3/**", "/pingapi/v1/**");
     }
 
     @Override
@@ -67,8 +70,31 @@ public class Simulator extends SimulatorRestAdapter {
 
     @Bean
     public static HttpScenarioGenerator scenarioGenerator() {
-        HttpScenarioGenerator generator = new HttpScenarioGenerator(new Resources.ClasspathResource("swagger/petstore-api.json"));
+        HttpScenarioGenerator generator = new HttpScenarioGenerator(
+            new Resources.ClasspathResource("swagger/petstore-api.json"));
         generator.setContextPath("/petstore");
         return generator;
     }
+
+    @Bean
+    public static OpenApiRepository petstoreRepository() {
+        OpenApiRepository openApiRepository = new OpenApiRepository();
+        openApiRepository.setRootContextPath("/petstore");
+        openApiRepository.setLocations(List.of("openapi/*.json"));
+        return openApiRepository;
+    }
+
+    @Bean
+    public static OpenApiRepository pingRepository() {
+        OpenApiRepository openApiRepository = new OpenApiRepository();
+        openApiRepository.setLocations(List.of("openapi/*.yaml"));
+        return openApiRepository;
+    }
+
+    @Bean
+    static HttpResponseActionBuilderProvider httpResponseActionBuilderProvider() {
+        return new SpecificPingResponseMessageBuilder();
+    }
+
+
 }

@@ -1,20 +1,38 @@
+/*
+ * Copyright the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.citrusframework.simulator.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
+import io.apicurio.datamodels.openapi.models.OasResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import lombok.Getter;
+import org.citrusframework.context.SpringBeanReferenceResolver;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.exceptions.TestCaseFailedException;
+import org.citrusframework.exceptions.ValidationException;
 import org.citrusframework.functions.DefaultFunctionRegistry;
 import org.citrusframework.http.actions.HttpServerResponseActionBuilder;
 import org.citrusframework.http.message.HttpMessage;
@@ -23,7 +41,8 @@ import org.citrusframework.message.Message;
 import org.citrusframework.openapi.OpenApiRepository;
 import org.citrusframework.openapi.actions.OpenApiClientResponseActionBuilder;
 import org.citrusframework.openapi.model.OasModelHelper;
-import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.IntegrationTest;
+import org.citrusframework.simulator.http.HttpOperationScenarioIT.HttpOperationScenarioTestConfiguration;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.ScenarioEndpointConfiguration;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
@@ -35,26 +54,26 @@ import org.citrusframework.validation.context.HeaderValidationContext;
 import org.citrusframework.validation.json.JsonMessageValidationContext;
 import org.citrusframework.validation.json.JsonTextMessageValidator;
 import org.citrusframework.validation.matcher.DefaultValidationMatcherRegistry;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@ExtendWith(MockitoExtension.class)
+@IntegrationTest
+@ContextConfiguration(classes = HttpOperationScenarioTestConfiguration.class)
 class HttpOperationScenarioIT {
 
     private static final Function<String, String> IDENTITY = (text) -> text;
 
     private final DirectScenarioEndpoint scenarioEndpoint = new DirectScenarioEndpoint();
-
-    private static final OpenApiRepository openApiRepository = new OpenApiRepository();
 
     private static DefaultListableBeanFactory defaultListableBeanFactory;
 
@@ -62,41 +81,33 @@ class HttpOperationScenarioIT {
 
     private TestContext testContext;
 
-    @BeforeAll
-    static void beforeAll() {
-        ConfigurableApplicationContext applicationContext = mock();
-        defaultListableBeanFactory = new DefaultListableBeanFactory();
-        doReturn(defaultListableBeanFactory).when(applicationContext).getBeanFactory();
-        SimulatorConfigurationProperties simulatorConfigurationProperties = new SimulatorConfigurationProperties();
-        simulatorConfigurationProperties.setApplicationContext(applicationContext);
-
-        defaultListableBeanFactory.registerSingleton("SimulatorRestConfigurationProperties", new SimulatorRestConfigurationProperties());
-
-        openApiRepository.addRepository(new ClasspathResource("swagger/petstore-v2.json"));
-        openApiRepository.addRepository(new ClasspathResource("swagger/petstore-v3.json"));
-    }
-
     @BeforeEach
-    void beforeEach() {
+    void beforeEach(ApplicationContext applicationContext) {
+        defaultListableBeanFactory = (DefaultListableBeanFactory) ((ConfigurableApplicationContext)applicationContext).getBeanFactory();
         testContext = new TestContext();
-        testContext.setReferenceResolver(mock());
+        testContext.setReferenceResolver(new SpringBeanReferenceResolver(applicationContext));
         testContext.setMessageValidatorRegistry(new DefaultMessageValidatorRegistry());
         testContext.setFunctionRegistry(new DefaultFunctionRegistry());
         testContext.setValidationMatcherRegistry(new DefaultValidationMatcherRegistry());
         testContext.setLogModifier(new DefaultLogModifier());
-        scenarioRunner = new ScenarioRunner(scenarioEndpoint, mock(), testContext);
+
+        scenarioRunner = new ScenarioRunner(scenarioEndpoint, applicationContext, testContext);
     }
 
     static Stream<Arguments> scenarioExecution() {
         return Stream.of(
                 arguments("v2_addPet_success", "POST_/petstore/v2/pet", "data/addPet.json", IDENTITY, null),
                 arguments("v3_addPet_success", "POST_/petstore/v3/pet", "data/addPet.json", IDENTITY, null),
-                arguments("v2_addPet_payloadValidationFailure", "POST_/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "Missing JSON entry, expected 'id' to be in '[photoUrls, wrong_id_property, name, category, tags, status]'"),
-                arguments("v3_addPet_payloadValidationFailure", "POST_/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "Missing JSON entry, expected 'id' to be in '[photoUrls, wrong_id_property, name, category, tags, status]'"),
+                arguments("v2_addPet_payloadValidationFailure", "POST_/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: /post/pet (addPet)\n"
+                    + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
+                arguments("v3_addPet_payloadValidationFailure", "POST_/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: /post/pet (addPet)\n"
+                    + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
                 arguments("v2_getPetById_success", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
                 arguments("v3_getPetById_success", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
-                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "MatchesValidationMatcher failed for field 'citrus_http_request_uri'. Received value is '/petstore/v2/pet/xxxx', control value is '/petstore/v2/pet/[0-9]+'"),
-                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "MatchesValidationMatcher failed for field 'citrus_http_request_uri'. Received value is '/petstore/v3/pet/xxxx', control value is '/petstore/v3/pet/[0-9]+'")
+                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: /get/pet/{petId} (getPetById)\n"
+                    + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []"),
+                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: /get/pet/{petId} (getPetById)\n"
+                    + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []")
             );
     }
 
@@ -110,7 +121,9 @@ class HttpOperationScenarioIT {
 
         HttpOperationScenario httpOperationScenario = getHttpOperationScenario(operationName);
         HttpMessage controlMessage = new HttpMessage();
-        OpenApiClientResponseActionBuilder.fillMessageFromResponse(httpOperationScenario.getOpenApiSpecification(), testContext, controlMessage, httpOperationScenario.getOperation(), httpOperationScenario.getResponse());
+        OasResponse oasResponse = httpOperationScenario.determineResponse(null);
+        OpenApiClientResponseActionBuilder.fillMessageFromResponse(httpOperationScenario.getOpenApiSpecification(),
+            testContext, controlMessage, httpOperationScenario.getOperation(), oasResponse);
 
         this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, controlMessage);
     }
@@ -120,7 +133,7 @@ class HttpOperationScenarioIT {
     void scenarioExecutionWithProvider(String name, String operationName, String payloadFile, Function<String, String> urlAdjuster, String exceptionMessage) {
 
         String payload = "{\"id\":1234}";
-        HttpResponseActionBuilderProvider httpResponseActionBuilderProvider = (oasOperation, receivedMessage) -> {
+        HttpResponseActionBuilderProvider httpResponseActionBuilderProvider = (scenarioRunner, simulatorScenario, receivedMessage) -> {
             HttpServerResponseActionBuilder serverResponseActionBuilder = new HttpServerResponseActionBuilder();
             serverResponseActionBuilder
                 .endpoint(scenarioEndpoint)
@@ -179,7 +192,7 @@ class HttpOperationScenarioIT {
 
         if (exceptionMessage != null) {
             assertThatThrownBy(() -> httpOperationScenario.run(scenarioRunner)).isInstanceOf(
-                TestCaseFailedException.class).hasMessage(exceptionMessage);
+                TestCaseFailedException.class).cause().isInstanceOf(ValidationException.class).hasMessage(exceptionMessage);
         } else {
             assertThatCode(() -> httpOperationScenario.run(scenarioRunner)).doesNotThrowAnyException();
 
@@ -206,6 +219,7 @@ class HttpOperationScenarioIT {
 
         private Message receiveMessage;
 
+        @Getter
         private Message sendMessage;
 
         public DirectScenarioEndpoint() {
@@ -236,9 +250,16 @@ class HttpOperationScenarioIT {
             this.receiveMessage = receiveMessage;
         }
 
-        public Message getSendMessage() {
-            return sendMessage;
-        }
+    }
 
+    @TestConfiguration
+    public static class HttpOperationScenarioTestConfiguration {
+
+        @Bean
+        public OpenApiRepository repository() {
+            OpenApiRepository openApiRepository = new OpenApiRepository();
+            openApiRepository.setLocations(List.of("swagger/petstore-v2.json", "swagger/petstore-v3.json"));
+            return openApiRepository;
+        }
     }
 }

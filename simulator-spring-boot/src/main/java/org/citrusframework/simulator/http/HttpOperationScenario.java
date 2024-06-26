@@ -16,23 +16,22 @@
 
 package org.citrusframework.simulator.http;
 
-import static java.lang.String.format;
 import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasResponse;
+import jakarta.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import org.citrusframework.http.actions.HttpServerResponseActionBuilder;
-import org.citrusframework.message.Message;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.MessageHeaders;
 import org.citrusframework.openapi.OpenApiSpecification;
 import org.citrusframework.openapi.actions.OpenApiActionBuilder;
 import org.citrusframework.openapi.actions.OpenApiServerActionBuilder;
 import org.citrusframework.openapi.actions.OpenApiServerRequestActionBuilder;
 import org.citrusframework.openapi.model.OasModelHelper;
-import org.citrusframework.simulator.config.OpenApiScenarioIdGenerationMode;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
@@ -53,10 +52,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     private final OasOperation operation;
 
-    private OasResponse response;
-
-    private HttpStatus statusCode = HttpStatus.OK;
-
     private JsonPathMappingDataDictionary inboundDataDictionary;
 
     private JsonPathMappingDataDictionary outboundDataDictionary;
@@ -69,10 +64,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
         this.openApiSpecification = openApiSpecification;
         this.operation = operation;
         this.httpResponseActionBuilderProvider = httpResponseActionBuilderProvider;
-
-        // Note, that in case of an absent response, an OK response will be sent. This is to maintain backwards compatibility with previous swagger implementation.
-        // Also, the petstore api lacks the definition of good responses for several operations
-        this.response = OasModelHelper.getResponseForRandomGeneration(getOasDocument(), operation).orElse(null);
     }
 
     @Override
@@ -83,11 +74,11 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
         OpenApiServerActionBuilder openApiServerActionBuilder = new OpenApiActionBuilder(
             openApiSpecification).server(getScenarioEndpoint());
 
-        Message receivedMessage = receive(scenario, openApiServerActionBuilder);
+        HttpMessage receivedMessage = receive(scenario, openApiServerActionBuilder);
         respond(scenario, openApiServerActionBuilder, receivedMessage);
     }
 
-    private Message receive(ScenarioRunner scenario,
+    private HttpMessage receive(ScenarioRunner scenarioRunner,
         OpenApiServerActionBuilder openApiServerActionBuilder) {
 
         OpenApiServerRequestActionBuilder requestActionBuilder = openApiServerActionBuilder.receive(
@@ -101,34 +92,58 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
             requestActionBuilder.message().dictionary(inboundDataDictionary);
         }
 
-        AtomicReference<Message> receivedMessage = new AtomicReference<>();
+        AtomicReference<HttpMessage> receivedMessage = new AtomicReference<>();
         requestActionBuilder.getMessageProcessors().add(
-            (message, context) -> receivedMessage.set(message));
+            (message, context) -> receivedMessage.set((HttpMessage)message));
 
         // Verify incoming request
-        scenario.$(requestActionBuilder);
+        scenarioRunner.$(requestActionBuilder);
 
         return receivedMessage.get();
     }
 
-    private void respond(ScenarioRunner scenario,
-        OpenApiServerActionBuilder openApiServerActionBuilder, Message receivedMessage) {
+    private void respond(ScenarioRunner scenarioRunner,
+        OpenApiServerActionBuilder openApiServerActionBuilder, HttpMessage receivedMessage) {
 
         HttpServerResponseActionBuilder responseBuilder = null;
         if (httpResponseActionBuilderProvider != null) {
-            responseBuilder = httpResponseActionBuilderProvider.provideHttpServerResponseActionBuilder(operation, receivedMessage);
+            responseBuilder = httpResponseActionBuilderProvider.provideHttpServerResponseActionBuilder(scenarioRunner, this, receivedMessage);
         }
 
-        HttpStatus httpStatus = response != null && response.getStatusCode() != null ? HttpStatus.valueOf(Integer.parseInt(response.getStatusCode())) : HttpStatus.OK;
-        responseBuilder = responseBuilder != null ? responseBuilder : openApiServerActionBuilder.send(
-            operation.operationId, httpStatus);
+        if (responseBuilder == null) {
+            responseBuilder = createRandomMessageResponseBuilder(openApiServerActionBuilder, receivedMessage.getAccept());
+        }
 
+        scenarioRunner.$(responseBuilder);
+    }
+
+    /**
+     * Creates a builder that creates a random message based on OpenApi specification.
+     * @param openApiServerActionBuilder
+     * @return
+     */
+    private HttpServerResponseActionBuilder createRandomMessageResponseBuilder(
+        OpenApiServerActionBuilder openApiServerActionBuilder, String accept) {
+        HttpServerResponseActionBuilder responseBuilder;
+
+        OasResponse response = determineResponse(accept);
+
+        HttpStatus httpStatus = getStatusFromResponseOrDefault(response);
+        responseBuilder = openApiServerActionBuilder.send(operation.operationId, httpStatus, accept);
         responseBuilder.message()
             .status(httpStatus)
             .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
 
-        // Return generated response
-        scenario.$(responseBuilder);
+        return responseBuilder;
+    }
+
+    private HttpStatus getStatusFromResponseOrDefault(@Nullable OasResponse response) {
+        return response != null && response.getStatusCode() != null ? HttpStatus.valueOf(
+            Integer.parseInt(response.getStatusCode())) : HttpStatus.OK;
+    }
+
+    OasResponse determineResponse(String accept) {
+        return OasModelHelper.getResponseForRandomGeneration(getOasDocument(), operation, null, accept).orElse(null);
     }
 
     /**
@@ -142,24 +157,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
 
     public String getMethod() {
         return operation.getMethod() != null ? operation.getMethod().toUpperCase() : null;
-    }
-
-    /**
-     * Sets the response.
-     *
-     * @param response
-     */
-    public void setResponse(OasResponse response) {
-        this.response = response;
-    }
-
-    /**
-     * Sets the statusCode.
-     *
-     * @param statusCode
-     */
-    public void setStatusCode(HttpStatus statusCode) {
-        this.statusCode = statusCode;
     }
 
     /**
@@ -180,20 +177,4 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
         this.outboundDataDictionary = outboundDataDictionary;
     }
 
-    /**
-     * Retrieve a unique scenario id for the oas operation.
-     *
-     * @param openApiScenarioIdGenerationMode
-     * @param path
-     * @param oasOperation
-     * @return
-     */
-    public static String getUniqueScenarioId(
-        OpenApiScenarioIdGenerationMode openApiScenarioIdGenerationMode, String path, OasOperation oasOperation) {
-
-        return switch(openApiScenarioIdGenerationMode)  {
-            case OPERATION_ID -> oasOperation.operationId;
-            case FULL_PATH -> format("%s_%s", oasOperation.getMethod().toUpperCase(), path);
-        };
-    }
 }
