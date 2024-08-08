@@ -14,6 +14,11 @@ test('should have refresh list, and reset button', async ({page}) => {
 });
 
 test('should have total, successful, failed tabs', async ({page}) => {
+  await page.route('**/api/test-results/count-by-status', async route => {
+    const json = {"successful": 90, "failed": 10, "total": 100};
+    await route.fulfill({json});
+  });
+
   await page.goto('http://localhost:9000/');
 
   await expect(page.getByText('Total:')).toBeVisible();
@@ -22,7 +27,7 @@ test('should have total, successful, failed tabs', async ({page}) => {
 });
 
 test('total, successful, failed tabs should display simulations count', async ({page}) => {
-  await page.route('*/**/api/test-results/count-by-status', async route => {
+  await page.route('**/api/test-results/count-by-status', async route => {
     const json = {"successful": 746039, "failed": 490, "total": 746529};
     await route.fulfill({json});
   });
@@ -80,4 +85,12 @@ test('should display list categories', async ({page}) => {
   await expect(page.locator('table th :text("End Date")')).toHaveCount(1);
   await expect(page.locator('table th :text("Status")')).toHaveCount(1);
   await expect(page.locator('table th :text("Error Message")')).toHaveCount(1);
+});
+
+test('should display footer', async ({page}) => {
+  await page.goto('http://localhost:9000/');
+
+  await expect(page.getByText('©2023 to the original author or authors.')).toBeVisible();
+  await expect(page.getByText('Citrusframework/Simulator')).toBeVisible();
+  await expect(page.getByText('Find us on:')).toBeVisible();
 });
