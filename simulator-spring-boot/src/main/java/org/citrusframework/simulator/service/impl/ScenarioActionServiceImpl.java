@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.common.TimeProvider;
 import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.repository.ScenarioActionRepository;
 import org.citrusframework.simulator.service.ScenarioActionService;
