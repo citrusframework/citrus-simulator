@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import {test, expect, Locator} from '@playwright/test';
 
 test('should have title', async ({page}) => {
   await page.goto('http://localhost:9000/');
@@ -66,7 +66,28 @@ test('should display input form', async ({page}) => {
   await expect(page.getByText('Items per Page')).toBeVisible();
   await expect(page.locator('#pageSize')).toHaveValue('10');
   await expect(page.getByLabel('Scenario Name')).toBeVisible();
+  await expect(page.getByLabel('Status')).toBeVisible();
+  await expect(page.getByLabel('From Date')).toBeVisible();
+  await expect(page.getByLabel('To Date')).toBeVisible();
+  await expect(page.getByLabel('Message Headers')).toBeVisible();
 });
+
+test('should filter with input form', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByLabel('Scenario Name').fill('Test Scenario');
+  await page.getByLabel('Status').selectOption('Failure');
+  await fillDatePickerField(page.getByLabel('From Date'), '10072024', '120531')
+  await fillDatePickerField(page.getByLabel('To Date'), '11072024', '052007')
+  await page.getByLabel('Message Headers').fill('Test Headers');
+});
+
+const fillDatePickerField = async (dateField: Locator, date: string, time: string) => {
+  await dateField.click();
+  await dateField.pressSequentially(date);
+  await dateField.press('Tab');
+  await dateField.pressSequentially(time);
+}
 
 test('should display table headers for scenario executions', async ({page}) => {
   await page.route('**/api/scenario-executions*', async route => {
