@@ -1,7 +1,7 @@
 import {test, expect, Locator} from '@playwright/test';
 
 test('should have title', async ({page}) => {
-  await page.goto('http://localhost:9000/');
+  await page.goto('http://localhost:9000/'); //test
 
   await expect(page).toHaveTitle(/Citrus Simulator/);
 });
