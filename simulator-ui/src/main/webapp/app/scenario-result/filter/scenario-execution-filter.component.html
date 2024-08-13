@@ -4,7 +4,7 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="text" class="form-control" id="name" formControlName="nameContains" />
+            <input mdbInput type="text" class="form-control" id="name" formControlName="nameContains" data-testid="scenarioExecutionFilter/scenarioName"/>
             <label
               mdbLabel
               for="name"
@@ -19,7 +19,7 @@
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <select mdbInput class="form-control form-select" id="statusIn" formControlName="statusIn">
+            <select mdbInput class="form-control form-select" id="statusIn" formControlName="statusIn" data-testid="scenarioExecutionFilter/status">
               <option value="" jhiTranslate="citrusSimulatorApp.testResult.statusAll">All</option>
               <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.testResult.statusSuccess">SUCCESS</option>
               <option value="FAILURE" jhiTranslate="citrusSimulatorApp.testResult.statusFailure">FAILURE</option>
@@ -40,7 +40,7 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="fromDate" formControlName="fromDate" />
+            <input mdbInput type="datetime-local" step="1" class="form-control" id="fromDate" formControlName="fromDate" data-testid="scenarioExecutionFilter/fromDate"/>
             <label
               mdbLabel
               for="fromDate"
@@ -54,7 +54,7 @@
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="toDate" formControlName="toDate" />
+            <input mdbInput type="datetime-local" step="1" class="form-control" id="toDate" formControlName="toDate" data-testid="scenarioExecutionFilter/toDate"/>
             <label
               mdbLabel
               for="toDate"
@@ -77,6 +77,7 @@
               id="headerFilter"
               formControlName="headerFilter"
               [class.is-invalid]="filterForm.get('headerFilter')?.invalid"
+              data-testid="scenarioExecutionFilter/messageHeaders"
             />
             <label
               mdbLabel

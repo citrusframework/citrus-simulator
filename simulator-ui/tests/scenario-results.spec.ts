@@ -1,64 +1,4 @@
-import {test, expect, Locator} from '@playwright/test';
-
-test('should have title', async ({page}) => {
-  await page.goto('http://localhost:9000/'); //test
-
-  await expect(page).toHaveTitle(/Citrus Simulator/);
-});
-
-test('should have refresh list, and reset button', async ({page}) => {
-  await page.goto('http://localhost:9000/');
-
-  await expect(page.getByText('Refresh List')).toBeVisible();
-  await expect(page.getByText('Reset')).toBeVisible();
-});
-
-test('should have total, successful, failed tabs', async ({page}) => {
-  await page.route('**/api/test-results/count-by-status', async route => {
-    const json = {"successful": 90, "failed": 10, "total": 100};
-    await route.fulfill({json});
-  });
-
-  await page.goto('http://localhost:9000/');
-
-  await expect(page.getByText('Total:')).toBeVisible();
-  await expect(page.getByText('Successful:')).toBeVisible();
-  await expect(page.getByText('Failed:')).toBeVisible();
-});
-
-test('total, successful, failed tabs should display simulations count', async ({page}) => {
-  await page.route('**/api/test-results/count-by-status', async route => {
-    const json = {"successful": 170, "failed": 30, "total": 200};
-    await route.fulfill({json});
-  });
-
-  await page.goto('http://localhost:9000/');
-
-  await expect(page.getByText('200')).toBeVisible();
-  await expect(page.getByText('170')).toBeVisible();
-  await expect(page.getByText('30')).toBeVisible();
-});
-
-test('total, successful, failed tabs should display percentage in simulations count', async ({page}) => {
-  await page.route('**/api/test-results/count-by-status', async route => {
-    const json = {"successful": 746039, "failed": 490, "total": 746529};
-    await route.fulfill({json});
-  });
-
-  await page.goto('http://localhost:9000/');
-
-  await expect(page.getByText('100 %')).toBeVisible();
-  await expect(page.getByText('99.93 %')).toBeVisible();
-  await expect(page.getByText('0.07 %')).toBeVisible();
-});
-
-test('should display footer', async ({page}) => {
-  await page.goto('http://localhost:9000/');
-
-  await expect(page.getByText('©2023 to the original author or authors.')).toBeVisible();
-  await expect(page.getByText('Citrusframework/Simulator')).toBeVisible();
-  await expect(page.getByText('Find us on:')).toBeVisible();
-});
+import {expect, Locator, test} from "@playwright/test";
 
 test('should display input form', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
@@ -223,11 +163,11 @@ test('should filter with input form', async ({page}) => {
     await route.fulfill({json: scenarioExecutionsJson});
   });
 
-  await page.getByLabel('Scenario Name').fill('Test Scenario');
-  await page.getByLabel('Status').selectOption('Failure');
-  await fillDatePickerField(page.getByLabel('From Date'), '10072024', '120531')
-  await fillDatePickerField(page.getByLabel('To Date'), '11072024', '052007')
-  await page.getByLabel('Message Headers').fill('Test Headers');
+  await page.getByTestId('scenarioExecutionFilter/scenarioName').fill('Test Scenario');
+  await page.getByTestId('scenarioExecutionFilter/status').selectOption('Failure');
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '10072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '11072024', '052007')
+  await page.getByTestId('scenarioExecutionFilter/messageHeaders').fill('Test Headers');
 });
 
 const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<any> => {
@@ -298,5 +238,4 @@ test('should display table row for scenario executions', async ({page}) => {
   await expect(page.locator('tr :text("Scenario Parameters")')).toHaveCount(1);
   await expect(page.locator('tr :text("View")')).toHaveCount(1);
 });
-
 

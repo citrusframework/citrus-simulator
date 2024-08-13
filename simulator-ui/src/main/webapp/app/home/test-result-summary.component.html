@@ -5,11 +5,11 @@
 
     <div class="d-flex justify-content-end">
       <div class="btn-group">
-        <button class="btn btn-info" (click)="load()" [disabled]="isLoading">
+        <button class="btn btn-info" (click)="load()" [disabled]="isLoading" data-testid="testResultsummary/refreshListButton">
           <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
         </button>
-        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0">
+        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0" data-testid="testResultSummary/resetButton">
           <fa-icon icon="trash-alt"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.testParameter.action.reset">Reset</span>
         </button>
