@@ -209,13 +209,13 @@ build_and_stage_artifacts() {
     cd $working_dir
     if [ $(hasflag --local-release) ]; then
         echo "==== Release to local"
-        ./mvnw ${maven_opts} install
+        ./mvnw ${maven_opts} install -DskipFrontend=false
     elif [ $(hasflag --snapshot-release) ]; then
         echo "==== Release snapshot to local"
-        ./mvnw ${maven_opts} install
+        ./mvnw ${maven_opts} install -DskipFrontend=false
     else
         echo "==== Release to Maven central and stage artifacts to Sonatype"
-        ./mvnw ${maven_opts} install deploy -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -Dtest -Dit.test -Prelease-central -DstagingDescription="Staging Citrus for v$release_version"
+        ./mvnw ${maven_opts} install deploy -DskipFrontend=false -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -Dtest -Dit.test -Prelease-central -DstagingDescription="Staging Citrus for v$release_version"
     fi
 }
 
