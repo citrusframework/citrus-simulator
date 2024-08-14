@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="testResults && testResults.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+    <table class="table table-striped table-hover" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="id">
@@ -82,7 +82,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testResult of testResults; trackBy: trackId" data-cy="entityTable">
+        <tr *ngFor="let testResult of testResults; trackBy: trackId" data-cy="entityTable" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']">
           <td>
             <a [routerLink]="['/test-result', testResult.id, 'view']">{{ testResult.id }}</a>
           </td>
@@ -99,7 +99,7 @@
           <td>{{ testResult.createdDate | formatMediumDatetime }}</td>
           <td>{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
-            <div class="btn-group">
+            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
               <a [routerLink]="['/test-parameter']" [queryParams]="{ 'filter[testResultId.in]': testResult.id }">
                 <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
                   <fa-icon icon="cogs"></fa-icon>
@@ -109,12 +109,6 @@
                     [translateValues]="{ otherEntity: ('citrusSimulatorApp.testResult.testParameter' | translate) }"
                     >Show Test Parameters</span
                   >
-                </button>
-              </a>
-              <a [routerLink]="['/test-result', testResult.id, 'view']">
-                <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                  <fa-icon icon="eye"></fa-icon>
-                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                 </button>
               </a>
             </div>
