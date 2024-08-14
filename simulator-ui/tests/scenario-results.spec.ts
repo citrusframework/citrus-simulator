@@ -245,3 +245,26 @@ test('should display table row for scenario executions', async ({page}) => {
   await expect(page.locator('tr :text("View")')).toHaveCount(1);
 });
 
+test('should display help dialog after clicking button', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByTestId('scenarioExecutionFilter/dialogButton').click();
+  await expect(page.getByTestId(('scenarioExecutionFilter/helpDialog'))).toBeVisible();
+});
+
+test('should display filter message header popup after clicking button', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
+  await expect(page.getByTestId(('scenarioExecutionFilter/filterMessageHeaderForm'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/headerName'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/headerValue'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/valueComparator'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/valueType'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/addAnotherButton'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/cancelButton'))).toBeVisible();
+  await expect(page.getByTestId(('scenarioExecutionFilter/applyFilterButton'))).toBeVisible();
+});
+
+
+

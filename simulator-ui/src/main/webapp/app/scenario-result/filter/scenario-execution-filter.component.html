@@ -98,10 +98,10 @@
           </mdb-form-control>
         </div>
         <div class="form-group col-auto d-md-flex justify-content-md-end">
-          <button type="button" class="btn btn-secondary me-3" (click)="openHelpModal()">
+          <button type="button" class="btn btn-secondary me-3" (click)="openHelpModal()" data-testid="scenarioExecutionFilter/dialogButton">
             <fa-icon icon="circle-info"></fa-icon>
           </button>
-          <button type="button" class="btn btn-info" (click)="openHeaderFilterModal()">
+          <button type="button" class="btn btn-info" (click)="openHeaderFilterModal()" data-testid="scenarioExecutionFilter/headerFilterButton">
             <fa-icon icon="window-maximize"></fa-icon>
             &nbsp;
             <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.open">Open Dialog</span>

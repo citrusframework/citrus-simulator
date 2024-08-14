@@ -153,7 +153,7 @@ test('should have updated total, successful, failed tabs after refresh button cl
     const json = {"successful": successfulTests, "failed": failedTests, "total": totalTests};
     await route.fulfill({json});
   });
-  let successfulTests = 90;
+  const successfulTests = 90;
   let failedTests = 10;
   const totalTests = successfulTests + failedTests;
 
@@ -176,8 +176,8 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
     const json = {"successful": successfulTests, "failed": failedTests, "total": totalTests};
     await route.fulfill({json});
   });
-  let successfulTests = 90;
-  let failedTests = 10;
+  const successfulTests = 90;
+  const failedTests = 10;
   const totalTests = successfulTests + failedTests;
 
   await page.goto('http://localhost:9000/');
@@ -187,8 +187,8 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
   await page.getByTestId('home/resetButton').click();
   await expect(page.getByTestId('home/deletePopup')).toBeVisible();
   await page.getByTestId('home/cancelDeleteButtonCross').click();
-  //HOW assert that API was NOT called?
-  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); //invisible?
+  // HOW assert that API was NOT called?
+  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); // invisible?
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTests, successfulTests, failedTests);
 })
@@ -198,8 +198,8 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
     const json = {"successful": successfulTests, "failed": failedTests, "total": totalTests};
     await route.fulfill({json});
   });
-  let successfulTests = 90;
-  let failedTests = 10;
+  const successfulTests = 90;
+  const failedTests = 10;
   const totalTests = successfulTests + failedTests;
 
   await page.goto('http://localhost:9000/');
@@ -209,8 +209,8 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
   await page.getByTestId('home/resetButton').click();
   await expect(page.getByTestId('home/deletePopup')).toBeVisible();
   await page.getByTestId('home/cancelDeleteButton').click();
-  //HOW assert that API was NOT called?
-  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); //invisible?
+  // HOW assert that API was NOT called?
+  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); // invisible?
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTests, successfulTests, failedTests);
 })
@@ -248,14 +248,14 @@ test('should have reset total, successful, failed tabs after confirmed Deletion 
   await deleteRequestPromise;
   await deleteResponsePromise;
 
-  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); //invisible?
+  await expect(page.getByTestId('home/deletePopup'), undefined).toBeVisible(); // invisible?
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTests, successfulTests, failedTests);
 })
 
 
 
-let checkIfSummaryTabsAreDisplayingRightNumbersFunction = async (page: Page, totalTests: number, successfulTests: number, failedTests: number) => {
+const checkIfSummaryTabsAreDisplayingRightNumbersFunction = async (page: Page, totalTests: number, successfulTests: number, failedTests: number) => {
   await expect(page.getByTestId('home/totalTestsNumber')).toHaveText(totalTests + ` (${(totalTests/totalTests*100).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} %)`);
   await expect(page.getByTestId('home/successfulTestsNumber')).toHaveText(successfulTests + ` (${(successfulTests/totalTests*100).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} %)`);
   await expect(page.getByTestId('home/failedTestsNumber')).toHaveText(failedTests+ ` (${(failedTests/totalTests*100).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} %)`);
