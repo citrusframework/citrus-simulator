@@ -3,19 +3,20 @@ import {expect, Locator, test} from "@playwright/test";
 test('should display input form', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await expect(page.getByText('Items per Page')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/pageSize')).toBeVisible();
   await expect(page.locator('#pageSize')).toHaveValue('10');
-  await expect(page.getByLabel('Scenario Name')).toBeVisible();
-  await expect(page.getByLabel('Status')).toBeVisible();
-  await expect(page.getByLabel('From Date')).toBeVisible();
-  await expect(page.getByLabel('To Date')).toBeVisible();
-  await expect(page.getByLabel('Message Headers')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/scenarioName')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/status')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/fromDate')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/toDate')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toBeVisible();
 });
 
 test('should filter with input form', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.route('**/api/scenario-executions*', async route => {
+
+  await page.route('**/api/scenario-executions?page=0&size=10&sort=executionId,asc', async route => {
     const scenarioExecutionsJson = [
       {
         "executionId": 630650,
@@ -163,10 +164,15 @@ test('should filter with input form', async ({page}) => {
     await route.fulfill({json: scenarioExecutionsJson});
   });
 
+  await page.route('**/api/scenario-executions?page=1&size=10&sort=executionId,asc&filter%5BstartDate.greaterThanOrEqual%5D=2024-07-21T10:05:31.000Z&filter%5BendDate.lessThanOrEqual%5D=2024-07-22T03:02:07.000Z', async route => {
+    await route.fulfill({});
+  });
+  await page.goto('http://localhost:9000/scenario-result/');
+
   await page.getByTestId('scenarioExecutionFilter/scenarioName').fill('Test Scenario');
   await page.getByTestId('scenarioExecutionFilter/status').selectOption('Failure');
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '10072024', '120531')
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '11072024', '052007')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '21072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '22072024', '052007')
   await page.getByTestId('scenarioExecutionFilter/messageHeaders').fill('Test Headers');
 });
 
