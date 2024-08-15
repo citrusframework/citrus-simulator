@@ -78,7 +78,7 @@
           </td>
           <td>{{ scenarioExecution.testResult?.errorMessage }}</td>
           <td class="text-end">
-            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
+            <div class="btn-group" (click)="$event.stopPropagation()">
               <a [routerLink]="['/scenario-action']" [queryParams]="{ 'filter[scenarioExecutionId.in]': scenarioExecution.executionId }">
                 <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
                   <fa-icon icon="flag"></fa-icon>

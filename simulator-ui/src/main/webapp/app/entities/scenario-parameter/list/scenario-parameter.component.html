@@ -79,7 +79,7 @@
           <td>{{ scenarioParameter.createdDate }}</td>
           <td>{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</td>
           <td>
-            <!-- //NOSONAR --><div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
+            <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
               <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
                 scenarioParameter.scenarioExecution.scenarioName
               }}</a>

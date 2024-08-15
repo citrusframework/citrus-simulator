@@ -85,7 +85,7 @@
           <td>{{ message.createdDate | formatMediumDatetime }}</td>
           <td>{{ message.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
-            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
+            <div class="btn-group" (click)="$event.stopPropagation()">
               <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }">
                 <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
                   <fa-icon icon="heading"></fa-icon>

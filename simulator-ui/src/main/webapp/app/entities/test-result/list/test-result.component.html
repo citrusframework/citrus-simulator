@@ -99,7 +99,7 @@
           <td>{{ testResult.createdDate | formatMediumDatetime }}</td>
           <td>{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
-            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
+            <div class="btn-group" (click)="$event.stopPropagation()">
               <a [routerLink]="['/test-parameter']" [queryParams]="{ 'filter[testResultId.in]': testResult.id }">
                 <button type="button" class="btn btn-info btn-sm" data-cy="filterOtherEntityButton">
                   <fa-icon icon="cogs"></fa-icon>
