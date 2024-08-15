@@ -32,7 +32,7 @@ test('should have total, successful, failed tabs', async ({page}) => {
 });
 
 test('total, successful, failed tabs should display percentage in simulations count', async ({page}) => {
-  const successfulTestsBig = 746039; //TODO check if it still works with big values
+  const successfulTestsBig = 746039;
   const failedTestsBig = 490;
   const totalTestsBig = successfulTestsBig + failedTestsBig;
 
