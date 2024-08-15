@@ -266,5 +266,43 @@ test('should display filter message header popup after clicking button', async (
   await expect(page.getByTestId(('scenarioExecutionFilter/applyFilterButton'))).toBeVisible();
 });
 
+test('should filter message headers with header name and header value', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
 
+  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
+  await expect(page.getByTestId(('scenarioExecutionFilter/filterMessageHeaderForm'))).toBeVisible();
+  await page.getByTestId(('scenarioExecutionFilter/headerName')).fill('HeaderName1');
+  await page.getByTestId(('scenarioExecutionFilter/headerValue')).fill('HeaderValue1');
+  await page.getByTestId(('scenarioExecutionFilter/addAnotherButton')).click();
+  await page.locator(('#header-1')).fill('HeaderName2');
+  await page.locator(('#header-1-value-comparator')).selectOption('contains');
+  await page.locator(('#header-1-value')).fill('HeaderValue2');
+  await page.getByTestId(('scenarioExecutionFilter/applyFilterButton')).click();
+  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toHaveValue('HeaderName1=HeaderValue1; HeaderName2~HeaderValue2');
+});
 
+test('should clear all filters', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByTestId('scenarioExecutionFilter/scenarioName').fill('Test Scenario');
+  await page.getByTestId('scenarioExecutionFilter/status').selectOption('Failure');
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '21072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '22072024', '052007')
+  await page.getByTestId('scenarioExecutionFilter/messageHeaders').fill('Test Headers');
+
+  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
+  await page.getByTestId(('scenarioExecutionFilter/headerName')).fill('HeaderName1');
+  await page.getByTestId(('scenarioExecutionFilter/headerValue')).fill('HeaderValue1');
+  await page.getByTestId(('scenarioExecutionFilter/addAnotherButton')).click();
+  await page.locator(('#header-1')).fill('HeaderName2');
+  await page.locator(('#header-1-value-comparator')).selectOption('contains');
+  await page.locator(('#header-1-value')).fill('HeaderValue2');
+  await page.getByTestId(('scenarioExecutionFilter/applyFilterButton')).click();
+  await page.getByTestId('scenarioExecutionFilter/clearFilterButton').click();
+
+  await expect(page.getByTestId('scenarioExecutionFilter/scenarioName')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionFilter/status')).toHaveValue('');
+  await expect(page.getByTestId('scenarioExecutionFilter/fromDate')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionFilter/toDate')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toBeEmpty();
+});
