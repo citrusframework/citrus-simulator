@@ -159,8 +159,8 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
               queryParams,
               this.getFilterQueryParameter({
                 nameContains: formValue.nameContains,
-                fromDate: formValue.fromDate ? dayjs(formValue.fromDate) : undefined,
-                toDate: formValue.toDate ? dayjs(formValue.toDate) : undefined,
+                fromDate: formValue.fromDate ? dayjs.utc(formValue.fromDate) : undefined,
+                toDate: formValue.toDate ? dayjs.utc(formValue.toDate) : undefined,
                 statusIn: formValue.statusIn ? testResultStatusFromName(formValue.statusIn) : undefined,
                 headerFilter: formValue.headerFilter,
               }),

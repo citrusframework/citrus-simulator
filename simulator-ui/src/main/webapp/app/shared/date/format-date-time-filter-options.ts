@@ -8,7 +8,7 @@ export const formatDateTimeFilterOptions = (filterOptions: IFilterOptions): IFil
     const values: string[] = [];
     for (const value of filterOption.values.slice()) {
       if (isNaN(Number(value)) && dayjs(value).isValid()) {
-        values.push(dayjs(value).format('YYYY-MM-DD HH:mm:ss'));
+        values.push(dayjs.utc(value).format('YYYY-MM-DD HH:mm:ss'));
       } else {
         values.push(value);
       }
