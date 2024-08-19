@@ -12,8 +12,8 @@
       "id": "ID",
       "name": "Name",
       "type": "Type",
-      "scenarioExecutions": "Scenario Executions",
-      "scenarioParameters": "Scenario Parameters",
+      "scenarioExecutions": "Executions",
+      "scenarioParameters": "Parameters",
       "action": {
         "launch": "Launch",
         "launchFailed": "Failed to launch Scenario!",
