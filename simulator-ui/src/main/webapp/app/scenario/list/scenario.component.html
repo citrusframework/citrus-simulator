@@ -11,7 +11,14 @@
             <label for="name" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName"
               >Scenario Name:</label
             >
-            <input type="text" class="form-control" id="name" placeholder="Filter by name..." formControlName="nameContains" data-cy="scenarioFilterByNameInput" />
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Filter by name..."
+              formControlName="nameContains"
+              data-cy="scenarioFilterByNameInput"
+            />
           </div>
 
           <div class="form-group col-md-3 me-md-auto">
@@ -49,7 +56,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarios && scenarios.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="scenarioEntitiesTable" >
+    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="scenarioEntitiesTable">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues($event)">
           <th scope="col" jhiSortBy="name">
@@ -68,13 +75,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenario of scenarios; trackBy: trackId"  data-cy="scenarioEntitiesRow" class='clickable-row'  [routerLink]="['/scenario', scenario.name, scenario.type, 'view']" class='clickable-row'  [routerLink]="['/scenario', scenario.name, scenario.type, 'view']">
+        <tr
+          *ngFor="let scenario of scenarios; trackBy: trackId"
+          data-cy="scenarioEntitiesRow"
+          class="clickable-row"
+          [routerLink]="['/scenario', scenario.name, scenario.type, 'view']"
+          class="clickable-row"
+          [routerLink]="['/scenario', scenario.name, scenario.type, 'view']"
+        >
           <td>
             <a [routerLink]="['/scenario', scenario.name, scenario.type, 'view']" data-cy="scenarioEntitiesName">{{ scenario.name }}</a>
           </td>
           <td data-cy="scenarioEntitiesType">{{ scenario.type }}</td>
           <td class="text-end">
-            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
+            <!-- //NOSONAR -->
+            <div class="btn-group" (click)="$event.stopPropagation()">
               <button
                 *ngIf="scenario.type === 'STARTER'"
                 type="submit"
@@ -85,7 +100,11 @@
                 <fa-icon icon="play"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenario.action.launch">Launch</span>
               </button>
-              <a [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }" data-cy="scenarioEntitiesScenarioExecutions">
+              <a
+                [routerLink]="['/scenario-result']"
+                [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }"
+                data-cy="scenarioEntitiesScenarioExecutions"
+              >
                 <button type="button" class="btn btn-info btn-sm">
                   <fa-icon icon="square-poll-vertical"></fa-icon>
                   <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenario.scenarioExecutions"

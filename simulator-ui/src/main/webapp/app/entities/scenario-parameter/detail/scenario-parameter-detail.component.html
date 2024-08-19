@@ -18,27 +18,28 @@
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span></dt>
         <dd>
-          <span  data-cy="scenarioParameterDetailsName">{{ scenarioParameter.name }}</span>
+          <span data-cy="scenarioParameterDetailsName">{{ scenarioParameter.name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span></dt>
         <dd>
-          <span  data-cy="scenarioParameterDetailsControlType">{{ scenarioParameter.controlType }}</span>
+          <span data-cy="scenarioParameterDetailsControlType">{{ scenarioParameter.controlType }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span></dt>
         <dd>
-          <span  data-cy="scenarioParameterDetailsValue">{{ scenarioParameter.value }}</span>
+          <span data-cy="scenarioParameterDetailsValue">{{ scenarioParameter.value }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.createdDate">Created Date</span></dt>
         <dd>
-          <span  data-cy="scenarioParameterDetailsCreatedDate">{{ scenarioParameter.createdDate }}</span>
+          <span data-cy="scenarioParameterDetailsCreatedDate">{{ scenarioParameter.createdDate }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span  data-cy="scenarioParameterDetailLastModifiedDate">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="scenarioParameterDetailLastModifiedDate">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.scenarioExecution">Scenario Execution</span></dt>
         <dd>
-          <!-- //NOSONAR --><div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
+          <!-- //NOSONAR -->
+          <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
             <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
               scenarioParameter.scenarioExecution.scenarioName
             }}</a>

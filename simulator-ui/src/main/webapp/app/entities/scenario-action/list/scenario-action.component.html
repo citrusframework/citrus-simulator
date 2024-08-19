@@ -57,18 +57,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenarioAction of scenarioActions; trackBy: trackId" class='clickable-row' [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesRow">
+        <tr
+          *ngFor="let scenarioAction of scenarioActions; trackBy: trackId"
+          class="clickable-row"
+          [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']"
+          data-cy="scenarioActionEntitiesRow"
+        >
           <td>
-            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesId">{{ scenarioAction.actionId }}</a>
+            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesId">{{
+              scenarioAction.actionId
+            }}</a>
           </td>
           <td data-cy="scenarioActionEntitiesName">{{ scenarioAction.name }}</td>
           <td data-cy="scenarioActionEntitiesStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
           <td data-cy="scenarioActionEntitiesEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
           <td>
-            <!-- //NOSONAR --><div *ngIf="scenarioAction.scenarioExecution" (click)="$event.stopPropagation()">
-              <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']" data-cy="scenarioActionEntitiesScenarioExecutionLink">{{
-                scenarioAction.scenarioExecution.scenarioName
-              }}</a>
+            <!-- //NOSONAR -->
+            <div *ngIf="scenarioAction.scenarioExecution" (click)="$event.stopPropagation()">
+              <a
+                [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
+                data-cy="scenarioActionEntitiesScenarioExecutionLink"
+                >{{ scenarioAction.scenarioExecution.scenarioName }}</a
+              >
             </div>
           </td>
         </tr>

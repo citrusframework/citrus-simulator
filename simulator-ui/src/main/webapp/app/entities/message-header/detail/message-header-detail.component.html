@@ -27,7 +27,9 @@
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.message">Message</span></dt>
         <dd>
           <div *ngIf="messageHeader.message">
-            <a [routerLink]="['/message', messageHeader.message.messageId, 'view']" data-cy="messageHeaderDetailsMessageLink">{{ messageHeader.message.citrusMessageId }}</a>
+            <a [routerLink]="['/message', messageHeader.message.messageId, 'view']" data-cy="messageHeaderDetailsMessageLink">{{
+              messageHeader.message.citrusMessageId
+            }}</a>
           </div>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.createdDate">Created Date</span></dt>

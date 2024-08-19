@@ -4,7 +4,14 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="text" class="form-control" id="name" data-cy="scenarioExecutionFilterInput" formControlName="nameContains" />
+            <input
+              mdbInput
+              type="text"
+              class="form-control"
+              id="name"
+              data-cy="scenarioExecutionFilterInput"
+              formControlName="nameContains"
+            />
             <label
               mdbLabel
               for="name"
@@ -19,7 +26,13 @@
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <select mdbInput class="form-control form-select" id="statusIn" data-cy="scenarioExecutionStatusInSelect" formControlName="statusIn">
+            <select
+              mdbInput
+              class="form-control form-select"
+              id="statusIn"
+              data-cy="scenarioExecutionStatusInSelect"
+              formControlName="statusIn"
+            >
               <option value="" jhiTranslate="citrusSimulatorApp.testResult.statusAll">All</option>
               <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.testResult.statusSuccess">SUCCESS</option>
               <option value="FAILURE" jhiTranslate="citrusSimulatorApp.testResult.statusFailure">FAILURE</option>
@@ -40,7 +53,15 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="fromDate" data-cy="scenarioExecutionFromDateInput" formControlName="fromDate" />
+            <input
+              mdbInput
+              type="datetime-local"
+              step="1"
+              class="form-control"
+              id="fromDate"
+              data-cy="scenarioExecutionFromDateInput"
+              formControlName="fromDate"
+            />
             <label
               mdbLabel
               for="fromDate"
@@ -54,7 +75,15 @@
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="toDate" data-cy="scenarioExecutionToDateInput" formControlName="toDate" />
+            <input
+              mdbInput
+              type="datetime-local"
+              step="1"
+              class="form-control"
+              id="toDate"
+              data-cy="scenarioExecutionToDateInput"
+              formControlName="toDate"
+            />
             <label
               mdbLabel
               for="toDate"
@@ -101,7 +130,7 @@
           <button type="button" class="btn btn-secondary me-3" data-cy="scenarioExecutionOpenHelpButton" (click)="openHelpModal()">
             <fa-icon icon="circle-info"></fa-icon>
           </button>
-          <button type="button" class="btn btn-info" data-cy="scenarioExecutionOpenFilterButton"  (click)="openHeaderFilterModal()">
+          <button type="button" class="btn btn-info" data-cy="scenarioExecutionOpenFilterButton" (click)="openHeaderFilterModal()">
             <fa-icon icon="window-maximize"></fa-icon>
             &nbsp;
             <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.open">Open Dialog</span>

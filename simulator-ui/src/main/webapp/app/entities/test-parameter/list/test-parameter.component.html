@@ -57,13 +57,22 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testParameter of testParameters; trackBy: trackId" data-cy="testParameterEntityRow" class='clickable-row' [routerLink]="['/test-result', testParameter.testResult.id, 'view']" class='clickable-row' [routerLink]="['/test-result', testParameter.testResult.id, 'view']">
+        <tr
+          *ngFor="let testParameter of testParameters; trackBy: trackId"
+          data-cy="testParameterEntityRow"
+          class="clickable-row"
+          [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
+          class="clickable-row"
+          [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
+        >
           <td data-cy="testParameterEntityKey">{{ testParameter.key }}</td>
           <td data-cy="testParameterEntityValue">{{ testParameter.value }}</td>
           <td data-cy="testParameterEntityCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</td>
           <td data-cy="testParameterEntityLastModifiedDate">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
           <td>
-            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterEntityTestResultLink">{{ testParameter.testResult.id }}</a>
+            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterEntityTestResultLink">{{
+              testParameter.testResult.id
+            }}</a>
           </td>
         </tr>
       </tbody>

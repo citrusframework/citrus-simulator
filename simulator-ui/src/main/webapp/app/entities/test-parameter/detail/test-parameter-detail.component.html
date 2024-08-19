@@ -30,7 +30,9 @@
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span></dt>
         <dd>
-          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterDetailsTestResultsId">{{ testParameter.testResult.id }}</a>
+          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterDetailsTestResultsId">{{
+            testParameter.testResult.id
+          }}</a>
         </dd>
       </dl>
 

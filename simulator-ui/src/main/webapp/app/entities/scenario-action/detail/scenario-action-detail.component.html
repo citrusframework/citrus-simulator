@@ -18,22 +18,24 @@
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span></dt>
         <dd>
-          <span  data-cy="scenarioActionDetailName">{{ scenarioAction.name }}</span>
+          <span data-cy="scenarioActionDetailName">{{ scenarioAction.name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span></dt>
         <dd>
-          <span  data-cy="scenarioActionDetailsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</span>
+          <span data-cy="scenarioActionDetailsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span></dt>
         <dd>
-          <span  data-cy="scenarioActionDetailsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</span>
+          <span data-cy="scenarioActionDetailsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span></dt>
         <dd>
           <div *ngIf="scenarioAction.scenarioExecution">
-            <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"  data-cy="scenarioActionDetailsScenarioExecutionsLink">{{
-              scenarioAction.scenarioExecution.scenarioName
-            }}</a>
+            <a
+              [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
+              data-cy="scenarioActionDetailsScenarioExecutionsLink"
+              >{{ scenarioAction.scenarioExecution.scenarioName }}</a
+            >
           </div>
         </dd>
       </dl>

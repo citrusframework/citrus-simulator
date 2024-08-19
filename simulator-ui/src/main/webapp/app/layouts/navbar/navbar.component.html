@@ -51,7 +51,13 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="navigationEntitiesLink">
+          <a
+            class="nav-link dropdown-toggle"
+            ngbDropdownToggle
+            href="javascript:void(0);"
+            id="entity-menu"
+            data-cy="navigationEntitiesLink"
+          >
             <span>
               <fa-icon icon="th-list"></fa-icon>
               <span jhiTranslate="global.menu.entities.main">Entities</span>

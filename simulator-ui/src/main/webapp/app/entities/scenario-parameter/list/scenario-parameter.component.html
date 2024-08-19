@@ -69,9 +69,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="scenarioParameterEntityRow" class='clickable-row' [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" class='clickable-row' [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">
+        <tr
+          *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId"
+          data-cy="scenarioParameterEntityRow"
+          class="clickable-row"
+          [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
+          class="clickable-row"
+          [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
+        >
           <td>
-            <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" data-cy="scenarioParameterEntityId">{{ scenarioParameter.parameterId }}</a>
+            <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" data-cy="scenarioParameterEntityId">{{
+              scenarioParameter.parameterId
+            }}</a>
           </td>
           <td data-cy="scenarioParameterEntityName">{{ scenarioParameter.name }}</td>
           <td data-cy="scenarioParameterEntityControlType">{{ scenarioParameter.controlType }}</td>
@@ -79,10 +88,13 @@
           <td data-cy="scenarioParameterEntityCreatedDate">{{ scenarioParameter.createdDate }}</td>
           <td data-cy="scenarioParameterEntityLastModified">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</td>
           <td>
-            <!-- //NOSONAR --><div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
-              <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']" data-cy="scenarioParameterEntityScenarioExecutionLink">{{
-                scenarioParameter.scenarioExecution.scenarioName
-              }}</a>
+            <!-- //NOSONAR -->
+            <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
+              <a
+                [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']"
+                data-cy="scenarioParameterEntityScenarioExecutionLink"
+                >{{ scenarioParameter.scenarioExecution.scenarioName }}</a
+              >
             </div>
           </td>
         </tr>
