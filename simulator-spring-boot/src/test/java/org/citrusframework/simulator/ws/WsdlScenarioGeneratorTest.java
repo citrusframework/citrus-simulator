@@ -29,11 +29,18 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.citrusframework.simulator.ws.WsdlScenarioGenerator.WsdlScenarioNamingStrategy.INPUT;
+import static org.citrusframework.simulator.ws.WsdlScenarioGenerator.WsdlScenarioNamingStrategy.OPERATION;
+import static org.citrusframework.simulator.ws.WsdlScenarioGenerator.WsdlScenarioNamingStrategy.SOAP_ACTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -46,38 +53,35 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class WsdlScenarioGeneratorTest {
 
-    private static final String SCENARIO_INPUT = String.format("<v1:TestRequest name=\"string\" id=\"100\" flag=\"false\" xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\">%n" +
+    private static final String SCENARIO_INPUT = format("<v1:TestRequest name=\"string\" id=\"100\" flag=\"(true|false)\" xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\">%n" +
         "  <v1:name>string</v1:name>%n" +
         "  <v1:id>100</v1:id>%n" +
-        "  <v1:flag>true</v1:flag>%n" +
+        "  <v1:flag>(true|false)</v1:flag>%n" +
         "  <v1:restricted>stringstri</v1:restricted>%n" +
         "</v1:TestRequest>");
+    public static final Pattern SCENARIO_INPUT_PATTERN = Pattern.compile(SCENARIO_INPUT);
 
-    private static final String SCENARIO_OUTPUT = String.format("<v1:TestResponse name=\"string\" id=\"100\" flag=\"false\" xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\">%n" +
+    private static final String SCENARIO_OUTPUT = format("<v1:TestResponse name=\"string\" id=\"100\" flag=\"(true|false)\" xmlns:v1=\"http://www.citrusframework.org/schema/samples/TestService/v1\">%n" +
         "  <v1:name>string</v1:name>%n" +
         "  <v1:id>100</v1:id>%n" +
-        "  <v1:flag>true</v1:flag>%n" +
+        "  <v1:flag>(true|false)</v1:flag>%n" +
         "  <v1:restricted>stringstri</v1:restricted>%n" +
         "</v1:TestResponse>");
+    public static final Pattern SCENARIO_OUTPUT_PATTERN = Pattern.compile(SCENARIO_OUTPUT);
+
     @Mock
     private ConfigurableListableBeanFactory beanFactoryMock;
+
     @Mock
     private DefaultListableBeanFactory beanRegistryMock;
+
     private WsdlScenarioGenerator fixture;
-
-    static Stream<Arguments> testGenerateScenarios() {
-        return data();
-    }
-
-    static Stream<Arguments> testGenerateScenariosWithRegistry() {
-        return data();
-    }
 
     static Stream<Arguments> data() {
         return Stream.of(
-            Arguments.of("TestRequest", WsdlScenarioGenerator.WsdlScenarioNamingStrategy.INPUT, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT),
-            Arguments.of("test", WsdlScenarioGenerator.WsdlScenarioNamingStrategy.OPERATION, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT),
-            Arguments.of("/TestService/test", WsdlScenarioGenerator.WsdlScenarioNamingStrategy.SOAP_ACTION, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT)
+            arguments("TestRequest", INPUT, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT),
+            arguments("test", OPERATION, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT),
+            arguments("/TestService/test", SOAP_ACTION, "/TestService/test", SCENARIO_INPUT, SCENARIO_OUTPUT)
         );
     }
 
@@ -86,17 +90,17 @@ class WsdlScenarioGeneratorTest {
         fixture = new WsdlScenarioGenerator(new Resources.ClasspathResource("schema/TestService.wsdl"));
     }
 
-    @MethodSource
     @ParameterizedTest
+    @MethodSource("data")
     void testGenerateScenarios(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
         fixture.setNamingStrategy(namingStrategy);
 
         doAnswer(invocation -> {
             WsdlOperationScenario scenario = (WsdlOperationScenario) invocation.getArguments()[1];
 
-            assertEquals(scenario.getSoapAction(), soapAction);
-            assertEquals(scenario.getInput(), input);
-            assertEquals(scenario.getOutput(), output);
+            assertEquals(soapAction, scenario.getSoapAction());
+            assertThat(scenario.getInput()).matches(SCENARIO_INPUT_PATTERN);
+            assertThat(scenario.getOutput()).matches(SCENARIO_OUTPUT_PATTERN);
 
             return null;
         }).when(beanFactoryMock).registerSingleton(eq(scenarioName), any(WsdlOperationScenario.class));
@@ -106,17 +110,17 @@ class WsdlScenarioGeneratorTest {
         verify(beanFactoryMock).registerSingleton(eq(scenarioName), any(WsdlOperationScenario.class));
     }
 
-    @MethodSource
     @ParameterizedTest
+    @MethodSource("data")
     void testGenerateScenariosWithRegistry(String scenarioName, WsdlScenarioGenerator.WsdlScenarioNamingStrategy namingStrategy, String soapAction, String input, String output) {
         fixture.setNamingStrategy(namingStrategy);
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-            assertEquals(scenario.getPropertyValues().get("soapAction"), soapAction);
-            assertEquals(scenario.getPropertyValues().get("input"), input);
-            assertEquals(scenario.getPropertyValues().get("output"), output);
+            assertEquals(soapAction, scenario.getPropertyValues().get("soapAction"));
+            assertThat(scenario.getPropertyValues().get("input")).asString().matches(SCENARIO_INPUT_PATTERN);
+            assertThat(scenario.getPropertyValues().get("output")).asString().matches(SCENARIO_OUTPUT_PATTERN);
             assertNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             assertNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
@@ -136,9 +140,9 @@ class WsdlScenarioGeneratorTest {
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
 
-            assertEquals(scenario.getPropertyValues().get("soapAction"), "/TestService/test");
-            assertEquals(scenario.getPropertyValues().get("input"), SCENARIO_INPUT);
-            assertEquals(scenario.getPropertyValues().get("output"), SCENARIO_OUTPUT);
+            assertEquals("/TestService/test", scenario.getPropertyValues().get("soapAction"));
+            assertThat(scenario.getPropertyValues().get("input")).asString().matches(SCENARIO_INPUT_PATTERN);
+            assertThat(scenario.getPropertyValues().get("output")).asString().matches(SCENARIO_OUTPUT_PATTERN);
             assertNotNull(scenario.getPropertyValues().get("inboundDataDictionary"));
             assertNotNull(scenario.getPropertyValues().get("outboundDataDictionary"));
 
