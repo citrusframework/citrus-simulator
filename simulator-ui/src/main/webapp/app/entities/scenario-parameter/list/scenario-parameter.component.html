@@ -1,9 +1,9 @@
 <div>
-  <h2 id="page-heading" data-cy="ScenarioParameterHeading">
+  <h2 id="page-heading" data-cy="scenarioParameterHeading">
     <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.title">Scenario Parameters</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.refreshListLabel">Refresh List</span>
       </button>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarioParameters && scenarioParameters.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="scenarioParameterEntityTable">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="parameterId">
@@ -66,34 +66,32 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
-          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="entityTable">
+        <tr
+          *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId"
+          data-cy="scenarioParameterEntityRow"
+          class="clickable-row"
+          [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
+        >
           <td>
-            <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">{{ scenarioParameter.parameterId }}</a>
+            <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" data-cy="scenarioParameterEntityId">{{
+              scenarioParameter.parameterId
+            }}</a>
           </td>
-          <td>{{ scenarioParameter.name }}</td>
-          <td>{{ scenarioParameter.controlType }}</td>
-          <td>{{ scenarioParameter.value }}</td>
-          <td>{{ scenarioParameter.createdDate }}</td>
-          <td>{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</td>
+          <td data-cy="scenarioParameterEntityName">{{ scenarioParameter.name }}</td>
+          <td data-cy="scenarioParameterEntityControlType">{{ scenarioParameter.controlType }}</td>
+          <td data-cy="scenarioParameterEntityValue">{{ scenarioParameter.value }}</td>
+          <td data-cy="scenarioParameterEntityCreatedDate">{{ scenarioParameter.createdDate }}</td>
+          <td data-cy="scenarioParameterEntityLastModified">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</td>
           <td>
-            <div *ngIf="scenarioParameter.scenarioExecution">
-              <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
-                scenarioParameter.scenarioExecution.scenarioName
-              }}</a>
-            </div>
-          </td>
-          <td class="text-end">
-            <div class="btn-group">
-              <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">
-                <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                  <fa-icon icon="eye"></fa-icon>
-                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                </button>
-              </a>
+            <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
+              <a
+                [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']"
+                data-cy="scenarioParameterEntityScenarioExecutionLink"
+                >{{ scenarioParameter.scenarioExecution.scenarioName }}</a
+              >
             </div>
           </td>
         </tr>

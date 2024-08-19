@@ -20,6 +20,13 @@ a:hover {
   cursor: pointer;
 }
 
+.clickable-row {
+  /* make sure browsers use the pointer cursor for clickable rows, even with no href */
+  :hover {
+    cursor: pointer;
+  }
+}
+
 .dropdown-item:hover {
   color: $dropdown-link-hover-color;
 }

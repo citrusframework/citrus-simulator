@@ -3,7 +3,7 @@
     <span jhiTranslate="citrusSimulatorApp.testParameter.home.title">Test Parameters</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.testParameter.home.refreshListLabel">Refresh List</span>
       </button>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="testParameters && testParameters.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+    <table class="table table-striped table-hover" data-cy="testParameterEntityTable" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="key">
@@ -54,27 +54,23 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
-          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testParameter of testParameters; trackBy: trackId" data-cy="entityTable">
-          <td>{{ testParameter.key }}</td>
-          <td>{{ testParameter.value }}</td>
-          <td>{{ testParameter.createdDate | formatMediumDatetime }}</td>
-          <td>{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
+        <tr
+          *ngFor="let testParameter of testParameters; trackBy: trackId"
+          data-cy="testParameterEntityRow"
+          class="clickable-row"
+          [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
+        >
+          <td data-cy="testParameterEntityKey">{{ testParameter.key }}</td>
+          <td data-cy="testParameterEntityValue">{{ testParameter.value }}</td>
+          <td data-cy="testParameterEntityCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</td>
+          <td data-cy="testParameterEntityLastModifiedDate">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
           <td>
-            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']">{{ testParameter.testResult.id }}</a>
-          </td>
-          <td class="text-end">
-            <div class="btn-group">
-              <a [routerLink]="['/test-parameter', testParameter.testResult.id, testParameter.key, 'view']">
-                <button type="button" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                  <fa-icon icon="eye"></fa-icon>
-                  <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                </button>
-              </a>
-            </div>
+            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterEntityTestResultLink">{{
+              testParameter.testResult.id
+            }}</a>
           </td>
         </tr>
       </tbody>
