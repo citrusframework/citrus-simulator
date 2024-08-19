@@ -82,25 +82,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testResult of testResults; trackBy: trackId" data-cy="testResultEntitiesRow" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']">
+        <tr
+          *ngFor="let testResult of testResults; trackBy: trackId"
+          data-cy="testResultEntitiesRow"
+          class="clickable-row"
+          [routerLink]="['/test-result', testResult.id, 'view']"
+          class="clickable-row"
+          [routerLink]="['/test-result', testResult.id, 'view']"
+        >
           <td>
             <a [routerLink]="['/test-result', testResult.id, 'view']" data-cy="testResultEntitiesId">{{ testResult.id }}</a>
           </td>
           <td>
-            <span class="badge" [ngClass]="getStatusBadgeClass({ id: 0, name: testResult.status ?? 'UNKNOWN' })" data-cy="testResultEntitiesStatus">{{
-              testResult.status
-            }}</span>
+            <span
+              class="badge"
+              [ngClass]="getStatusBadgeClass({ id: 0, name: testResult.status ?? 'UNKNOWN' })"
+              data-cy="testResultEntitiesStatus"
+              >{{ testResult.status }}</span
+            >
           </td>
           <td data-cy="testResultEntitiesTestName">{{ testResult.testName }}</td>
           <td data-cy="testResultEntitiesClassName">{{ testResult.className }}</td>
           <td data-cy="testResultEntitiesErrorMessage">{{ testResult.errorMessage }}</td>
-          <td data-cy="testResultEntitiesStackTrace"> {{ testResult.stackTrace }}</td>
+          <td data-cy="testResultEntitiesStackTrace">{{ testResult.stackTrace }}</td>
           <td data-cy="testResultEntitiesFailureType">{{ testResult.failureType }}</td>
           <td data-cy="testResultEntitiesCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</td>
           <td data-cy="testResultEntitiesLastModifiedDate">{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
-            <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
-              <a [routerLink]="['/test-parameter']" [queryParams]="{ 'filter[testResultId.in]': testResult.id }" data-cy="testResultEntitiesTestParametersLink">
+            <!-- //NOSONAR -->
+            <div class="btn-group" (click)="$event.stopPropagation()">
+              <a
+                [routerLink]="['/test-parameter']"
+                [queryParams]="{ 'filter[testResultId.in]': testResult.id }"
+                data-cy="testResultEntitiesTestParametersLink"
+              >
                 <button type="button" class="btn btn-info btn-sm">
                   <fa-icon icon="cogs"></fa-icon>
                   <span

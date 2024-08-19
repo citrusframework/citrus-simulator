@@ -29,7 +29,12 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let message of sortedMessages; trackBy: trackId" class='clickable-row' [routerLink]="['/message', message.messageId, 'view']" data-cy="scenarioMessagesEntityRow">
+      <tr
+        *ngFor="let message of sortedMessages; trackBy: trackId"
+        class="clickable-row"
+        [routerLink]="['/message', message.messageId, 'view']"
+        data-cy="scenarioMessagesEntityRow"
+      >
         <td>
           <a [routerLink]="['/message', message.messageId, 'view']" data-cy="scenarioMessagesEntityMessageLink">{{ message.messageId }}</a>
         </td>
@@ -37,8 +42,13 @@
         <td data-cy="scenarioMessagesEntityPayload">{{ message.payload }}</td>
         <td data-cy="scenarioMessagesEntityCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
         <td class="text-end">
-          <!-- //NOSONAR --><div class="btn-group" (click)="$event.stopPropagation()">
-            <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }" data-cy="scenarioMessagesEntityMessageHeaderLink">
+          <!-- //NOSONAR -->
+          <div class="btn-group" (click)="$event.stopPropagation()">
+            <a
+              [routerLink]="['/message-header']"
+              [queryParams]="{ 'filter[messageId.in]': message.messageId }"
+              data-cy="scenarioMessagesEntityMessageHeaderLink"
+            >
               <button type="button" class="btn btn-info btn-sm">
                 <fa-icon icon="heading"></fa-icon>
                 <span
