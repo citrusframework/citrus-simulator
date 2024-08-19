@@ -41,7 +41,7 @@
           }}</a>
         </td>
         <td data-test="scenarioMessagesEntityDirection">{{ message.direction }}</td>
-        <td data-test="scenarioMessagesEntityPayload">{{ message.payload }}</td>
+        <td data-test="scenarioMessagesEntityPayload"><code *ngIf="message.payload" [highlightAuto]="message.payload"></code></td>
         <td data-test="scenarioMessagesEntityCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group" (click)="$event.stopPropagation()">
