@@ -14,31 +14,31 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="global.field.id">ID</span></dt>
         <dd>
-          <span>{{ scenarioParameter.parameterId }}</span>
+          <span data-cy="scenarioParameterDetailsId">{{ scenarioParameter.parameterId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span></dt>
         <dd>
-          <span>{{ scenarioParameter.name }}</span>
+          <span data-cy="scenarioParameterDetailsName">{{ scenarioParameter.name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span></dt>
         <dd>
-          <span>{{ scenarioParameter.controlType }}</span>
+          <span data-cy="scenarioParameterDetailsControlType">{{ scenarioParameter.controlType }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span></dt>
         <dd>
-          <span>{{ scenarioParameter.value }}</span>
+          <span data-cy="scenarioParameterDetailsValue">{{ scenarioParameter.value }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.createdDate">Created Date</span></dt>
         <dd>
-          <span>{{ scenarioParameter.createdDate }}</span>
+          <span data-cy="scenarioParameterDetailsCreatedDate">{{ scenarioParameter.createdDate }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span>{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="scenarioParameterDetailLastModifiedDate">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.scenarioExecution">Scenario Execution</span></dt>
         <dd>
-          <div *ngIf="scenarioParameter.scenarioExecution">
+          <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
             <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
               scenarioParameter.scenarioExecution.scenarioName
             }}</a>

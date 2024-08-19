@@ -12,37 +12,43 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.message.id">ID</span></dt>
         <dd>
-          <span>{{ message.messageId }}</span>
+          <span data-cy="messageDetailId">{{ message.messageId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span></dt>
         <dd>
-          <span>{{ message.direction }}</span>
+          <span data-cy="messageDetailDirection">{{ message.direction }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span></dt>
         <dd>
-          <span>{{ message.payload }}</span>
+          <span data-cy="messageDetailPayload">{{ message.payload }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span></dt>
         <dd>
-          <span>{{ message.citrusMessageId }}</span>
+          <span data-cy="messageDetailCitrusMessageId">{{ message.citrusMessageId }}</span>
         </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.scenarioExecution">Scenario Execution</span></dt>
+        <dt>
+          <span jhiTranslate="citrusSimulatorApp.message.scenarioExecution" data-cy="messageDetailScenarioExecution"
+            >Scenario Execution</span
+          >
+        </dt>
         <dd>
           <div *ngIf="message.scenarioExecutionId">
-            <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']">{{ message.scenarioName }}</a>
+            <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']" data-cy="messageDetailViewExecutionLink">{{
+              message.scenarioName
+            }}</a>
           </div>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span></dt>
         <dd>
-          <span>{{ message.createdDate | formatMediumDatetime }}</span>
+          <span data-cy="messageDetailCreatedDate">{{ message.createdDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span>{{ message.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="messageDetailLastModifiedDate">{{ message.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
       </dl>
 
-      <h3 data-cy="messageDetailsHeading"><span jhiTranslate="citrusSimulatorApp.messageHeader.home.title">Message Headers</span></h3>
+      <h3 data-cy="messageDetailMessageHeaders"><span jhiTranslate="citrusSimulatorApp.messageHeader.home.title">Message Headers</span></h3>
 
       <hr />
 

@@ -12,15 +12,15 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.scenario.name">Name</span></dt>
         <dd>
-          <span>{{ name }}</span>
+          <span data-cy="scenarioDetailsName">{{ name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenario.type">Type</span></dt>
         <dd>
-          <span>{{ type }}</span>
+          <span data-cy="scenarioDetailsType">{{ type }}</span>
         </dd>
       </dl>
 
-      <table class="table table-striped" aria-describedby="page-heading">
+      <table class="table table-striped" aria-describedby="page-heading" data-cy="scenarioDetailsEntitiesTable">
         <thead>
           <tr>
             <th scope="col" jhiSortBy="name">
@@ -42,10 +42,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="entityTable">
-            <td>{{ scenarioParameter.name }}</td>
-            <td>{{ scenarioParameter.controlType }}</td>
-            <td>{{ scenarioParameter.value }}</td>
+          <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="scenarioDetailsEntitiesRow">
+            <td data-cy="scenarioDetailsEntitiesName">{{ scenarioParameter.name }}</td>
+            <td data-cy="scenarioDetailsEntitiesControlType">{{ scenarioParameter.controlType }}</td>
+            <td data-cy="scenarioDetailsEntitiesValue">{{ scenarioParameter.value }}</td>
           </tr>
         </tbody>
       </table>

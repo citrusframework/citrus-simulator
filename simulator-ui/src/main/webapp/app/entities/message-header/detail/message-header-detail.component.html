@@ -14,29 +14,31 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.id">ID</span></dt>
         <dd>
-          <span>{{ messageHeader.headerId }}</span>
+          <span data-cy="messageHeaderDetailsId">{{ messageHeader.headerId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.name">Name</span></dt>
         <dd>
-          <span>{{ messageHeader.name }}</span>
+          <span data-cy="messageHeaderDetailsName">{{ messageHeader.name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.value">Value</span></dt>
         <dd>
-          <span>{{ messageHeader.value }}</span>
+          <span data-cy="messageHeaderDetailsValue">{{ messageHeader.value }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.message">Message</span></dt>
         <dd>
           <div *ngIf="messageHeader.message">
-            <a [routerLink]="['/message', messageHeader.message.messageId, 'view']">{{ messageHeader.message.citrusMessageId }}</a>
+            <a [routerLink]="['/message', messageHeader.message.messageId, 'view']" data-cy="messageHeaderDetailsMessageLink">{{
+              messageHeader.message.citrusMessageId
+            }}</a>
           </div>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.createdDate">Created Date</span></dt>
         <dd>
-          <span>{{ messageHeader.createdDate | formatMediumDatetime }}</span>
+          <span data-cy="messageHeaderDetailsCreatedDate">{{ messageHeader.createdDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.messageHeader.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span>{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="messageHeaderDetailsLastModified">{{ messageHeader.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
       </dl>
 

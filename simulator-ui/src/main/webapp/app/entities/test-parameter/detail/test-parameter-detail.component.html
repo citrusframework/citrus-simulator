@@ -14,23 +14,25 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span></dt>
         <dd>
-          <span>{{ testParameter.key }}</span>
+          <span data-cy="testParameterDetailsKey">{{ testParameter.key }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span></dt>
         <dd>
-          <span>{{ testParameter.value }}</span>
+          <span data-cy="testParameterDetailsValue">{{ testParameter.value }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span></dt>
         <dd>
-          <span>{{ testParameter.createdDate | formatMediumDatetime }}</span>
+          <span data-cy="testParameterDetailsCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span>{{ testParameter.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="testParameterDetailsLastModified">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span></dt>
         <dd>
-          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']">{{ testParameter.testResult.id }}</a>
+          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterDetailsTestResultsId">{{
+            testParameter.testResult.id
+          }}</a>
         </dd>
       </dl>
 
