@@ -1,9 +1,9 @@
 <div>
-  <h2 id="page-heading" data-cy="TestResultHeading">
+  <h2 id="page-heading" data-test="TestResultHeading">
     <span jhiTranslate="citrusSimulatorApp.testResult.home.title">Test Results</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.testResult.home.refreshListLabel">Refresh List</span>
       </button>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="testResults && testResults.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="testResultEntitiesTable">
+    <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="testResultEntitiesTable">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="id">
@@ -84,34 +84,34 @@
       <tbody>
         <tr
           *ngFor="let testResult of testResults; trackBy: trackId"
-          data-cy="testResultEntitiesRow"
+          data-test="testResultEntitiesRow"
           class="clickable-row"
           [routerLink]="['/test-result', testResult.id, 'view']"
         >
           <td>
-            <a [routerLink]="['/test-result', testResult.id, 'view']" data-cy="testResultEntitiesId">{{ testResult.id }}</a>
+            <a [routerLink]="['/test-result', testResult.id, 'view']" data-test="testResultEntitiesId">{{ testResult.id }}</a>
           </td>
           <td>
             <span
               class="badge"
               [ngClass]="getStatusBadgeClass({ id: 0, name: testResult.status ?? 'UNKNOWN' })"
-              data-cy="testResultEntitiesStatus"
+              data-test="testResultEntitiesStatus"
               >{{ testResult.status }}</span
             >
           </td>
-          <td data-cy="testResultEntitiesTestName">{{ testResult.testName }}</td>
-          <td data-cy="testResultEntitiesClassName">{{ testResult.className }}</td>
-          <td data-cy="testResultEntitiesErrorMessage">{{ testResult.errorMessage }}</td>
-          <td data-cy="testResultEntitiesStackTrace">{{ testResult.stackTrace }}</td>
-          <td data-cy="testResultEntitiesFailureType">{{ testResult.failureType }}</td>
-          <td data-cy="testResultEntitiesCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</td>
-          <td data-cy="testResultEntitiesLastModifiedDate">{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
+          <td data-test="testResultEntitiesTestName">{{ testResult.testName }}</td>
+          <td data-test="testResultEntitiesClassName">{{ testResult.className }}</td>
+          <td data-test="testResultEntitiesErrorMessage">{{ testResult.errorMessage }}</td>
+          <td data-test="testResultEntitiesStackTrace">{{ testResult.stackTrace }}</td>
+          <td data-test="testResultEntitiesFailureType">{{ testResult.failureType }}</td>
+          <td data-test="testResultEntitiesCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</td>
+          <td data-test="testResultEntitiesLastModifiedDate">{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
           <td class="text-end">
             <div class="btn-group" (click)="$event.stopPropagation()">
               <a
                 [routerLink]="['/test-parameter']"
                 [queryParams]="{ 'filter[testResultId.in]': testResult.id }"
-                data-cy="testResultEntitiesTestParametersLink"
+                data-test="testResultEntitiesTestParametersLink"
               >
                 <button type="button" class="btn btn-info btn-sm">
                   <fa-icon icon="cogs"></fa-icon>

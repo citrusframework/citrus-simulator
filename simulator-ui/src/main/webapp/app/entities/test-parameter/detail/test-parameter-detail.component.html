@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <div *ngIf="testParameter">
-      <h2 data-cy="testParameterDetailsHeading">
+      <h2 data-test="testParameterDetailsHeading">
         <span jhiTranslate="citrusSimulatorApp.testParameter.detail.title">Test Parameter</span>
       </h2>
 
@@ -14,29 +14,29 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span></dt>
         <dd>
-          <span data-cy="testParameterDetailsKey">{{ testParameter.key }}</span>
+          <span data-test="testParameterDetailsKey">{{ testParameter.key }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span></dt>
         <dd>
-          <span data-cy="testParameterDetailsValue">{{ testParameter.value }}</span>
+          <span data-test="testParameterDetailsValue">{{ testParameter.value }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span></dt>
         <dd>
-          <span data-cy="testParameterDetailsCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</span>
+          <span data-test="testParameterDetailsCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span data-cy="testParameterDetailsLastModified">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-test="testParameterDetailsLastModified">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span></dt>
         <dd>
-          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-cy="testParameterDetailsTestResultsId">{{
+          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-test="testParameterDetailsTestResultsId">{{
             testParameter.testResult.id
           }}</a>
         </dd>
       </dl>
 
-      <button type="button" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>
     </div>

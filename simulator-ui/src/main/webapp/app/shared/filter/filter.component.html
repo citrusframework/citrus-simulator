@@ -4,12 +4,12 @@
   <ul>
     <ng-container *ngFor="let filterOption of filters.filterOptions">
       <li *ngFor="let value of filterOption.values">
-        <span data-cy="filterValue">{{ filterOption.name }}:</span> {{ value }}
+        <span data-test="filterValue">{{ filterOption.name }}:</span> {{ value }}
         <fa-icon
           icon="times"
           (click)="clearFilter(filterOption.name, value)"
           title="{{ 'entity.filters.clear' | translate }}"
-          data-cy="clearFilterButton"
+          data-test="clearFilterButton"
         ></fa-icon>
       </li>
     </ng-container>

@@ -1,4 +1,4 @@
-<nav data-cy="navbar" class="navbar navbar-dark navbar-expand-md bg-primary">
+<nav data-test="navbar" class="navbar navbar-dark navbar-expand-md bg-primary">
   <div class="container-fluid">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
@@ -20,7 +20,7 @@
     <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a class="nav-link" routerLink="/" (click)="collapseNavbar()" data-cy="navigationHomeLink">
+          <a class="nav-link" routerLink="/" (click)="collapseNavbar()" data-test="navigationHomeLink">
             <span>
               <fa-icon icon="home"></fa-icon>
               <span jhiTranslate="global.menu.home">Home</span>
@@ -28,7 +28,7 @@
           </a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/scenario" (click)="collapseNavbar()" data-cy="navigationScenariosLink">
+          <a class="nav-link" routerLink="/scenario" (click)="collapseNavbar()" data-test="navigationScenariosLink">
             <span>
               <fa-icon icon="box-open"></fa-icon>
               <span jhiTranslate="citrusSimulatorApp.scenario.home.title">Scenarios</span>
@@ -36,7 +36,7 @@
           </a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/scenario-result" (click)="collapseNavbar()" data-cy="navigationScenarioExecutionsLink">
+          <a class="nav-link" routerLink="/scenario-result" (click)="collapseNavbar()" data-test="navigationScenarioExecutionsLink">
             <span>
               <fa-icon icon="square-poll-vertical"></fa-icon>
               <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
@@ -56,7 +56,7 @@
             ngbDropdownToggle
             href="javascript:void(0);"
             id="entity-menu"
-            data-cy="navigationEntitiesLink"
+            data-test="navigationEntitiesLink"
           >
             <span>
               <fa-icon icon="th-list"></fa-icon>
@@ -71,7 +71,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesMessageLink"
+                data-test="navigationEntitiesMessageLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.message">Message</span>
@@ -84,7 +84,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesMessageHeaderLink"
+                data-test="navigationEntitiesMessageHeaderLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.messageHeader">Message Header</span>
@@ -97,7 +97,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesScenarioExecutionLink"
+                data-test="navigationEntitiesScenarioExecutionLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.scenarioExecution">Scenario Execution</span>
@@ -110,7 +110,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesScenarioActionLink"
+                data-test="navigationEntitiesScenarioActionLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.scenarioAction">Scenario Action</span>
@@ -123,7 +123,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesScenarioParameterLink"
+                data-test="navigationEntitiesScenarioParameterLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.scenarioParameter">Scenario Parameter</span>
@@ -136,7 +136,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesTestResultLink"
+                data-test="navigationEntitiesTestResultLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.testResult">Test Result</span>
@@ -149,7 +149,7 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
                 (click)="collapseNavbar()"
-                data-cy="navigationEntitiesParameterLink"
+                data-test="navigationEntitiesParameterLink"
               >
                 <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
                 <span jhiTranslate="global.menu.entities.testParameter">Test Parameter</span>
@@ -165,7 +165,7 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="resources-menu" data-cy="entity">
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="resources-menu" data-test="entity">
             <span>
               <fa-icon icon="circle-info"></fa-icon>
               <span jhiTranslate="global.menu.resources.main">Resources</span>
