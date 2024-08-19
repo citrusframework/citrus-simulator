@@ -1,7 +1,7 @@
 import { registerLocaleData } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import locale from '@angular/common/locales/en';
-import { NgModule, LOCALE_ID } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TitleStrategy } from '@angular/router';
@@ -12,6 +12,9 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import dayjs from 'dayjs/esm';
+import './config/dayjs';
+
+import { HIGHLIGHT_OPTIONS, provideHighlightOptions } from 'ngx-highlightjs';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { httpInterceptorProviders } from 'app/core/interceptor';
@@ -19,7 +22,6 @@ import { TranslationModule } from 'app/shared/language/translation.module';
 
 import { AppPageTitleStrategy } from './app-page-title-strategy';
 import { AppRoutingModule } from './app-routing.module';
-import './config/dayjs';
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { fontAwesomeIcons } from './config/font-awesome-icons';
 import MainComponent from './layouts/main/main.component';
@@ -35,16 +37,19 @@ import MainModule from './layouts/main/main.module';
     AppRoutingModule,
     // Set this to true to enable service worker (PWA)
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
-    HttpClientModule,
     MainModule,
     TranslationModule,
   ],
   providers: [
+    provideHttpClient(),
     Title,
     { provide: LOCALE_ID, useValue: 'en' },
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
+    provideHighlightOptions({
+      fullLibraryLoader: () => import('highlight.js'),
+    }),
   ],
   bootstrap: [MainComponent],
 })

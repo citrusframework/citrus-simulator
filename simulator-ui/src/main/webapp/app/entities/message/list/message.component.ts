@@ -5,6 +5,8 @@ import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/r
 
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
+import { HighlightAuto } from 'ngx-highlightjs';
+
 import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
@@ -35,6 +37,7 @@ import { navigateToWithPagingInformation } from '../../navigation-util';
     FormatMediumDatePipe,
     FilterComponent,
     ItemCountComponent,
+    HighlightAuto,
   ],
 })
 export class MessageComponent implements OnInit {

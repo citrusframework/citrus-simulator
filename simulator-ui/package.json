@@ -56,7 +56,9 @@
     "bootswatch": "5.3.3",
     "dayjs": "1.11.12",
     "mdb-angular-ui-kit": "^6.1.0",
+    "ngx-highlightjs": "^12.0.0",
     "ngx-infinite-scroll": "18.0.0",
+    "prettier": "^3.3.3",
     "rxjs": "7.8.1",
     "tslib": "2.6.3",
     "zone.js": "~0.14.10"
@@ -90,7 +92,6 @@
     "jest-preset-angular": "14.2.2",
     "jest-sonar": "0.2.16",
     "merge-jsons-webpack-plugin": "2.0.1",
-    "prettier": "3.3.3",
     "prettier-plugin-packagejson": "2.5.1",
     "rimraf": "6.0.1",
     "swagger-ui-dist": "5.17.14",

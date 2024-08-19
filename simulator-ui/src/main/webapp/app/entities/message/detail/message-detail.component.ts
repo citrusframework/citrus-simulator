@@ -1,16 +1,19 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
+import { HighlightAuto } from 'ngx-highlightjs';
+
+import { IMessage } from 'app/entities/message/message.model';
+import MessageHeaderTableComponent from 'app/entities/message-header/list/message-header-table.component';
+
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
-
-import { IMessage } from '../message.model';
-import MessageHeaderTableComponent from '../../message-header/list/message-header-table.component';
 
 @Component({
   standalone: true,
   selector: 'app-message-detail',
   templateUrl: './message-detail.component.html',
+  styleUrls: ['./message-detail.component.scss'],
   imports: [
     SharedModule,
     RouterModule,
@@ -18,7 +21,7 @@ import MessageHeaderTableComponent from '../../message-header/list/message-heade
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
     MessageHeaderTableComponent,
-    MessageHeaderTableComponent,
+    HighlightAuto,
   ],
 })
 export class MessageDetailComponent {
