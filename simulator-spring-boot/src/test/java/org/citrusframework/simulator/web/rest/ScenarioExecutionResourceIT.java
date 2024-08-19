@@ -16,7 +16,9 @@
 
 package org.citrusframework.simulator.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.Message;
 import org.citrusframework.simulator.model.ScenarioAction;
@@ -25,7 +27,11 @@ import org.citrusframework.simulator.model.ScenarioExecution.ScenarioExecutionBu
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
+import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+import org.citrusframework.simulator.scenario.Scenario;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,11 +40,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
+import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
 import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -519,5 +532,94 @@ public class ScenarioExecutionResourceIT {
     void getNonExistingScenarioExecution() throws Exception {
         // Get the scenarioExecution
         mockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+    }
+
+    @Nested
+    class CorrectTimeOnScenarioExecution {
+        public static final TemporalUnitLessThanOffset LESS_THAN_5_SECONDS = new TemporalUnitLessThanOffset(5, SECONDS);
+
+        @Autowired
+        private ObjectMapper objectMapper;
+
+        @Autowired
+        private MockMvc mockMvc;
+
+        @Test
+        void shouldInvokeScenario() throws Exception {
+            String mockEndpointResult = mockMvc
+                .perform(get("/services/rest/api/v1/ZmNrqCkoGQ"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+            assertThat(mockEndpointResult).contains("E5a084sOZw7");
+
+            String scenarioExecutionsResult = mockMvc
+                .perform(get("/api/scenario-executions"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+            List<ScenarioExecution> scenarioExecutions = objectMapper.readValue(scenarioExecutionsResult, ScenarioExecutions.class);
+
+            assertThat(scenarioExecutions)
+                .hasSize(1)
+                .anySatisfy(execution -> {
+                    assertThat(execution.startDate()).isCloseTo(now(), LESS_THAN_5_SECONDS);
+                    assertThat(execution.endDate()).isCloseTo(now(), LESS_THAN_5_SECONDS);
+                    assertThat(execution.scenarioActions()).allSatisfy(action -> {
+                        assertThat(action.startDate()).isCloseTo(now(), LESS_THAN_5_SECONDS);
+                        assertThat(action.endDate()).isCloseTo(now(), LESS_THAN_5_SECONDS);
+                    });
+                    assertThat(execution.scenarioMessages()).anySatisfy(action -> {
+                        assertThat(action.createdDate()).isCloseTo(now(), LESS_THAN_5_SECONDS);
+                    });
+                });
+        }
+
+        @Scenario("DEFAULT_SCENARIO")
+        public static class HelloScenario extends AbstractSimulatorScenario {
+            @Override
+            public void run(ScenarioRunner scenario) {
+                scenario.$(scenario.http()
+                    .receive()
+                    .get()
+                    .path("/services/rest/api/v1/ZmNrqCkoGQ"));
+
+                scenario.$(scenario.http()
+                    .send()
+                    .response(OK)
+                    .message()
+                    .body("E5a084sOZw7"));
+            }
+        }
+
+
+        public static class ScenarioExecutions extends ArrayList<ScenarioExecution> {
+        }
+
+        public record ScenarioExecution(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            List<ScenarioActions> scenarioActions,
+            List<ScenarioMessages> scenarioMessages
+        ) {
+
+        }
+
+        public record ScenarioActions(
+            LocalDateTime startDate,
+            LocalDateTime endDate
+        ) {
+
+        }
+
+        public record ScenarioMessages(
+            LocalDateTime createdDate
+        ) {
+
+        }
     }
 }

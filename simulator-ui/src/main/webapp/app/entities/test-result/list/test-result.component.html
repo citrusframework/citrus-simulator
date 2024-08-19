@@ -82,7 +82,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let testResult of testResults; trackBy: trackId" data-cy="testResultEntitiesRow" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']">
+        <tr *ngFor="let testResult of testResults; trackBy: trackId" data-cy="testResultEntitiesRow" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']" class='clickable-row' [routerLink]="['/test-result', testResult.id, 'view']">
           <td>
             <a [routerLink]="['/test-result', testResult.id, 'view']" data-cy="testResultEntitiesId">{{ testResult.id }}</a>
           </td>
