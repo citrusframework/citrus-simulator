@@ -23,7 +23,6 @@ import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.spi.CitrusResourceWrapper;
@@ -51,6 +50,9 @@ import javax.wsdl.factory.WSDLFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil.createSampleForType;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 
 /**
  * @author Christoph Deppisch
@@ -127,13 +129,13 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                     case SOAP_ACTION -> soapAction;
                 };
 
-                if (beanFactory instanceof BeanDefinitionRegistry) {
-                    logger.info("Register auto generated scenario as bean definition: " + scenarioName);
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(WsdlOperationScenario.class)
+                if (beanFactory instanceof BeanDefinitionRegistry beanDefinitionRegistry) {
+                    logger.info("Register auto generated scenario as bean definition: {}", scenarioName);
+                    BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(WsdlOperationScenario.class)
                         .addConstructorArgValue(operation)
                         .addPropertyValue("soapAction", soapAction)
-                        .addPropertyValue("input", generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)))
-                        .addPropertyValue("output", generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
+                        .addPropertyValue("input", generateRequest(operation, createSampleForType(requestElem)))
+                        .addPropertyValue("output", generateResponse(operation, createSampleForType(responseElem)));
 
                     if (beanFactory.containsBeanDefinition("inboundXmlDataDictionary")) {
                         beanDefinitionBuilder.addPropertyReference("inboundDataDictionary", "inboundXmlDataDictionary");
@@ -143,10 +145,10 @@ public class WsdlScenarioGenerator implements BeanFactoryPostProcessor {
                         beanDefinitionBuilder.addPropertyReference("outboundDataDictionary", "outboundXmlDataDictionary");
                     }
 
-                    ((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(scenarioName, beanDefinitionBuilder.getBeanDefinition());
+                    beanDefinitionRegistry.registerBeanDefinition(scenarioName, beanDefinitionBuilder.getBeanDefinition());
                 } else {
-                    logger.info("Register auto generated scenario as singleton: " + scenarioName);
-                    WsdlOperationScenario scenario = createScenario(operation, soapAction, generateRequest(operation, SampleXmlUtil.createSampleForType(requestElem)), generateResponse(operation, SampleXmlUtil.createSampleForType(responseElem)));
+                    logger.info("Register auto generated scenario as singleton: {}", scenarioName);
+                    WsdlOperationScenario scenario = createScenario(operation, soapAction, generateRequest(operation, createSampleForType(requestElem)), generateResponse(operation, createSampleForType(responseElem)));
                     beanFactory.registerSingleton(scenarioName, scenario);
                 }
             }
