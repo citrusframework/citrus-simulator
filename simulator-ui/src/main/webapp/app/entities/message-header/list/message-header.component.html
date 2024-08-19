@@ -1,9 +1,9 @@
 <div>
-  <h2 id="page-heading" data-cy="MessageHeaderHeading">
+  <h2 id="page-heading" data-test="MessageHeaderHeading">
     <span jhiTranslate="citrusSimulatorApp.messageHeader.home.title">Message Headers</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.messageHeader.home.refreshListLabel">Refresh List</span>
       </button>

@@ -1,5 +1,5 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedParameters && sortedParameters.length > 0; else noParameters">
-  <table class="table table-striped table-hover" data-cy="scenarioParametersEntityTable" aria-describedby="page-heading">
+  <table class="table table-striped table-hover" data-test="scenarioParametersEntityTable" aria-describedby="page-heading">
     <thead>
       <th scope="col" jhiSortBy="parameterId">
         <div class="d-flex">
@@ -31,18 +31,18 @@
         *ngFor="let scenarioParameter of sortedParameters; trackBy: trackId"
         class="clickable-row"
         [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
-        data-cy="scenarioParametersEntityRow"
+        data-test="scenarioParametersEntityRow"
       >
         <td>
           <a
             [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']"
-            data-cy="scenarioParametersEntityScenarioParameterLink"
+            data-test="scenarioParametersEntityScenarioParameterLink"
             >{{ scenarioParameter.parameterId }}</a
           >
         </td>
-        <td data-cy="scenarioParametersEntityName">{{ scenarioParameter.name }}</td>
-        <td data-cy="scenarioParametersEntityControlType">{{ scenarioParameter.controlType }}</td>
-        <td data-cy="scenarioParametersEntityValue">{{ scenarioParameter.value }}</td>
+        <td data-test="scenarioParametersEntityName">{{ scenarioParameter.name }}</td>
+        <td data-test="scenarioParametersEntityControlType">{{ scenarioParameter.controlType }}</td>
+        <td data-test="scenarioParametersEntityValue">{{ scenarioParameter.value }}</td>
       </tr>
     </tbody>
   </table>

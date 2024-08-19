@@ -1,5 +1,5 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedMessages && sortedMessages.length > 0; else noMessages">
-  <table class="table table-striped table-hover" data-cy="scenarioMessagesEntityTable" aria-describedby="page-heading">
+  <table class="table table-striped table-hover" data-test="scenarioMessagesEntityTable" aria-describedby="page-heading">
     <thead>
       <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortMessages()">
         <th scope="col" jhiSortBy="messageId">
@@ -33,20 +33,22 @@
         *ngFor="let message of sortedMessages; trackBy: trackId"
         class="clickable-row"
         [routerLink]="['/message', message.messageId, 'view']"
-        data-cy="scenarioMessagesEntityRow"
+        data-test="scenarioMessagesEntityRow"
       >
         <td>
-          <a [routerLink]="['/message', message.messageId, 'view']" data-cy="scenarioMessagesEntityMessageLink">{{ message.messageId }}</a>
+          <a [routerLink]="['/message', message.messageId, 'view']" data-test="scenarioMessagesEntityMessageLink">{{
+            message.messageId
+          }}</a>
         </td>
-        <td data-cy="scenarioMessagesEntityDirection">{{ message.direction }}</td>
-        <td data-cy="scenarioMessagesEntityPayload">{{ message.payload }}</td>
-        <td data-cy="scenarioMessagesEntityCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
+        <td data-test="scenarioMessagesEntityDirection">{{ message.direction }}</td>
+        <td data-test="scenarioMessagesEntityPayload">{{ message.payload }}</td>
+        <td data-test="scenarioMessagesEntityCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group" (click)="$event.stopPropagation()">
             <a
               [routerLink]="['/message-header']"
               [queryParams]="{ 'filter[messageId.in]': message.messageId }"
-              data-cy="scenarioMessagesEntityMessageHeaderLink"
+              data-test="scenarioMessagesEntityMessageHeaderLink"
             >
               <button type="button" class="btn btn-info btn-sm">
                 <fa-icon icon="heading"></fa-icon>

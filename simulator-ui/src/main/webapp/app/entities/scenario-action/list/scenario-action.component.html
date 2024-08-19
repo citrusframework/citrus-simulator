@@ -1,9 +1,9 @@
 <div>
-  <h2 id="page-heading" data-cy="ScenarioActionHeading">
+  <h2 id="page-heading" data-test="ScenarioActionHeading">
     <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.title">Scenario Actions</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.refreshListLabel">Refresh List</span>
       </button>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarioActions && scenarioActions.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="scenarioActionEntitiesTable">
+    <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="scenarioActionEntitiesTable">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="actionId">
@@ -59,23 +59,23 @@
       <tbody>
         <tr
           *ngFor="let scenarioAction of scenarioActions; trackBy: trackId"
-          data-cy="scenarioActionEntitiesRow"
+          data-test="scenarioActionEntitiesRow"
           class="clickable-row"
           [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']"
         >
           <td>
-            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesId">{{
+            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-test="scenarioActionEntitiesId">{{
               scenarioAction.actionId
             }}</a>
           </td>
-          <td data-cy="scenarioActionEntitiesName">{{ scenarioAction.name }}</td>
-          <td data-cy="scenarioActionEntitiesStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
-          <td data-cy="scenarioActionEntitiesEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+          <td data-test="scenarioActionEntitiesName">{{ scenarioAction.name }}</td>
+          <td data-test="scenarioActionEntitiesStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+          <td data-test="scenarioActionEntitiesEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
           <td>
             <div *ngIf="scenarioAction.scenarioExecution" (click)="$event.stopPropagation()">
               <a
                 [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
-                data-cy="scenarioActionEntitiesScenarioExecutionLink"
+                data-test="scenarioActionEntitiesScenarioExecutionLink"
                 >{{ scenarioAction.scenarioExecution.scenarioName }}</a
               >
             </div>

@@ -9,7 +9,7 @@
               type="text"
               class="form-control"
               id="name"
-              data-cy="scenarioExecutionFilterInput"
+              data-test="scenarioExecutionFilterInput"
               formControlName="nameContains"
             />
             <label
@@ -30,7 +30,7 @@
               mdbInput
               class="form-control form-select"
               id="statusIn"
-              data-cy="scenarioExecutionStatusInSelect"
+              data-test="scenarioExecutionStatusInSelect"
               formControlName="statusIn"
             >
               <option value="" jhiTranslate="citrusSimulatorApp.testResult.statusAll">All</option>
@@ -59,7 +59,7 @@
               step="1"
               class="form-control"
               id="fromDate"
-              data-cy="scenarioExecutionFromDateInput"
+              data-test="scenarioExecutionFromDateInput"
               formControlName="fromDate"
             />
             <label
@@ -81,7 +81,7 @@
               step="1"
               class="form-control"
               id="toDate"
-              data-cy="scenarioExecutionToDateInput"
+              data-test="scenarioExecutionToDateInput"
               formControlName="toDate"
             />
             <label
@@ -105,7 +105,7 @@
               class="form-control"
               id="headerFilter"
               formControlName="headerFilter"
-              data-cy="scenarioExecutionHeaderFilterInput"
+              data-test="scenarioExecutionHeaderFilterInput"
               [class.is-invalid]="filterForm.get('headerFilter')?.invalid"
             />
             <label
@@ -127,10 +127,10 @@
           </mdb-form-control>
         </div>
         <div class="form-group col-auto d-md-flex justify-content-md-end">
-          <button type="button" class="btn btn-secondary me-3" data-cy="scenarioExecutionOpenHelpButton" (click)="openHelpModal()">
+          <button type="button" class="btn btn-secondary me-3" data-test="scenarioExecutionOpenHelpButton" (click)="openHelpModal()">
             <fa-icon icon="circle-info"></fa-icon>
           </button>
-          <button type="button" class="btn btn-info" data-cy="scenarioExecutionOpenFilterButton" (click)="openHeaderFilterModal()">
+          <button type="button" class="btn btn-info" data-test="scenarioExecutionOpenFilterButton" (click)="openHeaderFilterModal()">
             <fa-icon icon="window-maximize"></fa-icon>
             &nbsp;
             <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.open">Open Dialog</span>
