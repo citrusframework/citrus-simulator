@@ -63,6 +63,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let scenarioExecution of scenarioExecutions; trackBy: trackId" data-cy="scenarioExecutionEntityRow"
+            class='clickable-row' [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']"
             class='clickable-row' [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']">
           <td>
             <a [routerLink]="['/scenario-execution', scenarioExecution.executionId, 'view']" data-cy="scenarioExecutionEntityScenarioExecutionLink">{{ scenarioExecution.executionId }}</a>

@@ -70,7 +70,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let message of messages; trackBy: trackId" class='clickable-row' [routerLink]="['/message', message.messageId, 'view']" data-cy="messageEntityRow">
+        <tr *ngFor="let message of messages; trackBy: trackId" class='clickable-row' [routerLink]="['/message', message.messageId, 'view']" data-cy="messageEntityRow" class='clickable-row' [routerLink]="['/message', message.messageId, 'view']">
           <td>
             <a [routerLink]="['/message', message.messageId, 'view']" data-cy="messageEntityMessageId">{{ message.messageId }}</a>
           </td>

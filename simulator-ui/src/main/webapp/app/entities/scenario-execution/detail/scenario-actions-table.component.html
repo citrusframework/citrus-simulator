@@ -29,7 +29,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let scenarioAction of sortedActions; trackBy: trackId" data-cy="scenarioActionsEntityRow" class='clickable-row'  [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
+      <tr *ngFor="let scenarioAction of sortedActions; trackBy: trackId" data-cy="scenarioActionsEntityRow" class='clickable-row'  [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" class='clickable-row'  [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
         <td>
           <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionsEntityScenarioActionLink">{{ scenarioAction.actionId }}</a>
         </td>

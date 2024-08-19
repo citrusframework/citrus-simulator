@@ -18,6 +18,7 @@ package org.citrusframework.simulator.service.impl;
 
 import jakarta.annotation.Nullable;
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.common.TimeProvider;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.model.TestResult;

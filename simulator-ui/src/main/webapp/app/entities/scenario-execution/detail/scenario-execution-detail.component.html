@@ -38,7 +38,7 @@
         </dd>
       </dl>
 
-      <div ngbAccordion class="mb-3">
+      <div *ngIf="scenarioExecution.testResult?.stackTrace" ngbAccordion class="mb-3">
         <div ngbAccordionItem>
           <h2 ngbAccordionHeader>
             <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Stacktrace</button>

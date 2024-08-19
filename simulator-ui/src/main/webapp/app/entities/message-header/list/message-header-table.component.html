@@ -41,7 +41,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let messageHeader of sortedMessageHeaders; trackBy: trackId" class='clickable-row' [routerLink]="['/message-header', messageHeader.headerId, 'view']" data-cy="messageHeaderEntityRow">
+      <tr *ngFor="let messageHeader of sortedMessageHeaders; trackBy: trackId" class='clickable-row' [routerLink]="['/message-header', messageHeader.headerId, 'view']" data-cy="messageHeaderEntityRow" class='clickable-row' [routerLink]="['/message-header', messageHeader.headerId, 'view']">
         <td>
           <a [routerLink]="['/message-header', messageHeader.headerId, 'view']" data-cy="messageHeaderEntityId">{{ messageHeader.headerId }}</a>
         </td>

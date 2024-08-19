@@ -69,7 +69,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="scenarioParameterEntityRow" class='clickable-row' [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">
+        <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="scenarioParameterEntityRow" class='clickable-row' [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" class='clickable-row' [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']">
           <td>
             <a [routerLink]="['/scenario-parameter', scenarioParameter.parameterId, 'view']" data-cy="scenarioParameterEntityId">{{ scenarioParameter.parameterId }}</a>
           </td>
