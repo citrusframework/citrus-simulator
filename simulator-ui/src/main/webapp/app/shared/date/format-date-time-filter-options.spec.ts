@@ -1,6 +1,12 @@
+import dayjs from 'dayjs/esm';
+
 import { FilterOptions, IFilterOptions } from '../filter';
 
 import { formatDateTimeFilterOptions } from './format-date-time-filter-options';
+
+function mockDayJsUtc(date: Date): void {
+  dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(date));
+}
 
 describe('formatDateTimeFilterOptions', () => {
   const expectFilterOptionsToContain = (formattedOptions: IFilterOptions, name: string, values: string[]): void => {
@@ -12,6 +18,8 @@ describe('formatDateTimeFilterOptions', () => {
     const initialOptions = new FilterOptions();
     const date = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date.toISOString());
+
+    mockDayJsUtc(date);
 
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
@@ -35,6 +43,8 @@ describe('formatDateTimeFilterOptions', () => {
     const date2 = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date1.toISOString(), date2.toISOString());
 
+    dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(date1)).mockReturnValueOnce(dayjs(date2));
+
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
     expectFilterOptionsToContain(formattedOptions, 'dateFilter', ['2023-11-15 00:00:00', '2023-11-16 00:00:00']);
@@ -53,6 +63,8 @@ describe('formatDateTimeFilterOptions', () => {
     const initialOptions = new FilterOptions();
     const date = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date.toISOString(), 'invalidDate');
+
+    mockDayJsUtc(date);
 
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
