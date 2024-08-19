@@ -12,39 +12,39 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="global.field.id">ID</span></dt>
         <dd>
-          <span>{{ testResult.id }}</span>
+          <span data-cy="testResultDetailsId">{{ testResult.id }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
         <dd>
-          <span>{{ testResult.status }}</span>
+          <span data-cy="testResultDetailsStatus">{{ testResult.status }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span></dt>
         <dd>
-          <span>{{ testResult.testName }}</span>
+          <span data-cy="testResultDetailsTestName">{{ testResult.testName }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span></dt>
         <dd>
-          <span>{{ testResult.className }}</span>
+          <span data-cy="testResultDetailsClassName">{{ testResult.className }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
         <dd>
-          <span>{{ testResult.errorMessage }}</span>
+          <span data-cy="testResultDetailsErrorMessage">{{ testResult.errorMessage }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span></dt>
         <dd>
-          <span>{{ testResult.stackTrace }}</span>
+          <span data-cy="testResultDetailsStackTrace">{{ testResult.stackTrace }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span></dt>
         <dd>
-          <span>{{ testResult.failureType }}</span>
+          <span data-cy="testResultDetailsFailureType">{{ testResult.failureType }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span></dt>
         <dd>
-          <span>{{ testResult.createdDate | formatMediumDatetime }}</span>
+          <span data-cy="testResultDetailsCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span></dt>
         <dd>
-          <span>{{ testResult.lastModifiedDate | formatMediumDatetime }}</span>
+          <span data-cy="testResultDetailsLastModified">{{ testResult.lastModifiedDate | formatMediumDatetime }}</span>
         </dd>
       </dl>
 

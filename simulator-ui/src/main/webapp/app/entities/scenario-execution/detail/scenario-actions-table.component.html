@@ -1,5 +1,5 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedActions && sortedActions.length > 0; else noParameters">
-  <table class="table table-striped table-hover" aria-describedby="page-heading">
+  <table class="table table-striped table-hover" data-cy="scenarioActionsEntityTable" aria-describedby="page-heading">
     <thead>
       <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortActions()">
         <th scope="col" jhiSortBy="actionId">
@@ -29,13 +29,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let scenarioAction of sortedActions; trackBy: trackId" data-cy="entityTable" class='clickable-row'  [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
+      <tr *ngFor="let scenarioAction of sortedActions; trackBy: trackId" data-cy="scenarioActionsEntityRow" class='clickable-row'  [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
         <td>
-          <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">{{ scenarioAction.actionId }}</a>
+          <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionsEntityScenarioActionLink">{{ scenarioAction.actionId }}</a>
         </td>
-        <td>{{ scenarioAction.name }}</td>
-        <td>{{ scenarioAction.startDate | formatMediumDatetime }}</td>
-        <td>{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+        <td data-cy="scenarioActionsEntityName">{{ scenarioAction.name }}</td>
+        <td data-cy="scenarioActionsEntityStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+        <td data-cy="scenarioActionsEntityEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
       </tr>
     </tbody>
   </table>

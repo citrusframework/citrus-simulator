@@ -3,7 +3,7 @@
     <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.title">Scenario Actions</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-cy="refreshListButton">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.refreshListLabel">Refresh List</span>
       </button>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarioActions && scenarioActions.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading">
+    <table class="table table-striped table-hover" aria-describedby="page-heading" data-cy="scenarioActionEntitiesTable">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="actionId">
@@ -57,16 +57,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let scenarioAction of scenarioActions; trackBy: trackId" class='clickable-row'  data-cy="entityTable" [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">
+        <tr *ngFor="let scenarioAction of scenarioActions; trackBy: trackId" class='clickable-row' [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesRow">
           <td>
-            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">{{ scenarioAction.actionId }}</a>
+            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-cy="scenarioActionEntitiesId">{{ scenarioAction.actionId }}</a>
           </td>
-          <td>{{ scenarioAction.name }}</td>
-          <td>{{ scenarioAction.startDate | formatMediumDatetime }}</td>
-          <td>{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+          <td data-cy="scenarioActionEntitiesName">{{ scenarioAction.name }}</td>
+          <td data-cy="scenarioActionEntitiesStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+          <td data-cy="scenarioActionEntitiesEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
           <td>
-            <div *ngIf="scenarioAction.scenarioExecution">
-              <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']">{{
+            <!-- //NOSONAR --><div *ngIf="scenarioAction.scenarioExecution" (click)="$event.stopPropagation()">
+              <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']" data-cy="scenarioActionEntitiesScenarioExecutionLink">{{
                 scenarioAction.scenarioExecution.scenarioName
               }}</a>
             </div>

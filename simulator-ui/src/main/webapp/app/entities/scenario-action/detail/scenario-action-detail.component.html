@@ -14,24 +14,24 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="global.field.id">ID</span></dt>
         <dd>
-          <span>{{ scenarioAction.actionId }}</span>
+          <span data-cy="scenarioActionDetailsId">{{ scenarioAction.actionId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span></dt>
         <dd>
-          <span>{{ scenarioAction.name }}</span>
+          <span  data-cy="scenarioActionDetailName">{{ scenarioAction.name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span></dt>
         <dd>
-          <span>{{ scenarioAction.startDate | formatMediumDatetime }}</span>
+          <span  data-cy="scenarioActionDetailsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span></dt>
         <dd>
-          <span>{{ scenarioAction.endDate | formatMediumDatetime }}</span>
+          <span  data-cy="scenarioActionDetailsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span></dt>
         <dd>
           <div *ngIf="scenarioAction.scenarioExecution">
-            <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']">{{
+            <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"  data-cy="scenarioActionDetailsScenarioExecutionsLink">{{
               scenarioAction.scenarioExecution.scenarioName
             }}</a>
           </div>
