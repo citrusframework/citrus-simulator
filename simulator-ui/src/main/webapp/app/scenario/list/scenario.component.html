@@ -11,7 +11,7 @@
             <label for="name" class="form-label mt-4" jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName"
               >Scenario Name:</label
             >
-            <input type="text" class="form-control" id="name" placeholder="Filter by name..." formControlName="nameContains" />
+            <input data-testid="home/ScenarioNameFilterInput" type="text" class="form-control" id="name" placeholder="Filter by name..." formControlName="nameContains" />
           </div>
 
           <div class="form-group col-md-3 me-md-auto">
@@ -20,6 +20,7 @@
 
           <div class="btn-group form-group col-md-2 mt-sm-3">
             <button
+              data-testid="scenario/clearFilterButton"
               [disabled]="filterForm.pristine"
               type="button"
               class="btn btn-secondary"
