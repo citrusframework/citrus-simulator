@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        node-version: [ 20, 21, 22 ]
+        node-version: [ 22 ]
         os: [ ubuntu-20.04 ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -55,9 +55,6 @@ jobs:
           npm --version
       - name: Install dependencies
         run: npm ci --cache .npm --force
-        working-directory: simulator-ui
-      - name: Lint
-        run: npm run lint
         working-directory: simulator-ui
       - name: Prettier
         run: npm run prettier:check

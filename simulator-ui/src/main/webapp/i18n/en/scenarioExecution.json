@@ -43,12 +43,12 @@
       "id": "ID",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "scenarioName": "Scenario Name",
+      "scenarioName": "Name",
       "errorMessage": "Error Message",
       "testResult": "Test Result",
-      "scenarioActions": "Scenario Actions",
-      "scenarioMessages": "Scenario Messages",
-      "scenarioParameters": "Scenario Parameters"
+      "scenarioActions": "Actions",
+      "scenarioMessages": "Messages",
+      "scenarioParameters": "Parameters"
     }
   }
 }

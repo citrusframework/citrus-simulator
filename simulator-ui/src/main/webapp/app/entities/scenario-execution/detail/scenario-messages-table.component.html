@@ -1,5 +1,5 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedMessages && sortedMessages.length > 0; else noMessages">
-  <table class="table table-striped" aria-describedby="page-heading">
+  <table class="table table-striped table-hover" data-test="scenarioMessagesEntityTable" aria-describedby="page-heading">
     <thead>
       <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortMessages()">
         <th scope="col" jhiSortBy="messageId">
@@ -26,34 +26,38 @@
             <fa-icon class="p-1" icon="sort"></fa-icon>
           </div>
         </th>
-        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let message of sortedMessages; trackBy: trackId">
+      <tr
+        *ngFor="let message of sortedMessages; trackBy: trackId"
+        class="clickable-row"
+        [routerLink]="['/message', message.messageId, 'view']"
+        data-test="scenarioMessagesEntityRow"
+      >
         <td>
-          <a [routerLink]="['/message', message.messageId, 'view']">{{ message.messageId }}</a>
+          <a [routerLink]="['/message', message.messageId, 'view']" data-test="scenarioMessagesEntityMessageLink">{{
+            message.messageId
+          }}</a>
         </td>
-        <td data-testid="scenarioExecutionFilter/messagesDirection">{{ message.direction }}</td>
-        <td data-testid="scenarioExecutionFilter/messagesPayload">{{ message.payload }}</td>
-        <td data-testid="scenarioExecutionFilter/messagesCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
+        <td data-test="scenarioMessagesEntityDirection">{{ message.direction }}</td>
+        <td data-test="scenarioMessagesEntityPayload">{{ message.payload }}</td>
+        <td data-test="scenarioMessagesEntityCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
         <td class="text-end">
-          <div class="btn-group">
-            <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }">
+          <div class="btn-group" (click)="$event.stopPropagation()">
+            <a
+              [routerLink]="['/message-header']"
+              [queryParams]="{ 'filter[messageId.in]': message.messageId }"
+              data-test="scenarioMessagesEntityMessageHeaderLink"
+            >
               <button type="button" class="btn btn-info btn-sm">
                 <fa-icon icon="heading"></fa-icon>
                 <span
                   class="d-none d-md-inline"
                   jhiTranslate="entity.action.show"
                   [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
-                  >Show Message Header</span
+                  >Message Header</span
                 >
-              </button>
-            </a>
-            <a [routerLink]="['/message', message.messageId, 'view']">
-              <button type="button" class="btn btn-info btn-sm">
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
               </button>
             </a>
           </div>

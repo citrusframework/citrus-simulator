@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
     <div *ngIf="name && type">
-      <h2 data-cy="scenarioDetailsHeading"><span jhiTranslate="citrusSimulatorApp.scenario.detail.title">Scenario</span></h2>
+      <h2 data-test="scenarioDetailsHeading"><span jhiTranslate="citrusSimulatorApp.scenario.detail.title">Scenario</span></h2>
 
       <hr />
 
@@ -12,15 +12,15 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.scenario.name">Name</span></dt>
         <dd>
-          <span>{{ name }}</span>
+          <span data-test="scenarioDetailsName">{{ name }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenario.type">Type</span></dt>
         <dd>
-          <span>{{ type }}</span>
+          <span data-test="scenarioDetailsType">{{ type }}</span>
         </dd>
       </dl>
 
-      <table class="table table-striped" aria-describedby="page-heading">
+      <table class="table table-striped" aria-describedby="page-heading" data-test="scenarioDetailsEntitiesTable">
         <thead>
           <tr>
             <th scope="col" jhiSortBy="name">
@@ -42,15 +42,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-cy="entityTable">
-            <td>{{ scenarioParameter.name }}</td>
-            <td>{{ scenarioParameter.controlType }}</td>
-            <td>{{ scenarioParameter.value }}</td>
+          <tr *ngFor="let scenarioParameter of scenarioParameters; trackBy: trackId" data-test="scenarioDetailsEntitiesRow">
+            <td data-test="scenarioDetailsEntitiesName">{{ scenarioParameter.name }}</td>
+            <td data-test="scenarioDetailsEntitiesControlType">{{ scenarioParameter.controlType }}</td>
+            <td data-test="scenarioDetailsEntitiesValue">{{ scenarioParameter.value }}</td>
           </tr>
         </tbody>
       </table>
 
-      <button type="button" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>
     </div>

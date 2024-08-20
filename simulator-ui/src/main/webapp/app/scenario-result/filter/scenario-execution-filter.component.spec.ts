@@ -8,6 +8,8 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { TranslateModule } from '@ngx-translate/core';
 
+import dayjs from 'dayjs/esm';
+
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
 
 import { STATUS_SUCCESS } from 'app/entities/test-result/test-result.model';
@@ -86,6 +88,8 @@ describe('ScenarioExecution Filter Component', () => {
         }),
       );
 
+      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(queryParamStartDate)).mockReturnValueOnce(dayjs(queryParamEndDate));
+
       component.ngOnInit();
 
       expect(component.filterForm.getRawValue()).toEqual({
@@ -141,6 +145,8 @@ describe('ScenarioExecution Filter Component', () => {
         headerFilter,
       });
 
+      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
+
       tick(DEBOUNCE_TIME_MILLIS);
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -185,6 +191,8 @@ describe('ScenarioExecution Filter Component', () => {
         statusIn: STATUS_SUCCESS.name,
         headerFilter,
       });
+
+      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
 
       // @ts-ignore: Access protected function for testing
       component.applyFilter();

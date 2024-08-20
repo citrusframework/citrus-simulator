@@ -1,5 +1,5 @@
 <div>
-  <h2 id="page-heading" data-cy="ScenarioExecutionHeading" class="mb-3">
+  <h2 id="page-heading" data-test="ScenarioExecutionHeading" class="mb-3">
     <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
 
     <div *ngIf="scenarioExecutionComponent" class="d-flex justify-content-end">
@@ -8,7 +8,12 @@
         [key]="USER_PREFERENCES_KEY"
         (pageSizeChanged)="pageSizeChanged($event)"
       ></app-select-page-size>
-      <button class="btn btn-info" (click)="scenarioExecutionComponent!.load()" [disabled]="scenarioExecutionComponent!.isLoading">
+      <button
+        class="btn btn-info"
+        (click)="scenarioExecutionComponent!.load()"
+        [disabled]="scenarioExecutionComponent!.isLoading"
+        data-test="refreshListButton"
+      >
         <fa-icon icon="sync" [animation]="scenarioExecutionComponent!.isLoading ? 'spin' : undefined"></fa-icon>
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
       </button>
@@ -27,8 +32,7 @@
           type="button"
           class="btn btn-secondary"
           (click)="resetFilter()"
-          data-cy="clearFilterButton"
-          data-testid="scenarioExecutionFilter/clearFilterButton"
+          data-test="clearFilterButton"
         >
           <fa-icon icon="xmark"></fa-icon>
           <span class="d-none d-md-inline" jhiTranslate="entity.filters.clear">Clear Filter</span>

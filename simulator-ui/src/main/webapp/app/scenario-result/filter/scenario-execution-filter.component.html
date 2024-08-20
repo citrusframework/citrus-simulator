@@ -4,7 +4,14 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="text" class="form-control" id="name" formControlName="nameContains" data-testid="scenarioExecutionFilter/scenarioName"/>
+            <input
+              mdbInput
+              type="text"
+              class="form-control"
+              id="name"
+              data-test="scenarioExecutionFilterInput"
+              formControlName="nameContains"
+            />
             <label
               mdbLabel
               for="name"
@@ -12,14 +19,20 @@
               jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName"
               [class.label-dirty-input]="filterForm.get('nameContains')?.dirty"
             >
-              Scenario Name
+              Name
             </label>
           </mdb-form-control>
         </div>
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <select mdbInput class="form-control form-select" id="statusIn" formControlName="statusIn" data-testid="scenarioExecutionFilter/status">
+            <select
+              mdbInput
+              class="form-control form-select"
+              id="statusIn"
+              data-test="scenarioExecutionStatusInSelect"
+              formControlName="statusIn"
+            >
               <option value="" jhiTranslate="citrusSimulatorApp.testResult.statusAll">All</option>
               <option value="SUCCESS" jhiTranslate="citrusSimulatorApp.testResult.statusSuccess">SUCCESS</option>
               <option value="FAILURE" jhiTranslate="citrusSimulatorApp.testResult.statusFailure">FAILURE</option>
@@ -40,7 +53,15 @@
       <div class="row mb-4">
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="fromDate" formControlName="fromDate" data-testid="scenarioExecutionFilter/fromDate"/>
+            <input
+              mdbInput
+              type="datetime-local"
+              step="1"
+              class="form-control"
+              id="fromDate"
+              data-test="scenarioExecutionFromDateInput"
+              formControlName="fromDate"
+            />
             <label
               mdbLabel
               for="fromDate"
@@ -54,7 +75,15 @@
 
         <div class="form-group col-md-6">
           <mdb-form-control>
-            <input mdbInput type="datetime-local" step="1" class="form-control" id="toDate" formControlName="toDate" data-testid="scenarioExecutionFilter/toDate"/>
+            <input
+              mdbInput
+              type="datetime-local"
+              step="1"
+              class="form-control"
+              id="toDate"
+              data-test="scenarioExecutionToDateInput"
+              formControlName="toDate"
+            />
             <label
               mdbLabel
               for="toDate"
@@ -76,8 +105,8 @@
               class="form-control"
               id="headerFilter"
               formControlName="headerFilter"
+              data-test="scenarioExecutionHeaderFilterInput"
               [class.is-invalid]="filterForm.get('headerFilter')?.invalid"
-              data-testid="scenarioExecutionFilter/messageHeaders"
             />
             <label
               mdbLabel
@@ -98,10 +127,10 @@
           </mdb-form-control>
         </div>
         <div class="form-group col-auto d-md-flex justify-content-md-end">
-          <button type="button" class="btn btn-secondary me-3" (click)="openHelpModal()" data-testid="scenarioExecutionFilter/dialogButton">
+          <button type="button" class="btn btn-secondary me-3" data-test="scenarioExecutionOpenHelpButton" (click)="openHelpModal()">
             <fa-icon icon="circle-info"></fa-icon>
           </button>
-          <button type="button" class="btn btn-info" (click)="openHeaderFilterModal()" data-testid="scenarioExecutionFilter/headerFilterButton">
+          <button type="button" class="btn btn-info" data-test="scenarioExecutionOpenFilterButton" (click)="openHeaderFilterModal()">
             <fa-icon icon="window-maximize"></fa-icon>
             &nbsp;
             <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.open">Open Dialog</span>

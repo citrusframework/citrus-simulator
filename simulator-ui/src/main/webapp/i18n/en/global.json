@@ -46,7 +46,7 @@
       "open": "Open",
       "save": "Save",
       "view": "View",
-      "show": "Show {{otherEntity}}"
+      "show": "{{otherEntity}}"
     },
     "detail": {
       "field": "Field",

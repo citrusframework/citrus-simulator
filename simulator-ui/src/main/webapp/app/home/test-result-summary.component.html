@@ -5,11 +5,11 @@
 
     <div class="d-flex justify-content-end">
       <div class="btn-group">
-        <button class="btn btn-info" (click)="load()" [disabled]="isLoading" data-testid="home/refreshListButton">
+        <button class="btn btn-info" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
           <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
         </button>
-        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0" data-testid="home/resetButton">
+        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0" data-test="resetButton">
           <fa-icon icon="trash-alt"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.testParameter.action.reset">Reset</span>
         </button>
@@ -20,14 +20,14 @@
   <div class="row" *ngIf="testResults?.total !== 0; else infoNoSimulationsRanYet">
     <div class="col-md-3">
       <a class="link-no-text-style" [routerLink]="['/scenario-result']">
-        <ngb-alert data-testid="home/totalTestsSummary" type="info" [dismissible]="false">
+        <ngb-alert type="info" [dismissible]="false">
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
-              <h5 data-testid="home/totalTestsNumber">{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+              <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
             </div>
             <div class="col d-flex justify-content-end">
-              <div class="btn btn-info btn-sm" data-testid="home/totalDetailsBtn" data-cy="scenarioExecutionsButton">
+              <div class="btn btn-info btn-sm" data-test="totalSimulationsButton">
                 <fa-icon icon="hand-pointer"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
               </div>
@@ -39,16 +39,16 @@
 
     <div class="col-md-3">
       <a class="link-no-text-style" [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[status.equals]': statusSuccess.id }">
-        <ngb-alert data-testid="home/successfulTestsSummary" type="success" [dismissible]="false">
+        <ngb-alert type="success" [dismissible]="false">
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
-              <h5 data-testid="home/successfulTestsNumber">
+              <h5>
                 {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
               </h5>
             </div>
             <div class="col d-flex justify-content-end">
-              <div class="btn btn-success btn-sm" data-testid="home/successfulDetailsBtn" data-cy="scenarioExecutionsButton">
+              <div class="btn btn-success btn-sm" data-test="successfulSimulationsButton">
                 <fa-icon icon="hand-pointer"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
               </div>
@@ -60,16 +60,16 @@
 
     <div class="col-md-3">
       <a class="link-no-text-style" [routerLink]="['/scenario-result']" [queryParams]="{ 'filter[status.equals]': statusFailed.id }">
-        <ngb-alert data-testid="home/failedTestsSummary" type="danger" [dismissible]="false">
+        <ngb-alert type="danger" [dismissible]="false">
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
-              <h5 data-testid="home/failedTestsNumber">
+              <h5>
                 {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
               </h5>
             </div>
             <div class="col d-flex justify-content-end">
-              <div class="btn btn-danger btn-sm" data-testid="home/failedDetailsBtn" data-cy="scenarioExecutionsButton">
+              <div class="btn btn-danger btn-sm" data-test="failedSimulationsButton">
                 <fa-icon icon="hand-pointer"></fa-icon>
                 <span class="d-none d-md-inline" jhiTranslate="entity.action.details">Details</span>
               </div>

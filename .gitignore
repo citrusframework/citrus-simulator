@@ -3,6 +3,7 @@ target
 .classpath
 .settings
 .idea
+.vscode
 .DS_Store
 *.iml
 *.ipr

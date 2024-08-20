@@ -1,8 +1,8 @@
-<form name="deleteForm" (ngSubmit)="confirmDelete()" data-testid="home/deletePopup">
+<form name="deleteForm" (ngSubmit)="confirmDelete()">
   <div class="modal-header">
-    <h4 class="modal-title" data-cy="testResultDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm Delete</h4>
+    <h4 class="modal-title" data-test="testResultDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm Delete</h4>
 
-    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true" (click)="cancel()" data-testid="home/cancelDeleteButtonCross"></button>
+    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true" (click)="cancel()"></button>
   </div>
 
   <div class="modal-body">
@@ -14,11 +14,11 @@
 
   <div class="modal-footer">
     <div class="col-md-6 btn-group">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()" data-testid="home/cancelDeleteButton">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
         <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
       </button>
 
-      <button id="app-confirm-delete-test-results" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger" data-testid="home/confirmDeleteButton">
+      <button id="app-confirm-delete-test-results" data-test="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
         <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
       </button>
     </div>
