@@ -13,27 +13,27 @@
 
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailId">
           <span>{{ scenarioExecution.executionId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailStartDate">
           <span>{{ scenarioExecution.startDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailEndDate">
           <span>{{ scenarioExecution.endDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailScenarioName">
           <span>{{ scenarioExecution.scenarioName }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailStatus">
           <span>{{ scenarioExecution.testResult?.status }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
-        <dd>
+        <dd data-testid="scenarioExecutionFilter/detailErrorMessage">
           <span>{{ scenarioExecution.testResult?.errorMessage }}</span>
         </dd>
       </dl>
@@ -41,10 +41,10 @@
       <div ngbAccordion class="mb-3">
         <div ngbAccordionItem>
           <h2 ngbAccordionHeader>
-            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Stacktrace</button>
+            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-testid="scenarioExecutionFilter/openStackTraceButton">Stacktrace</button>
           </h2>
           <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
+            <div ngbAccordionBody data-testid="scenarioExecutionFilter/detailStackTrace">
               <ng-template>{{ scenarioExecution.testResult?.stackTrace }}</ng-template>
             </div>
           </div>

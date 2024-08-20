@@ -34,9 +34,9 @@
         <td>
           <a [routerLink]="['/message', message.messageId, 'view']">{{ message.messageId }}</a>
         </td>
-        <td>{{ message.direction }}</td>
-        <td>{{ message.payload }}</td>
-        <td>{{ message.createdDate | formatMediumDatetime }}</td>
+        <td data-testid="scenarioExecutionFilter/messagesDirection">{{ message.direction }}</td>
+        <td data-testid="scenarioExecutionFilter/messagesPayload">{{ message.payload }}</td>
+        <td data-testid="scenarioExecutionFilter/messagesCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group">
             <a [routerLink]="['/message-header']" [queryParams]="{ 'filter[messageId.in]': message.messageId }">

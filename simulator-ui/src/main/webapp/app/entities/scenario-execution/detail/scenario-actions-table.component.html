@@ -34,9 +34,9 @@
         <td>
           <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">{{ scenarioAction.actionId }}</a>
         </td>
-        <td>{{ scenarioAction.name }}</td>
-        <td>{{ scenarioAction.startDate | formatMediumDatetime }}</td>
-        <td>{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+        <td data-testid="scenarioExecutionFilter/scenarioActionsName">{{ scenarioAction.name }}</td>
+        <td data-testid="scenarioExecutionFilter/scenarioActionsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+        <td data-testid="scenarioExecutionFilter/scenarioActionsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
         <td class="text-end">
           <div class="btn-group">
             <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">

@@ -306,3 +306,82 @@ test('should clear all filters', async ({page}) => {
   await expect(page.getByTestId('scenarioExecutionFilter/toDate')).toBeEmpty();
   await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toBeEmpty();
 });
+
+test('should display detail view on ID link click', async ({page}) => {
+  await page.route('**/api/scenario-executions*', async route => {
+    const scenarioExecutionJson = [
+      {
+        "executionId": 752603,
+        "startDate": "2024-06-27T10:59:03.872021Z",
+        "endDate": "2024-06-27T11:05:21.168103Z",
+        "scenarioName": "Default",
+        "testResult": {
+          "id": 752026,
+          "status": "FAILURE",
+          "errorMessage": "Unable to validate because message store is not of type 'CorrelatedMessageProvider'! Check your configuration and register a suitable message store.",
+          "createdDate": "2024-06-27T08:59:04.159168Z",
+        },
+      }
+    ];
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.route('**/api/scenario-executions/752603', async route => {
+    const scenarioExecutionJson =
+      {
+        "executionId": 752603,
+        "startDate": "2024-06-27T10:59:03.872021Z",
+        "endDate": "2024-06-27T11:05:21.168103Z",
+        "scenarioName": "Default",
+        "testResult": {
+          "id": 752026,
+          "status": "FAILURE",
+          "errorMessage": "Unable to validate because message store is not of type 'CorrelatedMessageProvider'! Check your configuration and register a suitable message store.",
+          "stackTrace" : "org.citrusframework.exceptions.CitrusRuntimeException: It is the courage to continue that counts. at org.citrusframework.actions.FailAction.doExecute(FailAction.java:43) at org.citrusframework.actions.AbstractTestAction.execute(AbstractTestAction.java:59) at org.citrusframework.DefaultTestCase.executeAction(DefaultTestCase.java:190) at org.citrusframework.DefaultTestCaseRunner.run(DefaultTestCaseRunner.java:145) at org.citrusframework.simulator.scenario.ScenarioRunner.run(ScenarioRunner.java:79) at org.citrusframework.TestActionRunner.$(TestActionRunner.java:51) at org.citrusframework.simulator.sample.scenario.FailScenario.run(FailScenario.java:49) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.createAndRunScenarioRunner(DefaultScenarioExecutorService.java:147) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.startScenario(DefaultScenarioExecutorService.java:116) at org.citrusframework.simulator.service.runner.AsyncScenarioExecutorService.lambda$startScenarioAsync$0(AsyncScenarioExecutorService.java:126) at java.base",
+          "createdDate": "2024-06-27T08:59:04.159168Z",
+        },
+        "scenarioParameters": [],
+        "scenarioActions": [
+          {
+            "actionId": 29,
+            "name": "http:receive-request",
+            "startDate": "2024-06-27T15:10:03.616968Z",
+            "endDate": "2024-08-15T15:10:03.632568Z"
+          },
+          {
+            "actionId": 30,
+            "name": "echo",
+            "startDate": "2024-06-27T15:10:03.632568Z",
+            "endDate": "2024-06-27T15:10:03.648188Z"
+          }
+        ],
+        "scenarioMessages": [
+          {
+            "messageId": 20,
+            "direction": "INBOUND",
+            "payload": "",
+            "citrusMessageId": "0fa15e84-422f-4a61-a587-ea33d12e4b38",
+            "headers": null,
+            "createdDate": "2024-06-27T13:10:03.632568Z",
+            "lastModifiedDate": "2024-06-27T13:10:03.632568Z"
+          }
+        ]
+
+      };
+
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByRole('link', {name: '752603'}).click();
+  await expect(page).toHaveURL('http://localhost:9000/scenario-execution/752603/view');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailId')).toHaveText('752603');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailStartDate')).toHaveText('27 Jun 2024 10:59:03');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailEndDate')).toHaveText('27 Jun 2024 11:05:21');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailScenarioName')).toHaveText('Default');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailStatus')).toHaveText('FAILURE');
+  await expect(page.getByTestId('scenarioExecutionFilter/detailErrorMessage')).toHaveText('Unable to validate because message store is not of type \'CorrelatedMessageProvider\'! Check your configuration and register a suitable message store.');
+  await page.getByTestId('scenarioExecutionFilter/openStackTraceButton').click();
+  await expect(page.getByTestId('scenarioExecutionFilter/detailStackTrace')).toHaveText('org.citrusframework.exceptions.CitrusRuntimeException: It is the courage to continue that counts. at org.citrusframework.actions.FailAction.doExecute(FailAction.java:43) at org.citrusframework.actions.AbstractTestAction.execute(AbstractTestAction.java:59) at org.citrusframework.DefaultTestCase.executeAction(DefaultTestCase.java:190) at org.citrusframework.DefaultTestCaseRunner.run(DefaultTestCaseRunner.java:145) at org.citrusframework.simulator.scenario.ScenarioRunner.run(ScenarioRunner.java:79) at org.citrusframework.TestActionRunner.$(TestActionRunner.java:51) at org.citrusframework.simulator.sample.scenario.FailScenario.run(FailScenario.java:49) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.createAndRunScenarioRunner(DefaultScenarioExecutorService.java:147) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.startScenario(DefaultScenarioExecutorService.java:116) at org.citrusframework.simulator.service.runner.AsyncScenarioExecutorService.lambda$startScenarioAsync$0(AsyncScenarioExecutorService.java:126) at java.base');
+});
