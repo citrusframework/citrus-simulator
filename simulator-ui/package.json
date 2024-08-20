@@ -73,8 +73,8 @@
     "@angular/service-worker": "18.2.0",
     "@types/jest": "29.5.12",
     "@types/node": "22.4.1",
-    "@typescript-eslint/eslint-plugin": "8.1.0",
-    "@typescript-eslint/parser": "8.1.0",
+    "@typescript-eslint/eslint-plugin": "8.2.0",
+    "@typescript-eslint/parser": "8.2.0",
     "browser-sync": "3.0.2",
     "browser-sync-v3-webpack-plugin": "^0.1.0",
     "buffer": "6.0.3",
@@ -97,7 +97,6 @@
     "swagger-ui-dist": "5.17.14",
     "ts-jest": "29.2.4",
     "typescript": "^5.5",
-    "wait-on": "7.2.0",
     "webpack-bundle-analyzer": "4.10.2",
     "webpack-merge": "6.0.1",
     "webpack-notifier": "1.15.0"
