@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.service.impl;
+package org.citrusframework.simulator.common;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
-class TimeProvider {
+import static java.time.ZoneOffset.UTC;
 
-    TimeProvider() {
-        // Separate class that allows mocking
-    }
+/**
+ * Should be used whenever the current time is needed, to ensure consistent Date/Time values
+ */
+public class TimeProvider {
 
-    Instant getTimeNow() {
-        return LocalDateTime.now().toInstant(ZoneOffset.UTC);
+    public Instant getTimeNow() {
+        return LocalDateTime.now().toInstant(UTC);
     }
 }

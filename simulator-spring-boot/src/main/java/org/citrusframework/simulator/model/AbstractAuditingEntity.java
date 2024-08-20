@@ -21,6 +21,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
+import org.citrusframework.simulator.common.TimeProvider;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,16 +40,18 @@ import java.time.ZonedDateTime;
 @JsonIgnoreProperties(value = {"createdDate", "lastModifiedDate"}, allowGetters = true)
 public abstract class AbstractAuditingEntity<T, I> implements Serializable {
 
+    private static TimeProvider timeProvider = new TimeProvider();
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
-    private Instant createdDate = Instant.now();
+    private Instant createdDate = timeProvider.getTimeNow();
 
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    private Instant lastModifiedDate = Instant.now();
+    private Instant lastModifiedDate = timeProvider.getTimeNow();
 
     public static abstract class AuditingEntityBuilder<B extends AuditingEntityBuilder<B, E, A>, E extends AbstractAuditingEntity<E, A>, A> {
 
