@@ -28,7 +28,7 @@
           </a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/scenario" (click)="collapseNavbar()">
+          <a data-testid="navbar/scenario" class="nav-link" routerLink="/scenario" (click)="collapseNavbar()">
             <span>
               <fa-icon icon="box-open"></fa-icon>
               <span jhiTranslate="citrusSimulatorApp.scenario.home.title">Scenarios</span>
@@ -36,7 +36,7 @@
           </a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/scenario-result" (click)="collapseNavbar()">
+          <a data-testid="navbar/scenario-executions" class="nav-link" routerLink="/scenario-result" (click)="collapseNavbar()">
             <span>
               <fa-icon icon="square-poll-vertical"></fa-icon>
               <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.title">Scenario Executions</span>
