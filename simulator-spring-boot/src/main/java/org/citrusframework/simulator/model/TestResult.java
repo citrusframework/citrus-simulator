@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.NONE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
@@ -132,7 +133,7 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     private String failureType;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "testResult")
+    @OneToOne(mappedBy = "testResult", cascade = {REMOVE})
     private ScenarioExecution scenarioExecution;
 
     /**
