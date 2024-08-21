@@ -30,9 +30,9 @@ test('should have the first 10 elements displayed in the table', async ({page}) 
 });
 
 test('should have correct number of Elements displayed in the table after selecting 20 as table size', async ({page}) => {
-
   await expect(page.getByText('Showing 1-12 of 12 Items')).toBeVisible();
 });
+//order isn't correct...not bad because backend sends in order...? Or should backend request be made??? and tested???
 test('text filter input should trigger the correct backend request and correct data should be displayed', async ({page}) => {
   const orderedJson = [
     {"name": "Fail", "type": "MESSAGE_TRIGGERED"},
@@ -60,7 +60,7 @@ test('text filter input should trigger the correct backend request and correct d
     await route.fulfill({json: orderedJson});
   })
 
-  await page.getByTestId('home/ScenarioNameFilterInput').fill('a');
+  await page.getByTestId('scenarioFilterByNameInput').fill('a');
 
   //check content --> ORDER not checked yet
   for (const element of orderedJson) {

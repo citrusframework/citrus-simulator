@@ -12,25 +12,23 @@ test.beforeEach(async ({page}) => {
   await page.goto('http://localhost:9000/');
 })
 
-test('should have title, disclaimer, refresh button, reset button, feedback option and footer', async ({page}) => {
+test('should have title, disclaimer, refresh button, reset button, feedback option, summary-tabs and footer', async ({page}) => {
   await expect(page).toHaveTitle(/Citrus Simulator/);
-  await expect(page.getByTestId('home/disclaimer')).toBeVisible();
-  await expect(page.getByTestId('home/refreshListButton')).toBeVisible();
-  await expect(page.getByTestId('home/resetButton')).toBeVisible();
-  await expect(page.getByTestId('home/feedbackStarGithub')).toBeVisible();
-  await expect(page.getByTestId('footer/footer')).toBeVisible();
+  await expect(page.getByTestId('disclaimer')).toBeVisible();
+  await expect(page.getByTestId('refreshListButton')).toBeVisible();
+  await expect(page.getByTestId('resetButton')).toBeVisible();
+  await expect(page.getByTestId('feedbackStarGithub')).toBeVisible();
+  await expect(page.getByTestId('footer')).toBeVisible();
+  await expect(page.getByTestId('totalSimulationsPercentage')).toBeVisible();
+  await expect(page.getByTestId('successfulSimulationsPercentage')).toBeVisible();
+  await expect(page.getByTestId('failedSimulationsPercentage')).toBeVisible();
 });
 
-test('should have total, successful, failed tabs', async ({page}) => {
-
-  await expect(page.getByTestId('home/totalTestsSummary')).toBeVisible();
-  await expect(page.getByTestId('home/successfulTestsSummary')).toBeVisible();
-  await expect(page.getByTestId('home/failedTestsSummary')).toBeVisible();
-
+test('check if summary-tab displays right percentage with round numbers', async ({page}) =>{
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
-});
+})
 
-test('total, successful, failed tabs should display percentage in simulations count', async ({page}) => {
+test('total, successful, failed tabs should display percentage in simulations count rounded to two decimal numbers', async ({page}) => {
   const successfulTestsBig = 746039;
   const failedTestsBig = 490;
   const totalTestsBig = successfulTestsBig + failedTestsBig;
@@ -48,7 +46,7 @@ test('should move to right page with Github link', async ({page}) => {
   const [newTab] = await Promise.all([
     // Start waiting for new page before clicking. Note no await.
     page.waitForEvent("popup"),
-    page.getByTestId('home/feedbackLinkStarGithub').click()
+    page.getByTestId('feedbackLinkStarGithub').click()
   ]);
 
   await newTab.waitForLoadState();
@@ -60,7 +58,7 @@ test('should move to right page with citrus link', async ({page}) => {
   const [newTab] = await Promise.all([
     // Start waiting for new page before clicking. Note no await.
     page.waitForEvent("popup"),
-    page.getByTestId('home/feedbackAndSuggestionLink').click()
+    page.getByTestId('feedbackAndSuggestionLink').click()
   ]);
 
   await newTab.waitForLoadState();
@@ -69,24 +67,24 @@ test('should move to right page with citrus link', async ({page}) => {
 })
 
 test('should move to scenario-results page with right search field params after click on total-details', async ({page}) => {
-  await page.getByTestId('home/totalDetailsBtn').click();
+  await page.getByTestId('totalSimulationsButton').click();
 
   await expect(page).toHaveURL('http://localhost:9000/scenario-result?page=1&size=10&sort=executionId,asc');
-  await expect(page.getByTestId('scenarioExecutionFilter/status')).toHaveValue('');
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('');
 })
 
 test('should move to scenario-results page with right search field params after click on successful-details', async ({page}) => {
-  await page.getByTestId('home/successfulDetailsBtn').click();
+  await page.getByTestId('successfulSimulationsButton').click();
 
   await expect(page).toHaveURL('http://localhost:9000/scenario-result?page=1&size=10&sort=executionId,asc&filter%5Bstatus.equals%5D=1');
-  await expect(page.getByTestId('scenarioExecutionFilter/status')).toHaveValue('SUCCESS');
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('SUCCESS');
 })
 
 test('should move to scenario-results page with right search field params after click on failed-details', async ({page}) => {
-  await page.getByTestId('home/failedDetailsBtn').click();
+  await page.getByTestId('failedSimulationsButton').click();
 
   await expect(page).toHaveURL('http://localhost:9000/scenario-result?page=1&size=10&sort=executionId,asc&filter%5Bstatus.equals%5D=2');
-  await expect(page.getByTestId('scenarioExecutionFilter/status')).toHaveValue('FAILURE');
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('FAILURE');
 })
 
 test('should have updated total, successful, failed tabs after refresh button clicked positive test', async ({page}) => {
@@ -98,7 +96,7 @@ test('should have updated total, successful, failed tabs after refresh button cl
     const json = {"successful": successfulTestsMock, "failed": failedTestsMock, "total": totalTestsMock};
     await route.fulfill({json});
   });
-  await page.getByTestId('home/refreshListButton').click();
+  await page.getByTestId('refreshListButton').click();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 })
@@ -112,7 +110,7 @@ test('should have updated total, successful, failed tabs after refresh button cl
     const json = {"successful": successfulTestsMock, "failed": failedTestsMock, "total": totalTestsMock};
     await route.fulfill({json});
   });
-  await page.getByTestId('home/refreshListButton').click();
+  await page.getByTestId('refreshListButton').click();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, newCorrectTotal, successfulTestsMock, failedTestsMock);
 })
@@ -120,11 +118,11 @@ test('should have updated total, successful, failed tabs after refresh button cl
 test('should have same total, successful, failed tabs after cancel Deletion via cross-Button', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 
-  await page.getByTestId('home/resetButton').click();
-  await expect(page.getByTestId('home/deletePopup')).toBeVisible();
-  await page.getByTestId('home/cancelDeleteButtonCross').click();
+  await page.getByTestId('resetButton').click();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
+  await page.getByTestId('testResultDeleteDialogCloseButton').click();
   // HOW assert that API was NOT called?
-  await expect(page.getByTestId('home/deletePopup')).toBeHidden();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 })
@@ -132,11 +130,11 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
 test('should have same total, successful, failed tabs after cancel Deletion via cancel-Button', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 
-  await page.getByTestId('home/resetButton').click();
-  await expect(page.getByTestId('home/deletePopup')).toBeVisible();
-  await page.getByTestId('home/cancelDeleteButton').click();
+  await page.getByTestId('resetButton').click();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
+  await page.getByTestId('testResultDeleteDialogCancelButton').click();
   // HOW assert that API was NOT called?
-  await expect(page.getByTestId('home/deletePopup')).toBeHidden();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 })
@@ -144,8 +142,8 @@ test('should have same total, successful, failed tabs after cancel Deletion via 
 test('should have reset total, successful, failed tabs after confirmed Deletion with (200, OK) response', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 
-  await page.getByTestId('home/resetButton').click();
-  await expect(page.getByTestId('home/deletePopup')).toBeVisible();
+  await page.getByTestId('resetButton').click();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
 
   successfulTestsMock = 0;
   failedTestsMock = 0;
@@ -163,26 +161,26 @@ test('should have reset total, successful, failed tabs after confirmed Deletion 
     && response.request().method() === 'DELETE'
   );
 
-  await page.getByTestId('home/confirmDeleteButton').click();
+  await page.getByTestId('entityConfirmDeleteButton').click();
 
   await deleteRequestPromise;
   await deleteResponsePromise;
 
-  await expect(page.getByTestId('home/deletePopup')).toBeHidden();
+  await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsMock, successfulTestsMock, failedTestsMock);
 })
 
 const checkIfSummaryTabsAreDisplayingRightNumbersFunction = async (page: Page, totalTests: number, successfulTests: number, failedTests: number): Promise<any> => {
-  await expect(page.getByTestId('home/totalTestsNumber')).toHaveText(totalTests + ` (${(totalTests / totalTests * 100).toLocaleString(undefined, {
+  await expect(page.getByTestId('totalSimulationsPercentage')).toHaveText(totalTests + ` (${(totalTests / totalTests * 100).toLocaleString(undefined, {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0
   })} %)`);
-  await expect(page.getByTestId('home/successfulTestsNumber')).toHaveText(successfulTests + ` (${(successfulTests / totalTests * 100).toLocaleString(undefined, {
+  await expect(page.getByTestId('successfulSimulationsPercentage')).toHaveText(successfulTests + ` (${(successfulTests / totalTests * 100).toLocaleString(undefined, {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0
   })} %)`);
-  await expect(page.getByTestId('home/failedTestsNumber')).toHaveText(failedTests + ` (${(failedTests / totalTests * 100).toLocaleString(undefined, {
+  await expect(page.getByTestId('failedSimulationsPercentage')).toHaveText(failedTests + ` (${(failedTests / totalTests * 100).toLocaleString(undefined, {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0
   })} %)`);
