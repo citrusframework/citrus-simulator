@@ -1,8 +1,10 @@
-import {expect, test} from "@playwright/test";
+import {expect, Page, test} from "@playwright/test";
+import {clickOnLinkAndCheckIfTabOpensWithCorrectURL} from "./helper-functions";
+
 const elementLinkPairNoDropdown = [
   {'testName': 'navigationScenariosLink', 'link': /.*scenario*/},
   {'testName': 'navigationScenarioExecutionsLink', 'link': /.*scenario-result*/}
-  ]
+]
 const elementLinkPairEntityDroptdown = [
   {'testName': 'navigationEntitiesMessageLink', 'link': /.*\/message*/},
   {'testName': 'navigationEntitiesMessageHeaderLink', 'link': /.*\/message-header*/},
@@ -38,21 +40,11 @@ test('should move to all entities pages as intended', async ({page}) => {
 })
 
 test('should move to the documentation in a new Tab', async ({page}) => {
-  const [newTab] = await Promise.all([
-    // Start waiting for new page before clicking. Note no await.
-    page.waitForEvent("popup"),
-
-    page.getByTestId('entity').click(),
-    page.getByTestId('documentation').click()
-  ]);
-  await newTab.waitForLoadState();
-
-  // Interact with the new page normally.
-  await expect(newTab).toHaveURL(/.*\/\/citrusframework.org\/citrus-simulator/);
+  await page.getByTestId('entity').click();
+  clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'documentation', /.*\/\/citrusframework.org\/citrus-simulator/);
 })
 test('should move to the swaggerUI documentation', async ({page}) => {
   await page.getByTestId('entity').click();
   await page.getByTestId('swaggerUI').click();
   await expect(page).toHaveURL(/.*swagger-ui\/index.html/);
 })
-
