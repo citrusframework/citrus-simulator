@@ -32,8 +32,9 @@ test('should have title, disclaimer, refresh button, reset button, feedback opti
     'successfulSimulationsPercentage',
     'failedSimulationsPercentage'
   ]
+
   await expect(page).toHaveTitle(/Citrus Simulator/);
-  for( const element of visibleElements){
+  for (const element of visibleElements) {
     await expect(page.getByTestId(element)).toBeVisible();
   }
 });
@@ -57,10 +58,10 @@ test('total, successful, failed tabs should display percentage in simulations co
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, totalTestsBig, successfulTestsBig, failedTestsBig);
 });
 
-//should there be two separate tests for this?
+//should there be two separate tests for this? Or a for loop?
 test('should move to right page with feedback resp suggestion link', async ({page}) => {
-  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackLinkStarGithub', /.*\/github.com\/citrusframework\/citrus-simulator/)
-  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackAndSuggestionLink', /.*\/github.com*/)
+  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackLinkStarGithub', /.*\/github.com\/citrusframework\/citrus-simulator/);
+  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackAndSuggestionLink', /.*\/github.com*/); //could be the login site ore the new-issue site: should one test the two options?
 
 })
 
@@ -76,19 +77,20 @@ test('should have updated total, successful, failed tabs after refresh button cl
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 
   nbOfFailedTests -= 10;
-  nbOfSuccessfulTests += 10;
-  await page.route('**/api/test-results/count-by-status', async route => {
-    const json = {"successful": nbOfSuccessfulTests, "failed": nbOfFailedTests, "total": nbOfTotalTests};
-    await route.fulfill({json});
+  nbOfSuccessfulTests += 10; //the total stays the same
+  await mockBackendResponse(page, '**/api/test-results/count-by-status', {
+    "successful": nbOfSuccessfulTests,
+    "failed": nbOfFailedTests,
+    "total": nbOfTotalTests
   });
   await page.getByTestId('refreshListButton').click();
 
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 })
 
-test('should have updated total, successful, failed tabs after refresh button clicked negative test', async ({page}) => {
+test('should have updated total, successful, failed tabs after refresh button clicked negative test with false total', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
-  nbOfFailedTests -= 10; // so the Total will be wrong!
+  nbOfFailedTests -= 10; // so the total will be wrong!
   const newCorrectTotal: number = nbOfTotalTests - 10;
   await mockBackendResponse(page, '**/api/test-results/count-by-status', {
     "successful": nbOfSuccessfulTests,
@@ -101,38 +103,36 @@ test('should have updated total, successful, failed tabs after refresh button cl
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, newCorrectTotal, nbOfSuccessfulTests, nbOfFailedTests);
 })
 
-test('should have same total, successful, failed tabs after cancel Deletion via close-Button and cancel-Button', async ({page}) => {
+test('should have same total, successful, failed tabs after cancel deletion via close-Button and cancel-Button', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
   const closeButtons = ['testResultDeleteDialogCloseButton', 'testResultDeleteDialogCancelButton'];
 
-  for(const button of closeButtons){
+  for (const button of closeButtons) {
     await page.getByTestId('resetButton').click();
     await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
     await page.getByTestId(button).click();
-    // HOW assert that API was NOT called? --> unit test?
+    // Do I have to assert that API was NOT called here? --> isn't that covered by unit test?
     await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
 
     await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
   }
 })
 
-//should i make a method for the deleteReq/RespPromeises?
-test('should have reset total, successful, failed tabs after confirmed Deletion with (200, OK) response', async ({page}) => {
+test('should have reset total, successful, failed tabs after confirmed deletion with (200, OK) response', async ({page}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
-
   await page.getByTestId('resetButton').click();
   await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
 
   nbOfSuccessfulTests = 0;
   nbOfFailedTests = 0;
   nbOfTotalTests = 0;
-
   await mockBackendResponse(page, '**/api/test-results/count-by-status', {
     "successful": nbOfSuccessfulTests,
     "failed": nbOfFailedTests,
     "total": nbOfTotalTests
   })
-
+  //are these promises too much because api-response-handling should be already covered in unit-tests?
+  //if they stay: Should I make an external method for the deleteReq/RespPromises for readability? --> no because it isn't reused?
   const deleteRequestPromise = page.waitForRequest(request =>
     request.url() === '**/api/test-results/' && request.method() === 'DELETE',
   );
@@ -140,28 +140,30 @@ test('should have reset total, successful, failed tabs after confirmed Deletion 
     response.url() === '**/api/test-results/' && response.status() === 200
     && response.request().method() === 'DELETE'
   );
-
   await page.getByTestId('entityConfirmDeleteButton').click();
-
   await deleteRequestPromise;
   await deleteResponsePromise;
 
   await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
-
   await checkIfSummaryTabsAreDisplayingRightNumbersFunction(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 })
 
 const checkIfSummaryTabsAreDisplayingRightNumbersFunction = async (page: Page, totalTests: number, successfulTests: number, failedTests: number): Promise<any> => {
-  await expect(page.getByTestId('totalSimulationsPercentage')).toHaveText(totalTests + ` (${(totalTests / totalTests * 100).toLocaleString(undefined, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 0
-  })} %)`);
-  await expect(page.getByTestId('successfulSimulationsPercentage')).toHaveText(successfulTests + ` (${(successfulTests / totalTests * 100).toLocaleString(undefined, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 0
-  })} %)`);
-  await expect(page.getByTestId('failedSimulationsPercentage')).toHaveText(failedTests + ` (${(failedTests / totalTests * 100).toLocaleString(undefined, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 0
-  })} %)`);
+  const summarySelectorToAbsoluteValueMapping: {
+    testSelector: string,
+    value: number
+  }[] = [{
+    testSelector: 'totalSimulationsPercentage',
+    value: totalTests
+  }, {
+    testSelector: 'successfulSimulationsPercentage',
+    value: successfulTests
+  }, {testSelector: 'failedSimulationsPercentage', value: failedTests}]
+
+  for (const percentageDisplay of summarySelectorToAbsoluteValueMapping) {
+    await expect(page.getByTestId(percentageDisplay.testSelector)).toHaveText(percentageDisplay.value + ` (${(percentageDisplay.value / totalTests * 100).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 0
+    })} %)`);
+  }
 }

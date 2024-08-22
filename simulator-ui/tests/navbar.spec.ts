@@ -41,8 +41,9 @@ test('should move to all entities pages as intended', async ({page}) => {
 
 test('should move to the documentation in a new Tab', async ({page}) => {
   await page.getByTestId('entity').click();
-  clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'documentation', /.*\/\/citrusframework.org\/citrus-simulator/);
+  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'documentation', /.*\/\/citrusframework.org\/citrus-simulator/);
 })
+
 test('should move to the swaggerUI documentation', async ({page}) => {
   await page.getByTestId('entity').click();
   await page.getByTestId('swaggerUI').click();
