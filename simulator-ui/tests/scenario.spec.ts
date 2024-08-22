@@ -142,7 +142,34 @@ test('should show error message if launch failed after click on the launch butto
   await expect(page).toHaveURL(/.*localhost:9000\/scenario/);
 })
 
+//should be split into multiple tests?
+test('should go to detail view of a scenario (no starter) and then go back', async ({page}) => {
+  const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'scenarioDetailsEntitiesName', 'scenarioDetailsEntitiesControlType', 'scenarioDetailsEntitiesValue', 'entityDetailsBackButton']
+  await page.getByText('Default').click();
 
+  await expect(page).toHaveURL(/.*scenario\/Default\/MESSAGE_TRIGGERED\/view*/);
+  for(const element of allVisibleDetailElements){
+    console.log(element);
+    await expect(page.getByText(element)).toBeVisible();
+  }
+  await page.getByTestId('entityDetailsBackButton').click();
+  await expect(page).toHaveURL(/.*scenario/);
+
+})
+//TODO: maybe test if it can be started?
+test('should go to detail view of a scenario STARTER check for content and go back', async ({page}) => {
+  const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'scenarioDetailsEntitiesName', 'scenarioDetailsEntitiesControlType', 'scenarioDetailsEntitiesValue', 'entityDetailsBackButton']
+  await page.getByText('One').click();
+
+  await expect(page).toHaveURL(/.*scenario\/One\/STARTER\/view*/);
+  for(const element of allVisibleDetailElements){
+    console.log(element);
+    await expect(page.getByText(element)).toBeVisible();
+  }
+  await page.getByTestId('entityDetailsBackButton').click();
+  await expect(page).toHaveURL(/.*scenario/);
+
+})
 const checkIfAllJsonContentIsVisible = async (page: Page, selectedPageSize: number, responseJson: {
   name: string,
   type: string
