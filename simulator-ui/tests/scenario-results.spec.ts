@@ -3,13 +3,13 @@ import {expect, Locator, test} from "@playwright/test";
 test('should display input form', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await expect(page.getByTestId('scenarioExecutionFilter/pageSize')).toBeVisible();
-  await expect(page.locator('#pageSize')).toHaveValue('10');
-  await expect(page.getByTestId('scenarioExecutionFilter/scenarioName')).toBeVisible();
-  await expect(page.getByTestId('scenarioExecutionFilter/status')).toBeVisible();
-  await expect(page.getByTestId('scenarioExecutionFilter/fromDate')).toBeVisible();
-  await expect(page.getByTestId('scenarioExecutionFilter/toDate')).toBeVisible();
-  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toBeVisible();
+  await expect(page.getByTestId('itemsPerPageSelect')).toBeVisible();
+  await expect(page.getByTestId('itemsPerPageSelect')).toHaveValue('10');
+  await expect(page.getByTestId('scenarioExecutionFilterInput')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionFromDateInput')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionToDateInput')).toBeVisible();
+  await expect(page.getByTestId('scenarioExecutionHeaderFilterInput')).toBeVisible();
 });
 
 test('should filter with input form', async ({page}) => {
@@ -169,11 +169,11 @@ test('should filter with input form', async ({page}) => {
   });
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.getByTestId('scenarioExecutionFilter/scenarioName').fill('Test Scenario');
-  await page.getByTestId('scenarioExecutionFilter/status').selectOption('Failure');
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '21072024', '120531')
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '22072024', '052007')
-  await page.getByTestId('scenarioExecutionFilter/messageHeaders').fill('Test Headers');
+  await page.getByTestId('scenarioExecutionFilterInput').fill('Test Scenario');
+  await page.getByTestId('scenarioExecutionStatusInSelect').selectOption('Failure');
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFromDateInput'), '21072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionToDateInput'), '22072024', '052007')
+  await page.getByTestId('scenarioExecutionHeaderFilterInput').fill('Test Headers');
 });
 
 const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<any> => {
@@ -205,7 +205,7 @@ test('should display table headers for scenario executions', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
   await expect(page.locator('th :text("ID")')).toHaveCount(1);
-  await expect(page.locator('th :text("Scenario Name")')).toHaveCount(1);
+  await expect(page.locator('th :text("Name")')).toHaveCount(1);
   await expect(page.locator('th :text("Start Date")')).toHaveCount(1);
   await expect(page.locator('th :text("End Date")')).toHaveCount(1);
   await expect(page.locator('th :text("Status")')).toHaveCount(1);
@@ -239,72 +239,69 @@ test('should display table row for scenario executions', async ({page}) => {
   await expect(page.locator('tr :text("27 Jun 2024 11:05:21")')).toHaveCount(1);
   await expect(page.locator('tr :text("FAILURE")')).toHaveCount(1);
   await expect(page.locator('tr :text("Unable to validate because message store is not of type \'CorrelatedMessageProvider\'! Check your configuration and register a suitable message store.")')).toHaveCount(1);
-  await expect(page.locator('tr :text("Scenario Actions")')).toHaveCount(1);
-  await expect(page.locator('tr :text("Scenario Messages")')).toHaveCount(1);
-  await expect(page.locator('tr :text("Scenario Parameters")')).toHaveCount(1);
-  await expect(page.locator('tr :text("View")')).toHaveCount(1);
+  await expect(page.locator('tr :text("Actions")')).toHaveCount(1);
+  await expect(page.locator('tr :text("Messages")')).toHaveCount(1);
+  await expect(page.locator('tr :text("Parameters")')).toHaveCount(1);
 });
 
 test('should display help dialog after clicking button', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.getByTestId('scenarioExecutionFilter/dialogButton').click();
-  await expect(page.getByTestId(('scenarioExecutionFilter/helpDialog'))).toBeVisible();
+  await page.getByTestId('scenarioExecutionOpenHelpButton').click();
+  await expect(page.getByTestId(('helpDialog'))).toBeVisible();
 });
 
 test('should display filter message header popup after clicking button', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
-  await expect(page.getByTestId(('scenarioExecutionFilter/filterMessageHeaderForm'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/headerName'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/headerValue'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/valueComparator'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/valueType'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/addAnotherButton'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/cancelButton'))).toBeVisible();
-  await expect(page.getByTestId(('scenarioExecutionFilter/applyFilterButton'))).toBeVisible();
+  await page.getByTestId('scenarioExecutionOpenFilterButton').click();
+  await expect(page.getByTestId(('headerFilterInput'))).toBeVisible();
+  await expect(page.getByTestId(('headerFilterTypeSelect'))).toBeVisible();
+  await expect(page.getByTestId(('headerFilterSelect'))).toBeVisible();
+  await expect(page.getByTestId(('headerValueInput'))).toBeVisible();
+  await expect(page.getByTestId(('addHeaderFilterButton'))).toBeVisible();
+  await expect(page.getByTestId(('cancelButton'))).toBeVisible();
+  await expect(page.getByTestId(('applyHeaderFilterButton'))).toBeVisible();
 });
 
 test('should filter message headers with header name and header value', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
-  await expect(page.getByTestId(('scenarioExecutionFilter/filterMessageHeaderForm'))).toBeVisible();
-  await page.getByTestId(('scenarioExecutionFilter/headerName')).fill('HeaderName1');
-  await page.getByTestId(('scenarioExecutionFilter/headerValue')).fill('HeaderValue1');
-  await page.getByTestId(('scenarioExecutionFilter/addAnotherButton')).click();
+  await page.getByTestId('scenarioExecutionOpenFilterButton').click();
+  await page.getByTestId(('headerFilterInput')).fill('HeaderName1');
+  await page.getByTestId(('headerValueInput')).fill('HeaderValue1');
+  await page.getByTestId(('addHeaderFilterButton')).click();
   await page.locator(('#header-1')).fill('HeaderName2');
   await page.locator(('#header-1-value-comparator')).selectOption('contains');
   await page.locator(('#header-1-value')).fill('HeaderValue2');
-  await page.getByTestId(('scenarioExecutionFilter/applyFilterButton')).click();
-  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toHaveValue('HeaderName1=HeaderValue1; HeaderName2~HeaderValue2');
+  await page.getByTestId(('applyHeaderFilterButton')).click();
+  await expect(page.getByTestId('scenarioExecutionHeaderFilterInput')).toHaveValue('HeaderName1=HeaderValue1; HeaderName2~HeaderValue2');
 });
 
 test('should clear all filters', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
-  await page.getByTestId('scenarioExecutionFilter/scenarioName').fill('Test Scenario');
-  await page.getByTestId('scenarioExecutionFilter/status').selectOption('Failure');
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/fromDate'), '21072024', '120531')
-  await fillDatePickerField(page.getByTestId('scenarioExecutionFilter/toDate'), '22072024', '052007')
-  await page.getByTestId('scenarioExecutionFilter/messageHeaders').fill('Test Headers');
+  await page.getByTestId('scenarioExecutionFilterInput').fill('Test Scenario');
+  await page.getByTestId('scenarioExecutionStatusInSelect').selectOption('Failure');
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFromDateInput'), '21072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionToDateInput'), '22072024', '052007')
+  await page.getByTestId('scenarioExecutionHeaderFilterInput').fill('Test Headers');
 
-  await page.getByTestId('scenarioExecutionFilter/headerFilterButton').click();
-  await page.getByTestId(('scenarioExecutionFilter/headerName')).fill('HeaderName1');
-  await page.getByTestId(('scenarioExecutionFilter/headerValue')).fill('HeaderValue1');
-  await page.getByTestId(('scenarioExecutionFilter/addAnotherButton')).click();
+  await page.getByTestId('scenarioExecutionOpenFilterButton').click();
+  await page.getByTestId(('headerFilterInput')).fill('HeaderName1');
+  await page.getByTestId(('headerValueInput')).fill('HeaderValue1');
+  await page.getByTestId(('addHeaderFilterButton')).click();
   await page.locator(('#header-1')).fill('HeaderName2');
   await page.locator(('#header-1-value-comparator')).selectOption('contains');
   await page.locator(('#header-1-value')).fill('HeaderValue2');
-  await page.getByTestId(('scenarioExecutionFilter/applyFilterButton')).click();
-  await page.getByTestId('scenarioExecutionFilter/clearFilterButton').click();
+  await page.getByTestId(('applyHeaderFilterButton')).click();
+  await page.getByTestId('clearScenarioExecutionsFilterButton').click();
 
-  await expect(page.getByTestId('scenarioExecutionFilter/scenarioName')).toBeEmpty();
-  await expect(page.getByTestId('scenarioExecutionFilter/status')).toHaveValue('');
-  await expect(page.getByTestId('scenarioExecutionFilter/fromDate')).toBeEmpty();
-  await expect(page.getByTestId('scenarioExecutionFilter/toDate')).toBeEmpty();
-  await expect(page.getByTestId('scenarioExecutionFilter/messageHeaders')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionFilterInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('');
+  await expect(page.getByTestId('scenarioExecutionFromDateInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionToDateInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionHeaderFilterInput')).toBeEmpty();
 });
 
 test('should display detail view on ID link click', async ({page}) => {
@@ -376,12 +373,12 @@ test('should display detail view on ID link click', async ({page}) => {
 
   await page.getByRole('link', {name: '752603'}).click();
   await expect(page).toHaveURL('http://localhost:9000/scenario-execution/752603/view');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailId')).toHaveText('752603');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailStartDate')).toHaveText('27 Jun 2024 10:59:03');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailEndDate')).toHaveText('27 Jun 2024 11:05:21');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailScenarioName')).toHaveText('Default');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailStatus')).toHaveText('FAILURE');
-  await expect(page.getByTestId('scenarioExecutionFilter/detailErrorMessage')).toHaveText('Unable to validate because message store is not of type \'CorrelatedMessageProvider\'! Check your configuration and register a suitable message store.');
-  await page.getByTestId('scenarioExecutionFilter/openStackTraceButton').click();
-  await expect(page.getByTestId('scenarioExecutionFilter/detailStackTrace')).toHaveText('org.citrusframework.exceptions.CitrusRuntimeException: It is the courage to continue that counts. at org.citrusframework.actions.FailAction.doExecute(FailAction.java:43) at org.citrusframework.actions.AbstractTestAction.execute(AbstractTestAction.java:59) at org.citrusframework.DefaultTestCase.executeAction(DefaultTestCase.java:190) at org.citrusframework.DefaultTestCaseRunner.run(DefaultTestCaseRunner.java:145) at org.citrusframework.simulator.scenario.ScenarioRunner.run(ScenarioRunner.java:79) at org.citrusframework.TestActionRunner.$(TestActionRunner.java:51) at org.citrusframework.simulator.sample.scenario.FailScenario.run(FailScenario.java:49) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.createAndRunScenarioRunner(DefaultScenarioExecutorService.java:147) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.startScenario(DefaultScenarioExecutorService.java:116) at org.citrusframework.simulator.service.runner.AsyncScenarioExecutorService.lambda$startScenarioAsync$0(AsyncScenarioExecutorService.java:126) at java.base');
+  await expect(page.getByTestId('scenarioExecutionId')).toHaveText('752603');
+  await expect(page.getByTestId('scenarioExecutionStartDate')).toHaveText('27 Jun 2024 10:59:03');
+  await expect(page.getByTestId('scenarioExecutionEndDate')).toHaveText('27 Jun 2024 11:05:21');
+  await expect(page.getByTestId('scenarioExecutionName')).toHaveText('Default');
+  await expect(page.getByTestId('scenarioExecutionStatus')).toHaveText('FAILURE');
+  await expect(page.getByTestId('scenarioExecutionErrorMessage')).toHaveText('Unable to validate because message store is not of type \'CorrelatedMessageProvider\'! Check your configuration and register a suitable message store.');
+  await page.getByTestId('openStackTraceButton').click();
+  await expect(page.getByTestId('scenarioExecutionStackTrace')).toHaveText('org.citrusframework.exceptions.CitrusRuntimeException: It is the courage to continue that counts. at org.citrusframework.actions.FailAction.doExecute(FailAction.java:43) at org.citrusframework.actions.AbstractTestAction.execute(AbstractTestAction.java:59) at org.citrusframework.DefaultTestCase.executeAction(DefaultTestCase.java:190) at org.citrusframework.DefaultTestCaseRunner.run(DefaultTestCaseRunner.java:145) at org.citrusframework.simulator.scenario.ScenarioRunner.run(ScenarioRunner.java:79) at org.citrusframework.TestActionRunner.$(TestActionRunner.java:51) at org.citrusframework.simulator.sample.scenario.FailScenario.run(FailScenario.java:49) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.createAndRunScenarioRunner(DefaultScenarioExecutorService.java:147) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.startScenario(DefaultScenarioExecutorService.java:116) at org.citrusframework.simulator.service.runner.AsyncScenarioExecutorService.lambda$startScenarioAsync$0(AsyncScenarioExecutorService.java:126) at java.base');
 });
