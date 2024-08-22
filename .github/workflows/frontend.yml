@@ -15,7 +15,7 @@
 # limitations under the License.
 # ---------------------------------------------------------------------------
 
-name: main
+name: frontend
 on:
   pull_request:
     branches:
@@ -70,9 +70,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --cache .npm --force
         working-directory: simulator-ui
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
