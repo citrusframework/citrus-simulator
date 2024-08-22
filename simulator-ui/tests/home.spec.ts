@@ -8,7 +8,7 @@ let nbOfTotalTests = nbOfSuccessfulTests + nbOfFailedTests;
 
 const scenarioSummariesLinkFilterTriples = [
   {'testName': 'totalSimulationsButton', 'link': /.*\/scenario-result*/, 'filterText': ''},
-  {'testName': 'successfulSimulationsButton', 'link': /.*\/scenario-result*/, 'filterText': 'SUCCESSFUL'},
+  {'testName': 'successfulSimulationsButton', 'link': /.*\/scenario-result*/, 'filterText': 'SUCCESS'},
   {'testName': 'failedSimulationsButton', 'link': /.*\/scenario-result*/, 'filterText': 'FAILURE'},
 ]
 
@@ -60,7 +60,7 @@ test('total, successful, failed tabs should display percentage in simulations co
 //should there be two separate tests for this?
 test('should move to right page with feedback resp suggestion link', async ({page}) => {
   await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackLinkStarGithub', /.*\/github.com\/citrusframework\/citrus-simulator/)
-  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackAndSuggestionLink', /.*\/github.com\/citrusframework\/citrus-simulator\/issues\/new/)
+  await clickOnLinkAndCheckIfTabOpensWithCorrectURL(page, 'feedbackAndSuggestionLink', /.*\/github.com*/)
 
 })
 

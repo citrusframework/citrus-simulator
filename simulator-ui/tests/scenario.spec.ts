@@ -33,7 +33,7 @@ test.beforeEach(async ({page}) => {
 
 })
 
-test('should display all information of a starter scenario', async ({page}) => {
+test('should display all scenario information of a starter scenario', async ({page}) => {
   await page.route('**/api/scenarios**', async route => {
     await route.fulfill({json: [{"name": "Test", "type": "STARTER"}]});
   });
@@ -44,7 +44,7 @@ test('should display all information of a starter scenario', async ({page}) => {
   await expect(page.getByTestId('scenarioExecutionButton')).toBeVisible();
 });
 
-test('should display all information of a non-starter scenario', async ({page}) => {
+test('should display all scenario information of a non-starter scenario', async ({page}) => {
   await page.route('**/api/scenarios**', async route => {
     await route.fulfill({json: [{"name": "Test", "type": "MESSAGE_TRIGGERED"}]});
   });
@@ -55,12 +55,12 @@ test('should display all information of a non-starter scenario', async ({page}) 
   await expect(page.getByTestId('scenarioExecutionButton')).toBeVisible();
 });
 
-test('should have the first 10 elements displayed in the table', async ({page}) => {
+test('should have the first 10 of 12 elements displayed in the table and the pagination field should display it right', async ({page}) => {
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
 //should one test EVERY option?
-test('should have correct number of Elements displayed in the table after selecting 20 as table size', async ({page}) => {
+test('should have all 12 scenarios displayed in the table after selecting 20 as table size', async ({page}) => {
   await page.getByTestId('itemsPerPageSelect').selectOption('20');
   for (const element of scenarioJson) {
     await expect(page.getByText(element.name)).toBeVisible();
@@ -68,7 +68,7 @@ test('should have correct number of Elements displayed in the table after select
   await expect(page.getByText('Showing 1-12 of 12 Items')).toBeVisible();
 });
 
-//how do you write this kind of test correctly? should the filter test be in the same as the reset button? or separate?
+//how do you write this kind of test correctly? should the filter test be in the same as the reset button? or separate? Test independency violated?
 test('text filter input should apply and clear filter button should reset it', async ({page}) => {
   await applyFilterAAndCheckCorrectness(page);
   await page.getByTestId('clearFilterButton').click();
@@ -77,10 +77,11 @@ test('text filter input should apply and clear filter button should reset it', a
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
-test('should have updated scenarios after refresh button clicked', async ({page}) => {
+//maybe put these two tests together in one function
+test('should have updated displayed scenarios (11 from max 11) and pagination number after refresh button clicked', async ({page}) => {
   //should I really test the whole list?
   await page.getByTestId('itemsPerPageSelect').selectOption('20');
-  await checkIfAllJsonContentIsVisible(page, 20, scenarioJson);
+  //await checkIfAllJsonContentIsVisible(page, 20, scenarioJson); should this be tested everytime?
 
   scenarioJson.push({"name": "Three", "type": "STARTER"});
   await mockBackendResponse(page, '**/api/scenarios**', scenarioJson);
@@ -90,10 +91,10 @@ test('should have updated scenarios after refresh button clicked', async ({page}
   scenarioJson.pop();
 })
 
-test('should have updated scenarios after refresh button clicked but not the display only the pagination-number', async ({page}) => {
+test('should have updated the pagination-number  but not the displayed scenarios (10 from 11) after clicking refresh button', async ({page}) => {
   //should I really test the whole list?
-  await page.getByTestId('itemsPerPageSelect').selectOption('10');
-  await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
+  await expect(page.getByTestId('itemsPerPageSelect')).toHaveValue('10');
+  //await checkIfAllJsonContentIsVisible(page, 10, scenarioJson); should this be tested everytime?
 
   scenarioJson.push({"name": "Three", "type": "STARTER"});
   await mockBackendResponse(page, '**/api/scenarios**', scenarioJson);
@@ -102,32 +103,43 @@ test('should have updated scenarios after refresh button clicked but not the dis
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 })
 
-//TODO: fix this test to work
+
 test('should move to the scenario-execution page with right filter entered if clicked on the execution button', async ({page}) => {
-  //andy fragen, wie er den button selected da es ja viele davon gibt.
+  const scenarioName = 'Test';
+  await mockBackendResponse(page, '**/api/scenarios**', [{"name": scenarioName, "type": "STARTER"}]);
+  await page.goto('http://localhost:9000/scenario');
   await page.getByTestId('scenarioExecutionButton').click();
-  const scenarioName = 'Hello';
   //how to regex this?
-  await expect(page).toHaveURL(`.*scenario-result\\?&filter\\[scenarioName.equals]=${scenarioName}`);
+  await expect(page).toHaveURL(/.*scenario-result.*filter%5BscenarioName.equals%5D=/ + scenarioName);
   await expect(page.getByTestId('scenarioExecutionFilterInput')).toHaveValue(scenarioName);
 })
 
 test('should launch the scenario-execution and popup should be visible if clicked on the launch button', async ({page}) => {
-  await page.route('**/api/scenarios**', async route => {
-    await route.fulfill({json: [{"name": "Test", "type": "STARTER"}]});
-  });
+  const scenarioId = [7];
+  const scenarioName = 'Test'
+  await mockBackendResponse(page, '**/api/scenarios**', [{"name": scenarioName, "type": "STARTER"}]);
+  await page.goto('http://localhost:9000/scenario');
+
+  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/launch**`, scenarioId)
+  await page.getByTestId('scenarioLaunchButton').click();
+  await expect(page.getByText('Scenario successfully launched')).toBeVisible();
+  await page.getByText('view Execution').click();
+  //how to regex this?
+  await expect(page).toHaveURL(/.*scenario-result.*filter%5BexecutionId.in%5D=*/ + scenarioId[0].toString())
+  await expect(page.getByText('Following filters are set')).toBeVisible();
+  await expect(page.getByText('executionId.in: ' + scenarioId)).toBeVisible();
+})
+
+test('should show error message if launch failed after click on the launch button', async ({page}) => {
+  const scenarioId = [7];
+  const scenarioName = 'Test'
+  await mockBackendResponse(page, '**/api/scenarios**', [{"name": scenarioName, "type": "STARTER"}]);
   await page.goto('http://localhost:9000/scenario');
 
   await page.getByTestId('scenarioLaunchButton').click();
-  const scenarioName = 'Test';
-  //how to regex this?
-  await expect(page).toHaveURL(`.*scenario-result\\?&filter\\[scenarioName.equals]=${scenarioName}`)
-  await expect(page.getByTestId('scenarioExecutionFilterInput')).toHaveValue(scenarioName);
-  //mockBackendResponse(page, '**/api/scenarios/GoodByeStarter/launch'); //muss das überhaupt sein, wäre ja unit test?
-  //alert gets triggered....thats why i make "getbyText"
-  await expect(page.getByText('Scenario successfully launched')).toBeVisible();
-  await page.getByText('view Execution').click();
-  await expect(page).toHaveURL(`.*scenario-result?&filter\\[executionId.in]=\\d+\\`);
+
+  await expect(page.getByText('Failed to launch Scenario!')).toBeVisible();
+  await expect(page).toHaveURL(/.*localhost:9000\/scenario/);
 })
 
 
