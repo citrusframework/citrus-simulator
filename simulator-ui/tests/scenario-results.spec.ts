@@ -508,7 +508,7 @@ test('should display detail view of message', async ({page}) => {
           },
           {
             "headerId": 207,
-            "name": "accept-encoding",
+            "name": "deflect-encoding",
             "value": "gzip, x-gzip, deflate",
             "createdDate": "2024-08-22T08:38:56.708514Z",
             "lastModifiedDate": "2024-08-22T08:38:56.708514Z"
@@ -534,4 +534,151 @@ test('should display detail view of message', async ({page}) => {
   await expect(page.getByTestId('messageDetailCitrusMessageId')).toHaveText('c65cdf92-7075-44d6-b0f2-42a556d12f80');
   await expect(page.getByTestId('messageDetailCreatedDate')).toHaveText('22 Aug 2024 08:38:56');
   await expect(page.getByTestId('messageDetailLastModifiedDate')).toHaveText('22 Aug 2024 08:38:56');
+
+  await expect(page.locator('tr :text("214")')).toHaveCount(1);
+  await expect(page.locator('tr :text("accept")')).toHaveCount(1);
+  await expect(page.locator('tr :text("application/json")')).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(0)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(1)).toHaveCount(1);
+
+  await expect(page.locator('tr :text("207")')).toHaveCount(1);
+  await expect(page.locator('tr :text("deflect-encoding")')).toHaveCount(1);
+  await expect(page.locator('tr :text("gzip, x-gzip, deflate")')).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(2)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(3)).toHaveCount(1);
+});
+
+test('should display detail view of message header', async ({page}) => {
+  await page.route('**/api/scenario-executions?page=0&size=10&sort=executionId,asc', async route => {
+    const scenarioExecutionJson = [
+      {
+        "executionId": 752603,
+        "startDate": "2024-06-27T10:59:03.872021Z",
+        "endDate": "2024-06-27T11:05:21.168103Z",
+        "scenarioName": "Default",
+        "testResult": {
+          "id": 752026,
+          "status": "FAILURE",
+          "errorMessage": "Unable to validate because message store is not of type 'CorrelatedMessageProvider'! Check your configuration and register a suitable message store.",
+          "createdDate": "2024-06-27T08:59:04.159168Z",
+        },
+      }
+    ];
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.route('**/api/scenario-executions/752603', async route => {
+    const scenarioExecutionJson =
+      {
+        "executionId": 752603,
+        "startDate": "2024-06-27T10:59:03.872021Z",
+        "endDate": "2024-06-27T11:05:21.168103Z",
+        "scenarioName": "Default",
+        "testResult": {
+          "id": 752026,
+          "status": "FAILURE",
+          "errorMessage": "Unable to validate because message store is not of type 'CorrelatedMessageProvider'! Check your configuration and register a suitable message store.",
+          "stackTrace" : "org.citrusframework.exceptions.CitrusRuntimeException: It is the courage to continue that counts. at org.citrusframework.actions.FailAction.doExecute(FailAction.java:43) at org.citrusframework.actions.AbstractTestAction.execute(AbstractTestAction.java:59) at org.citrusframework.DefaultTestCase.executeAction(DefaultTestCase.java:190) at org.citrusframework.DefaultTestCaseRunner.run(DefaultTestCaseRunner.java:145) at org.citrusframework.simulator.scenario.ScenarioRunner.run(ScenarioRunner.java:79) at org.citrusframework.TestActionRunner.$(TestActionRunner.java:51) at org.citrusframework.simulator.sample.scenario.FailScenario.run(FailScenario.java:49) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.createAndRunScenarioRunner(DefaultScenarioExecutorService.java:147) at org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.startScenario(DefaultScenarioExecutorService.java:116) at org.citrusframework.simulator.service.runner.AsyncScenarioExecutorService.lambda$startScenarioAsync$0(AsyncScenarioExecutorService.java:126) at java.base",
+          "createdDate": "2024-06-27T08:59:04.159168Z",
+        },
+        "scenarioParameters": [
+          {
+            "parameterId": 0,
+            "name": "scenario parameter name",
+            "controlType": "Control Type of parameter",
+            "value": "scenario parameter value",
+            "options": [
+              {
+                "key": "random key",
+                "value": "random value"
+              }
+            ],
+            "createdDate": "2024-06-27T09:27:02.286Z",
+            "lastModifiedDate": "2024-06-27T09:27:02.286Z"
+          },
+        ],
+        "scenarioActions": [
+          {
+            "actionId": 29,
+            "name": "http:receive-request",
+            "startDate": "2024-06-27T15:10:03.616968Z",
+            "endDate": "2024-08-15T15:10:03.632568Z"
+          },
+          {
+            "actionId": 30,
+            "name": "echo",
+            "startDate": "2024-06-27T15:10:03.632568Z",
+            "endDate": "2024-06-27T15:10:03.648188Z"
+          }
+        ],
+        "scenarioMessages": [
+          {
+            "messageId": 20,
+            "direction": "INBOUND",
+            "payload": "",
+            "citrusMessageId": "0fa15e84-422f-4a61-a587-ea33d12e4b38",
+            "headers": null,
+            "createdDate": "2024-06-27T13:10:03.632568Z",
+            "lastModifiedDate": "2024-06-27T13:10:03.632568Z"
+          }
+        ]
+
+      };
+
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.route('**/api/messages/20', async route => {
+    const scenarioExecutionJson =
+      {
+        "messageId": 20,
+        "direction": "INBOUND",
+        "payload": "",
+        "citrusMessageId": "c65cdf92-7075-44d6-b0f2-42a556d12f80",
+        "headers": [
+          {
+            "headerId": 214,
+            "name": "accept",
+            "value": "application/json",
+            "createdDate": "2024-08-22T08:38:56.708514Z",
+            "lastModifiedDate": "2024-08-22T08:38:56.708514Z"
+          },
+          {
+            "headerId": 207,
+            "name": "accept-encoding",
+            "value": "gzip, x-gzip, deflate",
+            "createdDate": "2024-08-22T08:38:56.708514Z",
+            "lastModifiedDate": "2024-08-22T08:38:56.708514Z"
+          },
+        ],
+        "createdDate": "2024-08-22T08:38:56.632568Z",
+        "lastModifiedDate": "2024-08-22T08:38:56.632568Z"
+      };
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.route('**/api/message-headers/214', async route => {
+    const scenarioExecutionJson =
+      {
+        "headerId": 214,
+        "name": "accept",
+        "value": "application/json",
+        "createdDate": "2024-08-22T08:38:56.708514Z",
+        "lastModifiedDate": "2024-08-22T08:38:56.708514Z"
+      };
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.goto('http://localhost:9000/scenario-result/');
+  await page.getByRole('link', {name: '752603'}).click();
+  await expect(page).toHaveURL('http://localhost:9000/scenario-execution/752603/view');
+  await page.getByTestId('scenarioMessagesEntityMessageLink').click();
+  await expect(page).toHaveURL('http://localhost:9000/message/20/view');
+  await page.getByTestId('messageHeaderEntityId').nth(0).click();
+  await expect(page).toHaveURL('http://localhost:9000/message-header/214/view');
+  await expect(page.getByTestId('messageHeaderDetailsId')).toHaveText('214');
+  await expect(page.getByTestId('messageHeaderDetailsName')).toHaveText('accept');
+  await expect(page.getByTestId('messageHeaderDetailsValue')).toHaveText('application/json');
+  await expect(page.getByTestId('messageHeaderDetailsCreatedDate')).toHaveText('22 Aug 2024 08:38:56');
+  await expect(page.getByTestId('messageHeaderDetailsLastModified')).toHaveText('22 Aug 2024 08:38:56');
 });
