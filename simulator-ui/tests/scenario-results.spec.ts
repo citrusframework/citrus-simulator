@@ -291,7 +291,7 @@ test('should delete second message header filter', async ({page}) => {
   await expect(page.locator(('#header-1-value'))).toHaveCount(0);
 });
 
-test('should clear all filters', async ({page}) => {
+test('should clear all filters with button', async ({page}) => {
   await page.goto('http://localhost:9000/scenario-result/');
 
   await page.getByTestId('scenarioExecutionFilterInput').fill('Test Scenario');
@@ -309,6 +309,32 @@ test('should clear all filters', async ({page}) => {
   await page.locator(('#header-1-value')).fill('HeaderValue2');
   await page.getByTestId(('applyHeaderFilterButton')).click();
   await page.getByTestId('clearScenarioExecutionsFilterButton').click();
+
+  await expect(page.getByTestId('scenarioExecutionFilterInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('');
+  await expect(page.getByTestId('scenarioExecutionFromDateInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionToDateInput')).toBeEmpty();
+  await expect(page.getByTestId('scenarioExecutionHeaderFilterInput')).toBeEmpty();
+});
+
+test('should clear all filters with icon', async ({page}) => {
+  await page.goto('http://localhost:9000/scenario-result/');
+
+  await page.getByTestId('scenarioExecutionFilterInput').fill('Test Scenario');
+  await page.getByTestId('scenarioExecutionStatusInSelect').selectOption('Failure');
+  await fillDatePickerField(page.getByTestId('scenarioExecutionFromDateInput'), '21072024', '120531')
+  await fillDatePickerField(page.getByTestId('scenarioExecutionToDateInput'), '22072024', '052007')
+  await page.getByTestId('scenarioExecutionHeaderFilterInput').fill('Test Headers');
+
+  await page.getByTestId('scenarioExecutionOpenFilterButton').click();
+  await page.getByTestId(('headerFilterInput')).fill('HeaderName1');
+  await page.getByTestId(('headerValueInput')).fill('HeaderValue1');
+  await page.getByTestId(('addHeaderFilterButton')).click();
+  await page.locator(('#header-1')).fill('HeaderName2');
+  await page.locator(('#header-1-value-comparator')).selectOption('contains');
+  await page.locator(('#header-1-value')).fill('HeaderValue2');
+  await page.getByTestId(('applyHeaderFilterButton')).click();
+  await page.getByTestId('clearAllFiltersButton').click();
 
   await expect(page.getByTestId('scenarioExecutionFilterInput')).toBeEmpty();
   await expect(page.getByTestId('scenarioExecutionStatusInSelect')).toHaveValue('');
