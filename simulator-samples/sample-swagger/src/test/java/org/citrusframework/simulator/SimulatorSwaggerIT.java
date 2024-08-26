@@ -36,6 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
+import static java.lang.String.format;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
 
 /**
@@ -57,26 +58,24 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
 
     @CitrusTest
     public void testUiInfo() {
-        $(http().client(simulatorUiClient)
-                .send()
-                .get("/api/manage/info")
-                .message()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+        $(http().client(simulatorUiClient).send().get("/api/manage/info").message()
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        $(http().client(simulatorUiClient)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{" +
-                        "\"simulator\":" +
-                            "{" +
-                                "\"name\":\"REST Petstore Simulator\"," +
-                                "\"version\":\"@ignore@\"" +
-                            "}," +
-                            "\"activeProfiles\": []" +
-                        "}"));
+        $(http().client(simulatorUiClient).receive().response(HttpStatus.OK).message()
+            .contentType(MediaType.APPLICATION_JSON_VALUE).body(
+                "{"
+                    + "\"simulator\":"
+                        + "{"
+                            + "\"name\":\"REST Petstore Simulator\","
+                            + "\"version\":\"@ignore@\""
+                        + "},"
+                    + "\"config\":"
+                        + "{\n"
+                            + "\"reset-results-enabled\": \"true\"\n"
+                        + "},"
+                    + "\"activeProfiles\": []"
+                    + "}"));
     }
 
     @CitrusTest
@@ -238,14 +237,14 @@ public class SimulatorSwaggerIT extends TestNGCitrusSpringSupport {
         @Bean
         public HttpClient petstoreClient() {
             return CitrusEndpoints.http().client()
-                    .requestUrl(String.format("http://localhost:%s/petstore/v2", 8080))
+                    .requestUrl(format("http://localhost:%s/petstore/v2", 8080))
                     .build();
         }
 
         @Bean
         public HttpClient simulatorUiClient() {
             return CitrusEndpoints.http().client()
-                    .requestUrl(String.format("http://localhost:%s", 8080))
+                    .requestUrl(format("http://localhost:%s", 8080))
                     .build();
         }
 

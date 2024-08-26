@@ -16,6 +16,8 @@
 
 package org.citrusframework.simulator.web.rest;
 
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties.SimulationResults;
 import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.service.TestResultQueryService;
 import org.citrusframework.simulator.service.TestResultService;
@@ -42,6 +44,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
+
 /**
  * REST controller for managing {@link TestResult}.
  */
@@ -51,12 +55,14 @@ public class TestResultResource {
 
     private static final Logger logger = LoggerFactory.getLogger(TestResultResource.class);
 
+    private final SimulatorConfigurationProperties simulatorConfigurationProperties;
     private final TestResultService testResultService;
     private final TestResultQueryService testResultQueryService;
 
     private final TestResultMapper testResultMapper;
 
-    public TestResultResource(TestResultService testResultService, TestResultQueryService testResultQueryService, TestResultMapper testResultMapper) {
+    public TestResultResource(SimulatorConfigurationProperties simulatorConfigurationProperties, TestResultService testResultService, TestResultQueryService testResultQueryService, TestResultMapper testResultMapper) {
+        this.simulatorConfigurationProperties = simulatorConfigurationProperties;
         this.testResultService = testResultService;
         this.testResultQueryService = testResultQueryService;
         this.testResultMapper = testResultMapper;
@@ -80,14 +86,27 @@ public class TestResultResource {
 
     /**
      * {@code DELETE  /test-results} : delete all the testResults.
+     * <p>
+     * Functionality can be disabled using the
+     * property {@link SimulationResults#isResetEnabled()}, in which case an HTTP 501 "Not
+     * Implemented" code will be returned.
      *
      * @return the {@link ResponseEntity} with status {@code 201 (NO CONTENT)}.
      */
     @DeleteMapping("/test-results")
     public ResponseEntity<Void> deleteAllTestResults() {
-        logger.debug("REST request to delete all TestResults");
-        testResultService.deleteAll();
-        return ResponseEntity.noContent().build();
+        if (simulatorConfigurationProperties.getSimulationResults().isResetEnabled()) {
+            logger.debug("REST request to delete all TestResults");
+            testResultService.deleteAll();
+            return ResponseEntity.noContent().build();
+        } else {
+            logger.warn("REST request to delete all TestResults, but reset is disabled!");
+            return ResponseEntity.status(NOT_IMPLEMENTED)
+                .header(
+                    "message",
+                    "Resetting TestResults is disabled on this simulator, see property 'citrus.simulator.simulation-results.reset-enabled' for more information!")
+                .build();
+        }
     }
 
     /**

@@ -21,6 +21,8 @@ For each listed resource, the following operations are supported:
 
 All REST resources adhere to this pattern, with exceptions noted in subsequent sections.
 
+The endpoint `/api/test-results` additionally supports the `DELETE` request that removes all recorded Test Results and Executions.
+
 [[receive-single-test-result]]
 === Receive SINGLE Test-Parameter
 

@@ -10,6 +10,9 @@ import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { STATUS_FAILURE, STATUS_SUCCESS } from 'app/entities/test-result/test-result.model';
 import { TestResultsByStatus, TestResultService } from 'app/entities/test-result/service/test-result.service';
 
+import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { SimulatorConfiguration } from 'app/layouts/profiles/profile-info.model';
+
 import SharedModule from 'app/shared/shared.module';
 
 import TestResultDeleteDialogComponent from './delete/test-result-delete-dialog.component';
@@ -31,8 +34,13 @@ export default class TestResultSummaryComponent implements OnInit {
   statusSuccess = STATUS_SUCCESS;
   statusFailed = STATUS_FAILURE;
 
+  resetEnabled = this.profileService
+    .getSimulatorConfiguration()
+    .pipe(map((simulatorConfiguration: SimulatorConfiguration) => simulatorConfiguration.resetResultsEnabled));
+
   constructor(
     private modalService: NgbModal,
+    private profileService: ProfileService,
     private testResultService: TestResultService,
   ) {}
 
@@ -57,6 +65,7 @@ export default class TestResultSummaryComponent implements OnInit {
         complete: () => (this.isLoading = false),
       });
   }
+
   protected reset(): void {
     const modalRef = this.modalService.open(TestResultDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     // unsubscribe not needed because closed completes on modal close

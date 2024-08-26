@@ -7,24 +7,36 @@ import { of } from 'rxjs';
 
 import { TestResultsByStatus, TestResultService } from 'app/entities/test-result/service/test-result.service';
 
+import { ProfileService } from 'app/layouts/profiles/profile.service';
+
 import TestResultSummaryComponent from './test-result-summary.component';
 
 import Mocked = jest.Mocked;
+import { SimulatorConfiguration } from '../layouts/profiles/profile-info.model';
 
 describe('TestResultSummaryComponent', () => {
+  let testProfileService: Mocked<ProfileService>;
   let testResultService: Mocked<TestResultService>;
 
   let fixture: ComponentFixture<TestResultSummaryComponent>;
   let component: TestResultSummaryComponent;
 
   beforeEach(async () => {
+    testProfileService = {
+      getSimulatorConfiguration: jest.fn().mockReturnValueOnce(of({ resetResultsEnabled: true } as SimulatorConfiguration)),
+    } as unknown as Mocked<ProfileService>;
+
     testResultService = {
       countByStatus: jest.fn(),
     } as unknown as Mocked<TestResultService>;
 
     await TestBed.configureTestingModule({
       imports: [TestResultSummaryComponent],
-      providers: [TranslateService, { provide: TestResultService, useValue: testResultService }],
+      providers: [
+        { provide: ProfileService, useValue: testProfileService },
+        { provide: TestResultService, useValue: testResultService },
+        TranslateService,
+      ],
     })
       .overrideTemplate(TestResultSummaryComponent, '')
       .compileComponents();
@@ -38,6 +50,11 @@ describe('TestResultSummaryComponent', () => {
   });
 
   describe('ngOnInit', () => {
+    it('should subscribe to simulator configuration', () => {
+      expect(testProfileService.getSimulatorConfiguration).toHaveBeenCalled();
+      expect(component.resetEnabled).toBeTruthy();
+    });
+
     it('should correctly calculate fixed percentages', fakeAsync(() => {
       const mockData = new HttpResponse({
         body: {
