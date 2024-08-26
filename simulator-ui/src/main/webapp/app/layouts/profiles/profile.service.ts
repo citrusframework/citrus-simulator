@@ -6,40 +6,41 @@ import { map, shareReplay } from 'rxjs/operators';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 
-import { ProfileInfo, InfoResponse } from './profile-info.model';
+import { InfoResponse, SimulatorInfo, SimulatorConfiguration } from './profile-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
   private infoUrl = this.applicationConfigService.getEndpointFor('api/manage/info');
-  private profileInfo$?: Observable<ProfileInfo>;
+
+  private simulatorInfo$?: Observable<SimulatorInfo>;
 
   constructor(
     private http: HttpClient,
     private applicationConfigService: ApplicationConfigService,
   ) {}
 
-  getProfileInfo(): Observable<ProfileInfo> {
-    if (this.profileInfo$) {
-      return this.profileInfo$;
-    }
-
-    this.profileInfo$ = this.http.get<InfoResponse>(this.infoUrl).pipe(
-      map((response: InfoResponse) => {
-        const profileInfo: ProfileInfo = {
-          activeProfiles: response.activeProfiles,
-          inProduction: response.activeProfiles?.includes('prod'),
-        };
-        if (response.activeProfiles && response['display-ribbon-on-profiles']) {
-          const displayRibbonOnProfiles = response['display-ribbon-on-profiles'].split(',');
-          const ribbonProfiles = displayRibbonOnProfiles.filter(profile => response.activeProfiles?.includes(profile));
-          if (ribbonProfiles.length > 0) {
-            profileInfo.ribbonEnv = ribbonProfiles[0];
-          }
-        }
-        return profileInfo;
-      }),
+  getSimulatorConfiguration(): Observable<SimulatorConfiguration> {
+    return this.http.get<InfoResponse>(this.infoUrl).pipe(
+      map(
+        (response: InfoResponse) =>
+          ({
+            resetResultsEnabled: response.config?.['reset-results-enabled'].toLowerCase() === 'true',
+          }) as SimulatorConfiguration,
+      ),
       shareReplay(),
     );
-    return this.profileInfo$;
+  }
+
+  getSimulatorInfo(): Observable<SimulatorInfo> {
+    if (this.simulatorInfo$) {
+      return this.simulatorInfo$;
+    }
+
+    this.simulatorInfo$ = this.http.get<InfoResponse>(this.infoUrl).pipe(
+      map((response: InfoResponse) => ({ ...response.simulator })),
+      shareReplay(),
+    );
+
+    return this.simulatorInfo$;
   }
 }

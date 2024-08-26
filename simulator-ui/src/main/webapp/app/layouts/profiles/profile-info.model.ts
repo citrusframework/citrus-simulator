@@ -1,17 +1,11 @@
 export interface InfoResponse {
-  'display-ribbon-on-profiles'?: string;
   git?: any;
   build?: any;
   activeProfiles?: string[];
   simulator?: SimulatorInfo;
-}
-
-export class ProfileInfo {
-  constructor(
-    public activeProfiles?: string[],
-    public ribbonEnv?: string,
-    public inProduction?: boolean,
-  ) {}
+  config?: SimulatorConfiguration & {
+    'reset-results-enabled': string;
+  };
 }
 
 export class SimulatorInfo {
@@ -19,4 +13,8 @@ export class SimulatorInfo {
     public name?: string,
     public version?: string,
   ) {}
+}
+
+export class SimulatorConfiguration {
+  constructor(public resetResultsEnabled: boolean = true) {}
 }

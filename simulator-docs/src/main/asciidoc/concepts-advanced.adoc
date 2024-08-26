@@ -1,14 +1,14 @@
-[[concepts-advanced]]
+[[advanced-concepts]]
 = Advanced Concepts
 
-[[concept-advanced-execution-modes]]
+[[advanced-concepts-execution-modes]]
 == Execution Modes in Citrus Simulator
 
 The Citrus Simulator offers different modes of operation to accommodate various testing scenarios and requirements.
 These modes dictate how the simulator executes the test scenarios.
 It comes with two modes, a synchronous and an asynchronous one, providing flexibility in how interactions are simulated and tested.
 
-[[concept-advanced-execution-sync-mode]]
+[[advanced-concepts-execution-sync-mode]]
 === Synchronous Execution Mode
 
 The synchronous execution mode ensures that scenarios are executed one after the other, in a single thread.
@@ -31,7 +31,7 @@ citrus:
     mode: sync
 ----
 
-[[concept-advanced-execution-async-mode]]
+[[advanced-concepts-execution-async-mode]]
 === Asynchronous Execution Mode
 
 In asynchronous execution mode, scenarios are executed concurrently in separate threads, allowing for parallel processing.
@@ -57,7 +57,7 @@ citrus:
       threads: 10
 ----
 
-[[concept-advanced-execution-custom-mode]]
+[[advanced-concepts-execution-custom-mode]]
 === Custom Executors
 
 For advanced scenarios, you have the flexibility to provide custom executors by implementing the `ScenarioExecutorService` interface.
@@ -78,14 +78,15 @@ public ScenarioExecutorService customScenarioExecutorService() {
 
 This custom executor will then be used by the simulator to execute scenarios according to the logic you've implemented.
 
-== Best Practices
+[[advanced-concepts-execution-mode-best-practices]]
+=== Best Practices
 
 - Use the _synchronous mode_ as the standard, for linear simulations where data consistency matters or when debugging to ensure straightforward tracing of actions and outcomes.
 - Opt for the _asynchronous mode_ only when explicitly needed, when simulating more complex scenarios that involve intermediate synchronous messages.
 
 By understanding and appropriately configuring the execution modes of the Citrus Simulator, you can tailor the simulation environment to best suit your testing needs, whether you require precise control over scenario execution or need to simulate high-volume, concurrent interactions.
 
-[[concept-advanced-database-schema]]
+[[advanced-concepts-database-schema]]
 == Database Schema
 
 In some cases, it may be useful to keep the database schema in mind.
@@ -94,8 +95,8 @@ This visual representation can help understand the relationships and structure o
 
 image::database-schema.png[Database Schema, title="Database Schema of the Citrus Simulator"]
 
-[[concept-advanced-runtime-scenario-registration]]
-== Registering Simulator Scenarios at Runtime
+[[advanced-concepts-scenario-cache]]
+== Scenario Cache
 
 Registering simulator scenarios at runtime is a perfectly valid approach.
 However, it's crucial to ensure that the scenario cache used by the simulator remains synchronized.
@@ -107,6 +108,7 @@ Therefore, after making modifications, it's necessary to call `ScenarioLookupSer
 
 The following Java source code illustrates how to register a custom scenario and update the scenario cache:
 
+.Custom Scenario Bean Registration
 [source,java]
 ----
 import org.citrusframework.simulator.service.ScenarioLookupService;
@@ -127,4 +129,27 @@ public class MyCustomBeanConfiguration {
         scenarioLookupService.evictAndReloadScenarioCache();
     }
 }
+----
+
+[[advanced-concepts-housekeeping]]
+== Housekeeping
+
+The Simulator has the ability to reset all recorded Test Results and Executions, either using the <<rest-api,REST API>> or <<user-interface-integration,User Interface>>.
+This functionality is useful for smaller and/or ephemeral simulations, but can be problematic for long-lived or even central services.
+In such cases, it is recommended to switch the endpoint off and set up your own housekeeping.
+
+To disable the functionality in both back- and frontend, configure the below property in the Spring Boot configuration files:
+
+.Example `application.properties`
+[source, properties]
+----
+citrus.simulator.simulation-results.reset-enabled=false
+----
+
+.Example `application.yml`
+----
+citrus:
+  simulator:
+    test-results:
+        reset-enabeld: false
 ----

@@ -9,7 +9,13 @@
           <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
         </button>
-        <button class="btn btn-secondary" (click)="reset()" [disabled]="testResults?.total === 0" data-test="resetButton">
+        <button
+          *ngIf="resetEnabled | async"
+          class="btn btn-secondary"
+          (click)="reset()"
+          [disabled]="testResults?.total === 0"
+          data-test="resetButton"
+        >
           <fa-icon icon="trash-alt"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.testParameter.action.reset">Reset</span>
         </button>
