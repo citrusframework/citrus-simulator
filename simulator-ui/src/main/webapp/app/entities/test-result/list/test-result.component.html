@@ -16,7 +16,7 @@
 
   <app-filter [filters]="displayFilters"></app-filter>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="testResults?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="testResults?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.testResult.home.notFound">No Test Results found</span>
   </div>
 

@@ -16,7 +16,7 @@
 
   <app-filter [filters]="displayFilters"></app-filter>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="scenarioActions?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="scenarioActions?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.notFound">No Scenario Actions found</span>
   </div>
 

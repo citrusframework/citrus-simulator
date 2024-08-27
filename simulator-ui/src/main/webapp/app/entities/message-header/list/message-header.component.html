@@ -16,7 +16,7 @@
 
   <app-filter [filters]="displayFilters"></app-filter>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="messageHeaders?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="messageHeaders?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.messageHeader.home.notFound">No Message Headers found</span>
   </div>
 

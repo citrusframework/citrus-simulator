@@ -51,7 +51,7 @@
 
   <app-alert></app-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.scenario.home.notFound">No Scenarios found</span>
   </div>
 

@@ -1,5 +1,5 @@
 import {expect, Page, test} from "@playwright/test";
-import {mockBackendResponse} from "./helper-functions";
+import {mockBackendResponse} from "./helpers";
 
 const scenarioJson = [
   {"name": "Default", "type": "MESSAGE_TRIGGERED"},
@@ -34,9 +34,8 @@ test.beforeEach(async ({page}) => {
 })
 
 test('should display all scenario information of a starter scenario', async ({page}) => {
-  await page.route('**/api/scenarios**', async route => {
-    await route.fulfill({json: [{"name": "Test", "type": "STARTER"}]});
-  });
+  await mockBackendResponse(page, '**/api/scenarios**', {"name": "Test", "type": "STARTER"} );
+
 
   await page.goto('http://localhost:9000/scenario');
 

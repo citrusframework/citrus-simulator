@@ -1,5 +1,5 @@
 import {expect, test} from "@playwright/test";
-import {mockBackendResponse} from "./helper-functions";
+import {mockBackendResponse} from "./helpers";
 
 
 const entityPageContentMap = [

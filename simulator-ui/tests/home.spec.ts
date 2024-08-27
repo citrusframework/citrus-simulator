@@ -1,6 +1,6 @@
 import {expect, Page, test} from '@playwright/test';
 
-import {clickOnLinkAndCheckIfTabOpensWithCorrectURL, mockBackendResponse} from "./helper-functions";
+import {clickOnLinkAndCheckIfTabOpensWithCorrectURL, mockBackendResponse} from "./helpers";
 
 let nbOfSuccessfulTests = 90;
 let nbOfFailedTests = 10;
