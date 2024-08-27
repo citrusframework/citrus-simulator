@@ -74,6 +74,73 @@ test('should display table of messages', async ({page}) => {
   await expect(page.getByTestId('filterOtherEntityButton')).toBeVisible();
 })
 
+test('should show message headers when clicking button on message row', async ({page}) => {
+  await page.route('**/api/messages*', async route => {
+    const scenarioExecutionJson = [
+      {
+        "messageId": 1,
+        "direction": "INBOUND",
+        "payload": "<Default>Should trigger default scenario</Default>",
+        "citrusMessageId": "5605967b-bfd6-42bb-ba3b-a2404d20783a",
+        "headers": [
+          {
+            "headerId": 13,
+            "name": "Content-Type",
+            "value": "application/xml;charset=UTF-8",
+            "createdDate": "2024-08-23T08:25:31.224400Z",
+            "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
+          },
+          {
+            "headerId": 11,
+            "name": "accept",
+            "value": "text/plain, application/json, application/*+json, */*",
+            "createdDate": "2024-08-23T08:25:31.224400Z",
+            "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
+          },
+        ],
+        "createdDate": "2024-08-23T08:25:31.223402Z",
+        "lastModifiedDate": "2024-08-23T08:25:31.223402Z"
+      }
+    ];
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.route('**/api/message-headers*', async route => {
+    const scenarioExecutionJson = [
+        {
+          "headerId": 13,
+          "name": "Content-Type",
+          "value": "application/xml;charset=UTF-8",
+          "createdDate": "2024-08-23T08:25:31.224400Z",
+          "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
+        },
+        {
+          "headerId": 11,
+          "name": "accept",
+          "value": "text/plain, application/json, application/*+json, */*",
+          "createdDate": "2024-08-23T08:25:31.224400Z",
+          "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
+        },
+    ];
+    await route.fulfill({json: scenarioExecutionJson});
+  });
+
+  await page.goto('http://localhost:9000/message/');
+
+  await page.getByTestId('filterOtherEntityButton').nth(0).click();
+  await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
+  await expect(page.getByTestId('filterValue')).toHaveText('messageId.in: 1');
+  await expect(page.locator('th :text("ID")')).toHaveCount(1);
+  await expect(page.locator('th :text("Name")')).toHaveCount(1);
+  await expect(page.locator('th :text("Value")')).toHaveCount(1);
+  await expect(page.getByTestId('messageHeaderEntityId').nth(0)).toHaveText('13')
+  await expect(page.getByTestId('messageHeaderEntityName').nth(0)).toHaveText('Content-Type')
+  await expect(page.getByTestId('messageHeaderEntityValue').nth(0)).toHaveText('application/xml;charset=UTF-8')
+  await expect(page.getByTestId('messageHeaderEntityId').nth(1)).toHaveText('11')
+  await expect(page.getByTestId('messageHeaderEntityName').nth(1)).toHaveText('accept')
+  await expect(page.getByTestId('messageHeaderEntityValue').nth(1)).toHaveText('text/plain, application/json, application/*+json, */*')
+})
+
 test('should display table of message headers', async ({page}) => {
   await page.route('**/api/message-headers*', async route => {
     const scenarioExecutionJson = [

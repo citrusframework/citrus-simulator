@@ -4,7 +4,7 @@
   <ul>
     <ng-container *ngFor="let filterOption of filters.filterOptions">
       <li *ngFor="let value of filterOption.values">
-        <span data-test="filterValue">{{ filterOption.name }}:</span> {{ value }}
+        <span data-test="filterValue">{{ filterOption.name }}: {{ value }}</span>
         <fa-icon
           icon="times"
           (click)="clearFilter(filterOption.name, value)"
