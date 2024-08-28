@@ -13,7 +13,7 @@ export const elementLinkPairEntityDroptdown = [
   {'testName': 'navigationEntitiesTestResultLink', 'link': /.*\/test-result*/},
   {'testName': 'navigationEntitiesParameterLink', 'link': /.*\/test-parameter*/},
 ]
-//what to use as type instead of Promise<any>??
+// what to use as type instead of Promise<any>??
 export const clickOnLinkAndCheckIfTabOpensWithCorrectURL = async (page: Page, linkTestSelector: string, expectedURL: RegExp): Promise<any> => {
   const [newTab] = await Promise.all([
     // Start waiting for new page before clicking. Note no await.
@@ -31,6 +31,24 @@ export const mockBackendResponse = async (page: Page, apiURL: string, responseJs
   await page.route(apiURL, async route => {
     await route.fulfill({json: responseJson});
   })
+}
+
+export const mockErrorResponseOfAllApiUrls = async (page: Page): Promise<any> => {
+  for (const element of elementLinkPairNoDropdown) {
+    await page.route('**/api'+ element.link +'*', async (route) => {
+      await route.fulfill({
+        status: 500,
+      });
+    });
+  }
+
+  for (const element of elementLinkPairEntityDroptdown) {
+    await page.route('**/api'+ element.link +'*', async (route) => {
+      await route.fulfill({
+        status: 500,
+      });
+    });
+  }
 }
 
 export const goToAllPagesAndCheckURLPlusContent = async (page: Page, checkPageContentFunction?: (page: Page) => void): Promise<any> => {
