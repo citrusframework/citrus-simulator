@@ -24,10 +24,23 @@ const orderedJson = [
   {"name": "ByeStarter", "type": "STARTER"},
 ];
 
+const parameterJson = [
+  {
+    "parameterId" : null,
+    "name": "payload",
+    "controlType" : "TEXTAREA",
+    "value" : "test value",
+    "options" : [],
+    "createdDate" : "2024-08-28T13:25:55.907136400Z",
+    "lastModifiedDate": "2024-08-28T13:25:55.907136400Z"
+  },
+];
+
 test.beforeEach(async ({page}) => {
-  await page.route('**/api/scenarios**', async route => {
+  await page.route('**/api/scenarios?page=0&size=10&sort=name,asc', async route => {
     await route.fulfill({json: scenarioJson});
   });
+
   await page.goto('http://localhost:9000/scenario');
   await page.getByTestId('itemsPerPageSelect').selectOption('10');
 
@@ -63,7 +76,7 @@ test('should have the first 10 of 12 elements displayed in the table and the pag
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
-//should one test EVERY option?
+// should one test EVERY option?
 test('should have all 12 scenarios displayed in the table after selecting 20 as table size', async ({page}) => {
   const selectedPageSize = '20';
   await page.getByTestId('itemsPerPageSelect').selectOption(selectedPageSize);
@@ -75,7 +88,7 @@ test('should have all 12 scenarios displayed in the table after selecting 20 as 
   await expect(page.getByText('Showing 1-12 of 12 Items')).toBeVisible();
 });
 
-//how do you write this kind of test correctly? should the filter test be in the same as the reset button? or separate? Is the independence of the tests violated?
+// how do you write this kind of test correctly? should the filter test be in the same as the reset button? or separate? Is the independence of the tests violated?
 test('text filter input should apply and clear filter button should reset it', async ({page}) => {
   await applyFilterAAndCheckCorrectness(page);
   await page.getByTestId('clearFilterButton').click();
@@ -84,13 +97,13 @@ test('text filter input should apply and clear filter button should reset it', a
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
-//is the test independence again violated? should there be two separate tests for the pagination-select-option-button and the refresh button? --> no because the refresh button affects the pagination number inevitably.
+// is the test independence again violated? should there be two separate tests for the pagination-select-option-button and the refresh button? --> no because the refresh button affects the pagination number inevitably.
 test('should have updated displayed scenarios after refresh button was clicked and a new scenario received', async ({page}) => {
   const selectOptionsForNumberOfScenariosToDisplay: number[] = [10, 20, 50, 100];
-  //should I really test the whole list?
+  // should I really test the whole list?
   for (const option of selectOptionsForNumberOfScenariosToDisplay) {
     await page.getByTestId('itemsPerPageSelect').selectOption(option.toString());
-    //should it be tested whether the start condition is met - like 'await checkIfAllJsonContentIsVisible(page, 20, scenarioJson);' - or not?
+    // should it be tested whether the start condition is met - like 'await checkIfAllJsonContentIsVisible(page, 20, scenarioJson);' - or not?
 
     scenarioJson.push({"name": "Three", "type": "STARTER"});
     await mockBackendResponse(page, '**/api/scenarios**', scenarioJson);
@@ -127,7 +140,7 @@ test('should launch the scenario-execution and popup should be visible if clicke
 
   await expect(page).toHaveURL(urlRegex)
   await expect(page.getByText('Following filters are set')).toBeVisible();
-  await expect(page.getByText('executionId.in: ' + scenarioId)).toBeVisible();
+  await expect(page.getByText('executionId.in: ' + scenarioId[0])).toBeVisible();
 })
 
 test('should show error message if launch failed after click on the launch button', async ({page}) => {
@@ -141,34 +154,37 @@ test('should show error message if launch failed after click on the launch butto
   await expect(page).toHaveURL(/.*localhost:9000\/scenario/);
 })
 
-//should be split into multiple tests?
-test('should go to detail view of a scenario (no starter) and then go back', async ({page}) => {
-  const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'scenarioDetailsEntitiesName', 'scenarioDetailsEntitiesControlType', 'scenarioDetailsEntitiesValue', 'entityDetailsBackButton']
+test('should go to detail view of a scenario (not type starter) and then go back', async ({page}) => {
+  const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'entityDetailsBackButton']
   await page.getByText('Default').click();
 
   await expect(page).toHaveURL(/.*scenario\/Default\/MESSAGE_TRIGGERED\/view*/);
   for (const element of allVisibleDetailElements) {
-    console.log(element);
-    await expect(page.getByText(element)).toBeVisible();
+    await expect(page.getByTestId(element)).toBeVisible();
   }
   await page.getByTestId('entityDetailsBackButton').click();
   await expect(page).toHaveURL(/.*scenario/);
 })
 
-//TODO: maybe test if it can be started?
-test('should go to detail view of a scenario STARTER check for content and go back', async ({page}) => {
+test('should go to detail view of a scenario type STARTER check for content and go back', async ({page}) => {
+  await mockScenarioParameters(page);
   const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'scenarioDetailsEntitiesName', 'scenarioDetailsEntitiesControlType', 'scenarioDetailsEntitiesValue', 'entityDetailsBackButton']
   await page.getByText('One').click();
 
+  // await mockScenarioParameters(page);
   await expect(page).toHaveURL(/.*scenario\/One\/STARTER\/view*/);
   for (const element of allVisibleDetailElements) {
-    console.log(element);
-    await expect(page.getByText(element)).toBeVisible();
+    await expect(page.getByTestId(element)).toBeVisible();
   }
   await page.getByTestId('entityDetailsBackButton').click();
   await expect(page).toHaveURL(/.*scenario/);
 })
 
+const mockScenarioParameters = async (page: Page): Promise<any> => {
+  await page.route('http://localhost:9000/api/scenarios/One/parameters', async route => {
+    await route.fulfill({json: parameterJson});
+  });
+}
 
 const checkIfAllJsonContentIsVisible = async (page: Page, selectedPageSize: number, responseJson: {
   name: string,
