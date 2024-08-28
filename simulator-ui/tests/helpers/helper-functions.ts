@@ -1,17 +1,18 @@
 import {expect, Page} from "@playwright/test";
+import {navbarElementLinkPair} from "./helper-interfaces";
 
-export const elementLinkPairNoDropdown = [
-  {'testName': 'navigationScenariosLink', 'link': /.*scenario*/},
-  {'testName': 'navigationScenarioExecutionsLink', 'link': /.*scenario-result*/}
+export const elementLinkPairNoDropdown: navbarElementLinkPair[] = [
+  {testName: 'navigationScenariosLink', link: /.*scenario*/},
+  {testName: 'navigationScenarioExecutionsLink', link: /.*scenario-result*/}
 ]
-export const elementLinkPairEntityDroptdown = [
-  {'testName': 'navigationEntitiesMessageLink', 'link': /.*\/message*/},
-  {'testName': 'navigationEntitiesMessageHeaderLink', 'link': /.*\/message-header*/},
-  {'testName': 'navigationEntitiesScenarioExecutionLink', 'link': /.*\/scenario-execution*/},
-  {'testName': 'navigationEntitiesScenarioActionLink', 'link': /.*\/scenario-action*/},
-  {'testName': 'navigationEntitiesScenarioParameterLink', 'link': /.*\/scenario-parameter*/},
-  {'testName': 'navigationEntitiesTestResultLink', 'link': /.*\/test-result*/},
-  {'testName': 'navigationEntitiesParameterLink', 'link': /.*\/test-parameter*/},
+export const elementLinkPairEntityDroptdown: navbarElementLinkPair[] = [
+  {testName: 'navigationEntitiesMessageLink', link: /.*\/message*/},
+  {testName: 'navigationEntitiesMessageHeaderLink', link: /.*\/message-header*/},
+  {testName: 'navigationEntitiesScenarioExecutionLink', link: /.*\/scenario-execution*/},
+  {testName: 'navigationEntitiesScenarioActionLink', link: /.*\/scenario-action*/},
+  {testName: 'navigationEntitiesScenarioParameterLink', link: /.*\/scenario-parameter*/},
+  {testName: 'navigationEntitiesTestResultLink', link: /.*\/test-result*/},
+  {testName: 'navigationEntitiesParameterLink', link: /.*\/test-parameter*/},
 ]
 //what to use as type instead of Promise<any>??
 export const clickOnLinkAndCheckIfTabOpensWithCorrectURL = async (page: Page, linkTestSelector: string, expectedURL: RegExp): Promise<any> => {
@@ -23,7 +24,6 @@ export const clickOnLinkAndCheckIfTabOpensWithCorrectURL = async (page: Page, li
   ]);
   await newTab.waitForLoadState();
 
-  // Interact with the new page normally.
   await expect(newTab).toHaveURL(expectedURL);
 }
 

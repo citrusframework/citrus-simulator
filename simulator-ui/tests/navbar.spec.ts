@@ -1,5 +1,5 @@
 import {expect, test} from "@playwright/test";
-import {clickOnLinkAndCheckIfTabOpensWithCorrectURL, goToAllPagesAndCheckURLPlusContent} from "./helpers";
+import {clickOnLinkAndCheckIfTabOpensWithCorrectURL, goToAllPagesAndCheckURLPlusContent} from "./helpers/helper-functions";
 
 test.beforeEach(async ({page}) => {
   await page.goto('http://localhost:9000/');

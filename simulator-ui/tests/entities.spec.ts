@@ -1,322 +1,255 @@
-import {expect, test} from "@playwright/test";
-import {mockBackendResponse} from "./helpers";
+import {expect, Page, test} from "@playwright/test";
+import {EntityPageContentObject} from "./helpers/helper-interfaces";
+import {
+  messageHeaderJson,
+  messageJson,
+  scenarioActionJson,
+  scenarioExecutionJson, testParameterJson,
+  testResultJson
+} from "./helpers/entity-jsons";
+import {mockBackendResponse} from "./helpers/helper-functions";
 
 
-const entityPageContentMap = [
+const exampleDate = '23 Aug 2024 08:25:31';
+const entityPageContentMap: EntityPageContentObject[] = [
   {
-    apiUrl: '...' /* TODO:die URLs der entsprechenden endpoints einfügen*/,
+    apiUrl: '**/api/messages*',
     entityUrl: 'http://localhost:9000/message',
-    contentJson: {/* TODO: den Inhalt der Jsons befüllen entsprechend was gesendet wird*/}
+    contentJson: messageJson,
+    locators: [
+      'th :text("Direction")',
+      'th :text("Payload")',
+      'th :text("Citrus Message Id")',
+      'th :text("Scenario Execution")',
+      'th :text("Created Date")',
+      'th :text("Last Modified Date")',
+    ],
+    testIdsAndExpectedValues: [
+      {id: 'messageEntityMessageId', value: '1'},
+      {id: 'messageEntityMessageDirection', value: 'INBOUND'},
+      {id: 'messageEntityMessagePayload', value: '<Default>Should trigger default scenario</Default>'},
+      {id: 'messageEntityMessageCitrusMessage', value: '5605967b-bfd6-42bb-ba3b-a2404d20783a'},
+      {id: 'messageEntityMessageCreatedDate', value: exampleDate},
+      {id: 'messageEntityMessageLastModified', value: exampleDate}],
+    testIdToBeVisible: [
+      'filterOtherEntityButton',
+    ]
   },
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/message-header', contentJson: {}},
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/scenario-execution', contentJson: {}},
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/scenario-action', contentJson: {}},
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/scenario-parameter', contentJson: {}},
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/test-result', contentJson: {}},
-  {apiUrl: '...', entityUrl: 'http://localhost:9000/test-parameter', contentJson: {}}
+  {
+    apiUrl: '**/api/message-headers*',
+    entityUrl: 'http://localhost:9000/message-header',
+    contentJson: messageHeaderJson,
+    locators: ['th :text("Name")', 'th :text("Value")'],
+    testIdsAndExpectedValues: [
+      {id: 'messageHeaderEntityId', value: '13'},
+      {id: 'messageHeaderEntityName', value: 'Content-Type'},
+      {id: 'messageHeaderEntityValue', value: 'application/xml;charset=UTF-8'}],
+    testIdToBeVisible: []
+  },
+  {
+    apiUrl: '**/api/scenario-executions*',
+    entityUrl: 'http://localhost:9000/scenario-execution',
+    contentJson: scenarioExecutionJson,
+    locators: [
+      'th :text("Name")',
+      'th :text("Start Date")',
+      'th :text("End Date")',
+      'th :text("Status")',
+      'th :text("Error Message")',
+    ],
+    testIdsAndExpectedValues: [
+      {id: 'scenarioExecutionEntityScenarioExecutionLink', value: '1'},
+      {id: 'scenarioExecutionEntityScenarioName', value: 'Default'},
+      {id: 'scenarioExecutionEntityStartDate', value: exampleDate},
+      {id: 'scenarioExecutionEntityEndDate', value: exampleDate},
+      {id: 'scenarioExecutionEntityStatus', value: 'FAILURE'},
+      {id: 'scenarioExecutionEntityTestResult', value: 'New Error'},
+    ],
+    testIdToBeVisible: []
+  },
+  {
+    apiUrl: '**/api/scenario-actions*',
+    entityUrl: 'http://localhost:9000/scenario-action',
+    contentJson: scenarioActionJson,
+    locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Scenario Execution")'],
+    testIdsAndExpectedValues: [
+      {id: 'scenarioActionEntitiesId', value: '1'},
+      {id: 'scenarioActionEntitiesName', value: 'http:receive-request'},
+      {id: 'scenarioActionEntitiesStartDate', value: exampleDate},
+      {id: 'scenarioActionEntitiesEndDate', value: exampleDate},
+    ],
+    testIdToBeVisible: []
+  },
+  {
+    apiUrl: '**/api/test-results*',
+    entityUrl: 'http://localhost:9000/test-result',
+    contentJson: testResultJson,
+    locators: [
+      'th :text("Status")',
+      'th :text("Test Name")',
+      'th :text("Class Name")',
+      'th :text("Error Message")',
+      'th :text("Stack Trace")'],
+    testIdsAndExpectedValues: [
+      {id: 'testResultEntitiesId', value: '1'},
+      {id: 'testResultEntitiesStatus', value: 'FAILURE'},
+      {id: 'testResultEntitiesTestName', value: 'Scenario(Default)'},
+      {id: 'testResultEntitiesClassName', value: 'DefaultTestCase'},
+      {id: 'testResultEntitiesErrorMessage', value: 'New Error'},
+      {id: 'testResultEntitiesStackTrace', value: 'New Stacktrace'},
+      {id: 'testResultEntitiesFailureType', value: ''},
+      {id: 'testResultEntitiesCreatedDate', value: exampleDate},
+      {id: 'testResultEntitiesLastModifiedDate', value: exampleDate},
+    ],
+    testIdToBeVisible: []
+  },
+  {
+    apiUrl: '**/api/test-parameters*',
+    entityUrl: 'http://localhost:9000/test-parameter',
+    contentJson: testParameterJson,
+    locators: [
+      'th :text("Key")',
+      'th :text("Value")',
+      'th :text("Test Result")',
+      'th :text("Created Date")',
+      'th :text("Last Modified Date")'
+    ],
+    testIdsAndExpectedValues: [
+      {id: 'testParameterEntityKey', value: 'test key'},
+      {id: 'testParameterEntityValue', value: 'test value'},
+      {id: 'testParameterEntityTestResultLink', value: '0'},
+      {id: 'testParameterEntityCreatedDate', value: exampleDate},
+      {id: 'testParameterEntityLastModifiedDate', value: exampleDate},
+    ],
+    testIdToBeVisible: ['', '']
+  }
 ]
 
-test('should test if content is displayed for every entity page', async ({page}) => {
-  for (const entity of entityPageContentMap) {
-    await mockBackendResponse(page, entity.apiUrl, entity.contentJson)
-    await page.goto(entity.entityUrl);
+//the test steps are very repetitive and could be done in one loop... would this work with playwright?
+//or should there be a separate test file for every entity page?
 
-    // TODO: Inhalt der Tabellen prüfen --> evnetuell Map ergänzen mit Testselektoren.
-  }
-})
+//should these be two separate tests?
+test('should display table of messages and refresh button should work', async ({page}) => {
+  //'first test'
+  const contentObject = entityPageContentMap[0];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-test('should display table of messages', async ({page}) => {
-  await page.route('**/api/messages*', async route => {
-    const scenarioExecutionJson = [
-        {
-          "messageId": 1,
-          "direction": "INBOUND",
-          "payload": "<Default>Should trigger default scenario</Default>",
-          "citrusMessageId": "5605967b-bfd6-42bb-ba3b-a2404d20783a",
-          "headers": [
-            {
-              "headerId": 13,
-              "name": "Content-Type",
-              "value": "application/xml;charset=UTF-8",
-              "createdDate": "2024-08-23T08:25:31.224400Z",
-              "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-            },
-            {
-              "headerId": 11,
-              "name": "accept",
-              "value": "text/plain, application/json, application/*+json, */*",
-              "createdDate": "2024-08-23T08:25:31.224400Z",
-              "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-            },
-          ],
-          "createdDate": "2024-08-23T08:25:31.223402Z",
-          "lastModifiedDate": "2024-08-23T08:25:31.223402Z"
-        }
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
-
-  await page.goto('http://localhost:9000/message/');
+  await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Direction")')).toHaveCount(1);
-  await expect(page.locator('th :text("Payload")')).toHaveCount(1);
-  await expect(page.locator('th :text("Citrus Message Id")')).toHaveCount(1);
-  await expect(page.locator('th :text("Scenario Execution")')).toHaveCount(1);
-  await expect(page.locator('th :text("Created Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("Last Modified Date")')).toHaveCount(1);
-  await expect(page.getByTestId('messageEntityMessageId')).toHaveText('1')
-  await expect(page.getByTestId('messageEntityMessageDirection')).toHaveText('INBOUND')
-  await expect(page.getByTestId('messageEntityMessagePayload')).toHaveText('<Default>Should trigger default scenario</Default>')
-  await expect(page.getByTestId('messageEntityMessageCitrusMessage')).toHaveText('5605967b-bfd6-42bb-ba3b-a2404d20783a')
-  await expect(page.getByTestId('messageEntityMessageCreatedDate')).toHaveText('23 Aug 2024 08:25:31')
-  await expect(page.getByTestId('messageEntityMessageLastModified')).toHaveText('23 Aug 2024 08:25:31')
-  await expect(page.getByTestId('filterOtherEntityButton')).toBeVisible();
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  //'second test'
+  await checkIfRefreshButtonWorks(page, contentObject);
 })
 
 test('should show message headers when clicking button on message row', async ({page}) => {
-  await page.route('**/api/messages*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "messageId": 1,
-        "direction": "INBOUND",
-        "payload": "<Default>Should trigger default scenario</Default>",
-        "citrusMessageId": "5605967b-bfd6-42bb-ba3b-a2404d20783a",
-        "headers": [
-          {
-            "headerId": 13,
-            "name": "Content-Type",
-            "value": "application/xml;charset=UTF-8",
-            "createdDate": "2024-08-23T08:25:31.224400Z",
-            "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-          },
-          {
-            "headerId": 11,
-            "name": "accept",
-            "value": "text/plain, application/json, application/*+json, */*",
-            "createdDate": "2024-08-23T08:25:31.224400Z",
-            "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-          },
-        ],
-        "createdDate": "2024-08-23T08:25:31.223402Z",
-        "lastModifiedDate": "2024-08-23T08:25:31.223402Z"
-      }
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  const contentObject = entityPageContentMap[0];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await page.route('**/api/message-headers*', async route => {
-    const scenarioExecutionJson = [
-        {
-          "headerId": 13,
-          "name": "Content-Type",
-          "value": "application/xml;charset=UTF-8",
-          "createdDate": "2024-08-23T08:25:31.224400Z",
-          "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-        },
-        {
-          "headerId": 11,
-          "name": "accept",
-          "value": "text/plain, application/json, application/*+json, */*",
-          "createdDate": "2024-08-23T08:25:31.224400Z",
-          "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-        },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
-
-  await page.goto('http://localhost:9000/message/');
+  await page.goto(contentObject.entityUrl);
 
   await page.getByTestId('filterOtherEntityButton').nth(0).click();
-  await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
   await expect(page.getByTestId('filterValue')).toHaveText('messageId.in: 1');
-  await expect(page.locator('th :text("ID")')).toHaveCount(1);
-  await expect(page.locator('th :text("Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Value")')).toHaveCount(1);
-  await expect(page.getByTestId('messageHeaderEntityId').nth(0)).toHaveText('13')
-  await expect(page.getByTestId('messageHeaderEntityName').nth(0)).toHaveText('Content-Type')
-  await expect(page.getByTestId('messageHeaderEntityValue').nth(0)).toHaveText('application/xml;charset=UTF-8')
-  await expect(page.getByTestId('messageHeaderEntityId').nth(1)).toHaveText('11')
-  await expect(page.getByTestId('messageHeaderEntityName').nth(1)).toHaveText('accept')
-  await expect(page.getByTestId('messageHeaderEntityValue').nth(1)).toHaveText('text/plain, application/json, application/*+json, */*')
+  await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
+  //eventually test if gui-element is visible too?
 })
 
-test('should display table of message headers', async ({page}) => {
-  await page.route('**/api/message-headers*', async route => {
-    const scenarioExecutionJson = [
-        {
-          "headerId": 1,
-          "name": "contentType",
-          "value": "application/xml;charset=UTF-8",
-          "createdDate": "2024-08-23T08:25:31.224400Z",
-          "lastModifiedDate": "2024-08-23T08:25:31.224400Z"
-        },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
-
-  await page.goto('http://localhost:9000/message-header/');
+test('should display table of message headers and refresh button should work', async ({page}) => {
+  const contentObject = entityPageContentMap[1];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
+  await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Value")')).toHaveCount(1);
-  await expect(page.getByTestId('messageHeaderEntityId')).toHaveText('1')
-  await expect(page.getByTestId('messageHeaderEntityName')).toHaveText('contentType')
-  await expect(page.getByTestId('messageHeaderEntityValue')).toHaveText('application/xml;charset=UTF-8')
+
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  await checkIfRefreshButtonWorks(page, contentObject);
 })
 
 test('should display table of scenario executions', async ({page}) => {
-  await page.route('**/api/scenario-executions*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "executionId": 1,
-        "startDate": "2024-08-23T08:25:30.950455Z",
-        "endDate": "2024-08-23T08:25:31.386924Z",
-        "scenarioName": "Default",
-        "testResult": {
-          "id": 1,
-          "status": "FAILURE",
-          "testName": "Scenario(Default)",
-          "className": "DefaultTestCase",
-          "testParameters": null,
-          "errorMessage": "New Error",
-          "stackTrace": null,
-          "failureType": null,
-          "createdDate": "2024-08-23T08:25:31.372931Z",
-          "lastModifiedDate": "2024-08-23T08:25:31.373926Z"
-        },
-        "scenarioParameters": [],
-        "scenarioActions": [],
-        "scenarioMessages": []
-      },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  const contentObject = entityPageContentMap[2];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson)
 
-  await page.goto('http://localhost:9000/scenario-execution/');
+  await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Start Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("End Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("Status")')).toHaveCount(1);
-  await expect(page.locator('th :text("Error Message")')).toHaveCount(1);
-  await expect(page.getByTestId('scenarioExecutionEntityScenarioExecutionLink')).toHaveText('1')
-  await expect(page.getByTestId('scenarioExecutionEntityScenarioName')).toHaveText('Default')
-  await expect(page.getByTestId('scenarioExecutionEntityStartDate')).toHaveText('23 Aug 2024 08:25:30')
-  await expect(page.getByTestId('scenarioExecutionEntityEndDate')).toHaveText('23 Aug 2024 08:25:31')
-  await expect(page.getByTestId('scenarioExecutionEntityStatus')).toHaveText('FAILURE')
-  await expect(page.getByTestId('scenarioExecutionEntityTestResult')).toHaveText('New Error')
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  await checkIfRefreshButtonWorks(page, contentObject);
 })
 
 test('should display table of scenario actions', async ({page}) => {
-  await page.route('**/api/scenario-actions*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "actionId": 1,
-        "name": "http:receive-request",
-        "startDate": "2024-08-23T08:25:31.201406Z",
-        "endDate": "2024-08-23T08:25:31.327926Z"
-      },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  const contentObject = entityPageContentMap[3];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await page.goto('http://localhost:9000/scenario-action/');
+  await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Start Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("End Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("Scenario Execution")')).toHaveCount(1);
-  await expect(page.getByTestId('scenarioActionEntitiesId')).toHaveText('1')
-  await expect(page.getByTestId('scenarioActionEntitiesName')).toHaveText('http:receive-request')
-  await expect(page.getByTestId('scenarioActionEntitiesStartDate')).toHaveText('23 Aug 2024 08:25:31')
-  await expect(page.getByTestId('scenarioActionEntitiesEndDate')).toHaveText('23 Aug 2024 08:25:31')
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  await checkIfRefreshButtonWorks(page, contentObject);
 })
 
 test('should display table of test results', async ({page}) => {
-  await page.route('**/api/test-results*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "id": 1,
-        "status": "FAILURE",
-        "testName": "Scenario(Default)",
-        "className": "DefaultTestCase",
-        "testParameters": [],
-        "errorMessage": "New Error",
-        "stackTrace": "New Stacktrace",
-        "failureType": null,
-        "createdDate": "2024-08-23T08:25:31.372931Z",
-        "lastModifiedDate": "2024-08-23T08:25:31.373926Z"
-      },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  const contentObject = entityPageContentMap[4];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await page.goto('http://localhost:9000/test-result/');
+  await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Status")')).toHaveCount(1);
-  await expect(page.locator('th :text("Test Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Class Name")')).toHaveCount(1);
-  await expect(page.locator('th :text("Error Message")')).toHaveCount(1);
-  await expect(page.locator('th :text("Stack Trace")')).toHaveCount(1);
-  await expect(page.getByTestId('testResultEntitiesId')).toHaveText('1')
-  await expect(page.getByTestId('testResultEntitiesStatus')).toHaveText('FAILURE')
-  await expect(page.getByTestId('testResultEntitiesTestName')).toHaveText('Scenario(Default)')
-  await expect(page.getByTestId('testResultEntitiesClassName')).toHaveText('DefaultTestCase')
-  await expect(page.getByTestId('testResultEntitiesErrorMessage')).toHaveText('New Error')
-  await expect(page.getByTestId('testResultEntitiesStackTrace')).toHaveText('New Stacktrace')
-  await expect(page.getByTestId('testResultEntitiesFailureType')).toHaveText('')
-  await expect(page.getByTestId('testResultEntitiesCreatedDate')).toHaveText('23 Aug 2024 08:25:31')
-  await expect(page.getByTestId('testResultEntitiesLastModifiedDate')).toHaveText('23 Aug 2024 08:25:31')
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  await checkIfRefreshButtonWorks(page, contentObject);
 })
 
 test('should show test parameters when clicking on button in test results row', async ({page}) => {
-  await page.route('**/api/test-results*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "id": 1,
-        "status": "FAILURE",
-        "testName": "Scenario(Default)",
-        "className": "DefaultTestCase",
-        "testParameters": [],
-        "errorMessage": "New Error",
-        "stackTrace": "New Stacktrace",
-        "failureType": null,
-        "createdDate": "2024-08-23T08:25:31.372931Z",
-        "lastModifiedDate": "2024-08-23T08:25:31.373926Z"
-      },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  const contentObject = entityPageContentMap[4];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await page.route('**/api/test-parameters*', async route => {
-    const scenarioExecutionJson = [
-      {
-        "key": "test key",
-        "testResultId": 0,
-        "value": "test value",
-        "createdDate": "2024-08-27T13:39:51.785Z",
-        "lastModifiedDate": "2024-08-27T13:39:51.785Z"
-      },
-    ];
-    await route.fulfill({json: scenarioExecutionJson});
-  });
+  await page.goto(contentObject.entityUrl);
 
-  await page.goto('http://localhost:9000/test-result/');
   await page.getByTestId('testParametersButton').click();
   await expect(page.getByTestId('filterValue')).toHaveText('testResultId.in: 1');
   await expect(page).toHaveURL('http://localhost:9000/test-parameter?filter%5BtestResultId.in%5D=1');
-  await expect(page.locator('th :text("Key")').nth(0)).toHaveCount(1);
-  await expect(page.locator('th :text("Value")')).toHaveCount(1);
-  await expect(page.locator('th :text("Test Result")')).toHaveCount(1);
-  await expect(page.locator('th :text("Created Date")')).toHaveCount(1);
-  await expect(page.locator('th :text("Last Modified Date")')).toHaveCount(1);
-  await expect(page.getByTestId('testParameterEntityKey')).toHaveText('test key')
-  await expect(page.getByTestId('testParameterEntityValue')).toHaveText('test value')
-  await expect(page.getByTestId('testParameterEntityTestResultLink')).toHaveText('0')
-  await expect(page.getByTestId('testParameterEntityCreatedDate')).toHaveText('27 Aug 2024 13:39:51')
-  await expect(page.getByTestId('testParameterEntityLastModifiedDate')).toHaveText('27 Aug 2024 13:39:51')
 })
+
+test('should display table of test parameters', async ({page}) => {
+  const contentObject = entityPageContentMap[5];
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
+
+  await page.goto(contentObject.entityUrl);
+
+  await checkEntityPageContentValueAndVisibility(page, contentObject);
+  await checkIfRefreshButtonWorks(page, contentObject);
+})
+
+
+const checkEntityPageContentValueAndVisibility = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
+  for (const locator of contentObject.locators) {
+    await expect(page.locator(locator)).toHaveCount(1);
+  }
+  for (const testId of contentObject.testIdsAndExpectedValues) {
+    await expect(page.getByTestId(testId.id)).toHaveText(testId.value);
+  }
+  for (const testId of contentObject.testIdToBeVisible) {
+    await expect(page.getByTestId(testId)).toBeVisible();
+  }
+}
+
+const checkIfRefreshButtonWorks = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
+  contentObject.contentJson.pop();
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
+
+  await page.getByTestId('refreshListButton').click();
+
+  await checkContentAfterRefresh(page, contentObject);
+}
+
+
+const checkContentAfterRefresh = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
+  for (const locator of contentObject.locators) {
+    await expect(page.locator(locator)).toHaveCount(0);
+  }
+  for (const testId of contentObject.testIdsAndExpectedValues) {
+    await expect(page.getByTestId(testId.id)).toBeHidden();
+  }
+  for (const testId of contentObject.testIdToBeVisible) {
+    await expect(page.getByTestId(testId)).toBeHidden();
+  }
+}

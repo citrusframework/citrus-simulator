@@ -1,5 +1,5 @@
 import {expect, Page, test} from "@playwright/test";
-import {mockBackendResponse} from "./helpers";
+import {mockBackendResponse} from "./helpers/helper-functions";
 
 const scenarioJson = [
   {"name": "Default", "type": "MESSAGE_TRIGGERED"},

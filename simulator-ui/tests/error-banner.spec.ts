@@ -1,5 +1,5 @@
 import {expect, Page, test} from "@playwright/test";
-import {goToAllPagesAndCheckURLPlusContent,} from "./helpers";
+import {goToAllPagesAndCheckURLPlusContent,} from "./helpers/helper-functions";
 
 test.beforeEach(async ({page}) => {
   await page.goto('http://localhost:9000/');
