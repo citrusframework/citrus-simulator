@@ -76,7 +76,6 @@ test('should have the first 10 of 12 elements displayed in the table and the pag
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
-// should one test EVERY option?
 test('should have all 12 scenarios displayed in the table after selecting 20 as table size', async ({page}) => {
   const selectedPageSize = '20';
   await page.getByTestId('itemsPerPageSelect').selectOption(selectedPageSize);
@@ -88,7 +87,6 @@ test('should have all 12 scenarios displayed in the table after selecting 20 as 
   await expect(page.getByText('Showing 1-12 of 12 Items')).toBeVisible();
 });
 
-// how do you write this kind of test correctly? should the filter test be in the same as the reset button? or separate? Is the independence of the tests violated?
 test('text filter input should apply and clear filter button should reset it', async ({page}) => {
   await applyFilterAAndCheckCorrectness(page);
   await page.getByTestId('clearFilterButton').click();
@@ -97,14 +95,10 @@ test('text filter input should apply and clear filter button should reset it', a
   await checkIfAllJsonContentIsVisible(page, 10, scenarioJson);
 });
 
-// is the test independence again violated? should there be two separate tests for the pagination-select-option-button and the refresh button? --> no because the refresh button affects the pagination number inevitably.
 test('should have updated displayed scenarios after refresh button was clicked and a new scenario received', async ({page}) => {
   const selectOptionsForNumberOfScenariosToDisplay: number[] = [10, 20, 50, 100];
-  // should I really test the whole list?
   for (const option of selectOptionsForNumberOfScenariosToDisplay) {
     await page.getByTestId('itemsPerPageSelect').selectOption(option.toString());
-    // should it be tested whether the start condition is met - like 'await checkIfAllJsonContentIsVisible(page, 20, scenarioJson);' - or not?
-
     scenarioJson.push({"name": "Three", "type": "STARTER"});
     await mockBackendResponse(page, '**/api/scenarios**', scenarioJson);
 
@@ -171,7 +165,6 @@ test('should go to detail view of a scenario type STARTER check for content and 
   const allVisibleDetailElements = ['scenarioDetailsHeading', 'scenarioDetailsName', 'scenarioDetailsType', 'scenarioDetailsEntitiesTable', 'scenarioDetailsEntitiesName', 'scenarioDetailsEntitiesControlType', 'scenarioDetailsEntitiesValue', 'entityDetailsBackButton']
   await page.getByText('One').click();
 
-  // await mockScenarioParameters(page);
   await expect(page).toHaveURL(/.*scenario\/One\/STARTER\/view*/);
   for (const element of allVisibleDetailElements) {
     await expect(page.getByTestId(element)).toBeVisible();

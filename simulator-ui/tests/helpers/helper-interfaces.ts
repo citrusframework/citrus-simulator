@@ -1,7 +1,7 @@
 export interface EntityPageContentObject {
   apiUrl: string,
   entityUrl: string,
-  contentJson: [{}],
+  contentJson: {}[],
   locators: string[],
   testIdsAndExpectedValues: TestIdValuePair[],
   testIdToBeVisible: string[]
