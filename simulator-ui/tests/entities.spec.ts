@@ -4,7 +4,8 @@ import {
   messageHeaderJson,
   messageJson,
   scenarioActionJson,
-  scenarioExecutionJson, testParameterJson,
+  scenarioExecutionJson,
+  testParameterJson,
   testResultJson
 } from "./helpers/entity-jsons";
 import {mockBackendResponse} from "./helpers/helper-functions";
@@ -125,10 +126,6 @@ const entityPageContentMap: EntityPageContentObject[] = [
   }
 ]
 
-//the test steps are very repetitive and could be done in one loop... would this work with playwright?
-//or should there be a separate test file for every entity page?
-
-//should these be two separate tests?
 test('should display table of messages and refresh button should work', async ({page}) => {
   //'first test'
   const contentObject = entityPageContentMap[0];
@@ -151,7 +148,6 @@ test('should show message headers when clicking button on message row', async ({
   await page.getByTestId('filterOtherEntityButton').nth(0).click();
   await expect(page.getByTestId('filterValue')).toHaveText('messageId.in: 1');
   await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
-  //eventually test if gui-element is visible too?
 })
 
 test('should display table of message headers and refresh button should work', async ({page}) => {
