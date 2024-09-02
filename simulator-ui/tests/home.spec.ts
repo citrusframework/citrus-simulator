@@ -87,7 +87,7 @@ test('should have updated total, successful, failed tabs after refresh button cl
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 });
 
-test('should have updated total, successful, failed tabs after refresh button clicked negative test with false total', async ({ page }) => {
+test('(test if frontend trusts backend blindly) should have updated total, successful, failed tabs after refresh button clicked negative test with false total', async ({ page }) => {
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
   nbOfFailedTests -= 10; // so the total will be wrong!
   const newCorrectTotal: number = nbOfTotalTests - 10;
@@ -99,7 +99,8 @@ test('should have updated total, successful, failed tabs after refresh button cl
 
   await page.getByTestId('refreshListButton').click();
 
-  await checkIfSummaryTabsAreDisplayingRightNumbers(page, newCorrectTotal, nbOfSuccessfulTests, nbOfFailedTests);
+  await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
+  expect(nbOfTotalTests == newCorrectTotal).toBeFalsy();
 });
 
 test('should have same total, successful, failed tabs after cancel deletion via close-Button and cancel-Button', async ({ page }) => {

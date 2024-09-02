@@ -212,7 +212,6 @@ const checkIfAllJsonContentIsVisible = async (
   for (const element of scenarioJson) {
     await expect(page.getByText(element.name)).toBeVisible();
   }
-  console.log(totalElementsAvailable, nbOfDisplayedElems)
   await expect(page.getByText(`Showing 1 - ${nbOfDisplayedElems} of ${totalElementsAvailable} items`)).toBeVisible();
 };
 
