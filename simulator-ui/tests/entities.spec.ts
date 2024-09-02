@@ -26,12 +26,12 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Last Modified Date")',
     ],
     testIdsAndExpectedValues: [
-      { id: 'messageEntityMessageId', value: '1' },
-      { id: 'messageEntityMessageDirection', value: 'INBOUND' },
-      { id: 'messageEntityMessagePayload', value: '<Default>Should trigger default scenario</Default>' },
-      { id: 'messageEntityMessageCitrusMessage', value: '5605967b-bfd6-42bb-ba3b-a2404d20783a' },
-      { id: 'messageEntityMessageCreatedDate', value: exampleDate },
-      { id: 'messageEntityMessageLastModified', value: exampleDate },
+      { testId: 'messageEntityMessageId', expectedValue: '1' },
+      { testId: 'messageEntityMessageDirection', expectedValue: 'INBOUND' },
+      { testId: 'messageEntityMessagePayload', expectedValue: '<Default>Should trigger default scenario</Default>' },
+      { testId: 'messageEntityMessageCitrusMessage', expectedValue: '5605967b-bfd6-42bb-ba3b-a2404d20783a' },
+      { testId: 'messageEntityMessageCreatedDate', expectedValue: exampleDate },
+      { testId: 'messageEntityMessageLastModified', expectedValue: exampleDate },
     ],
     testIdToBeVisible: ['filterOtherEntityButton'],
   },
@@ -42,9 +42,9 @@ const entityPageContentMap: EntityPageContentObject[] = [
     contentJson: messageHeaderJson,
     locators: ['th :text("Name")', 'th :text("Value")'],
     testIdsAndExpectedValues: [
-      { id: 'messageHeaderEntityId', value: '13' },
-      { id: 'messageHeaderEntityName', value: 'Content-Type' },
-      { id: 'messageHeaderEntityValue', value: 'application/xml;charset=UTF-8' },
+      { testId: 'messageHeaderEntityId', expectedValue: '13' },
+      { testId: 'messageHeaderEntityName', expectedValue: 'Content-Type' },
+      { testId: 'messageHeaderEntityValue', expectedValue: 'application/xml;charset=UTF-8' },
     ],
     testIdToBeVisible: [],
   },
@@ -55,12 +55,12 @@ const entityPageContentMap: EntityPageContentObject[] = [
     contentJson: scenarioExecutionJson,
     locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Status")', 'th :text("Error Message")'],
     testIdsAndExpectedValues: [
-      { id: 'scenarioExecutionEntityScenarioExecutionLink', value: '1' },
-      { id: 'scenarioExecutionEntityScenarioName', value: 'Default' },
-      { id: 'scenarioExecutionEntityStartDate', value: exampleDate },
-      { id: 'scenarioExecutionEntityEndDate', value: exampleDate },
-      { id: 'scenarioExecutionEntityStatus', value: 'FAILURE' },
-      { id: 'scenarioExecutionEntityTestResult', value: 'New Error' },
+      { testId: 'scenarioExecutionEntityScenarioExecutionLink', expectedValue: '1' },
+      { testId: 'scenarioExecutionEntityScenarioName', expectedValue: 'Default' },
+      { testId: 'scenarioExecutionEntityStartDate', expectedValue: exampleDate },
+      { testId: 'scenarioExecutionEntityEndDate', expectedValue: exampleDate },
+      { testId: 'scenarioExecutionEntityStatus', expectedValue: 'FAILURE' },
+      { testId: 'scenarioExecutionEntityTestResult', expectedValue: 'New Error' },
     ],
     testIdToBeVisible: [],
   },
@@ -71,10 +71,10 @@ const entityPageContentMap: EntityPageContentObject[] = [
     contentJson: scenarioActionJson,
     locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Scenario Execution")'],
     testIdsAndExpectedValues: [
-      { id: 'scenarioActionEntitiesId', value: '1' },
-      { id: 'scenarioActionEntitiesName', value: 'http:receive-request' },
-      { id: 'scenarioActionEntitiesStartDate', value: exampleDate },
-      { id: 'scenarioActionEntitiesEndDate', value: exampleDate },
+      { testId: 'scenarioActionEntitiesId', expectedValue: '1' },
+      { testId: 'scenarioActionEntitiesName', expectedValue: 'http:receive-request' },
+      { testId: 'scenarioActionEntitiesStartDate', expectedValue: exampleDate },
+      { testId: 'scenarioActionEntitiesEndDate', expectedValue: exampleDate },
     ],
     testIdToBeVisible: [],
   },
@@ -91,15 +91,15 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Stack Trace")',
     ],
     testIdsAndExpectedValues: [
-      { id: 'testResultEntitiesId', value: '1' },
-      { id: 'testResultEntitiesStatus', value: 'FAILURE' },
-      { id: 'testResultEntitiesTestName', value: 'Scenario(Default)' },
-      { id: 'testResultEntitiesClassName', value: 'DefaultTestCase' },
-      { id: 'testResultEntitiesErrorMessage', value: 'New Error' },
-      { id: 'testResultEntitiesStackTrace', value: 'New Stacktrace' },
-      { id: 'testResultEntitiesFailureType', value: '' },
-      { id: 'testResultEntitiesCreatedDate', value: exampleDate },
-      { id: 'testResultEntitiesLastModifiedDate', value: exampleDate },
+      { testId: 'testResultEntitiesId', expectedValue: '1' },
+      { testId: 'testResultEntitiesStatus', expectedValue: 'FAILURE' },
+      { testId: 'testResultEntitiesTestName', expectedValue: 'Scenario(Default)' },
+      { testId: 'testResultEntitiesClassName', expectedValue: 'DefaultTestCase' },
+      { testId: 'testResultEntitiesErrorMessage', expectedValue: 'New Error' },
+      { testId: 'testResultEntitiesStackTrace', expectedValue: 'New Stacktrace' },
+      { testId: 'testResultEntitiesFailureType', expectedValue: '' },
+      { testId: 'testResultEntitiesCreatedDate', expectedValue: exampleDate },
+      { testId: 'testResultEntitiesLastModifiedDate', expectedValue: exampleDate },
     ],
     testIdToBeVisible: [],
   },
@@ -116,11 +116,11 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Last Modified Date")',
     ],
     testIdsAndExpectedValues: [
-      { id: 'testParameterEntityKey', value: 'test key' },
-      { id: 'testParameterEntityValue', value: 'test value' },
-      { id: 'testParameterEntityTestResultLink', value: '0' },
-      { id: 'testParameterEntityCreatedDate', value: exampleDate },
-      { id: 'testParameterEntityLastModifiedDate', value: exampleDate },
+      { testId: 'testParameterEntityKey', expectedValue: 'test key' },
+      { testId: 'testParameterEntityValue', expectedValue: 'test value' },
+      { testId: 'testParameterEntityTestResultLink', expectedValue: '0' },
+      { testId: 'testParameterEntityCreatedDate', expectedValue: exampleDate },
+      { testId: 'testParameterEntityLastModifiedDate', expectedValue: exampleDate },
     ],
     testIdToBeVisible: ['', ''],
   },
@@ -178,7 +178,7 @@ const checkEntityPageContentValueAndVisibility = async (page: Page, contentObjec
     await expect(page.locator(locator)).toHaveCount(1);
   }
   for (const testId of contentObject.testIdsAndExpectedValues) {
-    await expect(page.getByTestId(testId.id)).toHaveText(testId.value);
+    await expect(page.getByTestId(testId.testId)).toHaveText(testId.expectedValue);
   }
   for (const testId of contentObject.testIdToBeVisible) {
     await expect(page.getByTestId(testId)).toBeVisible();
@@ -199,7 +199,7 @@ const checkContentAfterRefresh = async (page: Page, contentObject: EntityPageCon
     await expect(page.locator(locator)).toHaveCount(0);
   }
   for (const testId of contentObject.testIdsAndExpectedValues) {
-    await expect(page.getByTestId(testId.id)).toBeHidden();
+    await expect(page.getByTestId(testId.testId)).toBeHidden();
   }
   for (const testId of contentObject.testIdToBeVisible) {
     await expect(page.getByTestId(testId)).toBeHidden();

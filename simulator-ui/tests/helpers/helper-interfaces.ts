@@ -9,8 +9,8 @@ export interface EntityPageContentObject {
 }
 
 interface TestIdValuePair {
-  id: string;
-  value: string;
+  testId: string;
+  expectedValue: string;
 }
 
 export interface navbarElementLinkPair {
