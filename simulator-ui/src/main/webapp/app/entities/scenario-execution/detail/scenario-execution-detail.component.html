@@ -28,7 +28,7 @@
         <dd>
           <span data-test="scenarioExecutionName">{{ scenarioExecution.scenarioName }}</span>
         </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status" >Status</span></dt>
+        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
         <dd>
           <span data-test="scenarioExecutionStatus">{{ scenarioExecution.testResult?.status }}</span>
         </dd>
@@ -41,7 +41,9 @@
       <div *ngIf="scenarioExecution.testResult?.stackTrace" ngbAccordion class="mb-3">
         <div ngbAccordionItem>
           <h2 ngbAccordionHeader>
-            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-test="openStackTraceButton">Stacktrace</button>
+            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-test="openStackTraceButton">
+              Stacktrace
+            </button>
           </h2>
           <div ngbAccordionCollapse>
             <div ngbAccordionBody data-test="scenarioExecutionStackTrace">

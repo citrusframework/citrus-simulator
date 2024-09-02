@@ -1,15 +1,14 @@
-import {expect, Page, test} from "@playwright/test";
-import {EntityPageContentObject} from "./helpers/helper-interfaces";
+import { expect, Page, test } from '@playwright/test';
+import { EntityPageContentObject } from './helpers/helper-interfaces';
 import {
   messageHeaderJson,
   messageJson,
   scenarioActionJson,
   scenarioExecutionJson,
   testParameterJson,
-  testResultJson
-} from "./helpers/entity-jsons";
-import {mockBackendResponse} from "./helpers/helper-functions";
-
+  testResultJson,
+} from './helpers/entity-jsons';
+import { mockBackendResponse } from './helpers/helper-functions';
 
 const exampleDate = '23 Aug 2024 08:25:31';
 const entityPageContentMap: EntityPageContentObject[] = [
@@ -26,15 +25,14 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Last Modified Date")',
     ],
     testIdsAndExpectedValues: [
-      {id: 'messageEntityMessageId', value: '1'},
-      {id: 'messageEntityMessageDirection', value: 'INBOUND'},
-      {id: 'messageEntityMessagePayload', value: '<Default>Should trigger default scenario</Default>'},
-      {id: 'messageEntityMessageCitrusMessage', value: '5605967b-bfd6-42bb-ba3b-a2404d20783a'},
-      {id: 'messageEntityMessageCreatedDate', value: exampleDate},
-      {id: 'messageEntityMessageLastModified', value: exampleDate}],
-    testIdToBeVisible: [
-      'filterOtherEntityButton',
-    ]
+      { id: 'messageEntityMessageId', value: '1' },
+      { id: 'messageEntityMessageDirection', value: 'INBOUND' },
+      { id: 'messageEntityMessagePayload', value: '<Default>Should trigger default scenario</Default>' },
+      { id: 'messageEntityMessageCitrusMessage', value: '5605967b-bfd6-42bb-ba3b-a2404d20783a' },
+      { id: 'messageEntityMessageCreatedDate', value: exampleDate },
+      { id: 'messageEntityMessageLastModified', value: exampleDate },
+    ],
+    testIdToBeVisible: ['filterOtherEntityButton'],
   },
   {
     apiUrl: '**/api/message-headers*',
@@ -42,31 +40,26 @@ const entityPageContentMap: EntityPageContentObject[] = [
     contentJson: messageHeaderJson,
     locators: ['th :text("Name")', 'th :text("Value")'],
     testIdsAndExpectedValues: [
-      {id: 'messageHeaderEntityId', value: '13'},
-      {id: 'messageHeaderEntityName', value: 'Content-Type'},
-      {id: 'messageHeaderEntityValue', value: 'application/xml;charset=UTF-8'}],
-    testIdToBeVisible: []
+      { id: 'messageHeaderEntityId', value: '13' },
+      { id: 'messageHeaderEntityName', value: 'Content-Type' },
+      { id: 'messageHeaderEntityValue', value: 'application/xml;charset=UTF-8' },
+    ],
+    testIdToBeVisible: [],
   },
   {
     apiUrl: '**/api/scenario-executions*',
     entityUrl: 'http://localhost:9000/scenario-execution',
     contentJson: scenarioExecutionJson,
-    locators: [
-      'th :text("Name")',
-      'th :text("Start Date")',
-      'th :text("End Date")',
-      'th :text("Status")',
-      'th :text("Error Message")',
-    ],
+    locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Status")', 'th :text("Error Message")'],
     testIdsAndExpectedValues: [
-      {id: 'scenarioExecutionEntityScenarioExecutionLink', value: '1'},
-      {id: 'scenarioExecutionEntityScenarioName', value: 'Default'},
-      {id: 'scenarioExecutionEntityStartDate', value: exampleDate},
-      {id: 'scenarioExecutionEntityEndDate', value: exampleDate},
-      {id: 'scenarioExecutionEntityStatus', value: 'FAILURE'},
-      {id: 'scenarioExecutionEntityTestResult', value: 'New Error'},
+      { id: 'scenarioExecutionEntityScenarioExecutionLink', value: '1' },
+      { id: 'scenarioExecutionEntityScenarioName', value: 'Default' },
+      { id: 'scenarioExecutionEntityStartDate', value: exampleDate },
+      { id: 'scenarioExecutionEntityEndDate', value: exampleDate },
+      { id: 'scenarioExecutionEntityStatus', value: 'FAILURE' },
+      { id: 'scenarioExecutionEntityTestResult', value: 'New Error' },
     ],
-    testIdToBeVisible: []
+    testIdToBeVisible: [],
   },
   {
     apiUrl: '**/api/scenario-actions*',
@@ -74,12 +67,12 @@ const entityPageContentMap: EntityPageContentObject[] = [
     contentJson: scenarioActionJson,
     locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Scenario Execution")'],
     testIdsAndExpectedValues: [
-      {id: 'scenarioActionEntitiesId', value: '1'},
-      {id: 'scenarioActionEntitiesName', value: 'http:receive-request'},
-      {id: 'scenarioActionEntitiesStartDate', value: exampleDate},
-      {id: 'scenarioActionEntitiesEndDate', value: exampleDate},
+      { id: 'scenarioActionEntitiesId', value: '1' },
+      { id: 'scenarioActionEntitiesName', value: 'http:receive-request' },
+      { id: 'scenarioActionEntitiesStartDate', value: exampleDate },
+      { id: 'scenarioActionEntitiesEndDate', value: exampleDate },
     ],
-    testIdToBeVisible: []
+    testIdToBeVisible: [],
   },
   {
     apiUrl: '**/api/test-results*',
@@ -90,19 +83,20 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Test Name")',
       'th :text("Class Name")',
       'th :text("Error Message")',
-      'th :text("Stack Trace")'],
-    testIdsAndExpectedValues: [
-      {id: 'testResultEntitiesId', value: '1'},
-      {id: 'testResultEntitiesStatus', value: 'FAILURE'},
-      {id: 'testResultEntitiesTestName', value: 'Scenario(Default)'},
-      {id: 'testResultEntitiesClassName', value: 'DefaultTestCase'},
-      {id: 'testResultEntitiesErrorMessage', value: 'New Error'},
-      {id: 'testResultEntitiesStackTrace', value: 'New Stacktrace'},
-      {id: 'testResultEntitiesFailureType', value: ''},
-      {id: 'testResultEntitiesCreatedDate', value: exampleDate},
-      {id: 'testResultEntitiesLastModifiedDate', value: exampleDate},
+      'th :text("Stack Trace")',
     ],
-    testIdToBeVisible: []
+    testIdsAndExpectedValues: [
+      { id: 'testResultEntitiesId', value: '1' },
+      { id: 'testResultEntitiesStatus', value: 'FAILURE' },
+      { id: 'testResultEntitiesTestName', value: 'Scenario(Default)' },
+      { id: 'testResultEntitiesClassName', value: 'DefaultTestCase' },
+      { id: 'testResultEntitiesErrorMessage', value: 'New Error' },
+      { id: 'testResultEntitiesStackTrace', value: 'New Stacktrace' },
+      { id: 'testResultEntitiesFailureType', value: '' },
+      { id: 'testResultEntitiesCreatedDate', value: exampleDate },
+      { id: 'testResultEntitiesLastModifiedDate', value: exampleDate },
+    ],
+    testIdToBeVisible: [],
   },
   {
     apiUrl: '**/api/test-parameters*',
@@ -113,20 +107,20 @@ const entityPageContentMap: EntityPageContentObject[] = [
       'th :text("Value")',
       'th :text("Test Result")',
       'th :text("Created Date")',
-      'th :text("Last Modified Date")'
+      'th :text("Last Modified Date")',
     ],
     testIdsAndExpectedValues: [
-      {id: 'testParameterEntityKey', value: 'test key'},
-      {id: 'testParameterEntityValue', value: 'test value'},
-      {id: 'testParameterEntityTestResultLink', value: '0'},
-      {id: 'testParameterEntityCreatedDate', value: exampleDate},
-      {id: 'testParameterEntityLastModifiedDate', value: exampleDate},
+      { id: 'testParameterEntityKey', value: 'test key' },
+      { id: 'testParameterEntityValue', value: 'test value' },
+      { id: 'testParameterEntityTestResultLink', value: '0' },
+      { id: 'testParameterEntityCreatedDate', value: exampleDate },
+      { id: 'testParameterEntityLastModifiedDate', value: exampleDate },
     ],
-    testIdToBeVisible: ['', '']
-  }
-]
+    testIdToBeVisible: ['', ''],
+  },
+];
 
-test('should display table of messages and refresh button should work', async ({page}) => {
+test('should display table of messages and refresh button should work', async ({ page }) => {
   //'first test'
   const contentObject = entityPageContentMap[0];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
@@ -137,9 +131,9 @@ test('should display table of messages and refresh button should work', async ({
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   //'second test'
   await checkIfRefreshButtonWorks(page, contentObject);
-})
+});
 
-test('should show message headers when clicking button on message row', async ({page}) => {
+test('should show message headers when clicking button on message row', async ({ page }) => {
   const contentObject = entityPageContentMap[0];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
@@ -148,9 +142,9 @@ test('should show message headers when clicking button on message row', async ({
   await page.getByTestId('filterOtherEntityButton').nth(0).click();
   await expect(page.getByTestId('filterValue')).toHaveText('messageId.in: 1');
   await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
-})
+});
 
-test('should display table of message headers and refresh button should work', async ({page}) => {
+test('should display table of message headers and refresh button should work', async ({ page }) => {
   const contentObject = entityPageContentMap[1];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
   await page.goto(contentObject.entityUrl);
@@ -159,20 +153,20 @@ test('should display table of message headers and refresh button should work', a
 
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   await checkIfRefreshButtonWorks(page, contentObject);
-})
+});
 
-test('should display table of scenario executions', async ({page}) => {
+test('should display table of scenario executions', async ({ page }) => {
   const contentObject = entityPageContentMap[2];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson)
+  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
   await page.goto(contentObject.entityUrl);
 
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   await checkIfRefreshButtonWorks(page, contentObject);
-})
+});
 
-test('should display table of scenario actions', async ({page}) => {
+test('should display table of scenario actions', async ({ page }) => {
   const contentObject = entityPageContentMap[3];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
@@ -181,9 +175,9 @@ test('should display table of scenario actions', async ({page}) => {
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   await checkIfRefreshButtonWorks(page, contentObject);
-})
+});
 
-test('should display table of test results', async ({page}) => {
+test('should display table of test results', async ({ page }) => {
   const contentObject = entityPageContentMap[4];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
@@ -192,9 +186,9 @@ test('should display table of test results', async ({page}) => {
   await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   await checkIfRefreshButtonWorks(page, contentObject);
-})
+});
 
-test('should show test parameters when clicking on button in test results row', async ({page}) => {
+test('should show test parameters when clicking on button in test results row', async ({ page }) => {
   const contentObject = entityPageContentMap[4];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
@@ -203,9 +197,9 @@ test('should show test parameters when clicking on button in test results row', 
   await page.getByTestId('testParametersButton').click();
   await expect(page.getByTestId('filterValue')).toHaveText('testResultId.in: 1');
   await expect(page).toHaveURL('http://localhost:9000/test-parameter?filter%5BtestResultId.in%5D=1');
-})
+});
 
-test('should display table of test parameters', async ({page}) => {
+test('should display table of test parameters', async ({ page }) => {
   const contentObject = entityPageContentMap[5];
   await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
@@ -213,8 +207,7 @@ test('should display table of test parameters', async ({page}) => {
 
   await checkEntityPageContentValueAndVisibility(page, contentObject);
   await checkIfRefreshButtonWorks(page, contentObject);
-})
-
+});
 
 const checkEntityPageContentValueAndVisibility = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
   for (const locator of contentObject.locators) {
@@ -226,7 +219,7 @@ const checkEntityPageContentValueAndVisibility = async (page: Page, contentObjec
   for (const testId of contentObject.testIdToBeVisible) {
     await expect(page.getByTestId(testId)).toBeVisible();
   }
-}
+};
 
 const checkIfRefreshButtonWorks = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
   contentObject.contentJson.pop();
@@ -235,8 +228,7 @@ const checkIfRefreshButtonWorks = async (page: Page, contentObject: EntityPageCo
   await page.getByTestId('refreshListButton').click();
 
   await checkContentAfterRefresh(page, contentObject);
-}
-
+};
 
 const checkContentAfterRefresh = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
   for (const locator of contentObject.locators) {
@@ -248,4 +240,4 @@ const checkContentAfterRefresh = async (page: Page, contentObject: EntityPageCon
   for (const testId of contentObject.testIdToBeVisible) {
     await expect(page.getByTestId(testId)).toBeHidden();
   }
-}
+};

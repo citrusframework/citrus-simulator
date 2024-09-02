@@ -24,7 +24,9 @@
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
-              <h5 data-test="totalSimulationsPercentage">{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+              <h5 data-test="totalSimulationsPercentage">
+                {{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small>
+              </h5>
             </div>
             <div class="col d-flex justify-content-end">
               <div class="btn btn-info btn-sm" data-test="totalSimulationsButton">

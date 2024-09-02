@@ -36,7 +36,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    }
+    },
   ],
 
   /* Run your local dev server before starting the tests */
