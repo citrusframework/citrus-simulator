@@ -105,7 +105,12 @@ test('should have updated total, successful, failed tabs after refresh button cl
 test('should have same total, successful, failed tabs after cancel deletion via close-Button and cancel-Button', async ({ page }) => {
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
   const closeButtons = ['testResultDeleteDialogCloseButton', 'testResultDeleteDialogCancelButton'];
+  let deleteRequestWasMade = false;
 
+  page.on('request', request => {
+    if (request.method() == 'DELETE')
+      deleteRequestWasMade = true
+  })
   for (const button of closeButtons) {
     await page.getByTestId('resetButton').click();
     await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();
@@ -113,6 +118,7 @@ test('should have same total, successful, failed tabs after cancel deletion via 
     await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeHidden();
 
     await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
+    expect(deleteRequestWasMade).toBe(false);
   }
 });
 
