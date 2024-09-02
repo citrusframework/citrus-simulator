@@ -1,4 +1,5 @@
 export interface EntityPageContentObject {
+  testName: string;
   apiUrl: string;
   entityUrl: string;
   contentJson: {}[];

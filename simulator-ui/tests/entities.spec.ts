@@ -13,6 +13,7 @@ import { mockBackendResponse } from './helpers/helper-functions';
 const exampleDate = '23 Aug 2024 08:25:31';
 const entityPageContentMap: EntityPageContentObject[] = [
   {
+    testName: 'should display table of messages and refresh button should work',
     apiUrl: '**/api/messages*',
     entityUrl: 'http://localhost:9000/message',
     contentJson: messageJson,
@@ -35,6 +36,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
     testIdToBeVisible: ['filterOtherEntityButton'],
   },
   {
+    testName: 'should display table of message headers and refresh button should work',
     apiUrl: '**/api/message-headers*',
     entityUrl: 'http://localhost:9000/message-header',
     contentJson: messageHeaderJson,
@@ -47,6 +49,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
     testIdToBeVisible: [],
   },
   {
+    testName: 'should display table of scenario executions and refresh button should work',
     apiUrl: '**/api/scenario-executions*',
     entityUrl: 'http://localhost:9000/scenario-execution',
     contentJson: scenarioExecutionJson,
@@ -62,6 +65,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
     testIdToBeVisible: [],
   },
   {
+    testName: 'should display table of scenario actions and refresh button should work',
     apiUrl: '**/api/scenario-actions*',
     entityUrl: 'http://localhost:9000/scenario-action',
     contentJson: scenarioActionJson,
@@ -75,6 +79,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
     testIdToBeVisible: [],
   },
   {
+    testName: 'should display table of test results and refresh button should work',
     apiUrl: '**/api/test-results*',
     entityUrl: 'http://localhost:9000/test-result',
     contentJson: testResultJson,
@@ -99,6 +104,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
     testIdToBeVisible: [],
   },
   {
+    testName: 'should display table of test parameters and refresh button should work',
     apiUrl: '**/api/test-parameters*',
     entityUrl: 'http://localhost:9000/test-parameter',
     contentJson: testParameterJson,
@@ -120,17 +126,19 @@ const entityPageContentMap: EntityPageContentObject[] = [
   },
 ];
 
-test('should display table of messages and refresh button should work', async ({ page }) => {
-  //'first test'
-  const contentObject = entityPageContentMap[0];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await page.goto(contentObject.entityUrl);
+entityPageContentMap.forEach(( contentObject: EntityPageContentObject ) => {
+  test(`${contentObject.testName}`, async ({ page }) => {
+    //'first test'
+    await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
-  await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await checkEntityPageContentValueAndVisibility(page, contentObject);
-  //'second test'
-  await checkIfRefreshButtonWorks(page, contentObject);
+    await page.goto(contentObject.entityUrl);
+
+    await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
+    await checkEntityPageContentValueAndVisibility(page, contentObject);
+    //'second test'
+    await checkIfRefreshButtonWorks(page, contentObject);
+  });
 });
 
 test('should show message headers when clicking button on message row', async ({ page }) => {
@@ -142,50 +150,6 @@ test('should show message headers when clicking button on message row', async ({
   await page.getByTestId('filterOtherEntityButton').nth(0).click();
   await expect(page.getByTestId('filterValue')).toHaveText('messageId.in: 1');
   await expect(page).toHaveURL('http://localhost:9000/message-header?filter%5BmessageId.in%5D=1');
-});
-
-test('should display table of message headers and refresh button should work', async ({ page }) => {
-  const contentObject = entityPageContentMap[1];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
-  await page.goto(contentObject.entityUrl);
-
-  await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-
-  await checkEntityPageContentValueAndVisibility(page, contentObject);
-  await checkIfRefreshButtonWorks(page, contentObject);
-});
-
-test('should display table of scenario executions', async ({ page }) => {
-  const contentObject = entityPageContentMap[2];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
-
-  await page.goto(contentObject.entityUrl);
-
-  await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await checkEntityPageContentValueAndVisibility(page, contentObject);
-  await checkIfRefreshButtonWorks(page, contentObject);
-});
-
-test('should display table of scenario actions', async ({ page }) => {
-  const contentObject = entityPageContentMap[3];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
-
-  await page.goto(contentObject.entityUrl);
-
-  await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await checkEntityPageContentValueAndVisibility(page, contentObject);
-  await checkIfRefreshButtonWorks(page, contentObject);
-});
-
-test('should display table of test results', async ({ page }) => {
-  const contentObject = entityPageContentMap[4];
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
-
-  await page.goto(contentObject.entityUrl);
-
-  await expect(page.locator('th :text("ID")').nth(0)).toHaveCount(1);
-  await checkEntityPageContentValueAndVisibility(page, contentObject);
-  await checkIfRefreshButtonWorks(page, contentObject);
 });
 
 test('should show test parameters when clicking on button in test results row', async ({ page }) => {
