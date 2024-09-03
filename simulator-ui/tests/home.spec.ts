@@ -87,7 +87,9 @@ test('should have updated total, successful, failed tabs after refresh button cl
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 });
 
-test('(test if frontend trusts backend blindly) should have updated total, successful, failed tabs after refresh button clicked negative test with false total', async ({ page }) => {
+test('(test if frontend trusts backend blindly) should have updated total, successful, failed tabs after refresh button clicked negative test with false total', async ({
+  page,
+}) => {
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
   nbOfFailedTests -= 10; // so the total will be wrong!
   const newCorrectTotal: number = nbOfTotalTests - 10;
@@ -109,9 +111,8 @@ test('should have same total, successful, failed tabs after cancel deletion via 
   let deleteRequestWasMade = false;
 
   page.on('request', request => {
-    if (request.method() == 'DELETE')
-      deleteRequestWasMade = true
-  })
+    if (request.method() == 'DELETE') deleteRequestWasMade = true;
+  });
   for (const button of closeButtons) {
     await page.getByTestId('resetButton').click();
     await expect(page.getByTestId('testResultDeleteDialogHeading')).toBeVisible();

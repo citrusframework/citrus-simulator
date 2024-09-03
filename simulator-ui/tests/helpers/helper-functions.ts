@@ -2,13 +2,13 @@ import { expect, Page } from '@playwright/test';
 import { navbarElementLinkPair } from './helper-interfaces';
 
 export const elementLinkPairNoDropdown: navbarElementLinkPair[] = [
-  { testName: 'navigationScenariosLink', link: /.*scenario*/, apiLink: '**/api/scenarios*'},
+  { testName: 'navigationScenariosLink', link: /.*scenario*/, apiLink: '**/api/scenarios*' },
   { testName: 'navigationScenarioExecutionsLink', link: /.*scenario-result*/, apiLink: '**/api/scenario-executions*' },
 ];
 export const elementLinkPairEntityDroptdown: navbarElementLinkPair[] = [
-  { testName: 'navigationEntitiesMessageLink', link: /.*\/message*/ , apiLink: '**/api/messages*'},
-  { testName: 'navigationEntitiesMessageHeaderLink', link: /.*\/message-header*/, apiLink: '**/api/message-headers*'},
-  { testName: 'navigationEntitiesScenarioExecutionLink', link: /.*\/scenario-execution*/, apiLink: '**/api/scenario-executions*'},
+  { testName: 'navigationEntitiesMessageLink', link: /.*\/message*/, apiLink: '**/api/messages*' },
+  { testName: 'navigationEntitiesMessageHeaderLink', link: /.*\/message-header*/, apiLink: '**/api/message-headers*' },
+  { testName: 'navigationEntitiesScenarioExecutionLink', link: /.*\/scenario-execution*/, apiLink: '**/api/scenario-executions*' },
   { testName: 'navigationEntitiesScenarioActionLink', link: /.*\/scenario-action*/, apiLink: '**/api/scenario-actions*' },
   { testName: 'navigationEntitiesScenarioParameterLink', link: /.*\/scenario-parameter*/, apiLink: '**/api/scenario-parameters*' },
   { testName: 'navigationEntitiesTestResultLink', link: /.*\/test-result*/, apiLink: '**/api/test-results*' },
@@ -31,11 +31,14 @@ export const clickOnLinkAndCheckIfTabOpensWithCorrectURL = async (
   await expect(newTab).toHaveURL(expectedURL);
 };
 
-export const mockBackendResponse = async (page: Page, apiURL: string, responseJson: object, headers?:  {[key: string]: string; }): Promise<any> => {
+export const mockBackendResponse = async (
+  page: Page,
+  apiURL: string,
+  responseJson: object,
+  headers?: { [key: string]: string },
+): Promise<any> => {
   await page.route(apiURL, async route => {
-    headers
-      ? await route.fulfill({ json: responseJson , headers: headers })
-      : await route.fulfill({ json: responseJson })
+    headers ? await route.fulfill({ json: responseJson, headers: headers }) : await route.fulfill({ json: responseJson });
   });
 };
 

@@ -14,11 +14,11 @@ const scenarioJson = [
   { name: 'HiStarter', type: 'STARTER' },
 ];
 
-const addititonalPageJson=[
+const addititonalPageJson = [
   { name: 'One', type: 'STARTER' },
   { name: 'Two', type: 'STARTER' },
   { name: 'Three', type: 'STARTER' },
-]
+];
 
 const orderedJson = [
   { name: 'Fail', type: 'MESSAGE_TRIGGERED' },
@@ -43,13 +43,13 @@ const parameterJson = [
 const availableScenarios: number = addititonalPageJson.length + scenarioJson.length;
 
 test.beforeEach(async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenarios**page=0**', scenarioJson, {'x-total-count': availableScenarios.toString()})
+  await mockBackendResponse(page, '**/api/scenarios**page=0**', scenarioJson, { 'x-total-count': availableScenarios.toString() });
   await page.goto('http://localhost:9000/scenario');
   await page.getByTestId('itemsPerPageSelect').selectOption('10');
 });
 
 test('should display all scenario information of a starter scenario', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenarios**', [{ name: 'Test', type: 'STARTER' }], {'x-total-count': '1'});
+  await mockBackendResponse(page, '**/api/scenarios**', [{ name: 'Test', type: 'STARTER' }], { 'x-total-count': '1' });
 
   await page.goto('http://localhost:9000/scenario');
 
@@ -61,7 +61,7 @@ test('should display all scenario information of a starter scenario', async ({ p
 });
 
 test('should display all scenario information of a non-starter scenario', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenarios**', [{ name: 'Test', type: 'MESSAGE_TRIGGERED' }], {'x-total-count': '1'});
+  await mockBackendResponse(page, '**/api/scenarios**', [{ name: 'Test', type: 'MESSAGE_TRIGGERED' }], { 'x-total-count': '1' });
 
   await page.goto('http://localhost:9000/scenario');
 
@@ -71,13 +71,11 @@ test('should display all scenario information of a non-starter scenario', async 
   await expect(page.getByTestId('scenarioExecutionButton')).toBeVisible();
 });
 
-test('should have the first 10 of 13 elements displayed in the table and display right nb of visible elements', async ({
-  page,
-}) => {
+test('should have the first 10 of 13 elements displayed in the table and display right nb of visible elements', async ({ page }) => {
   await checkIfAllJsonContentIsVisible(page, 10, availableScenarios, scenarioJson);
 });
 
-test('should have the last 3 of 13 elements displayed in the table after clicking on 2. page', async ({page,}) => {
+test('should have the last 3 of 13 elements displayed in the table after clicking on 2. page', async ({ page }) => {
   await mockBackendResponse(page, '**/api/scenarios**page=1**', addititonalPageJson);
   await page.getByRole('link', { name: '2' }).click();
   await checkIfAllJsonContentIsVisible(page, 10, availableScenarios, addititonalPageJson);
@@ -92,7 +90,7 @@ test('see if frontend trusts backend to send only as much data as requested', as
 
   await page.getByTestId('itemsPerPageSelect').selectOption(selectedPageSize.toString());
 
-  await checkIfAllJsonContentIsVisible(page, selectedPageSize, availableScenarios, scenarioJson)
+  await checkIfAllJsonContentIsVisible(page, selectedPageSize, availableScenarios, scenarioJson);
   await expect(page.getByTestId('itemsPerPageSelect')).toHaveValue(selectedPageSize.toString());
   scenarioJson.pop();
 });
@@ -109,11 +107,11 @@ test('should have updated displayed scenarios after refresh button was clicked a
   for (const option of selectOptionsForNumberOfScenariosToDisplay) {
     await page.getByTestId('itemsPerPageSelect').selectOption(option.toString());
     scenarioJson.pop();
-    await mockBackendResponse(page, '**/api/scenarios**', scenarioJson, {'x-total-count': scenarioJson.length.toString()});
+    await mockBackendResponse(page, '**/api/scenarios**', scenarioJson, { 'x-total-count': scenarioJson.length.toString() });
 
     await page.getByTestId('refreshListButton').click();
     await checkIfAllJsonContentIsVisible(page, option, scenarioJson.length, scenarioJson);
-    scenarioJson.push({ name: 'HiStarter', type: 'STARTER' },);
+    scenarioJson.push({ name: 'HiStarter', type: 'STARTER' });
   }
 });
 
@@ -176,7 +174,7 @@ test('should go to detail view of a scenario (not type starter) and then go back
 });
 
 test('should go to detail view of a scenario type STARTER check for content and go back', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenarios/ByeStarter/parameters', parameterJson)
+  await mockBackendResponse(page, '**/api/scenarios/ByeStarter/parameters', parameterJson);
   const allVisibleDetailElements = [
     'scenarioDetailsHeading',
     'scenarioDetailsName',
@@ -219,7 +217,7 @@ const applyFilterAAndCheckCorrectness = async (page: Page): Promise<any> => {
   const pageSize: number = 20;
   await page.getByTestId('itemsPerPageSelect').selectOption(pageSize.toString());
   await checkIfAllJsonContentIsVisible(page, pageSize, availableScenarios, scenarioJson);
-  await mockBackendResponse(page, '**/api/scenarios?**nameContains=a&sort=id,asc', orderedJson, {'x-total-count': '5'});
+  await mockBackendResponse(page, '**/api/scenarios?**nameContains=a&sort=id,asc', orderedJson, { 'x-total-count': '5' });
 
   await page.getByTestId('scenarioFilterByNameInput').fill('a');
 
