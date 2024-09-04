@@ -62,8 +62,7 @@ jobs:
       - name: Frontend Tests
         run: npm run ci:frontend:test
         working-directory: simulator-ui
-
-  test:
+  e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
