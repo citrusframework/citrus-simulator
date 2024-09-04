@@ -76,7 +76,7 @@ test('should have updated total, successful, failed tabs after refresh button cl
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
 
   nbOfFailedTests -= 10;
-  nbOfSuccessfulTests += 10; //the total stays the same
+  nbOfSuccessfulTests += 10; // the total stays the same
   await mockBackendResponse(page, '**/api/test-results/count-by-status', {
     successful: nbOfSuccessfulTests,
     failed: nbOfFailedTests,
@@ -102,7 +102,7 @@ test('(test if frontend trusts backend blindly) should have updated total, succe
   await page.getByTestId('refreshListButton').click();
 
   await checkIfSummaryTabsAreDisplayingRightNumbers(page, nbOfTotalTests, nbOfSuccessfulTests, nbOfFailedTests);
-  expect(nbOfTotalTests == newCorrectTotal).toBeFalsy();
+  expect(nbOfTotalTests === newCorrectTotal).toBeFalsy();
 });
 
 test('should have same total, successful, failed tabs after cancel deletion via close-Button and cancel-Button', async ({ page }) => {
@@ -111,7 +111,9 @@ test('should have same total, successful, failed tabs after cancel deletion via 
   let deleteRequestWasMade = false;
 
   page.on('request', request => {
-    if (request.method() == 'DELETE') deleteRequestWasMade = true;
+    if (request.method() === 'DELETE') {
+      deleteRequestWasMade = true;
+    }
   });
   for (const button of closeButtons) {
     await page.getByTestId('resetButton').click();

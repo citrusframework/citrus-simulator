@@ -61,7 +61,17 @@ test('should display all scenario information of a starter scenario', async ({ p
 });
 
 test('should display all scenario information of a non-starter scenario', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenarios**', [{ name: 'Test', type: 'MESSAGE_TRIGGERED' }], { 'x-total-count': '1' });
+  await mockBackendResponse(
+    page,
+    '**/api/scenarios**',
+    [
+      {
+        name: 'Test',
+        type: 'MESSAGE_TRIGGERED',
+      },
+    ],
+    { 'x-total-count': '1' },
+  );
 
   await page.goto('http://localhost:9000/scenario');
 
@@ -222,9 +232,11 @@ const applyFilterAAndCheckCorrectness = async (page: Page): Promise<any> => {
   await page.getByTestId('scenarioFilterByNameInput').fill('a');
 
   for (const element of scenarioJson) {
-    element.name.includes('a') || element.name.includes('A')
-      ? await expect(page.getByText(element.name)).toBeVisible()
-      : await expect(page.getByText(element.name)).toBeHidden();
+    if (element.name.includes('a') || element.name.includes('A')) {
+      await expect(page.getByText(element.name)).toBeVisible();
+    } else {
+      await expect(page.getByText(element.name)).toBeHidden();
+    }
   }
   await expect(page.getByText('Showing 1 - 5 of 5 Items')).toBeVisible();
 };

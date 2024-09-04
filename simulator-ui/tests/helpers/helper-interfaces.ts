@@ -2,7 +2,7 @@ export interface EntityPageContentObject {
   testName: string;
   apiUrl: string;
   entityUrl: string;
-  contentJson: {}[];
+  contentJson: object[];
   locators: string[];
   testIdsAndExpectedValues: TestIdValuePair[];
   testIdToBeVisible: string[];

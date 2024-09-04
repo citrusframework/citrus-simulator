@@ -8,9 +8,17 @@ export const elementLinkPairNoDropdown: navbarElementLinkPair[] = [
 export const elementLinkPairEntityDroptdown: navbarElementLinkPair[] = [
   { testName: 'navigationEntitiesMessageLink', link: /.*\/message*/, apiLink: '**/api/messages*' },
   { testName: 'navigationEntitiesMessageHeaderLink', link: /.*\/message-header*/, apiLink: '**/api/message-headers*' },
-  { testName: 'navigationEntitiesScenarioExecutionLink', link: /.*\/scenario-execution*/, apiLink: '**/api/scenario-executions*' },
+  {
+    testName: 'navigationEntitiesScenarioExecutionLink',
+    link: /.*\/scenario-execution*/,
+    apiLink: '**/api/scenario-executions*',
+  },
   { testName: 'navigationEntitiesScenarioActionLink', link: /.*\/scenario-action*/, apiLink: '**/api/scenario-actions*' },
-  { testName: 'navigationEntitiesScenarioParameterLink', link: /.*\/scenario-parameter*/, apiLink: '**/api/scenario-parameters*' },
+  {
+    testName: 'navigationEntitiesScenarioParameterLink',
+    link: /.*\/scenario-parameter*/,
+    apiLink: '**/api/scenario-parameters*',
+  },
   { testName: 'navigationEntitiesTestResultLink', link: /.*\/test-result*/, apiLink: '**/api/test-results*' },
   { testName: 'navigationEntitiesParameterLink', link: /.*\/test-parameter*/, apiLink: '**/api/test-parameters*' },
 ];
@@ -38,7 +46,11 @@ export const mockBackendResponse = async (
   headers?: { [key: string]: string },
 ): Promise<any> => {
   await page.route(apiURL, async route => {
-    headers ? await route.fulfill({ json: responseJson, headers: headers }) : await route.fulfill({ json: responseJson });
+    if (headers) {
+      await route.fulfill({ json: responseJson, headers });
+    } else {
+      await route.fulfill({ json: responseJson });
+    }
   });
 };
 
@@ -60,12 +72,15 @@ export const mockErrorResponseOfAllApiUrls = async (page: Page): Promise<any> =>
   }
 };
 
-export const goToAllPagesAndCheckURLPlusContent = async (page: Page, checkPageContentFunction?: (page: Page) => void): Promise<any> => {
+export const goToAllPagesAndCheckURLPlusContent = async (
+  page: Page,
+  checkPageContentFunction?: (page: Page) => Promise<void>,
+): Promise<any> => {
   for (const element of elementLinkPairNoDropdown) {
     await page.getByTestId(element.testName).click();
     await expect(page).toHaveURL(element.link);
     if (checkPageContentFunction) {
-      checkPageContentFunction(page);
+      await checkPageContentFunction(page);
     }
   }
   for (const element of elementLinkPairEntityDroptdown) {
@@ -73,7 +88,7 @@ export const goToAllPagesAndCheckURLPlusContent = async (page: Page, checkPageCo
     await page.getByTestId(element.testName).click();
     await expect(page).toHaveURL(element.link);
     if (checkPageContentFunction) {
-      checkPageContentFunction(page);
+      await checkPageContentFunction(page);
     }
   }
 };

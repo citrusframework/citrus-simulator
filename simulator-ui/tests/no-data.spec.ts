@@ -6,8 +6,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('should show no-data-banner if there is an empty backend response on all pages', async ({ page }) => {
-  const checkIfNotFoundBannerVisible = async (page: Page) => {
-    await expect(page.getByTestId('noDataFound')).toBeVisible();
-  };
   await goToAllPagesAndCheckURLPlusContent(page, checkIfNotFoundBannerVisible);
 });
+
+const checkIfNotFoundBannerVisible = async (page: Page): Promise<void> => {
+  await expect(page.getByTestId('noDataFound')).toBeVisible();
+};
