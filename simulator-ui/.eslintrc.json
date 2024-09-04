@@ -19,6 +19,7 @@
     "sourceType": "module",
     "project": ["./tsconfig.app.json", "./tsconfig.spec.json"]
   },
+  "ignorePatterns": ["playwright-report"],
   "rules": {
     "@angular-eslint/component-selector": [
       "error",
