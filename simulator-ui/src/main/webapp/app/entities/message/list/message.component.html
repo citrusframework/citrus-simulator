@@ -80,7 +80,7 @@
             <a [routerLink]="['/message', message.messageId, 'view']" data-test="messageEntityMessageId">{{ message.messageId }}</a>
           </td>
           <td data-test="messageEntityMessageDirection">{{ message.direction }}</td>
-          <td data-test="messageEntityMessagePayload">{{ message.payload }}</td>
+          <td data-test="messageEntityMessagePayload"><code *ngIf="message.payload" [highlightAuto]="message.payload"></code></td>
           <td data-test="messageEntityMessageCitrusMessage">{{ message.citrusMessageId }}</td>
           <td>
             <div *ngIf="message.scenarioExecutionId">

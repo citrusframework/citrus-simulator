@@ -20,7 +20,9 @@
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span></dt>
         <dd>
-          <span data-test="messageDetailPayload">{{ message.payload }}</span>
+          <span data-test="messageDetailPayload">
+            <pre *ngIf="message.payload"><code [highlightAuto]="message.payload"></code></pre>
+          </span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span></dt>
         <dd>

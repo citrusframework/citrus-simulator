@@ -1,22 +1,33 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+import { HighlightAuto } from 'ngx-highlightjs';
 
 import { sort } from 'app/core/util/operators';
 
 import { IMessage } from 'app/entities/message/message.model';
 import { MessageService } from 'app/entities/message/service/message.service';
 
-import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatePipe } from 'app/shared/date';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
-import SortDirective from 'app/shared/sort/sort.directive';
+import SharedModule from 'app/shared/shared.module';
 import SortByDirective from 'app/shared/sort/sort-by.directive';
+import SortDirective from 'app/shared/sort/sort.directive';
 
 @Component({
   standalone: true,
   selector: 'app-scenario-messages-table',
   templateUrl: './scenario-messages-table.component.html',
-  imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
+  imports: [
+    RouterModule,
+    SharedModule,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    SortDirective,
+    SortByDirective,
+    HighlightAuto,
+  ],
 })
 export class ScenarioMessagesTableComponent implements OnInit {
   @Input()
