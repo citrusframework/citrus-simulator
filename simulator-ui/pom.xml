@@ -104,7 +104,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>ci --cache .npm --force</arguments>
+              <arguments>ci --cache .npm</arguments>
             </configuration>
           </execution>
           <execution>
