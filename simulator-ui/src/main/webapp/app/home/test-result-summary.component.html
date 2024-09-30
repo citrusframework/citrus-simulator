@@ -30,7 +30,9 @@
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
-              <h5>{{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small></h5>
+              <h5 data-test="totalSimulationsPercentage">
+                {{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small>
+              </h5>
             </div>
             <div class="col d-flex justify-content-end">
               <div class="btn btn-info btn-sm" data-test="totalSimulationsButton">
@@ -49,7 +51,7 @@
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
-              <h5>
+              <h5 data-test="successfulSimulationsPercentage">
                 {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
               </h5>
             </div>
@@ -70,7 +72,7 @@
           <div class="row align-items-center">
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
-              <h5>
+              <h5 data-test="failedSimulationsPercentage">
                 {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
               </h5>
             </div>
@@ -87,7 +89,7 @@
   </div>
 
   <ng-template #infoNoSimulationsRanYet>
-    <ngb-alert class="mt-3" type="warning" [dismissible]="false">
+    <ngb-alert class="mt-3" type="warning" [dismissible]="false" data-test="noSimulationsRanBanner">
       <span jhiTranslate="home.simulations.noSimulationsRanYet">No simulations ran yet! Try starting one:</span>
       <a
         href="https://citrusframework.org/citrus-simulator/reference/html/index.html#scenarios"

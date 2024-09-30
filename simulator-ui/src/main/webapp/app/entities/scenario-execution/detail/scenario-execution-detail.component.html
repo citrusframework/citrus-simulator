@@ -14,37 +14,39 @@
       <dl class="row-md jh-entity-details">
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span></dt>
         <dd>
-          <span>{{ scenarioExecution.executionId }}</span>
+          <span data-test="scenarioExecutionId">{{ scenarioExecution.executionId }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span></dt>
         <dd>
-          <span>{{ scenarioExecution.startDate | formatMediumDatetime }}</span>
+          <span data-test="scenarioExecutionStartDate">{{ scenarioExecution.startDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span></dt>
         <dd>
-          <span>{{ scenarioExecution.endDate | formatMediumDatetime }}</span>
+          <span data-test="scenarioExecutionEndDate">{{ scenarioExecution.endDate | formatMediumDatetime }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Name</span></dt>
         <dd>
-          <span>{{ scenarioExecution.scenarioName }}</span>
+          <span data-test="scenarioExecutionName">{{ scenarioExecution.scenarioName }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
         <dd>
-          <span>{{ scenarioExecution.testResult?.status }}</span>
+          <span data-test="scenarioExecutionStatus">{{ scenarioExecution.testResult?.status }}</span>
         </dd>
         <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
         <dd>
-          <span>{{ scenarioExecution.testResult?.errorMessage }}</span>
+          <span data-test="scenarioExecutionErrorMessage">{{ scenarioExecution.testResult?.errorMessage }}</span>
         </dd>
       </dl>
 
       <div *ngIf="scenarioExecution.testResult?.stackTrace" ngbAccordion class="mb-3">
         <div ngbAccordionItem>
           <h2 ngbAccordionHeader>
-            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Stacktrace</button>
+            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-test="openStackTraceButton">
+              Stacktrace
+            </button>
           </h2>
           <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
+            <div ngbAccordionBody data-test="scenarioExecutionStackTrace">
               <ng-template>{{ scenarioExecution.testResult?.stackTrace }}</ng-template>
             </div>
           </div>

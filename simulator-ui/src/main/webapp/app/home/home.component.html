@@ -17,7 +17,7 @@
         <b *ngIf="simulatorInfo" jhiTranslate="home.version" [translateValues]="{ version: simulatorInfo!.version }"></b>
       </p>
 
-      <ngb-alert class="mt-3" type="info" [dismissible]="false">
+      <ngb-alert class="mt-3" type="info" data-test="disclaimer" [dismissible]="false">
         <h3 jhiTranslate="home.disclaimer.title">Disclaimer!</h3>
         <p jhiTranslate="home.disclaimer.introduction">
           We are excited to announce that the Simulator UI has been comprehensively updated in our latest 3.0.0 release. This marks a
@@ -31,7 +31,11 @@
           versions, impacting the UI's interaction.
         </p>
         <p>
-          <a href="https://github.com/citrusframework/citrus-simulator/issues/new" target="_blank" rel="noopener noreferrer"
+          <a
+            data-test="feedbackAndSuggestionLink"
+            href="https://github.com/citrusframework/citrus-simulator/issues/new"
+            target="_blank"
+            rel="noopener noreferrer"
             ><b jhiTranslate="home.disclaimer.feedback">We greatly appreciate your feedback and suggestions!</b></a
           >
           <span jhiTranslate="home.disclaimer.closingNote">
@@ -43,9 +47,15 @@
         </p>
       </ngb-alert>
 
-      <p>
+      <p data-test="feedbackStarGithub">
         <span jhiTranslate="home.like">If you like Citrus and the Simulator, don't forget to give us a star on</span>
-        <a href="https://github.com/citrusframework/citrus-simulator" target="_blank" rel="noopener noreferrer" jhiTranslate="home.github">
+        <a
+          data-test="feedbackLinkStarGithub"
+          href="https://github.com/citrusframework/citrus-simulator"
+          target="_blank"
+          rel="noopener noreferrer"
+          jhiTranslate="home.github"
+        >
           GitHub
         </a>
         !

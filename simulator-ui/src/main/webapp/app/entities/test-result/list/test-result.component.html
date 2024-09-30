@@ -16,7 +16,7 @@
 
   <app-filter [filters]="displayFilters"></app-filter>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="testResults?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="testResults?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.testResult.home.notFound">No Test Results found</span>
   </div>
 
@@ -113,7 +113,7 @@
                 [queryParams]="{ 'filter[testResultId.in]': testResult.id }"
                 data-test="testResultEntitiesTestParametersLink"
               >
-                <button type="button" class="btn btn-info btn-sm">
+                <button type="button" class="btn btn-info btn-sm" data-test="testParametersButton">
                   <fa-icon icon="cogs"></fa-icon>
                   <span
                     class="d-none d-md-inline"

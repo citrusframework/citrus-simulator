@@ -1,8 +1,15 @@
-<form name="deleteForm" (ngSubmit)="confirmDelete()">
+<form name="deleteForm" data-test="testResultDeleteDialogHeading" (ngSubmit)="confirmDelete()">
   <div class="modal-header">
-    <h4 class="modal-title" data-test="testResultDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm Delete</h4>
+    <h4 class="modal-title" jhiTranslate="entity.delete.title">Confirm Delete</h4>
 
-    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true" (click)="cancel()"></button>
+    <button
+      type="button"
+      class="btn-close"
+      data-test="testResultDeleteDialogCloseButton"
+      data-dismiss="modal"
+      aria-hidden="true"
+      (click)="cancel()"
+    ></button>
   </div>
 
   <div class="modal-body">
@@ -14,7 +21,13 @@
 
   <div class="modal-footer">
     <div class="col-md-6 btn-group">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-test="testResultDeleteDialogCancelButton"
+        data-dismiss="modal"
+        (click)="cancel()"
+      >
         <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
       </button>
 

@@ -51,7 +51,7 @@
 
   <app-alert></app-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0">
+  <div class="alert alert-warning" id="no-result" *ngIf="scenarios?.length === 0" data-test="noDataFound">
     <span jhiTranslate="citrusSimulatorApp.scenario.home.notFound">No Scenarios found</span>
   </div>
 
@@ -102,7 +102,7 @@
                 [queryParams]="{ 'filter[scenarioName.equals]': scenario.name }"
                 data-test="scenarioEntitiesScenarioExecutions"
               >
-                <button type="button" class="btn btn-info btn-sm">
+                <button type="button" data-test="scenarioExecutionButton" class="btn btn-info btn-sm">
                   <fa-icon icon="square-poll-vertical"></fa-icon>
                   <span class="d-none d-md-inline" jhiTranslate="citrusSimulatorApp.scenario.scenarioExecutions">Scenario Executions</span>
                 </button>
