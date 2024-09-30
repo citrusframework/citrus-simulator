@@ -26,8 +26,8 @@
     <lombok.version>1.18.34</lombok.version>
     <citrus.version>4.3.2</citrus.version>
 
-    <spring-boot.version>3.3.3</spring-boot.version>
-    <spring.version>6.3.3</spring.version>
+    <spring-boot.version>3.3.4</spring-boot.version>
+    <spring.version>6.3.4</spring.version>
     <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
