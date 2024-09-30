@@ -119,6 +119,7 @@
                       class="form-control"
                       [id]="'header-' + i + '-value'"
                       formControlName="value"
+                      data-test="headerValueInput"
                     />
                   </div>
                 </div>
@@ -148,12 +149,12 @@
         &nbsp;
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.addAnother">Add Another</span>
       </button>
-      <button type="button" class="btn btn-warning" data-dismiss="modal" (click)="cancel()">
+      <button type="button" class="btn btn-warning" data-dismiss="modal" data-test="cancelButton" (click)="cancel()">
         <fa-icon icon="ban"></fa-icon>
         &nbsp;
         <span jhiTranslate="entity.action.cancel">Cancel</span>
       </button>
-      <button id="jhi-confirm-delete-event" data-test="applyHeaderFilterButton" type="button" class="btn btn-info" (click)="submit()">
+      <button id="jhi-confirm-delete-event" type="button" class="btn btn-info" data-test="applyHeaderFilterButton" (click)="submit()">
         <fa-icon icon="times"></fa-icon>
         &nbsp;
         <span jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.apply">Apply Filter</span>

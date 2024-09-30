@@ -116,7 +116,9 @@ Desktop.ini
 .eslintcache
 
 ######################
-# Code coverage
+# Test results
 ######################
 /coverage/
 /.nyc_output/
+/test-results/
+/playwright-report/
