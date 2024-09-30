@@ -17,7 +17,7 @@
   <properties>
     <!-- Plugin Management -->
     <hibernate.version>6.5.2.Final</hibernate.version>
-    <org.mapstruct.version>1.6.1</org.mapstruct.version>
+    <org.mapstruct.version>1.6.2</org.mapstruct.version>
   </properties>
 
   <dependencies>
