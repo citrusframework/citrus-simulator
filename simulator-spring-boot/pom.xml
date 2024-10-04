@@ -78,17 +78,30 @@
       <artifactId>jakarta.transaction-api</artifactId>
     </dependency>
 
-    <!-- Swagger Documentation -->
+    <!-- openapi & documentation of it -->
+    <dependency>
+      <groupId>io.swagger.parser.v3</groupId>
+      <artifactId>swagger-parser</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
       <version>2.3.0</version>
     </dependency>
 
+    <!-- open feature -->
     <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
+      <groupId>dev.openfeature</groupId>
+      <artifactId>sdk</artifactId>
+      <version>1.10.0</version>
     </dependency>
+    <dependency>
+      <groupId>dev.openfeature.contrib.providers</groupId>
+      <artifactId>flagd</artifactId>
+      <version>0.8.9</version>
+    </dependency>
+
+    <!-- WDL scenario generation -->
     <dependency>
       <groupId>org.apache.xmlbeans</groupId>
       <artifactId>xmlbeans</artifactId>
@@ -98,16 +111,6 @@
           <artifactId>saxon</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>io.swagger.parser.v3</groupId>
-      <artifactId>swagger-parser</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
     </dependency>
 
     <!-- Citrus -->
