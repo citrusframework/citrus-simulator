@@ -70,6 +70,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private @Nullable String headers;
 
+    private @Nullable StringFilter scenarioMessagesPayload;
+
     private @Nullable Boolean distinct;
 
     public ScenarioExecutionCriteria() {
@@ -85,6 +87,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
         this.scenarioParametersId = other.scenarioParametersId == null ? null : other.scenarioParametersId.copy();
         this.headers = other.headers;
+        this.scenarioMessagesPayload = other.scenarioMessagesPayload;
         this.distinct = other.distinct;
     }
 
@@ -108,6 +111,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(scenarioActionsId, scenarioExecutionCriteria.scenarioActionsId)
             .append(scenarioMessagesId, scenarioExecutionCriteria.scenarioMessagesId)
             .append(scenarioParametersId, scenarioExecutionCriteria.scenarioParametersId)
+            .append(headers, scenarioExecutionCriteria.headers)
+            .append(scenarioMessagesPayload, scenarioExecutionCriteria.scenarioMessagesPayload)
             .append(distinct, scenarioExecutionCriteria.distinct)
             .isEquals();
     }
@@ -123,6 +128,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(scenarioActionsId)
             .append(scenarioMessagesId)
             .append(scenarioParametersId)
+            .append(headers)
+            .append(scenarioMessagesPayload)
             .append(distinct)
             .toHashCode();
     }

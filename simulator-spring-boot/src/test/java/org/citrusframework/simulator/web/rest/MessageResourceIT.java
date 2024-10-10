@@ -53,8 +53,8 @@ public class MessageResourceIT {
     private static final Message.Direction DEFAULT_DIRECTION = Message.Direction.INBOUND; // Integer value: 1
     private static final Message.Direction UPDATED_DIRECTION = Message.Direction.OUTBOUND; // Integer value: 2
 
-    private static final String DEFAULT_PAYLOAD = "AAAAAAAAAA";
-    private static final String UPDATED_PAYLOAD = "BBBBBBBBBB";
+    static final String DEFAULT_PAYLOAD = "AAAAAAAAAA";
+    static final String UPDATED_PAYLOAD = "BBBBBBBBBB";
 
     private static final String DEFAULT_CITRUS_MESSAGE_ID = "AAAAAAAAAA";
     private static final String UPDATED_CITRUS_MESSAGE_ID = "BBBBBBBBBB";
