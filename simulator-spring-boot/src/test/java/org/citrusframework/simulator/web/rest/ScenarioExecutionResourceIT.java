@@ -50,6 +50,8 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
 import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
+import static org.citrusframework.simulator.web.rest.MessageResourceIT.DEFAULT_PAYLOAD;
+import static org.citrusframework.simulator.web.rest.MessageResourceIT.UPDATED_PAYLOAD;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -462,6 +464,28 @@ public class ScenarioExecutionResourceIT {
 
         // Get all the scenarioExecutionList where scenarioMessages equals to (scenarioMessagesId + 1)
         defaultScenarioExecutionShouldNotBeFound("scenarioMessagesId.equals=" + (scenarioMessagesId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllScenarioExecutionsByScenarioMessagesPayloadIsEqualToSomething() throws Exception {
+        Message scenarioMessages;
+        if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
+            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+            scenarioMessages = MessageResourceIT.createEntity(entityManager);
+        } else {
+            scenarioMessages = TestUtil.findAll(entityManager, Message.class).get(0);
+        }
+        entityManager.persist(scenarioMessages);
+        entityManager.flush();
+        scenarioExecution.addScenarioMessage(scenarioMessages);
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+
+        // Get all the scenarioExecutionList where payload equals the default payload
+        defaultScenarioExecutionShouldBeFound("scenarioMessagesPayload.equals=" + DEFAULT_PAYLOAD);
+
+        // Get all the scenarioExecutionList where payload equals another payload
+        defaultScenarioExecutionShouldNotBeFound("scenarioMessagesPayload.equals=" + UPDATED_PAYLOAD);
     }
 
     @Test

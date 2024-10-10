@@ -29,6 +29,7 @@ import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.service.filter.IntegerFilter;
 import org.citrusframework.simulator.service.filter.LongFilter;
+import org.citrusframework.simulator.service.filter.StringFilter;
 import org.citrusframework.simulator.web.rest.MessageResourceIT;
 import org.citrusframework.simulator.web.rest.ScenarioActionResourceIT;
 import org.citrusframework.simulator.web.rest.ScenarioExecutionResourceIT;
@@ -93,6 +94,7 @@ class ScenarioExecutionQueryServiceIT {
         scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
         message = MessageResourceIT.createEntityBuilder(entityManager)
             .citrusMessageId("e4d560c9-720f-4283-ac89-8f28b1d0f277")
+            .payload("foo")
             .build()
             .addHeader(MessageHeader.builder()
                 .name(TRACEPARENT)
@@ -118,6 +120,7 @@ class ScenarioExecutionQueryServiceIT {
                 .addScenarioMessage(
                     MessageResourceIT.createEntityBuilder(entityManager)
                         .citrusMessageId("6eda9f2b-3a7a-423f-b19c-329ed3dd5ecc")
+                        .payload("bar")
                         .build()
                         .addHeader(MessageHeader.builder()
                             .name(TRACEPARENT)
@@ -151,6 +154,7 @@ class ScenarioExecutionQueryServiceIT {
                 .addScenarioMessage(
                     MessageResourceIT.createEntityBuilder(entityManager)
                         .citrusMessageId("66666a09-7099-461b-aebb-260e776cd07f")
+                        .payload("baz")
                         .build()
                         .addHeader(MessageHeader.builder()
                             .name("numeric")
@@ -223,6 +227,14 @@ class ScenarioExecutionQueryServiceIT {
         void selectWithJoinToMessages() {
             var scenarioExecutionCriteria = new ScenarioExecutionCriteria();
             scenarioExecutionCriteria.setScenarioMessagesId((LongFilter) new LongFilter().setEquals(message.getMessageId()));
+
+            assertThatScenarioExecutionAtIndexSelectedByCriteria(scenarioExecutionCriteria, 1);
+        }
+
+        @Test
+        void selectWithJoinToMessagesPayload() {
+            var scenarioExecutionCriteria = new ScenarioExecutionCriteria();
+            scenarioExecutionCriteria.setScenarioMessagesPayload((StringFilter) new StringFilter().setEquals(message.getPayload()));
 
             assertThatScenarioExecutionAtIndexSelectedByCriteria(scenarioExecutionCriteria, 1);
         }

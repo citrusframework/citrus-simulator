@@ -209,6 +209,15 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                     specification = specification.and(messageHeaderSpecification);
                 }
             }
+            if (nonNull(criteria.getScenarioMessagesPayload())) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getScenarioMessagesPayload(),
+                            root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.payload)
+                        )
+                    );
+            }
         }
         return specification;
     }
