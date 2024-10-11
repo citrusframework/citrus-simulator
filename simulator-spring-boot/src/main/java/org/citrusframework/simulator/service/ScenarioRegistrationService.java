@@ -1,0 +1,70 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.citrusframework.simulator.service;
+
+import dev.openfeature.sdk.Client;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.common.FeatureFlagNotEnabledException;
+import org.citrusframework.simulator.scenario.SimulatorScenario;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import static org.citrusframework.simulator.scenario.DynamicClassLoader.compileAndLoad;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+
+@Service
+public class ScenarioRegistrationService {
+
+    private final ApplicationContext applicationContext;
+    private final Client openFeatureClient;
+    private final ScenarioLookupService scenarioLookupService;
+
+    public ScenarioRegistrationService(ApplicationContext applicationContext, Client openFeatureClient, ScenarioLookupService scenarioLookupService) {
+        this.applicationContext = applicationContext;
+        this.openFeatureClient = openFeatureClient;
+        this.scenarioLookupService = scenarioLookupService;
+    }
+
+    public SimulatorScenario registerScenarioFromJavaSourceCode(String scenarioName, String javaSourceCode) throws FeatureFlagNotEnabledException {
+        if () {
+
+        }
+
+        try {
+            Class<SimulatorScenario> loadedClass = compileAndLoad(scenarioName, javaSourceCode);
+            SimulatorScenario simulatorScenario = loadedClass.getDeclaredConstructor().newInstance();
+
+            registerScenarioBean(scenarioName, loadedClass);
+
+            scenarioLookupService.evictAndReloadScenarioCache();
+
+            return simulatorScenario;
+        } catch (Exception e) {
+            throw new CitrusRuntimeException(e);
+        }
+    }
+
+    private void registerScenarioBean(String scenarioName, Class<SimulatorScenario> loadedClass) {
+        if (!(applicationContext instanceof BeanDefinitionRegistry beanDefinitionRegistry)) {
+            throw new IllegalArgumentException("Cannot register simulation into bean registry, application context is not of type BeanDefinitionRegistry!");
+        }
+
+        var beanDefinition = genericBeanDefinition(loadedClass).getBeanDefinition();
+        beanDefinitionRegistry.registerBeanDefinition(scenarioName, beanDefinition);
+    }
+}
