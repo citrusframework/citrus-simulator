@@ -36,13 +36,13 @@ import java.util.Optional;
 public interface ScenarioExecutionRepository extends JpaRepository<ScenarioExecution, Long>, JpaSpecificationExecutor<ScenarioExecution> {
 
     @Override
-    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages"})
+    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages", "scenarioMessages.headers"})
     Page<ScenarioExecution> findAll(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages"})
+    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages", "scenarioMessages.headers"})
     Optional<ScenarioExecution> findOneByExecutionId(@Param("executionId") Long executionId);
 
     @Query("FROM ScenarioExecution WHERE executionId IN :scenarioExecutionIds")
-    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages"})
+    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages", "scenarioMessages.headers"})
     Page<ScenarioExecution> findAllWhereExecutionIdIn(@Param("scenarioExecutionIds") List<Long> scenarioExecutionIds, Pageable pageable);
 }
