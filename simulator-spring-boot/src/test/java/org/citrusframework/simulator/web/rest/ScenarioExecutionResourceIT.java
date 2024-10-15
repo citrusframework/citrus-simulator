@@ -560,6 +560,7 @@ public class ScenarioExecutionResourceIT {
 
     @Nested
     class CorrectTimeOnScenarioExecution {
+
         public static final TemporalUnitLessThanOffset LESS_THAN_5_SECONDS = new TemporalUnitLessThanOffset(5, SECONDS);
 
         @Autowired

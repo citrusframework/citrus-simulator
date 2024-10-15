@@ -34,11 +34,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * REST controller for managing {@link ScenarioExecution}.
@@ -56,7 +59,8 @@ public class ScenarioExecutionResource {
 
     public ScenarioExecutionResource(
         ScenarioExecutionService scenarioExecutionService,
-        ScenarioExecutionQueryService scenarioExecutionQueryService, ScenarioExecutionMapper scenarioExecutionMapper
+        ScenarioExecutionQueryService scenarioExecutionQueryService,
+        ScenarioExecutionMapper scenarioExecutionMapper
     ) {
         this.scenarioExecutionService = scenarioExecutionService;
         this.scenarioExecutionQueryService = scenarioExecutionQueryService;
@@ -71,10 +75,17 @@ public class ScenarioExecutionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of scenarioExecutions in body.
      */
     @GetMapping("/scenario-executions")
-    public ResponseEntity<List<ScenarioExecutionDTO>> getAllScenarioExecutions(ScenarioExecutionCriteria criteria, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ScenarioExecutionDTO>> getAllScenarioExecutions(
+        ScenarioExecutionCriteria criteria,
+        @RequestParam(name = "includeActions", required = false, defaultValue = "false") Boolean includeActions,
+        @RequestParam(name = "includeMessages", required = false, defaultValue = "false") Boolean includeMessages,
+        @RequestParam(name = "includeParameters", required = false, defaultValue = "false") Boolean includeParameters,
+        @ParameterObject Pageable pageable
+    ) {
         logger.debug("REST request to get ScenarioExecutions by criteria: {}", criteria);
 
         Page<ScenarioExecution> page = scenarioExecutionQueryService.findByCriteria(criteria, pageable);
+        stripPageContents(page, includeActions, includeMessages, includeParameters);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(scenarioExecutionMapper::toDto).toList());
     }
@@ -102,5 +113,17 @@ public class ScenarioExecutionResource {
         logger.debug("REST request to get ScenarioExecution : {}", id);
         Optional<ScenarioExecution> scenarioExecution = scenarioExecutionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(scenarioExecution.map(scenarioExecutionMapper::toDto));
+    }
+
+    private void stripPageContents(Page<ScenarioExecution> page, Boolean includeActions, Boolean includeMessages, Boolean includeParameters) {
+        if (FALSE.equals(includeActions)) {
+            page.getContent().forEach(scenarioExecution -> scenarioExecution.getScenarioActions().clear());
+        }
+        if (FALSE.equals(includeMessages)) {
+            page.getContent().forEach(scenarioExecution -> scenarioExecution.getScenarioMessages().clear());
+        }
+        if (FALSE.equals(includeParameters)) {
+            page.getContent().forEach(scenarioExecution -> scenarioExecution.getScenarioParameters().clear());
+        }
     }
 }

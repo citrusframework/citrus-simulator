@@ -36,8 +36,20 @@ export class ScenarioExecutionService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
-  query(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
+  query(
+    req?: any,
+    responseConfig: { includeActions: boolean; includeMessages: boolean; includeParameters: boolean } = {
+      includeActions: false,
+      includeMessages: false,
+      includeParameters: false,
+    },
+  ): Observable<EntityArrayResponseType> {
+    let options = createRequestOption(req);
+
+    for (const key of Object.keys(responseConfig)) {
+      options = options.append(key, responseConfig[key as keyof typeof responseConfig]);
+    }
+
     return this.http
       .get<RestScenarioExecution[]>(this.resourceUrl, { params: options, observe: 'response' })
       .pipe(map(res => this.convertResponseArrayFromServer(res)));
