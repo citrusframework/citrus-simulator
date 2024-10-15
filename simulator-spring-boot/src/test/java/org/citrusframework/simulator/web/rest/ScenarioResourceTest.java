@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -122,7 +123,7 @@ class ScenarioResourceTest {
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)
-                .asList()
+                .asInstanceOf(LIST)
                 .hasSize(1)
                 .first()
                 .asInstanceOf(type(Scenario.class))
@@ -141,7 +142,7 @@ class ScenarioResourceTest {
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)
-                .asList()
+                .asInstanceOf(LIST)
                 .hasSize(2)
                 .noneSatisfy(scenario ->
                     assertThat(scenario)
@@ -161,7 +162,7 @@ class ScenarioResourceTest {
 
             assertThat(result)
                 .extracting(ResponseEntity::getBody)
-                .asList()
+                .asInstanceOf(LIST)
                 .isEqualTo(SCENARIO_CACHE);
         }
 

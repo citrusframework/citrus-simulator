@@ -43,6 +43,6 @@ public interface ScenarioExecutionRepository extends JpaRepository<ScenarioExecu
     Optional<ScenarioExecution> findOneByExecutionId(@Param("executionId") Long executionId);
 
     @Query("FROM ScenarioExecution WHERE executionId IN :scenarioExecutionIds")
-    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages"})
+    @EntityGraph(attributePaths = {"testResult", "scenarioParameters", "scenarioActions", "scenarioMessages", "scenarioMessages.headers"})
     Page<ScenarioExecution> findAllWhereExecutionIdIn(@Param("scenarioExecutionIds") List<Long> scenarioExecutionIds, Pageable pageable);
 }
