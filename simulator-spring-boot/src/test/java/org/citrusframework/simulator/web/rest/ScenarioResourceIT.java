@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -160,6 +161,58 @@ class ScenarioResourceIT {
                     hasEntry("type", MESSAGE_TRIGGERED.toString())
                 )
             )));
+    }
+
+    @Test
+    void uploadDynamicScenarioAtRuntime() throws Exception {
+        // Standalone version of the HelloScenario in REST Sample
+        var scenarioName = "StandaloneHelloScenario";
+        var javaSourceCode = """
+            package org.citrusframework.simulator.sample.scenario;
+
+            import org.citrusframework.simulator.scenario.org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
+            import org.citrusframework.simulator.scenario.org.citrusframework.simulator.scenario.Scenario;
+            import org.citrusframework.simulator.scenario.ScenarioRunner;
+            import org.springframework.http.HttpStatus;
+            import org.springframework.web.bind.annotation.RequestMapping;
+            import org.springframework.web.bind.annotation.RequestMethod;
+
+            import static org.citrusframework.actions.EchoAction.Builder.echo;
+            import static org.citrusframework.dsl.MessageSupport.MessageBodySupport.fromBody;
+
+            @org.citrusframework.simulator.scenario.Scenario("StandaloneHelloScenario")
+            @RequestMapping(value = "/services/rest/simulator/hello", method = RequestMethod.POST)
+            public class StandaloneHelloScenario extends org.citrusframework.simulator.scenario.AbstractSimulatorScenario {
+
+                @Override
+                public void run(ScenarioRunner scenario) {
+                    scenario.$(scenario.http()
+                        .receive()
+                        .post()
+                        .message()
+                        .body("<Hello xmlns=\\"http://citrusframework.org/schemas/hello\\">" +
+                            "Say Hello!" +
+                            "</Hello>")
+                        .extract(fromBody().expression("//hello:Hello", "greeting")));
+
+                    scenario.$(echo("Received greeting: ${greeting}"));
+
+                    scenario.$(scenario.http()
+                        .send()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .body("<HelloResponse xmlns=\\"http://citrusframework.org/schemas/hello\\">Hi there!</HelloResponse>"));
+                }
+            }
+            """;
+
+        restScenarioParameterMockMvc
+            .perform(post(ENTITY_API_URL_SCENARIO_NAME, scenarioName)
+                .contentType(MediaType.TEXT_PLAIN)
+                .content(javaSourceCode))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name").value(equalTo(scenarioName)))
+            .andExpect(jsonPath("$.type").value(equalTo("MESSAGE_TRIGGERED")));
     }
 
     @Test

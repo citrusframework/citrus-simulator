@@ -19,6 +19,7 @@ package org.citrusframework.simulator.web.rest;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
+import org.citrusframework.simulator.service.ScenarioRegistrationService;
 import org.citrusframework.simulator.web.rest.ScenarioResource.Scenario;
 import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioParameterMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -62,13 +63,16 @@ class ScenarioResourceTest {
     private ScenarioLookupService scenarioLookupServiceMock;
 
     @Mock
+    private ScenarioRegistrationService scenarioRegistrationServiceMock;
+
+    @Mock
     private ScenarioParameterMapper scenarioParameterMapperMock;
 
     private ScenarioResource fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new ScenarioResource(scenarioExecutorServiceMock, scenarioLookupServiceMock, scenarioParameterMapperMock);
+        fixture = new ScenarioResource(scenarioExecutorServiceMock, scenarioLookupServiceMock, scenarioRegistrationServiceMock, scenarioParameterMapperMock);
     }
 
     @Test

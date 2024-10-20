@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.scenario;
+package org.citrusframework.simulator.soap;
 
-import org.citrusframework.endpoint.AbstractEndpointConfiguration;
+import org.citrusframework.ws.actions.ReceiveSoapMessageAction;
+import org.citrusframework.ws.actions.SendSoapMessageAction;
 
-/**
- * @author Christoph Deppisch
- */
-public class ScenarioEndpointConfiguration extends AbstractEndpointConfiguration {
+public interface SoapScenarioActionBuilder {
+
+    ReceiveSoapMessageAction.Builder receive();
+
+    SendSoapMessageAction.Builder send();
 }
