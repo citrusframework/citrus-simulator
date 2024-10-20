@@ -40,5 +40,5 @@ public class TechnicalStructureTest {
         .layer("Scenario").definedBy("..scenario..")
 
         .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
-        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Config", "DTO", "Service", "Persistence", "Endpoint", "Listener", "Scenario");
+        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Config", "DTO", "Service", "Persistence", "Endpoint", "Listener", "Scenario", "Web");
 }

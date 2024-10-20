@@ -515,7 +515,7 @@ public class ScenarioExecutionResourceIT {
      */
     private void defaultScenarioExecutionShouldBeFound(String filter) throws Exception {
         mockMvc
-            .perform(get(ENTITY_API_URL + "?sort=executionId,desc&" + filter))
+            .perform(get(ENTITY_API_URL + "?sort=executionId,desc&" + filter + "&includeActions=true&includeMessages=true&includeParameters=true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].executionId").value(hasItem(scenarioExecution.getExecutionId().intValue())))
@@ -560,6 +560,7 @@ public class ScenarioExecutionResourceIT {
 
     @Nested
     class CorrectTimeOnScenarioExecution {
+
         public static final TemporalUnitLessThanOffset LESS_THAN_5_SECONDS = new TemporalUnitLessThanOffset(5, SECONDS);
 
         @Autowired
@@ -580,7 +581,7 @@ public class ScenarioExecutionResourceIT {
             assertThat(mockEndpointResult).contains("E5a084sOZw7");
 
             String scenarioExecutionsResult = mockMvc
-                .perform(get("/api/scenario-executions"))
+                .perform(get("/api/scenario-executions?includeActions=true&includeMessages=true&includeParameters=true"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
