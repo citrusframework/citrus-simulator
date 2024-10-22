@@ -25,6 +25,7 @@ import org.citrusframework.simulator.sample.RestSimulator;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.citrusframework.xml.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -50,9 +51,17 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     private final String defaultResponse = "<DefaultResponse>This is a default response!</DefaultResponse>";
 
     /**
+     * Test Http REST client configured to access the API
+     */
+    @Autowired
+    @Qualifier("apiClient")
+    private HttpClient apiClient;
+
+    /**
      * Test Http REST client
      */
     @Autowired
+    @Qualifier("simulatorClient")
     private HttpClient simulatorClient;
 
     /**
@@ -263,6 +272,17 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
         $(http().client(simulatorClient)
             .receive()
             .response(HttpStatus.OK));
+
+        // Make sure we receive exactly one record using "count" resources
+        $(http().client(apiClient)
+            .send()
+            .get("scenario-executions/count?headers=citrus_endpoint_uri~/services/rest/simulator/fail&scenarioName.contains=Fail&status.equals=2&distinct=true"));
+
+        $(http().client(apiClient)
+            .receive()
+            .response(HttpStatus.OK)
+            .getMessageBuilderSupport()
+            .body("1"));
     }
 
     /**
@@ -316,6 +336,13 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
         public HttpClient simulatorClient() {
             return CitrusEndpoints.http().client()
                 .requestUrl(String.format("http://localhost:%s/services/rest/simulator", 8080))
+                .build();
+        }
+
+        @Bean
+        public HttpClient apiClient() {
+            return CitrusEndpoints.http().client()
+                .requestUrl(String.format("http://localhost:%s/api", 8080))
                 .build();
         }
 

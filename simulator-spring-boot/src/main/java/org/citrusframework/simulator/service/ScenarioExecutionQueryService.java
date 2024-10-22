@@ -275,7 +275,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
 
     private static SetJoin<Message, MessageHeader> joinMessageHeaders(Root<ScenarioExecution> root) {
         return root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT)
-            .join(Message_.headers);
+            .join(Message_.headers, JoinType.LEFT);
     }
 
     private static Path<String> joinMessageHeadersAndGetValue(Root<ScenarioExecution> root) {
