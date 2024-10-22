@@ -17,6 +17,7 @@ For each listed resource, the following operations are supported:
 * Listing all entries with a `GET` request to the root URI.
 ** Pagination and filtering are supported.
 * Counting all entries with a `GET /count` endpoint.
+** Note that the `?distinct=true` query parameter is required to count unique results.
 * Retrieving a single resource using the `GET /{id}` endpoint.
 
 All REST resources adhere to this pattern, with exceptions noted in subsequent sections.

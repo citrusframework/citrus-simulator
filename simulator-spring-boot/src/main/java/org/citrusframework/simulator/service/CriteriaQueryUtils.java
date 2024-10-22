@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.service;
 
 import static java.util.Objects.nonNull;
+import static org.springframework.data.domain.Pageable.unpaged;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -68,7 +69,10 @@ final class CriteriaQueryUtils {
         criteriaQuery = orderByPageSort(page, root, criteriaBuilder, criteriaQuery);
 
         TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
-        query = selectPage(page, query);
+
+        if (!unpaged().equals(page)) {
+            query = selectPage(page, query);
+        }
 
         return query;
     }
