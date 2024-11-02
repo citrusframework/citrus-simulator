@@ -16,9 +16,17 @@
 
 package org.citrusframework.simulator.web.rest;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.annotation.Nullable;
+import org.citrusframework.TestCaseRunner;
+import org.citrusframework.simulator.common.FeatureFlagNotEnabledException;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
+import org.citrusframework.simulator.scenario.ScenarioEndpoint;
+import org.citrusframework.simulator.scenario.ScenarioStarter;
+import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.simulator.service.ScenarioLookupService;
+import org.citrusframework.simulator.service.ScenarioRegistrationService;
 import org.citrusframework.simulator.web.rest.ScenarioResource.Scenario;
 import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioParameterMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -44,10 +52,17 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.citrusframework.simulator.config.OpenFeatureConfig.EXPERIMENTAL_SCENARIO_LOADING_AT_RUNTIME_ENABLED;
+import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.MESSAGE_TRIGGERED;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.data.domain.Pageable.unpaged;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes;
@@ -63,13 +78,16 @@ class ScenarioResourceTest {
     private ScenarioLookupService scenarioLookupServiceMock;
 
     @Mock
+    private ScenarioRegistrationService scenarioRegistrationServiceMock;
+
+    @Mock
     private ScenarioParameterMapper scenarioParameterMapperMock;
 
     private ScenarioResource fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new ScenarioResource(scenarioExecutorServiceMock, scenarioLookupServiceMock, scenarioParameterMapperMock);
+        fixture = new ScenarioResource(scenarioExecutorServiceMock, scenarioLookupServiceMock, scenarioRegistrationServiceMock, scenarioParameterMapperMock);
     }
 
     @Test
@@ -169,6 +187,132 @@ class ScenarioResourceTest {
         @AfterEach
         void afterEachTeardown() {
             resetRequestAttributes();
+        }
+    }
+
+    @Nested
+    class UploadScenario {
+
+        private static final String SCENARIO_NAME = "TestScenario";
+        private static final String JAVA_SOURCE_CODE = "public class TestScenario implements ScenarioStarter { }";
+
+        @Test
+        void shouldCreateStarterScenarioSuccessfully() throws FeatureFlagNotEnabledException {
+            var simulatorScenario = new ScenarioStarter() {
+                @Override
+                public ScenarioEndpoint getScenarioEndpoint() {
+                    return null;
+                }
+
+                @Override
+                public String getName() {
+                    return SCENARIO_NAME;
+                }
+
+                @Nullable
+                @Override
+                public TestCaseRunner getTestCaseRunner() {
+                    return null;
+                }
+
+                @Override
+                public void setTestCaseRunner(TestCaseRunner testCaseRunner) {
+
+                }
+            };
+
+            doReturn(simulatorScenario)
+                .when(scenarioRegistrationServiceMock)
+                .registerScenarioFromJavaSourceCode(
+                    eq(SCENARIO_NAME),
+                    eq(JAVA_SOURCE_CODE));
+
+            // When
+            ResponseEntity<?> response = fixture.uploadScenario(SCENARIO_NAME, JAVA_SOURCE_CODE);
+
+            // Then
+            assertThat(response.getStatusCode()).isEqualTo(CREATED);
+            assertThat(response.getHeaders().getLocation())
+                .hasToString("/api/scenarios/" + SCENARIO_NAME);
+
+            Scenario responseBody = (Scenario) response.getBody();
+            assertThat(responseBody)
+                .isNotNull()
+                .satisfies(
+                    scenario -> assertThat(scenario.name()).isEqualTo(SCENARIO_NAME),
+                    scenario -> assertThat(scenario.type()).isEqualTo(STARTER)
+                );
+        }
+
+        @Test
+        void shouldCreateMessageTriggeredScenarioSuccessfully() throws FeatureFlagNotEnabledException {
+            var simulatorScenario = new SimulatorScenario() {
+                @Override
+                public ScenarioEndpoint getScenarioEndpoint() {
+                    return null;
+                }
+
+                @Override
+                public String getName() {
+                    return SCENARIO_NAME;
+                }
+
+                @Nullable
+                @Override
+                public TestCaseRunner getTestCaseRunner() {
+                    return null;
+                }
+
+                @Override
+                public void setTestCaseRunner(TestCaseRunner testCaseRunner) {
+
+                }
+            };
+
+            doReturn(simulatorScenario)
+                .when(scenarioRegistrationServiceMock)
+                .registerScenarioFromJavaSourceCode(
+                    eq(SCENARIO_NAME),
+                    eq(JAVA_SOURCE_CODE)
+                );
+
+            // When
+            ResponseEntity<?> response = fixture.uploadScenario(SCENARIO_NAME, JAVA_SOURCE_CODE);
+
+            // Then
+            assertThat(response.getStatusCode()).isEqualTo(CREATED);
+            assertThat(response.getHeaders().getLocation())
+                .hasToString("/api/scenarios/" + SCENARIO_NAME);
+
+            Scenario responseBody = (Scenario) response.getBody();
+            assertThat(responseBody)
+                .isNotNull()
+                .satisfies(scenario -> assertThat(scenario.name()).isEqualTo(SCENARIO_NAME),
+                    scenario -> assertThat(scenario.type()).isEqualTo(MESSAGE_TRIGGERED)
+                );
+        }
+
+        @Test
+        void shouldReturnNotImplementedWhenFeatureFlagNotEnabled() throws FeatureFlagNotEnabledException {
+            doThrow(new FeatureFlagNotEnabledException(EXPERIMENTAL_SCENARIO_LOADING_AT_RUNTIME_ENABLED))
+                .when(scenarioRegistrationServiceMock)
+                .registerScenarioFromJavaSourceCode(
+                    anyString(),
+                    anyString()
+                );
+
+            ResponseEntity<?> response = fixture.uploadScenario(SCENARIO_NAME, JAVA_SOURCE_CODE);
+
+            assertThat(response.getStatusCode()).isEqualTo(NOT_IMPLEMENTED);
+
+            ObjectNode responseBody = (ObjectNode) response.getBody();
+            assertThat(responseBody)
+                .isNotNull();
+
+            assertThat(responseBody.get("message").asText())
+                .isEqualTo("Feature flag not enabled.");
+            assertThat(responseBody.get("flag").asText())
+                .isEqualTo(EXPERIMENTAL_SCENARIO_LOADING_AT_RUNTIME_ENABLED);
         }
     }
 }

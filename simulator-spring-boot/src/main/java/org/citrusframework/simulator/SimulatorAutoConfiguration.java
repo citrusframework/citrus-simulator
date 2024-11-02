@@ -20,12 +20,13 @@ import lombok.Getter;
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusSpringContextProvider;
 import org.citrusframework.config.CitrusSpringConfig;
+import org.citrusframework.simulator.config.OpenFeatureConfig;
+import org.citrusframework.simulator.config.RepositoryConfig;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.config.SimulatorImportSelector;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.dictionary.InboundXmlDataDictionary;
 import org.citrusframework.simulator.dictionary.OutboundXmlDataDictionary;
-import org.citrusframework.simulator.repository.RepositoryConfig;
 import org.citrusframework.simulator.scenario.ScenarioBeanNameGenerator;
 import org.citrusframework.spi.CitrusResourceWrapper;
 import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
@@ -61,7 +62,7 @@ import java.util.Properties;
         "org.citrusframework.simulator.service",
         "org.citrusframework.simulator.endpoint",
 }, nameGenerator = ScenarioBeanNameGenerator.class)
-@Import(value = {CitrusSpringConfig.class, SimulatorImportSelector.class, RepositoryConfig.class})
+@Import(value = {CitrusSpringConfig.class, OpenFeatureConfig.class, RepositoryConfig.class, SimulatorImportSelector.class})
 @ImportResource(
         locations = {
                 "classpath*:citrus-simulator-context.xml",

@@ -27,7 +27,7 @@
     <citrus.version>4.3.3</citrus.version>
 
     <spring-boot.version>3.3.4</spring-boot.version>
-    <spring.version>6.3.4</spring.version>
+    <spring.version>6.1.13</spring.version>
     <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
@@ -68,6 +68,7 @@
   </ciManagement>
 
   <modules>
+    <module>simulator-spring-boot-api</module>
     <module>simulator-spring-boot</module>
     <module>simulator-ui</module>
     <module>simulator-docs</module>
@@ -174,6 +175,11 @@
       </dependency>
 
       <!-- Citrus Simulator -->
+      <dependency>
+        <groupId>org.citrusframework</groupId>
+        <artifactId>citrus-spring-boot-simulator-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.citrusframework</groupId>
         <artifactId>citrus-spring-boot-simulator</artifactId>

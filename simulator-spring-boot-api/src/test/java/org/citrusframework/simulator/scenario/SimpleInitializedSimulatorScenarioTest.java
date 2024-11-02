@@ -17,8 +17,6 @@
 package org.citrusframework.simulator.scenario;
 
 import org.citrusframework.TestCaseRunner;
-import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith({MockitoExtension.class})
-class AbstractSimulatorScenarioTest {
+class SimpleInitializedSimulatorScenarioTest {
 
     @Mock
     private TestCaseRunner testCaseRunnerMock;
@@ -37,7 +35,7 @@ class AbstractSimulatorScenarioTest {
 
     @Test
     void isTestCaseRunnerAware() {
-        var fixture = new AbstractSimulatorScenario() {
+        var fixture = new SimpleInitializedSimulatorScenario() {
         };
 
         fixture.setTestCaseRunner(testCaseRunnerMock);
@@ -48,54 +46,12 @@ class AbstractSimulatorScenarioTest {
 
     @Test
     void isScenarioEndpointAware() {
-        var fixture = new AbstractSimulatorScenario() {
+        var fixture = new SimpleInitializedSimulatorScenario() {
         };
 
         fixture.setScenarioEndpoint(scenarioEndpointMock);
 
         assertThat(fixture.getScenarioEndpoint())
             .isEqualTo(scenarioEndpointMock);
-    }
-
-    @Test
-    void providesCorrelationHandler() {
-        var fixture = new AbstractSimulatorScenario() {
-        };
-        fixture.setScenarioEndpoint(scenarioEndpointMock);
-
-        assertThat(fixture.correlation())
-            .isInstanceOf(CorrelationHandlerBuilder.class)
-            .hasFieldOrPropertyWithValue("scenarioEndpoint", scenarioEndpointMock);
-    }
-
-    @Nested
-    class AfterPropertiesSet {
-
-        @Test
-        void initializesScenarioEndpointIfNull() {
-            var fixture = new AbstractSimulatorScenario() {
-            };
-
-            assertThat(fixture.getScenarioEndpoint())
-                .isNull();
-
-            fixture.afterPropertiesSet();
-
-            assertThat(fixture.getScenarioEndpoint())
-                .isNotNull()
-                .isInstanceOf(DefaultScenarioEndpoint.class);
-        }
-
-        @Test
-        void doesNothingIfScenarioEndpointAlreadyInitialized() {
-            var fixture = new AbstractSimulatorScenario() {
-            };
-            fixture.setScenarioEndpoint(scenarioEndpointMock);
-
-            fixture.afterPropertiesSet();
-
-            assertThat(fixture.getScenarioEndpoint())
-                .isEqualTo(scenarioEndpointMock);
-        }
     }
 }

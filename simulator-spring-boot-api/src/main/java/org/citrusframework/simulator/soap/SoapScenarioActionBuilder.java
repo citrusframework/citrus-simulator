@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.citrusframework.simulator.repository;
+package org.citrusframework.simulator.soap;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.citrusframework.ws.actions.ReceiveSoapMessageAction;
+import org.citrusframework.ws.actions.SendSoapMessageAction;
 
-/**
- * Configuration class for configuring spring data and JPA
- */
-@Configuration
-@EntityScan({"org.citrusframework.simulator.model"})
-@EnableJpaRepositories("org.citrusframework.simulator.repository")
-public class RepositoryConfig {
+public interface SoapScenarioActionBuilder {
+
+    ReceiveSoapMessageAction.Builder receive();
+
+    SendSoapMessageAction.Builder send();
 }

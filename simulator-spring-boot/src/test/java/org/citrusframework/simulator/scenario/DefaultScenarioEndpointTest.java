@@ -29,13 +29,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-class ScenarioEndpointTest {
+class DefaultScenarioEndpointTest {
 
     private ScenarioEndpoint fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new ScenarioEndpoint(null);
+        fixture = new DefaultScenarioEndpoint(null);
     }
 
     @Nested

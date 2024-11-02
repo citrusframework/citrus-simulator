@@ -17,7 +17,6 @@
 package org.citrusframework.simulator.scenario;
 
 import org.citrusframework.context.TestContext;
-import org.citrusframework.endpoint.AbstractEndpoint;
 import org.citrusframework.message.Message;
 import org.citrusframework.messaging.Consumer;
 import org.citrusframework.messaging.Producer;
@@ -33,7 +32,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
+public class DefaultScenarioEndpoint extends ScenarioEndpoint {
 
     /**
      * Internal im memory message channel
@@ -50,7 +49,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
      *
      * @param endpointConfiguration
      */
-    public ScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
+    public DefaultScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
         super(endpointConfiguration);
     }
 
@@ -59,6 +58,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
      *
      * @param request
      */
+    @Override
     public void add(Message request, CompletableFuture<Message> future) {
         responseFutures.push(future);
         channel.add(request);
@@ -103,7 +103,8 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
         completeNextResponseFuture(message);
     }
 
-    void fail(Throwable e) {
+    @Override
+    public void fail(Throwable e) {
         completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e));
     }
 

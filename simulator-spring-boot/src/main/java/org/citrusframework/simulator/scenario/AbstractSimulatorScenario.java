@@ -16,42 +16,25 @@
 
 package org.citrusframework.simulator.scenario;
 
-import jakarta.annotation.Nullable;
-import jakarta.annotation.PostConstruct;
-import org.citrusframework.TestCaseRunner;
-import org.citrusframework.simulator.correlation.CorrelationHandler;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
+import org.springframework.beans.factory.InitializingBean;
 
-public abstract class AbstractSimulatorScenario implements CorrelationHandler, SimulatorScenario {
+import static java.util.Objects.isNull;
 
-    private ScenarioEndpoint scenarioEndpoint;
-
-    private @Nullable TestCaseRunner testCaseRunner;
-
-    @PostConstruct
-    public void init() {
-        scenarioEndpoint = new ScenarioEndpoint(new ScenarioEndpointConfiguration());
-    }
+@Deprecated(forRemoval = true)
+public abstract class AbstractSimulatorScenario extends SimpleInitializedSimulatorScenario implements InitializingBean {
 
     @Override
-    public ScenarioEndpoint getScenarioEndpoint() {
-        return scenarioEndpoint;
-    }
-
-    @Override
-    public @Nullable TestCaseRunner getTestCaseRunner() {
-        return testCaseRunner;
-    }
-
-    @Override
-    public void setTestCaseRunner(TestCaseRunner testCaseRunner) {
-        this.testCaseRunner = testCaseRunner;
+    public void afterPropertiesSet() {
+        if (isNull(getScenarioEndpoint())) {
+            setScenarioEndpoint(new DefaultScenarioEndpoint(new ScenarioEndpointConfiguration()));
+        }
     }
 
     /**
      * Start new message correlation so scenario is provided with additional inbound messages.
      */
     public CorrelationHandlerBuilder correlation() {
-        return new CorrelationHandlerBuilder(scenarioEndpoint);
+        return new CorrelationHandlerBuilder(getScenarioEndpoint());
     }
 }
