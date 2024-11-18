@@ -24,19 +24,19 @@
     <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <lombok.version>1.18.34</lombok.version>
-    <citrus.version>4.3.3</citrus.version>
+    <citrus.version>4.4.0</citrus.version>
 
-    <spring-boot.version>3.3.4</spring-boot.version>
-    <spring.version>6.3.4</spring.version>
+    <spring-boot.version>3.3.5</spring-boot.version>
+    <spring.version>6.3.5</spring.version>
     <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
     <xstream.version>1.4.20</xstream.version>
 
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.3.0 -->
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.3.5 -->
     <log4j2.version>2.23.1</log4j2.version>
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.3.0 -->
-    <logback.classic.version>1.5.6</logback.classic.version>
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.3.5 -->
+    <logback.classic.version>1.5.11</logback.classic.version>
 
     <node.version>v22.4.1</node.version>
     <npm.version>10.8.1</npm.version>
@@ -216,7 +216,7 @@
       <dependency>
         <groupId>org.apache.xmlbeans</groupId>
         <artifactId>xmlbeans</artifactId>
-        <version>5.2.0</version>
+        <version>5.2.2</version>
       </dependency>
 
       <dependency>
@@ -368,7 +368,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.5.2</version>
           <configuration>
             <excludes>
               <exclude>**/*IT.java</exclude>
@@ -382,7 +382,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.5.2</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
