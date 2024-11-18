@@ -125,6 +125,9 @@
             <phase>compile</phase>
             <configuration>
               <arguments>run build</arguments>
+              <environmentVariables>
+                <APP_VERSION>${project.version}</APP_VERSION>
+              </environmentVariables>
             </configuration>
           </execution>
         </executions>
