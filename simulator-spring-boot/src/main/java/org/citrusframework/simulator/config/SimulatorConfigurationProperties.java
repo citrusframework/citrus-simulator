@@ -102,6 +102,8 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
      */
     private String outboundJsonDictionary = "outbound-json-dictionary.properties";
 
+    private SimulationResults simulationResults = new SimulationResults();
+
     @Override
     public void setEnvironment(Environment environment) {
         inboundXmlDictionary = environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_PROPERTY, environment.getProperty(SIMULATOR_INBOUND_XML_DICTIONARY_ENV, inboundXmlDictionary));
@@ -115,4 +117,14 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
         logger.info("Using the simulator configuration: {}", this);
     }
 
+    @Getter
+    @Setter
+    @ToString
+    public static class SimulationResults {
+
+        /**
+         * Specifies whether the test results shall be deletable or not. If you're working with a long-lived citrus-simulator and disable this, make sure to manually take care of housekeeping!
+         */
+        private boolean resetEnabled = true;
+    }
 }

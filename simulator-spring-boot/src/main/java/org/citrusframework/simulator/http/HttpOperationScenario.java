@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class HttpOperationScenario extends AbstractSimulatorScenario {
+public class HttpOperationScenario extends AbstractSimulatorScenario implements HttpScenario {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpOperationScenario.class);
 

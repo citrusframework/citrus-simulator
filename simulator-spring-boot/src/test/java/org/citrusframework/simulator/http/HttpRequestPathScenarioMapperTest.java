@@ -53,9 +53,14 @@ class HttpRequestPathScenarioMapperTest {
     public static final String FOO_LIST_POST_SCENARIO = "fooListPostScenario";
     public static final String BAR_LIST_SCENARIO = "barListScenario";
     public static final String FOO_SCENARIO = "fooScenario";
+    public static final String ISSUE_SCENARIO = "issueScenario";
     public static final String BAR_SCENARIO = "barScenario";
     public static final String FOO_DETAIL_SCENARIO = "fooDetailScenario";
     public static final String BAR_DETAIL_SCENARIO = "barDetailScenario";
+
+    public static final String FOOBAR_GET_SCENARIO = "foobarGetScenario";
+    public static final String FOOBAR_POST_SCENARIO = "foobarPostScenario";
+
     @Mock
     private SimulatorConfigurationProperties simulatorConfigurationMock;
 
@@ -83,14 +88,22 @@ class HttpRequestPathScenarioMapperTest {
             fail("Unexpected version: "+ version);
         }
 
+        HttpScenario foobarGetScenarioMock = mockHttpScenario("GET", "/issues/foobar", FOOBAR_GET_SCENARIO);
+        HttpScenario foobarPostScenarioMock = mockHttpScenario("POST", "/issues/foobar", FOOBAR_POST_SCENARIO);
+
         fixture.setScenarioList(Arrays.asList(new HttpOperationScenario("/issues/foos",
                 FOO_LIST_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
+
             new HttpOperationScenario("/issues/foos", FOO_LIST_POST_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.POST), null),
             new HttpOperationScenario("/issues/foo/{id}", FOO_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
             new HttpOperationScenario("/issues/foo/detail", FOO_DETAIL_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
             new HttpOperationScenario("/issues/bars", BAR_LIST_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
+            new HttpOperationScenario("/issues/{bar}/{id}", ISSUE_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
             new HttpOperationScenario("/issues/bar/{id}", BAR_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
-            new HttpOperationScenario("/issues/bar/detail", BAR_DETAIL_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null)));
+            new HttpOperationScenario("/issues/bar/detail", BAR_DETAIL_SCENARIO, openApiSpecificationMock, mockOperation(oasDocument, RequestMethod.GET), null),
+            foobarGetScenarioMock,
+            foobarPostScenarioMock)
+        );
 
         assertEquals(DEFAULT_SCENARIO,
             fixture.getMappingKey(new HttpMessage().method(HttpMethod.GET)));
@@ -118,6 +131,15 @@ class HttpRequestPathScenarioMapperTest {
         assertEquals(BAR_DETAIL_SCENARIO,
             fixture.getMappingKey(
                 new HttpMessage().method(HttpMethod.GET).path("/issues/bar/detail")));
+        assertEquals(FOOBAR_GET_SCENARIO,
+            fixture.getMappingKey(
+                new HttpMessage().method(HttpMethod.GET).path("/issues/foobar")));
+        assertEquals(FOOBAR_POST_SCENARIO,
+            fixture.getMappingKey(
+                new HttpMessage().method(HttpMethod.POST).path("/issues/foobar")));
+        assertEquals(ISSUE_SCENARIO,
+            fixture.getMappingKey(
+                new HttpMessage().method(HttpMethod.GET).path("/issues/1/2")));
 
         fixture.setUseDefaultMapping(false);
 
@@ -126,6 +148,14 @@ class HttpRequestPathScenarioMapperTest {
 
         HttpMessage httpGetIssuesMessage = new HttpMessage().method(HttpMethod.GET).path("/issues");
         assertThrows(CitrusRuntimeException.class, () -> fixture.getMappingKey(httpGetIssuesMessage));
+    }
+
+    private HttpScenario mockHttpScenario(String method, String path, String scenarioId) {
+        HttpScenario httpScenario = mock();
+        doReturn(method).when(httpScenario).getMethod();
+        doReturn(path).when(httpScenario).getPath();
+        doReturn(scenarioId).when(httpScenario).getScenarioId();
+        return httpScenario;
     }
 
     private OasOperation mockOperation(OasDocument oasDocument, RequestMethod requestMethod) {
@@ -141,4 +171,5 @@ class HttpRequestPathScenarioMapperTest {
         doReturn(requestMethod.toString()).when(oasOperationMock).getMethod();
         return oasOperationMock;
     }
+
 }

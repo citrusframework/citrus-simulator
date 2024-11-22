@@ -36,12 +36,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 /**
  * @author Christoph Deppisch
  */
 @Test
+// TODO check why this fails. check petstore-v3 json. what about the server url inside it. i just added a valid host. without the host, it does not load properly. now i get security exceptions. maybe we run in security filter because the urls and rest adaper mappings changed?
 @ContextConfiguration(classes = OpenApiIT.EndpointConfig.class)
 public class OpenApiIT extends TestNGCitrusSpringSupport {
 

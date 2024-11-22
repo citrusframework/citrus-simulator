@@ -72,14 +72,14 @@ public class Simulator extends SimulatorRestAdapter {
     public static HttpScenarioGenerator scenarioGenerator() {
         HttpScenarioGenerator generator = new HttpScenarioGenerator(
             new Resources.ClasspathResource("swagger/petstore-api.json"));
-        generator.setContextPath("/petstore");
+        generator.setContextPath("/petstore/v2");
         return generator;
     }
 
     @Bean
     public static OpenApiRepository petstoreRepository() {
         OpenApiRepository openApiRepository = new OpenApiRepository();
-        openApiRepository.setRootContextPath("/petstore");
+        openApiRepository.setRootContextPath("/petstore/api/v3");
         openApiRepository.setLocations(List.of("openapi/*.json"));
         return openApiRepository;
     }

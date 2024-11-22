@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
-import io.apicurio.datamodels.openapi.models.OasResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -39,7 +38,6 @@ import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.log.DefaultLogModifier;
 import org.citrusframework.message.Message;
 import org.citrusframework.openapi.OpenApiRepository;
-import org.citrusframework.openapi.actions.OpenApiClientResponseActionBuilder;
 import org.citrusframework.openapi.model.OasModelHelper;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.http.HttpOperationScenarioIT.HttpOperationScenarioTestConfiguration;
@@ -98,15 +96,15 @@ class HttpOperationScenarioIT {
         return Stream.of(
                 arguments("v2_addPet_success", "POST_/petstore/v2/pet", "data/addPet.json", IDENTITY, null),
                 arguments("v3_addPet_success", "POST_/petstore/v3/pet", "data/addPet.json", IDENTITY, null),
-                arguments("v2_addPet_payloadValidationFailure", "POST_/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: /post/pet (addPet)\n"
+                arguments("v2_addPet_payloadValidationFailure", "POST_/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
                     + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
-                arguments("v3_addPet_payloadValidationFailure", "POST_/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: /post/pet (addPet)\n"
+                arguments("v3_addPet_payloadValidationFailure", "POST_/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
                     + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
                 arguments("v2_getPetById_success", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
                 arguments("v3_getPetById_success", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
-                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: /get/pet/{petId} (getPetById)\n"
+                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
                     + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []"),
-                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: /get/pet/{petId} (getPetById)\n"
+                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
                     + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []")
             );
     }
@@ -119,13 +117,7 @@ class HttpOperationScenarioIT {
             defaultListableBeanFactory.destroySingleton("httpResponseActionBuilderProvider");
         }
 
-        HttpOperationScenario httpOperationScenario = getHttpOperationScenario(operationName);
-        HttpMessage controlMessage = new HttpMessage();
-        OasResponse oasResponse = httpOperationScenario.determineResponse(null);
-        OpenApiClientResponseActionBuilder.fillMessageFromResponse(httpOperationScenario.getOpenApiSpecification(),
-            testContext, controlMessage, httpOperationScenario.getOperation(), oasResponse);
-
-        this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, controlMessage);
+        this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, new HttpMessage());
     }
 
     @ParameterizedTest(name="{0}_custom_payload")
@@ -256,10 +248,21 @@ class HttpOperationScenarioIT {
     public static class HttpOperationScenarioTestConfiguration {
 
         @Bean
-        public OpenApiRepository repository() {
+        public OpenApiRepository petstoreV3Repository() {
+            // TODO Document rootContextPath configuration
             OpenApiRepository openApiRepository = new OpenApiRepository();
-            openApiRepository.setLocations(List.of("swagger/petstore-v2.json", "swagger/petstore-v3.json"));
+            openApiRepository.setLocations(List.of("swagger/petstore-v3.json"));
+            openApiRepository.setRootContextPath("/petstore/v3");
             return openApiRepository;
         }
+
+        @Bean
+        public OpenApiRepository petstoreV2Repository() {
+            OpenApiRepository openApiRepository = new OpenApiRepository();
+            openApiRepository.setLocations(List.of("swagger/petstore-v2.json"));
+            openApiRepository.setRootContextPath("/petstore/v2");
+            return openApiRepository;
+        }
+
     }
 }

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import org.citrusframework.openapi.OpenApiSpecification;
-import org.citrusframework.spi.Resources;
+import org.citrusframework.spi.Resources.ClasspathResource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -54,8 +54,8 @@ class HttpScenarioGeneratorTest {
 
         mockBeanFactory(beanFactoryMock);
 
-        fixture = new HttpScenarioGenerator(new Resources.ClasspathResource(
-            "swagger/petstore-"+version+".json"));
+        OpenApiSpecification openApiSpecification = createOpenApiSpecification(version);
+        fixture = new HttpScenarioGenerator(openApiSpecification);
 
         String addPetScenarioId = "POST_/petstore/"+version+"/pet";
         String getPetScenarioId = "GET_/petstore/"+version+"/pet/{petId}";
@@ -87,6 +87,13 @@ class HttpScenarioGeneratorTest {
         verify(beanFactoryMock).registerSingleton(eq(deletePetScenarioId), any(HttpOperationScenario.class));
     }
 
+    private static OpenApiSpecification createOpenApiSpecification(String version) {
+        OpenApiSpecification openApiSpecification = OpenApiSpecification.from(new ClasspathResource(
+            "swagger/petstore-" + version + ".json"));
+        openApiSpecification.setRootContextPath("/petstore/"+ version);
+        return openApiSpecification;
+    }
+
     @ParameterizedTest
     @ValueSource(strings={"v2", "v3"})
     void testGenerateScenariosWithBeanDefinitionRegistry(String version) {
@@ -94,10 +101,10 @@ class HttpScenarioGeneratorTest {
         DefaultListableBeanFactory beanRegistryMock = mock();
         mockBeanFactory(beanRegistryMock);
 
-        fixture = new HttpScenarioGenerator(new Resources.ClasspathResource(
-            "swagger/petstore-"+version+".json"));
+        OpenApiSpecification openApiSpecification = createOpenApiSpecification(version);
+        fixture = new HttpScenarioGenerator(openApiSpecification);
 
-        String context = "/petstore/"+ version ;
+        String context = openApiSpecification.getRootContextPath();
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
@@ -130,15 +137,16 @@ class HttpScenarioGeneratorTest {
         DefaultListableBeanFactory beanRegistryMock = mock();
         mockBeanFactory(beanRegistryMock);
 
-        fixture = new HttpScenarioGenerator(new Resources.ClasspathResource(
-            "swagger/petstore-"+version+".json"));
-        fixture.setContextPath("/services/rest2");
+        OpenApiSpecification openApiSpecification = createOpenApiSpecification(version);
+        openApiSpecification.setRootContextPath("/services/rest2");
 
-        String addPetScenarioId = "POST_/petstore/"+version+"/pet";
-        String getPetScenarioId = "GET_/petstore/"+version+"/pet/{petId}";
-        String deletePetScenarioId = "DELETE_/petstore/"+version+"/pet/{petId}";
+        fixture = new HttpScenarioGenerator(openApiSpecification);
 
-        String context = fixture.getContextPath()+"/petstore/"+ version ;
+        String addPetScenarioId = "POST_/services/rest2/pet";
+        String getPetScenarioId = "GET_/services/rest2/pet/{petId}";
+        String deletePetScenarioId = "DELETE_/services/rest2/pet/{petId}";
+
+        String context = fixture.getContextPath();
 
         doReturn(true).when(beanRegistryMock).containsBeanDefinition("inboundJsonDataDictionary");
         doReturn(true).when(beanRegistryMock).containsBeanDefinition("outboundJsonDataDictionary");

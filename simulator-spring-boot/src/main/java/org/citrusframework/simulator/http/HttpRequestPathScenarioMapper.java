@@ -16,54 +16,69 @@
 
 package org.citrusframework.simulator.http;
 
-import java.util.Objects;
+import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
+import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.scenario.ScenarioListAware;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.scenario.mapper.AbstractScenarioMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.lang.NonNull;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Scenario mapper supports path pattern matching on request path.
  *
  * @author Christoph Deppisch
  */
-public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implements ScenarioListAware {
+public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implements
+    ScenarioListAware,
+    ApplicationContextAware, ApplicationListener<ScenariosReloadedEvent> {
 
-    @Autowired(required = false)
-    private List<HttpOperationScenario> scenarioList = new ArrayList<>();
+    private final List<HttpScenario> scenarioList = new CopyOnWriteArrayList<>();
 
-    /** Request path matcher */
+    private ApplicationContext applicationContext;
+
+    /**
+     * Request path matcher
+     */
     private final PathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected String getMappingKey(Message request) {
         if (request instanceof HttpMessage httpMessage) {
             String requestPath = httpMessage.getPath();
+            String requestMethod =
+                httpMessage.getRequestMethod() != null ? httpMessage.getRequestMethod().name()
+                    : null;
 
-            if (requestPath != null) {
-                for (HttpOperationScenario scenario : scenarioList) {
-                    if (Objects.equals(scenario.getMethod(), ((HttpMessage) request).getRequestMethod().name()) && Objects.equals(requestPath, scenario.getPath())) {
-                        return scenario.getScenarioId();
-                    }
-                }
-
-                for (HttpOperationScenario scenario : scenarioList) {
-                    if (Objects.equals(scenario.getMethod(), ((HttpMessage) request).getRequestMethod().name()) && pathMatcher.match(scenario.getPath(), requestPath)) {
+            if (requestPath != null && requestMethod != null) {
+                for (HttpScenario scenario : scenarioList) {
+                    if (requestMethod.equals(scenario.getMethod()) && pathMatcher.match(
+                        scenario.getPath(), requestPath)) {
                         return scenario.getScenarioId();
                     }
                 }
             }
+
         }
 
         return super.getMappingKey(request);
+    }
+
+    @PostConstruct
+    public void init() {
+        setScenariosFromApplicationContext();
     }
 
     /**
@@ -71,8 +86,8 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
      *
      * @return
      */
-    public List<HttpOperationScenario> getHttpScenarios() {
-        return scenarioList;
+    public List<HttpScenario> getHttpScenarios() {
+        return new ArrayList<>(scenarioList);
     }
 
     /**
@@ -80,16 +95,13 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
      *
      * @param httpScenarios
      */
-    public void setHttpScenarios(List<HttpOperationScenario> httpScenarios) {
-        this.scenarioList = httpScenarios;
+    public void setHttpScenarios(List<HttpScenario> httpScenarios) {
+        updateScenarioList(httpScenarios);
     }
 
     @Override
     public void setScenarioList(List<SimulatorScenario> scenarioList) {
-        this.scenarioList = scenarioList.stream()
-                                        .filter(HttpOperationScenario.class::isInstance)
-                                        .map(HttpOperationScenario.class::cast)
-                                        .toList();
+        updateScenarioList(filterScenarios(scenarioList));
     }
 
     /**
@@ -100,4 +112,35 @@ public class HttpRequestPathScenarioMapper extends AbstractScenarioMapper implem
     public void setConfiguration(SimulatorConfigurationProperties configuration) {
         this.setSimulatorConfigurationProperties(configuration);
     }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext)
+        throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void onApplicationEvent(@NonNull ScenariosReloadedEvent event) {
+        setScenariosFromApplicationContext();
+    }
+
+    private void setScenariosFromApplicationContext() {
+        updateScenarioList(
+            filterScenarios(applicationContext.getBeansOfType(SimulatorScenario.class).values()));
+    }
+
+    private List<HttpScenario> filterScenarios(Collection<SimulatorScenario> allScenarios) {
+        return allScenarios.stream().filter(HttpScenario.class::isInstance)
+            .map(HttpScenario.class::cast)
+            .sorted(new HttpPathSpecificityComparator())
+            .toList();
+    }
+
+    private void updateScenarioList(Collection<HttpScenario> newScenarios) {
+        synchronized (this.scenarioList) {
+            scenarioList.clear();
+            scenarioList.addAll(newScenarios);
+        }
+    }
+
 }
