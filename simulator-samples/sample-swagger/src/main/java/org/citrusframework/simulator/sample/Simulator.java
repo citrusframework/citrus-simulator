@@ -70,24 +70,30 @@ public class Simulator extends SimulatorRestAdapter {
 
     @Bean
     public static HttpScenarioGenerator scenarioGenerator() {
-        HttpScenarioGenerator generator = new HttpScenarioGenerator(
-            new Resources.ClasspathResource("swagger/petstore-api.json"));
-        generator.setContextPath("/petstore/v2");
-        return generator;
+        return new HttpScenarioGenerator(
+            Resources.create("classpath:swagger/petstore-api.json"));
     }
 
     @Bean
-    public static OpenApiRepository petstoreRepository() {
+    public static OpenApiRepository swaggerRepository() {
         OpenApiRepository openApiRepository = new OpenApiRepository();
-        openApiRepository.setRootContextPath("/petstore/api/v3");
-        openApiRepository.setLocations(List.of("openapi/*.json"));
+        openApiRepository.setRootContextPath("/petstore");
+        openApiRepository.setLocations(List.of("swagger/petstore-api.json"));
         return openApiRepository;
     }
 
     @Bean
-    public static OpenApiRepository pingRepository() {
+    public static OpenApiRepository openApiRepository() {
         OpenApiRepository openApiRepository = new OpenApiRepository();
-        openApiRepository.setLocations(List.of("openapi/*.yaml"));
+        openApiRepository.setRootContextPath("/petstore");
+        openApiRepository.setLocations(List.of("openapi/petstore-v3.json"));
+        return openApiRepository;
+    }
+
+    @Bean
+    public static OpenApiRepository pingApiRepository() {
+        OpenApiRepository openApiRepository = new OpenApiRepository();
+        openApiRepository.setLocations(List.of("openapi/ping-v1.yaml"));
         return openApiRepository;
     }
 
@@ -95,6 +101,5 @@ public class Simulator extends SimulatorRestAdapter {
     static HttpResponseActionBuilderProvider httpResponseActionBuilderProvider() {
         return new SpecificPingResponseMessageBuilder();
     }
-
 
 }

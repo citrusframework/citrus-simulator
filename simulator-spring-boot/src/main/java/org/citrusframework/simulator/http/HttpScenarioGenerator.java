@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.http;
 
-import static org.citrusframework.util.StringUtils.appendSegmentToUrlPath;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 
 import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
@@ -196,11 +195,10 @@ public class HttpScenarioGenerator implements BeanFactoryPostProcessor {
             HttpResponseActionBuilderProvider httpResponseActionBuilderProvider = retrieveOptionalBuilderProvider(
                 beanFactory);
 
-            String path = oasPathItem.getPath();
             for (Map.Entry<String, OasOperation> operationEntry : OasModelHelper.getOperationMap(
                 oasPathItem).entrySet()) {
 
-                String fullPath = appendSegmentToUrlPath(openApiSpecification.getRootContextPath(), path);
+                String fullPath = openApiSpecification.getFullPath(oasPathItem);
                 OasOperation oasOperation = operationEntry.getValue();
 
                 String scenarioId = openApiSpecification.getUniqueId(oasOperation);

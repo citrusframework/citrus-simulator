@@ -94,17 +94,17 @@ class HttpOperationScenarioIT {
 
     static Stream<Arguments> scenarioExecution() {
         return Stream.of(
-                arguments("v2_addPet_success", "POST_/petstore/v2/pet", "data/addPet.json", IDENTITY, null),
-                arguments("v3_addPet_success", "POST_/petstore/v3/pet", "data/addPet.json", IDENTITY, null),
-                arguments("v2_addPet_payloadValidationFailure", "POST_/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
+                arguments("v2_addPet_success", "POST_/api/petstore/v2/pet", "data/addPet.json", IDENTITY, null),
+                arguments("v3_addPet_success", "POST_/api/petstore/v3/pet", "data/addPet.json", IDENTITY, null),
+                arguments("v2_addPet_payloadValidationFailure", "POST_/api/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
                     + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
-                arguments("v3_addPet_payloadValidationFailure", "POST_/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
+                arguments("v3_addPet_payloadValidationFailure", "POST_/api/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
                     + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
-                arguments("v2_getPetById_success", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
-                arguments("v3_getPetById_success", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
-                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
+                arguments("v2_getPetById_success", "GET_/api/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
+                arguments("v3_getPetById_success", "GET_/api/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "1234"), null),
+                arguments("v2_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v2/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
                     + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []"),
-                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
+                arguments("v3_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v3/pet/{petId}", null, (Function<String, String>)(text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
                     + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []")
             );
     }
@@ -252,7 +252,7 @@ class HttpOperationScenarioIT {
             // TODO Document rootContextPath configuration
             OpenApiRepository openApiRepository = new OpenApiRepository();
             openApiRepository.setLocations(List.of("swagger/petstore-v3.json"));
-            openApiRepository.setRootContextPath("/petstore/v3");
+            openApiRepository.setRootContextPath("/api");
             return openApiRepository;
         }
 
@@ -260,7 +260,7 @@ class HttpOperationScenarioIT {
         public OpenApiRepository petstoreV2Repository() {
             OpenApiRepository openApiRepository = new OpenApiRepository();
             openApiRepository.setLocations(List.of("swagger/petstore-v2.json"));
-            openApiRepository.setRootContextPath("/petstore/v2");
+            openApiRepository.setRootContextPath("/api");
             return openApiRepository;
         }
 

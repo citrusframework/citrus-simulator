@@ -57,11 +57,11 @@ class HttpScenarioGeneratorTest {
         OpenApiSpecification openApiSpecification = createOpenApiSpecification(version);
         fixture = new HttpScenarioGenerator(openApiSpecification);
 
-        String addPetScenarioId = "POST_/petstore/"+version+"/pet";
-        String getPetScenarioId = "GET_/petstore/"+version+"/pet/{petId}";
-        String deletePetScenarioId = "DELETE_/petstore/"+version+"/pet/{petId}";
+        String addPetScenarioId = "POST_/api/petstore/"+version+"/pet";
+        String getPetScenarioId = "GET_/api/petstore/"+version+"/pet/{petId}";
+        String deletePetScenarioId = "DELETE_/api/petstore/"+version+"/pet/{petId}";
 
-        String context = "/petstore/"+ version ;
+        String context = "/api/petstore/"+ version ;
         doAnswer(invocation -> {
             HttpOperationScenario scenario = (HttpOperationScenario) invocation.getArguments()[1];
             assertScenarioProperties(scenario, context+"/pet", addPetScenarioId, "POST");
@@ -90,7 +90,7 @@ class HttpScenarioGeneratorTest {
     private static OpenApiSpecification createOpenApiSpecification(String version) {
         OpenApiSpecification openApiSpecification = OpenApiSpecification.from(new ClasspathResource(
             "swagger/petstore-" + version + ".json"));
-        openApiSpecification.setRootContextPath("/petstore/"+ version);
+        openApiSpecification.setRootContextPath("/api");
         return openApiSpecification;
     }
 
@@ -104,31 +104,31 @@ class HttpScenarioGeneratorTest {
         OpenApiSpecification openApiSpecification = createOpenApiSpecification(version);
         fixture = new HttpScenarioGenerator(openApiSpecification);
 
-        String context = openApiSpecification.getRootContextPath();
+        String context = openApiSpecification.getFullContextPath();
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
-            assertBeanDefinition(scenario, context+"/pet", "POST_/petstore/"+version+"/pet", "post", false);
+            assertBeanDefinition(scenario, context+"/pet", "POST_/api/petstore/"+version+"/pet", "post", false);
             return null;
-        }).when(beanRegistryMock).registerBeanDefinition(eq("POST_/petstore/"+version+"/pet"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("POST_/api/petstore/"+version+"/pet"), any(BeanDefinition.class));
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
-            assertBeanDefinition(scenario, context+"/pet/{petId}", "GET_/petstore/"+version+"/pet/{petId}", "get", false);
+            assertBeanDefinition(scenario, context+"/pet/{petId}", "GET_/api/petstore/"+version+"/pet/{petId}", "get", false);
             return null;
-        }).when(beanRegistryMock).registerBeanDefinition(eq("GET_/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("GET_/api/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
 
         doAnswer(invocation -> {
             BeanDefinition scenario = (BeanDefinition) invocation.getArguments()[1];
-            assertBeanDefinition(scenario, context+"/pet/{petId}", "DELETE_/petstore/"+version+"/pet/{petId}", "delete", false);
+            assertBeanDefinition(scenario, context+"/pet/{petId}", "DELETE_/api/petstore/"+version+"/pet/{petId}", "delete", false);
             return null;
-        }).when(beanRegistryMock).registerBeanDefinition(eq("DELETE_/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
+        }).when(beanRegistryMock).registerBeanDefinition(eq("DELETE_/api/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
 
         fixture.postProcessBeanFactory(beanRegistryMock);
 
-        verify(beanRegistryMock).registerBeanDefinition(eq("POST_/petstore/"+version+"/pet"), any(BeanDefinition.class));
-        verify(beanRegistryMock).registerBeanDefinition(eq("GET_/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
-        verify(beanRegistryMock).registerBeanDefinition(eq("DELETE_/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("POST_/api/petstore/"+version+"/pet"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("GET_/api/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
+        verify(beanRegistryMock).registerBeanDefinition(eq("DELETE_/api/petstore/"+version+"/pet/{petId}"), any(BeanDefinition.class));
     }
 
     @ParameterizedTest
@@ -142,11 +142,11 @@ class HttpScenarioGeneratorTest {
 
         fixture = new HttpScenarioGenerator(openApiSpecification);
 
-        String addPetScenarioId = "POST_/services/rest2/pet";
-        String getPetScenarioId = "GET_/services/rest2/pet/{petId}";
-        String deletePetScenarioId = "DELETE_/services/rest2/pet/{petId}";
+        String addPetScenarioId = "POST_/services/rest2/petstore/"+version+"/pet";
+        String getPetScenarioId = "GET_/services/rest2/petstore/"+version+"/pet/{petId}";
+        String deletePetScenarioId = "DELETE_/services/rest2/petstore/"+version+"/pet/{petId}";
 
-        String context = fixture.getContextPath();
+        String context = openApiSpecification.getFullContextPath();
 
         doReturn(true).when(beanRegistryMock).containsBeanDefinition("inboundJsonDataDictionary");
         doReturn(true).when(beanRegistryMock).containsBeanDefinition("outboundJsonDataDictionary");
