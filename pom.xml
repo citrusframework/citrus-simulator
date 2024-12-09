@@ -7,7 +7,7 @@
   <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator</artifactId>
   <name>${project.artifactId}</name>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.0-PF-RC3</version>
   <packaging>pom</packaging>
   <description>Citrus Simulator</description>
   <url>https://citrusframework.org</url>
@@ -24,7 +24,7 @@
     <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <lombok.version>1.18.34</lombok.version>
-    <citrus.version>4.4.0</citrus.version>
+    <citrus.version>4.5.0-PF-RC2</citrus.version>
 
     <spring-boot.version>3.3.5</spring-boot.version>
     <spring.version>6.3.5</spring.version>
@@ -527,4 +527,5 @@
     </profile>
 
   </profiles>
+
 </project>

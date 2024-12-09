@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.citrusframework</groupId>
     <artifactId>citrus-simulator</artifactId>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>3.1.0-PF-RC3</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -130,6 +130,10 @@
       <groupId>org.citrusframework</groupId>
       <artifactId>citrus-http</artifactId>
     </dependency>
+      <dependency>
+          <groupId>org.citrusframework</groupId>
+          <artifactId>citrus-openapi</artifactId>
+      </dependency>
     <dependency>
       <groupId>org.citrusframework</groupId>
       <artifactId>citrus-ws</artifactId>
