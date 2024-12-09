@@ -1,6 +1,7 @@
 package org.citrusframework.simulator.sample;
 
 import static java.lang.String.format;
+import static org.citrusframework.openapi.OpenApiSettings.getResponseAutoFillRandomValues;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ public class SpecificPingResponseMessageBuilder implements HttpResponseActionBui
         OpenApiServerActionBuilder openApiServerActionBuilder, OasOperation oasOperation,
         HttpMessage receivedMessage) {
         OpenApiServerResponseActionBuilder sendMessageBuilder = openApiServerActionBuilder.send(
-            oasOperation.operationId, "200").enableRandomGeneration(false);
+            oasOperation.operationId, "200").enableRandomGeneration(getResponseAutoFillRandomValues());
         sendMessageBuilder.message().body(format("{\"id\": %d, \"pingTime\": %d}",
             getIdFromPingRequest(receivedMessage), System.currentTimeMillis()));
         return sendMessageBuilder;
