@@ -7,7 +7,7 @@
   <groupId>org.citrusframework</groupId>
   <artifactId>citrus-simulator</artifactId>
   <name>${project.artifactId}</name>
-  <version>3.1.0-PF-RC3</version>
+  <version>3.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Citrus Simulator</description>
   <url>https://citrusframework.org</url>
@@ -24,9 +24,9 @@
     <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <lombok.version>1.18.34</lombok.version>
-    <citrus.version>4.5.0-PF-RC2</citrus.version>
+    <citrus.version>4.5.0-PF-RC3</citrus.version>
 
-    <spring-boot.version>3.3.5</spring-boot.version>
+    <spring-boot.version>3.4.0</spring-boot.version>
     <spring.version>6.3.5</spring.version>
     <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
@@ -527,5 +527,18 @@
     </profile>
 
   </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>eta-maven-releases-local</name>
+            <url>https://repo.pnet.ch/artifactory/eta-maven-releases-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>eta-maven-snapshots-local</name>
+            <url>https://repo.pnet.ch/artifactory/eta-maven-snapshots-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
