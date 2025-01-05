@@ -1,14 +1,16 @@
-import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Component, OnInit, Renderer2, RendererFactory2, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs/esm';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
-import { Router } from '@angular/router';
+import FooterComponent from '../footer/footer.component';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   providers: [AppPageTitleStrategy],
+  imports: [RouterOutlet, FooterComponent],
 })
 export default class MainComponent implements OnInit {
   private renderer: Renderer2;

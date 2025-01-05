@@ -26,19 +26,19 @@
     <lombok.version>1.18.34</lombok.version>
     <citrus.version>4.5.2</citrus.version>
 
-    <spring-boot.version>3.4.1</spring-boot.version>
+    <spring-boot.version>3.4.2</spring-boot.version>
     <testng.version>7.10.2</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
     <xstream.version>1.4.21</xstream.version>
 
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.3.5 -->
-    <log4j2.version>2.23.1</log4j2.version>
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.3.5 -->
-    <logback.classic.version>1.5.11</logback.classic.version>
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.4.2 -->
+    <log4j2.version>2.24.3</log4j2.version>
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.4.2 -->
+    <logback.classic.version>1.5.16</logback.classic.version>
 
-    <node.version>v22.4.1</node.version>
-    <npm.version>10.8.1</npm.version>
+    <node.version>v23.6.1</node.version>
+    <npm.version>11.0.0</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>

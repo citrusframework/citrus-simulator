@@ -7,16 +7,13 @@ import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-par
 import { ScenarioParameterService } from 'app/entities/scenario-parameter/service/scenario-parameter.service';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe } from 'app/shared/date';
-import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
-import SortDirective from 'app/shared/sort/sort.directive';
 import SortByDirective from 'app/shared/sort/sort-by.directive';
 
 @Component({
   standalone: true,
   selector: 'app-scenario-parameters-table',
   templateUrl: './scenario-parameters-table.component.html',
-  imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
+  imports: [RouterModule, SharedModule, SortByDirective],
 })
 export class ScenarioParametersTableComponent implements OnInit {
   @Input()

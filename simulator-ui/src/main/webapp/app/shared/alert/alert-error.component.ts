@@ -93,7 +93,7 @@ export class AlertErrorComponent implements OnDestroy {
     });
   }
 
-  setClasses(alert: Alert): { [key: string]: boolean } {
+  setClasses(alert: Alert): Record<string, boolean> {
     const classes = { 'jhi-toast': Boolean(alert.toast) };
     if (alert.position) {
       return { ...classes, [alert.position]: true };
@@ -110,7 +110,7 @@ export class AlertErrorComponent implements OnDestroy {
     alert.close?.(this.alerts);
   }
 
-  private addErrorAlert(message?: string, translationKey?: string, translationParams?: { [key: string]: unknown }): void {
+  private addErrorAlert(message?: string, translationKey?: string, translationParams?: Record<string, unknown>): void {
     this.alertService.addAlert({ type: 'danger', message, translationKey, translationParams }, this.alerts);
   }
 }

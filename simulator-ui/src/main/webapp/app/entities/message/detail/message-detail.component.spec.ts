@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { MessageDetailComponent } from './message-detail.component';
@@ -8,7 +8,7 @@ import { MessageDetailComponent } from './message-detail.component';
 describe('Message Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MessageDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [MessageDetailComponent, provideRouter([], withComponentInputBinding())],
       providers: [
         provideRouter(
           [

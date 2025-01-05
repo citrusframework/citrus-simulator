@@ -54,7 +54,7 @@ jobs:
           node --version
           npm --version
       - name: Install dependencies
-        run: npm ci --cache .npm
+        run: npm ci --cache .npm --force
         working-directory: simulator-ui
       - name: Prettier
         run: npm run prettier:check

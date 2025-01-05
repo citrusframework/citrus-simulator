@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 
 import { ScenarioActionsTableComponent } from './scenario-actions-table.component';
 import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
@@ -17,9 +17,7 @@ import { IScenarioExecution } from '../scenario-execution.model';
   imports: [
     SharedModule,
     RouterModule,
-    DurationPipe,
     FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
     ScenarioActionsTableComponent,
     ScenarioMessagesTableComponent,
     ScenarioParametersTableComponent,

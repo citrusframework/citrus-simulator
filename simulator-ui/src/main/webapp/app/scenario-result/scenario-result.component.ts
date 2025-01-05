@@ -54,7 +54,6 @@ export default class ScenarioResultComponent implements AfterViewInit {
   }
 
   protected updateUserPreferences({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
-    // eslint-disable-next-line
     this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
     this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
   }

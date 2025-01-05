@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ITestParameter } from '../test-parameter.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../test-parameter.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../test-parameter.test-samples';
 
-import { TestParameterService, RestTestParameter } from './test-parameter.service';
+import { RestTestParameter, TestParameterService } from './test-parameter.service';
 
 const requireRestSample: RestTestParameter = {
   ...sampleWithRequiredData,
@@ -19,7 +19,7 @@ describe('TestParameter Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(TestParameterService);

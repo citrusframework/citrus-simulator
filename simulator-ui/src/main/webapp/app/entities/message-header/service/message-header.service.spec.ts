@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { IMessageHeader } from '../message-header.model';
 import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../message-header.test-samples';
@@ -19,7 +19,7 @@ describe('MessageHeader Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(MessageHeaderService);

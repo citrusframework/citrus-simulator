@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
+import { EntityOrder } from 'app/config/navigation.constants';
 
 import { ScenarioComponent } from './list/scenario.component';
 import { ScenarioDetailComponent } from './detail/scenario-detail.component';
@@ -12,7 +12,7 @@ const scenarioRoute: Routes = [
     path: '',
     component: ScenarioComponent,
     data: {
-      defaultSort: 'id,' + ASC,
+      defaultSort: 'id,' + EntityOrder.ASCENDING,
     },
   },
   {

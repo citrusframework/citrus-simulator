@@ -1,13 +1,12 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import * as operators from 'app/core/util/operators';
 
 import { IMessage } from 'app/entities/message/message.model';
 
 import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
-
+import { provideRouter } from '@angular/router';
 import SpyInstance = jest.SpyInstance;
 
 describe('Message Table Component', () => {
@@ -19,8 +18,8 @@ describe('Message Table Component', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([{ path: 'message', component: ScenarioMessagesTableComponent }]),
-        HttpClientTestingModule,
+        provideRouter([{ path: 'message', component: ScenarioMessagesTableComponent }]),
+        provideHttpClientTesting(),
         ScenarioMessagesTableComponent,
       ],
       providers: [],
