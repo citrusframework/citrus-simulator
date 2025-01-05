@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -23,12 +23,10 @@ export type EntityArrayResponseType = HttpResponse<ITestParameter[]>;
 
 @Injectable({ providedIn: 'root' })
 export class TestParameterService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-parameters');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-parameters');
 
   find(testResultId: number, key: string): Observable<EntityResponseType> {
     return this.http
@@ -43,18 +41,18 @@ export class TestParameterService {
       .pipe(map(res => this.convertResponseArrayFromServer(res)));
   }
 
-  getTestParameterIdentifier(testParameter: Pick<ITestParameter, 'key' | 'testResult'>): number {
-    return this.hash((testParameter.testResult.id ? testParameter.testResult.id : 0) + '-' + testParameter.key);
+  getTestParameterIdentifier(testParameter: Pick<ITestParameter, 'key' | 'testResultId'>): number {
+    return this.hash(String(testParameter.testResultId) + '-' + testParameter.key);
   }
 
   compareTestParameter(
-    o1: Pick<ITestParameter, 'key' | 'testResult'> | null,
-    o2: Pick<ITestParameter, 'key' | 'testResult'> | null,
+    o1: Pick<ITestParameter, 'key' | 'testResultId'> | null,
+    o2: Pick<ITestParameter, 'key' | 'testResultId'> | null,
   ): boolean {
     return o1 && o2 ? this.getTestParameterIdentifier(o1) === this.getTestParameterIdentifier(o2) : o1 === o2;
   }
 
-  addTestParameterToCollectionIfMissing<Type extends Pick<ITestParameter, 'key' | 'testResult'>>(
+  addTestParameterToCollectionIfMissing<Type extends Pick<ITestParameter, 'key' | 'testResultId'>>(
     testParameterCollection: Type[],
     ...testParametersToCheck: (Type | null | undefined)[]
   ): Type[] {

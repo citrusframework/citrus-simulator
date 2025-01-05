@@ -1,34 +1,17 @@
-import { Component, Input } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
-
-import { ScenarioActionsTableComponent } from './scenario-actions-table.component';
-import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
-import { ScenarioParametersTableComponent } from './scenario-parameters-table.component';
-
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { IScenarioExecution } from '../scenario-execution.model';
 
 @Component({
-  standalone: true,
   selector: 'app-scenario-execution-detail',
   templateUrl: './scenario-execution-detail.component.html',
-  imports: [
-    SharedModule,
-    RouterModule,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    ScenarioActionsTableComponent,
-    ScenarioMessagesTableComponent,
-    ScenarioParametersTableComponent,
-  ],
+  imports: [SharedModule, RouterModule, FormatMediumDatetimePipe],
 })
 export class ScenarioExecutionDetailComponent {
-  @Input() scenarioExecution: IScenarioExecution | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  scenarioExecution = input<IScenarioExecution | null>(null);
 
   previousState(): void {
     window.history.back();

@@ -28,7 +28,7 @@
       window.onload = async function () {
         const serverBaseUri = document.baseURI.replace('swagger-ui/', '');
         const getBearerToken = () => {
-          var authToken = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+          var authToken = localStorage.getItem('app-authenticationToken') || sessionStorage.getItem('app-authenticationToken');
           if (authToken) {
             authToken = JSON.parse(authToken);
             return `Bearer ${authToken}`;
@@ -53,11 +53,21 @@
           urls.sort(function (a, b) {
             var x = a.name.toLowerCase(),
               y = b.name.toLowerCase();
-            if (x.includes('(default)')) return -1;
-            if (y.includes('(default)')) return 1;
-            if (x.includes('(management)')) return -1;
-            if (y.includes('(management)')) return 1;
-            if (x < y) return -1;
+            if (x.includes('(default)')) {
+              return -1;
+            }
+            if (y.includes('(default)')) {
+              return 1;
+            }
+            if (x.includes('(management)')) {
+              return -1;
+            }
+            if (y.includes('(management)')) {
+              return 1;
+            }
+            if (x < y) {
+              return -1;
+            }
             return x > y ? 1 : 0;
           });
         }

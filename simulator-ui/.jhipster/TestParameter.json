@@ -6,22 +6,30 @@
     {
       "fieldName": "key",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "value",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "createdDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "lastModifiedDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,
@@ -29,14 +37,6 @@
   "pagination": "pagination",
   "readOnly": true,
   "relationships": [
-    {
-      "otherEntityField": "id",
-      "otherEntityName": "testResult",
-      "relationshipName": "testResult",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipValidateRules": ["required"]
-    }
   ],
   "searchEngine": "no",
   "service": "serviceImpl"

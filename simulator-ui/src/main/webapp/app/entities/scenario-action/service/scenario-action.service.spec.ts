@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { IScenarioAction } from '../scenario-action.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../scenario-action.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../scenario-action.test-samples';
 
-import { ScenarioActionService, RestScenarioAction } from './scenario-action.service';
+import { RestScenarioAction, ScenarioActionService } from './scenario-action.service';
 
 const requireRestSample: RestScenarioAction = {
   ...sampleWithRequiredData,
@@ -19,7 +20,7 @@ describe('ScenarioAction Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(ScenarioActionService);
@@ -120,7 +121,7 @@ describe('ScenarioAction Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { actionId: 123 };
+        const entity1 = { actionId: 2674 };
         const entity2 = null;
 
         const compareResult1 = service.compareScenarioAction(entity1, entity2);
@@ -131,8 +132,8 @@ describe('ScenarioAction Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { actionId: 123 };
-        const entity2 = { actionId: 456 };
+        const entity1 = { actionId: 2674 };
+        const entity2 = { actionId: 8050 };
 
         const compareResult1 = service.compareScenarioAction(entity1, entity2);
         const compareResult2 = service.compareScenarioAction(entity2, entity1);
@@ -142,8 +143,8 @@ describe('ScenarioAction Service', () => {
       });
 
       it('should return false if primaryKey matches', () => {
-        const entity1 = { actionId: 123 };
-        const entity2 = { actionId: 123 };
+        const entity1 = { actionId: 2674 };
+        const entity2 = { actionId: 2674 };
 
         const compareResult1 = service.compareScenarioAction(entity1, entity2);
         const compareResult2 = service.compareScenarioAction(entity2, entity1);

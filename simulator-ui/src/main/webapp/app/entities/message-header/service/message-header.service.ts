@@ -1,15 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
+import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { isPresent } from 'app/core/util/operators';
-
 import { IMessageHeader } from '../message-header.model';
 
 type RestOf<T extends IMessageHeader> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
@@ -24,12 +21,10 @@ export type EntityArrayResponseType = HttpResponse<IMessageHeader[]>;
 
 @Injectable({ providedIn: 'root' })
 export class MessageHeaderService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/message-headers');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/message-headers');
 
   find(headerId: number): Observable<EntityResponseType> {
     return this.http
@@ -74,7 +69,15 @@ export class MessageHeaderService {
     return messageHeaderCollection;
   }
 
-  convertDateFromServer(restMessageHeader: RestMessageHeader): IMessageHeader {
+  protected convertDateFromClient<T extends IMessageHeader>(messageHeader: T): RestOf<T> {
+    return {
+      ...messageHeader,
+      createdDate: messageHeader.createdDate?.toJSON() ?? null,
+      lastModifiedDate: messageHeader.lastModifiedDate?.toJSON() ?? null,
+    };
+  }
+
+  protected convertDateFromServer(restMessageHeader: RestMessageHeader): IMessageHeader {
     return {
       ...restMessageHeader,
       createdDate: restMessageHeader.createdDate ? dayjs(restMessageHeader.createdDate) : undefined,

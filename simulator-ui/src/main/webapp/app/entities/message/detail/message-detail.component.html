@@ -1,66 +1,46 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="message">
-      <h2 data-test="messageDetailsHeading"><span jhiTranslate="citrusSimulatorApp.message.detail.title">Message</span></h2>
+    @if (message(); as messageRef) {
+      <div>
+        <h2 data-cy="messageDetailsHeading"><span jhiTranslate="citrusSimulatorApp.message.detail.title">Message</span></h2>
 
-      <hr />
+        <hr />
 
-      <app-alert-error></app-alert-error>
+        <app-alert-error />
 
-      <app-alert></app-alert>
+        <app-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="citrusSimulatorApp.message.id">ID</span></dt>
-        <dd>
-          <span data-test="messageDetailId">{{ message.messageId }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span></dt>
-        <dd>
-          <span data-test="messageDetailDirection">{{ message.direction }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span></dt>
-        <dd>
-          <span data-test="messageDetailPayload">
-            <pre *ngIf="message.payload"><code [highlightAuto]="message.payload"></code></pre>
-          </span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span></dt>
-        <dd>
-          <span data-test="messageDetailCitrusMessageId">{{ message.citrusMessageId }}</span>
-        </dd>
-        <dt>
-          <span jhiTranslate="citrusSimulatorApp.message.scenarioExecution" data-test="messageDetailScenarioExecution"
-            >Scenario Execution</span
-          >
-        </dt>
-        <dd>
-          <div *ngIf="message.scenarioExecutionId">
-            <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']" data-test="messageDetailViewExecutionLink">{{
-              message.scenarioName
-            }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span></dt>
-        <dd>
-          <span data-test="messageDetailCreatedDate">{{ message.createdDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span></dt>
-        <dd>
-          <span data-test="messageDetailLastModifiedDate">{{ message.lastModifiedDate | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ messageRef.messageId }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span></dt>
+          <dd>
+            <span>{{ messageRef.direction }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span></dt>
+          <dd>
+            <span>{{ messageRef.payload }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span></dt>
+          <dd>
+            <span>{{ messageRef.citrusMessageId }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ messageRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span></dt>
+          <dd>
+            <span>{{ messageRef.lastModifiedDate | formatMediumDatetime }}</span>
+          </dd>
+        </dl>
 
-      <h3 data-test="messageDetailMessageHeaders">
-        <span jhiTranslate="citrusSimulatorApp.messageHeader.home.title">Message Headers</span>
-      </h3>
-
-      <hr />
-
-      <app-message-header-table [messageHeaders]="message.headers ?? []" [standalone]="true" predicate="name"></app-message-header-table>
-
-      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-      </button>
-    </div>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

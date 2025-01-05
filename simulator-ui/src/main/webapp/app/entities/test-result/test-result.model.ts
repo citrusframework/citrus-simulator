@@ -1,10 +1,12 @@
 import dayjs from 'dayjs/esm';
+import { ITestParameter } from '../test-parameter/test-parameter.model';
 
 export interface ITestResult {
   id: number;
   status?: 'UNKNOWN' | 'SUCCESS' | 'FAILURE' | 'SKIP' | null;
   testName?: string | null;
   className?: string | null;
+  testParameter?: ITestParameter[] | null;
   errorMessage?: string | null;
   stackTrace?: string | null;
   failureType?: string | null;

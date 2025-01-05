@@ -1,5 +1,5 @@
-import { Directive, OnInit, ElementRef, Renderer2, Input } from '@angular/core';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 
 @Directive({
   standalone: true,
@@ -19,7 +19,7 @@ export default class ActiveMenuDirective implements OnInit {
       this.updateActiveFlag(event.lang);
     });
 
-    this.updateActiveFlag(this.translateService.currentLang);
+    this.updateActiveFlag(this.translateService.getCurrentLang());
   }
 
   updateActiveFlag(selectedLanguage: string): void {

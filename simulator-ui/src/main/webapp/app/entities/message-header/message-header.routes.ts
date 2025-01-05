@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { MessageHeaderComponent } from './list/message-header.component';
-import { MessageHeaderDetailComponent } from './detail/message-header-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import MessageHeaderResolve from './route/message-header-routing-resolve.service';
 
 const messageHeaderRoute: Routes = [
   {
     path: '',
-    component: MessageHeaderComponent,
+    loadComponent: () => import('./list/message-header.component').then(m => m.MessageHeaderComponent),
     data: {
-      defaultSort: 'headerId,' + ASC,
+      defaultSort: 'headerId,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':headerId/view',
-    component: MessageHeaderDetailComponent,
+    loadComponent: () => import('./detail/message-header-detail.component').then(m => m.MessageHeaderDetailComponent),
     resolve: {
       messageHeader: MessageHeaderResolve,
     },

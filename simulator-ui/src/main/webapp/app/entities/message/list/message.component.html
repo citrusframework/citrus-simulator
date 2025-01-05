@@ -1,135 +1,132 @@
 <div>
-  <h2 id="page-heading" data-test="MessageHeading">
+  <h2 id="page-heading" data-cy="MessageHeading">
     <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="citrusSimulatorApp.message.home.refreshListLabel">Refresh List</span>
+        <span jhiTranslate="citrusSimulatorApp.message.home.refreshListLabel">Refresh list</span>
       </button>
     </div>
   </h2>
 
-  <app-alert-error></app-alert-error>
+  <app-alert-error />
 
-  <app-alert></app-alert>
+  <app-alert />
 
-  <app-filter [filters]="displayFilters"></app-filter>
+  <app-filter [filters]="filters" />
 
-  <div class="alert alert-warning" id="no-result" *ngIf="messages?.length === 0" data-test="noDataFound">
-    <span jhiTranslate="citrusSimulatorApp.message.home.notFound">No Messages found</span>
-  </div>
+  @if (messages().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="citrusSimulatorApp.message.home.notFound">No Messages found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="messageId">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
 
-  <div class="table-responsive table-entities" id="entities" *ngIf="messages && messages.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="messageEntityTable">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="messageId">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.id">ID</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="direction">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="payload">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="citrusMessageId">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="scenarioExecution.id">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.scenarioExecution">Scenario Execution</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="createdDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let message of messages; trackBy: trackId"
-          data-test="messageEntityRow"
-          class="clickable-row"
-          [routerLink]="['/message', message.messageId, 'view']"
-        >
-          <td>
-            <a [routerLink]="['/message', message.messageId, 'view']" data-test="messageEntityMessageId">{{ message.messageId }}</a>
-          </td>
-          <td data-test="messageEntityMessageDirection">{{ message.direction }}</td>
-          <td data-test="messageEntityMessagePayload"><code *ngIf="message.payload" [highlightAuto]="message.payload"></code></td>
-          <td data-test="messageEntityMessageCitrusMessage">{{ message.citrusMessageId }}</td>
-          <td>
-            <div *ngIf="message.scenarioExecutionId">
-              <a [routerLink]="['/scenario-execution', message.scenarioExecutionId, 'view']" data-test="messageEntityMessageScenarioId">{{
-                message.scenarioName
-              }}</a>
-            </div>
-          </td>
-          <td data-test="messageEntityMessageCreatedDate">{{ message.createdDate | formatMediumDatetime }}</td>
-          <td data-test="messageEntityMessageLastModified">{{ message.lastModifiedDate | formatMediumDatetime }}</td>
-          <td class="text-end">
-            <div class="btn-group" (click)="$event.stopPropagation()">
-              <a
-                [routerLink]="['/message-header']"
-                [queryParams]="{ 'filter[messageId.in]': message.messageId }"
-                data-test="messageEntityMessageHeaderLink"
-              >
-                <button type="button" class="btn btn-info btn-sm" data-test="filterOtherEntityButton">
-                  <fa-icon icon="heading"></fa-icon>
-                  <span
-                    class="d-none d-md-inline"
-                    jhiTranslate="entity.action.show"
-                    [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
-                    >Message Header</span
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="direction">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.message.direction">Direction</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="payload">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.message.payload">Payload</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="citrusMessageId">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.message.citrusMessageId">Citrus Message Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="createdDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.message.createdDate">Created Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lastModifiedDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.message.lastModifiedDate">Last Modified Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (message of messages(); track trackId(message)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/message', message.messageId, 'view']">{{ message.messageId }}</a>
+              </td>
+              <td>{{ message.direction }}</td>
+              <td>{{ message.payload }}</td>
+              <td>{{ message.citrusMessageId }}</td>
+              <td>{{ message.createdDate | formatMediumDatetime }}</td>
+              <td>{{ message.lastModifiedDate | formatMediumDatetime }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <button
+                    type="submit"
+                    [routerLink]="['/message-header']"
+                    [queryParams]="{ 'filter[messageId.in]': message.messageId }"
+                    class="btn btn-info btn-sm"
+                    data-cy="filterOtherEntityButton"
                   >
-                </button>
-              </a>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="messages && messages.length > 0">
-    <div class="d-flex justify-content-center">
-      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+                    <fa-icon icon="eye"></fa-icon>
+                    <span
+                      class="d-none d-md-inline"
+                      jhiTranslate="entity.action.show"
+                      [translateValues]="{ otherEntity: ('citrusSimulatorApp.message.headers' | translate) }"
+                      >Show Headers</span
+                    >
+                  </button>
+                  <a [routerLink]="['/message', message.messageId, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
+  }
+  @if (messages().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <app-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [page]="page"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="navigateToPage($event)"
-      ></ngb-pagination>
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
     </div>
-  </div>
+  }
 </div>

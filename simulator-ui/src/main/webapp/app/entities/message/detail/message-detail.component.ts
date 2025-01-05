@@ -1,33 +1,17 @@
-import { Component, Input } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-
-import { HighlightAuto } from 'ngx-highlightjs';
-
-import { IMessage } from 'app/entities/message/message.model';
-import MessageHeaderTableComponent from 'app/entities/message-header/list/message-header-table.component';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
+import { IMessage } from '../message.model';
 
 @Component({
-  standalone: true,
   selector: 'app-message-detail',
   templateUrl: './message-detail.component.html',
-  styleUrls: ['./message-detail.component.scss'],
-  imports: [
-    SharedModule,
-    RouterModule,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    MessageHeaderTableComponent,
-    HighlightAuto,
-  ],
+  imports: [SharedModule, RouterModule, FormatMediumDatetimePipe],
 })
 export class MessageDetailComponent {
-  @Input() message: IMessage | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  message = input<IMessage | null>(null);
 
   previousState(): void {
     window.history.back();

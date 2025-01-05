@@ -11,7 +11,7 @@ export interface Alert {
   type: AlertType;
   message?: string;
   translationKey?: string;
-  translationParams?: { [key: string]: unknown };
+  translationParams?: Record<string, unknown>;
   timeout?: number;
   toast?: boolean;
   position?: string;
@@ -60,9 +60,7 @@ export class AlertService {
       // if translation key exists
       if (translatedMessage !== `${translationNotFoundMessage}[${alert.translationKey}]`) {
         alert.message = translatedMessage;
-      }
-
-      alert.message ??= alert.translationKey;
+      } else alert.message ??= alert.translationKey;
     }
 
     alert.message = this.sanitizer.sanitize(SecurityContext.HTML, alert.message ?? '') ?? '';

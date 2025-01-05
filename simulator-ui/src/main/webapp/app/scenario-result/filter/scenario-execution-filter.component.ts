@@ -208,7 +208,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
     });
   }
 
-  private mergeParamsRemoveUndefinedValues(queryParams: Params, filterQueryParams: { [id: string]: any }): { [id: string]: any } {
+  private mergeParamsRemoveUndefinedValues(queryParams: Params, filterQueryParams: Record<string, any>): Record<string, any> {
     return Object.fromEntries(
       Object.entries({
         ...queryParams,
@@ -217,9 +217,13 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
     );
   }
 
-  private getFilterQueryParameter({ nameContains, fromDate, toDate, statusIn, headerFilter }: ScenarioExecutionFilter): {
-    [id: string]: any;
-  } {
+  private getFilterQueryParameter({
+    nameContains,
+    fromDate,
+    toDate,
+    statusIn,
+    headerFilter,
+  }: ScenarioExecutionFilter): Record<string, any> {
     return {
       'filter[scenarioName.contains]': nameContains ?? undefined,
       'filter[startDate.greaterThanOrEqual]': fromDate ? fromDate.toJSON() : undefined,

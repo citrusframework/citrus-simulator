@@ -1,97 +1,112 @@
 <div>
-  <h2 id="page-heading" data-test="TestParameterHeading">
+  <h2 id="page-heading" data-cy="TestParameterHeading">
     <span jhiTranslate="citrusSimulatorApp.testParameter.home.title">Test Parameters</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="citrusSimulatorApp.testParameter.home.refreshListLabel">Refresh List</span>
+        <span jhiTranslate="citrusSimulatorApp.testParameter.home.refreshListLabel">Refresh list</span>
       </button>
     </div>
   </h2>
 
-  <app-alert-error></app-alert-error>
+  <app-alert-error />
 
-  <app-alert></app-alert>
+  <app-alert />
 
-  <app-filter [filters]="displayFilters"></app-filter>
+  <app-filter [filters]="filters" />
 
-  <div class="alert alert-warning" id="no-result" *ngIf="testParameters?.length === 0" data-test="noDataFound">
-    <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
-  </div>
-
-  <div class="table-responsive table-entities" id="entities" *ngIf="testParameters && testParameters.length > 0">
-    <table class="table table-striped table-hover" data-test="testParameterEntityTable" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="key">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="value">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="testResult.id">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="createdDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let testParameter of testParameters; trackBy: trackId"
-          data-test="testParameterEntityRow"
-          class="clickable-row"
-          [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
-        >
-          <td data-test="testParameterEntityKey">{{ testParameter.key }}</td>
-          <td data-test="testParameterEntityValue">{{ testParameter.value }}</td>
-          <td data-test="testParameterEntityCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</td>
-          <td data-test="testParameterEntityLastModifiedDate">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
-          <td>
-            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-test="testParameterEntityTestResultLink">{{
-              testParameter.testResult.id
-            }}</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="testParameters && testParameters.length > 0">
-    <div class="d-flex justify-content-center">
-      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+  @if (testParameters().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
     </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="key">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [page]="page"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="navigateToPage($event)"
-      ></ngb-pagination>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="value">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="testResultId">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="createdDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lastModifiedDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (testParameter of testParameters(); track trackId(testParameter)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/test-parameter', testParameter.testResultId, testParameter.key, 'view']">{{ testParameter.key }}</a>
+              </td>
+              <td>{{ testParameter.value }}</td>
+              <td>
+                <div>
+                  <a [routerLink]="['/test-result', testParameter.testResultId, 'view']">{{ testParameter.testResultId }}</a>
+                </div>
+              </td>
+              <td>{{ testParameter.createdDate | formatMediumDatetime }}</td>
+              <td>{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/test-parameter',  testParameter.testResultId, testParameter.key, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  </div>
+  }
+  @if (testParameters().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <app-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
 </div>

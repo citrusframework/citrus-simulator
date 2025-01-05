@@ -1,21 +1,24 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { TestParameterDetailComponent } from './test-parameter-detail.component';
 
 describe('TestParameter Management Detail Component', () => {
+  let comp: TestParameterDetailComponent;
+  let fixture: ComponentFixture<TestParameterDetailComponent>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestParameterDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [TestParameterDetailComponent],
       providers: [
         provideRouter(
           [
             {
               path: '**',
-              component: TestParameterDetailComponent,
-              resolve: { testParameter: () => of({ id: 123 }) },
+              loadComponent: () => import('./test-parameter-detail.component').then(m => m.TestParameterDetailComponent),
+              resolve: { testParameter: () => of({ id: 3696 }) },
             },
           ],
           withComponentInputBinding(),
@@ -26,13 +29,26 @@ describe('TestParameter Management Detail Component', () => {
       .compileComponents();
   });
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TestParameterDetailComponent);
+    comp = fixture.componentInstance;
+  });
+
   describe('OnInit', () => {
     it('should load testParameter on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', TestParameterDetailComponent);
 
       // THEN
-      expect(instance.testParameter).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.testParameter()).toEqual(expect.objectContaining({ id: 3696 }));
+    });
+  });
+
+  describe('PreviousState', () => {
+    it('should navigate to previous state', () => {
+      jest.spyOn(window.history, 'back');
+      comp.previousState();
+      expect(window.history.back).toHaveBeenCalled();
     });
   });
 });

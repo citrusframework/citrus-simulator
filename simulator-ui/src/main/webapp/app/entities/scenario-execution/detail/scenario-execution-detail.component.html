@@ -1,57 +1,65 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="scenarioExecution">
-      <h2>
-        <span jhiTranslate="citrusSimulatorApp.scenarioExecution.detail.title">Scenario Execution</span>
-      </h2>
+    @if (scenarioExecution(); as scenarioExecutionRef) {
+      <div>
+        <h2 data-cy="scenarioExecutionDetailsHeading">
+          <span jhiTranslate="citrusSimulatorApp.scenarioExecution.detail.title">Scenario Execution</span>
+        </h2>
 
-      <hr />
+        <hr />
 
-      <app-alert-error></app-alert-error>
+        <app-alert-error />
 
-      <app-alert></app-alert>
+        <app-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionId">{{ scenarioExecution.executionId }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionStartDate">{{ scenarioExecution.startDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionEndDate">{{ scenarioExecution.endDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Name</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionName">{{ scenarioExecution.scenarioName }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionStatus">{{ scenarioExecution.testResult?.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
-        <dd>
-          <span data-test="scenarioExecutionErrorMessage">{{ scenarioExecution.testResult?.errorMessage }}</span>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.executionId }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.startDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.endDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.scenarioName">Scenario Name</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.scenarioName }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.status">Status</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.testResult?.status }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioExecution.errorMessage">Error Message</span></dt>
+          <dd>
+            <span>{{ scenarioExecutionRef.testResult?.errorMessage }}</span>
+          </dd>
+        </dl>
 
-      <div *ngIf="scenarioExecution.testResult?.stackTrace" ngbAccordion class="mb-3">
-        <div ngbAccordionItem>
-          <h2 ngbAccordionHeader>
-            <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-test="openStackTraceButton">
-              Stacktrace
-            </button>
-          </h2>
-          <div ngbAccordionCollapse>
-            <div ngbAccordionBody data-test="scenarioExecutionStackTrace">
-              <ng-template>{{ scenarioExecution.testResult?.stackTrace }}</ng-template>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+
+      @if (scenarioExecutionRef.testResult?.stackTrace) {
+        <div ngbAccordion class="mb-3">
+          <div ngbAccordionItem>
+            <h2 ngbAccordionHeader>
+              <button ngbAccordionButton jhiTranslate="citrusSimulatorApp.testResult.stackTrace" data-test="openStackTraceButton">
+                Stacktrace
+              </button>
+            </h2>
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody data-test="scenarioExecutionStackTrace">
+                <ng-template>{{ scenarioExecutionRef.testResult!.stackTrace }}</ng-template>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        }
 
       <hr />
 
@@ -59,10 +67,10 @@
         <span jhiTranslate="citrusSimulatorApp.scenarioParameter.home.title">Parameters</span>
       </h3>
 
-      <app-scenario-parameters-table
-        [parameters]="scenarioExecution.scenarioParameters ?? []"
-        predicate="createdDate"
-      ></app-scenario-parameters-table>
+<!--      <app-scenario-parameters-table-->
+<!--        [parameters]="scenarioExecution.scenarioParameters ?? []"-->
+<!--        predicate="createdDate"-->
+<!--      ></app-scenario-parameters-table>-->
 
       <hr />
 
@@ -70,20 +78,20 @@
         <span jhiTranslate="citrusSimulatorApp.message.home.title">Messages</span>
       </h3>
 
-      <app-scenario-messages-table
-        [messages]="scenarioExecution.scenarioMessages ?? []"
-        predicate="createdDate"
-      ></app-scenario-messages-table>
+<!--      <app-scenario-messages-table-->
+<!--        [messages]="scenarioExecution.scenarioMessages ?? []"-->
+<!--        predicate="createdDate"-->
+<!--      ></app-scenario-messages-table>-->
 
       <h3 class="mb-3">
         <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.title">Scenario Actions</span>
       </h3>
 
-      <app-scenario-actions-table [actions]="scenarioExecution.scenarioActions ?? []" predicate="createdDate"></app-scenario-actions-table>
+<!--      <app-scenario-actions-table [actions]="scenarioExecution.scenarioActions ?? []" predicate="createdDate"></app-scenario-actions-table>-->
 
       <button type="button" (click)="previousState()" class="btn btn-info mt-3">
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>
-    </div>
+    }
   </div>
 </div>

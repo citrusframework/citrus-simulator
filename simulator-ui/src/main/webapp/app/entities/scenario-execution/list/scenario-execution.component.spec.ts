@@ -1,16 +1,11 @@
-import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-
 import { of } from 'rxjs';
 
 import { ScenarioExecutionService } from '../service/scenario-execution.service';
 
 import { ScenarioExecutionComponent } from './scenario-execution.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('ScenarioExecution Management Component', () => {
@@ -21,12 +16,9 @@ describe('ScenarioExecution Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
-        HttpClientTestingModule,
-        ScenarioExecutionComponent,
-      ],
+      imports: [ScenarioExecutionComponent],
       providers: [
+        provideHttpClient(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -41,7 +33,15 @@ describe('ScenarioExecution Management Component', () => {
                 'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
               }),
             ),
-            snapshot: { queryParams: {} },
+            snapshot: {
+              queryParams: {},
+              queryParamMap: jest.requireActual('@angular/router').convertToParamMap({
+                page: '1',
+                size: '1',
+                sort: 'executionId,desc',
+                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+              }),
+            },
           },
         },
       ],
@@ -54,84 +54,85 @@ describe('ScenarioExecution Management Component', () => {
     service = TestBed.inject(ScenarioExecutionService);
     routerNavigateSpy = jest.spyOn(comp.router, 'navigate');
 
-    const headers = new HttpHeaders();
-    jest.spyOn(service, 'query').mockReturnValue(
-      of(
-        new HttpResponse({
-          body: [{ executionId: 123 }],
-          headers,
-        }),
-      ),
-    );
+    jest
+      .spyOn(service, 'query')
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ executionId: 7089 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
+            }),
+          }),
+        ),
+      )
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ executionId: 8486 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
+            }),
+          }),
+        ),
+      );
   });
 
-  describe('ngOnInit', () => {
-    it('should call load all on init', () => {
-      // WHEN
-      comp.ngOnInit();
+  it('should call load all on init', () => {
+    // WHEN
+    comp.ngOnInit();
 
-      // THEN
-      expect(service.query).toHaveBeenCalled();
-      expect(comp.scenarioExecutions?.[0]).toEqual(expect.objectContaining({ executionId: 123 }));
-    });
-
-    it('should calculate the filter attribute', () => {
-      // WHEN
-      comp.ngOnInit();
-
-      // THEN
-      expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'someId.in': ['dc4279ea-cfb9-11ec-9d64-0242ac120002'] }));
-    });
-
-    it('should calculate the sort attribute for an id', () => {
-      // WHEN
-      comp.ngOnInit();
-
-      // THEN
-      expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['executionId,desc'] }));
-    });
+    // THEN
+    expect(service.query).toHaveBeenCalled();
+    expect(comp.scenarioExecutions()[0]).toEqual(expect.objectContaining({ executionId: 7089 }));
   });
 
   describe('trackId', () => {
     it('should forward to scenarioExecutionService', () => {
-      const entity = { executionId: 123 };
+      const entity = { executionId: 7089 };
       jest.spyOn(service, 'getScenarioExecutionIdentifier');
-      const executionId = comp.trackId(0, entity);
+      const executionId = comp.trackId(entity);
       expect(service.getScenarioExecutionIdentifier).toHaveBeenCalledWith(entity);
       expect(executionId).toBe(entity.executionId);
     });
   });
 
-  describe('navigateToPage', () => {
-    it('should load a page', () => {
-      // WHEN
-      comp.navigateToPage(1);
+  it('should calculate the sort attribute for a non-id attribute', () => {
+    // WHEN
+    comp.navigateToWithComponentValues({ predicate: 'non-existing-column', order: 'asc' });
 
-      // THEN
-      expect(routerNavigateSpy).toHaveBeenCalled();
-    });
+    // THEN
+    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({
+          sort: ['non-existing-column,asc'],
+        }),
+      }),
+    );
   });
 
-  describe('navigateToWithComponentValues', () => {
-    it('should calculate the sort attribute for a non-id attribute', () => {
-      // GIVEN
-      const predicate = 'name';
-      comp.predicate = predicate;
-      comp.sortChange = { emit: jest.fn() } as unknown as EventEmitter<any>;
+  it('should load a page', () => {
+    // WHEN
+    comp.navigateToPage(1);
 
-      // WHEN
-      comp.navigateToWithComponentValues();
+    // THEN
+    expect(routerNavigateSpy).toHaveBeenCalled();
+  });
 
-      // THEN
-      expect(comp.sortChange.emit).toHaveBeenCalledWith({ predicate, ascending: true });
-      expect(routerNavigateSpy).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          queryParams: expect.objectContaining({
-            sort: ['name,asc'],
-          }),
-        }),
-      );
-    });
+  it('should calculate the sort attribute for an id', () => {
+    // WHEN
+    comp.ngOnInit();
+
+    // THEN
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['executionId,desc'] }));
+  });
+
+  it('should calculate the filter attribute', () => {
+    // WHEN
+    comp.ngOnInit();
+
+    // THEN
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'someId.in': ['dc4279ea-cfb9-11ec-9d64-0242ac120002'] }));
   });
 });

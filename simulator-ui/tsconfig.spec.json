@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/main/webapp/**/*.ts", "tests/*.ts", "playwright.config.ts"],
+  "include": ["src/main/webapp/**/*.ts"],
   "compilerOptions": {
     "composite": true,
     "outDir": "target/out-tsc/spec",

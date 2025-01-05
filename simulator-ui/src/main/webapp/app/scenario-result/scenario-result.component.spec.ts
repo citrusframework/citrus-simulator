@@ -52,7 +52,7 @@ describe('ScenarioResult Component', () => {
   });
 
   describe('ngAfterViewInit', () => {
-    let detectChangesSpy: SpyInstance<any>;
+    let detectChangesSpy: SpyInstance;
 
     beforeEach(() => {
       const changeDetectorRef = fixture.debugElement.injector.get(ChangeDetectorRef);
@@ -90,7 +90,7 @@ describe('ScenarioResult Component', () => {
     it('reloads the component if it exists', () => {
       component.scenarioExecutionComponent = scenarioExecutionComponent;
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.pageSizeChanged(itemsPerPage);
 
       expect(scenarioExecutionComponent.itemsPerPage).toEqual(itemsPerPage);
@@ -98,7 +98,7 @@ describe('ScenarioResult Component', () => {
     });
 
     it('does nothing if component does not exist', () => {
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.pageSizeChanged(itemsPerPage);
       expect(scenarioExecutionComponent.itemsPerPage).toEqual(0);
       expect(scenarioExecutionComponent.load).not.toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe('ScenarioResult Component', () => {
       { predicate: 'predicate', ascending: true, expectedEntityOrder: EntityOrder.ASCENDING },
       { predicate: 'predicate', ascending: false, expectedEntityOrder: EntityOrder.DESCENDING },
     ])('persists the values into the user service', ({ predicate, ascending, expectedEntityOrder }) => {
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.updateUserPreferences({ predicate, ascending });
 
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario-result', predicate);
@@ -124,7 +124,7 @@ describe('ScenarioResult Component', () => {
         resetFilter: jest.fn(),
       } as unknown as ScenarioExecutionFilterComponent;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.resetFilter();
 
       expect(component.scenarioExecutionFilterComponent.resetFilter).toHaveBeenCalled();

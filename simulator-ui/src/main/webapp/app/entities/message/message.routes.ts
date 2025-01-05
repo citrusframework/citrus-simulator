@@ -1,21 +1,18 @@
 import { Routes } from '@angular/router';
-
-import { ASC } from 'app/config/navigation.constants';
-import { MessageComponent } from './list/message.component';
-import { MessageDetailComponent } from './detail/message-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import MessageResolve from './route/message-routing-resolve.service';
 
 const messageRoute: Routes = [
   {
     path: '',
-    component: MessageComponent,
+    loadComponent: () => import('./list/message.component').then(m => m.MessageComponent),
     data: {
-      defaultSort: 'messageId,' + ASC,
+      defaultSort: 'messageId,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':messageId/view',
-    component: MessageDetailComponent,
+    loadComponent: () => import('./detail/message-detail.component').then(m => m.MessageDetailComponent),
     resolve: {
       message: MessageResolve,
     },

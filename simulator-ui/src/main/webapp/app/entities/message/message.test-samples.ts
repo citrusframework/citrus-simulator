@@ -3,30 +3,30 @@ import dayjs from 'dayjs/esm';
 import { IMessage } from './message.model';
 
 export const sampleWithRequiredData: IMessage = {
-  messageId: 4989,
-  direction: 'INBOUND',
-  citrusMessageId: 'fooey incidentally whether',
-  createdDate: dayjs('2023-10-13T01:53'),
-  lastModifiedDate: dayjs('2023-10-13T12:44'),
+  messageId: 10168,
+  direction: 5485,
+  citrusMessageId: 'voluntarily vacantly for',
+  createdDate: dayjs('2023-10-13T12:58'),
+  lastModifiedDate: dayjs('2023-10-13T10:43'),
 };
 
 export const sampleWithPartialData: IMessage = {
-  messageId: 11846,
-  direction: 'OUTBOUND',
-  citrusMessageId: 'ouch',
-  createdDate: dayjs('2023-10-12T16:06'),
-  lastModifiedDate: dayjs('2023-10-12T23:13'),
+  messageId: 30142,
+  direction: 6322,
+  payload: 'yahoo prioritize',
+  citrusMessageId: 'splurge',
+  createdDate: dayjs('2023-10-13T05:46'),
+  lastModifiedDate: dayjs('2023-10-13T01:07'),
 };
 
 export const sampleWithFullData: IMessage = {
-  messageId: 6858,
-  direction: 'INBOUND',
-  payload: 'yuck bite spectacular',
-  citrusMessageId: 'bah who',
-  createdDate: dayjs('2023-10-12T18:05'),
-  lastModifiedDate: dayjs('2023-10-13T06:42'),
+  messageId: 2775,
+  direction: 27778,
+  payload: 'midst comparison where',
+  citrusMessageId: 'what',
+  createdDate: dayjs('2023-10-12T19:51'),
+  lastModifiedDate: dayjs('2023-10-12T19:37'),
 };
-
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

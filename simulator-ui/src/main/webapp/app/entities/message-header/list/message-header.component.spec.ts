@@ -1,32 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-
 import { of } from 'rxjs';
 
 import { MessageHeaderService } from '../service/message-header.service';
 
 import { MessageHeaderComponent } from './message-header.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('MessageHeader Management Component', () => {
+  let comp: MessageHeaderComponent;
+  let fixture: ComponentFixture<MessageHeaderComponent>;
   let service: MessageHeaderService;
   let routerNavigateSpy: SpyInstance<Promise<boolean>>;
 
-  let fixture: ComponentFixture<MessageHeaderComponent>;
-  let component: MessageHeaderComponent;
-
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'message-header', component: MessageHeaderComponent }]),
-        HttpClientTestingModule,
-        MessageHeaderComponent,
-      ],
+      imports: [MessageHeaderComponent],
       providers: [
+        provideHttpClient(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -41,7 +33,15 @@ describe('MessageHeader Management Component', () => {
                 'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
               }),
             ),
-            snapshot: { queryParams: {} },
+            snapshot: {
+              queryParams: {},
+              queryParamMap: jest.requireActual('@angular/router').convertToParamMap({
+                page: '1',
+                size: '1',
+                sort: 'headerId,desc',
+                'filter[someId.in]': 'dc4279ea-cfb9-11ec-9d64-0242ac120002',
+              }),
+            },
           },
         },
       ],
@@ -50,82 +50,87 @@ describe('MessageHeader Management Component', () => {
       .compileComponents();
 
     fixture = TestBed.createComponent(MessageHeaderComponent);
-    component = fixture.componentInstance;
-
+    comp = fixture.componentInstance;
     service = TestBed.inject(MessageHeaderService);
-    routerNavigateSpy = jest.spyOn(component.router, 'navigate');
+    routerNavigateSpy = jest.spyOn(comp.router, 'navigate');
 
-    const headers = new HttpHeaders();
-    jest.spyOn(service, 'query').mockReturnValue(
-      of(
-        new HttpResponse({
-          body: [{ headerId: 123 }],
-          headers,
-        }),
-      ),
-    );
+    jest
+      .spyOn(service, 'query')
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ headerId: 21098 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
+            }),
+          }),
+        ),
+      )
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ headerId: 6180 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
+            }),
+          }),
+        ),
+      );
   });
 
   it('should call load all on init', () => {
     // WHEN
-    component.ngOnInit();
+    comp.ngOnInit();
 
     // THEN
     expect(service.query).toHaveBeenCalled();
-    expect(component.messageHeaders?.[0]).toEqual(expect.objectContaining({ headerId: 123 }));
+    expect(comp.messageHeaders()[0]).toEqual(expect.objectContaining({ headerId: 21098 }));
+  });
+
+  describe('trackId', () => {
+    it('should forward to messageHeaderService', () => {
+      const entity = { headerId: 21098 };
+      jest.spyOn(service, 'getMessageHeaderIdentifier');
+      const headerId = comp.trackId(entity);
+      expect(service.getMessageHeaderIdentifier).toHaveBeenCalledWith(entity);
+      expect(headerId).toBe(entity.headerId);
+    });
+  });
+
+  it('should calculate the sort attribute for a non-id attribute', () => {
+    // WHEN
+    comp.navigateToWithComponentValues({ predicate: 'non-existing-column', order: 'asc' });
+
+    // THEN
+    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({
+          sort: ['non-existing-column,asc'],
+        }),
+      }),
+    );
   });
 
   it('should load a page', () => {
     // WHEN
-    component.navigateToPage(1);
+    comp.navigateToPage(1);
 
     // THEN
     expect(routerNavigateSpy).toHaveBeenCalled();
   });
 
-  it('should calculate the sort attribute for a headerId', () => {
+  it('should calculate the sort attribute for an id', () => {
     // WHEN
-    component.ngOnInit();
+    comp.ngOnInit();
 
     // THEN
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['headerId,desc'] }));
   });
 
-  describe('navigateToWithComponentValues', () => {
-    it('should calculate the sort attribute for a non-id attribute', () => {
-      // WHEN
-      component.navigateToWithComponentValues({ ascending: true, predicate: 'name' });
-
-      // THEN
-      expect(routerNavigateSpy).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          queryParams: expect.objectContaining({
-            sort: ['name,asc'],
-          }),
-        }),
-      );
-    });
-
-    it('should respect given ascending and predicated', () => {
-      // WHEN
-      component.navigateToWithComponentValues({ ascending: false, predicate: 'messageHeaderId' });
-
-      // THEN
-      expect(routerNavigateSpy).toHaveBeenLastCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          queryParams: expect.objectContaining({
-            sort: ['messageHeaderId,desc'],
-          }),
-        }),
-      );
-    });
-  });
-
   it('should calculate the filter attribute', () => {
     // WHEN
-    component.ngOnInit();
+    comp.ngOnInit();
 
     // THEN
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ 'someId.in': ['dc4279ea-cfb9-11ec-9d64-0242ac120002'] }));

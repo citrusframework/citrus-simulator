@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { TestParameterComponent } from './list/test-parameter.component';
-import { TestParameterDetailComponent } from './detail/test-parameter-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import TestParameterResolve from './route/test-parameter-routing-resolve.service';
 
 const testParameterRoute: Routes = [
   {
     path: '',
-    component: TestParameterComponent,
+    loadComponent: () => import('./list/test-parameter.component').then(m => m.TestParameterComponent),
     data: {
-      defaultSort: 'createdDate,' + ASC,
+      defaultSort: 'createdDate,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':testResultId/:key/view',
-    component: TestParameterDetailComponent,
+    loadComponent: () => import('./detail/test-parameter-detail.component').then(m => m.TestParameterDetailComponent),
     resolve: {
       testParameter: TestParameterResolve,
     },

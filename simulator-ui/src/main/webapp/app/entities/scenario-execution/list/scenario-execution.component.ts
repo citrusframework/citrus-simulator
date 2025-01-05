@@ -1,116 +1,99 @@
-import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, NgZone, OnInit, Output, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-
-import { combineLatest, Observable, switchMap, tap } from 'rxjs';
-
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-import { ASC, DEFAULT_SORT_DATA, DESC, SORT } from 'app/config/navigation.constants';
+import { combineLatest, Observable, Subscription, tap } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
-import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { ItemCountComponent } from 'app/shared/pagination';
-import { SortByDirective, SortDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import { DEFAULT_SORT_DATA, SORT } from 'app/config/navigation.constants';
+import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { EntityArrayResponseType, ScenarioExecutionService } from '../service/scenario-execution.service';
 import { IScenarioExecution } from '../scenario-execution.model';
-
 import { navigateToWithPagingInformation } from '../../navigation-util';
-import { ITestResultStatus } from '../../test-result/test-result.model';
+import { ItemCountComponent } from '../../../shared/pagination';
+import { ITestResult, ITestResultStatus } from '../../test-result/test-result.model';
 
 @Component({
-  standalone: true,
   selector: 'app-scenario-execution',
   templateUrl: './scenario-execution.component.html',
-  styleUrls: ['./scenario-execution.component.scss'],
   imports: [
     RouterModule,
     FormsModule,
     SharedModule,
+    ItemCountComponent,
+    FilterComponent,
     SortDirective,
     SortByDirective,
-    DurationPipe,
     FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    FilterComponent,
-    ItemCountComponent,
   ],
 })
 export class ScenarioExecutionComponent implements OnInit {
   @Input() hideTitle = false;
 
-  @Output() sortChange = new EventEmitter<{ predicate: string; ascending: boolean }>();
+  @Output() sortChange = new EventEmitter<SortState>();
 
-  scenarioExecutions?: IScenarioExecution[];
+  subscription: Subscription | null = null;
+  scenarioExecutions = signal<IScenarioExecution[]>([]);
   isLoading = false;
 
-  predicate = 'executionId';
-  ascending = true;
-
-  displayFilters: IFilterOptions = new FilterOptions();
+  sortState = sortStateSignal({});
+  filters: IFilterOptions = new FilterOptions();
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
 
-  protected readonly USER_PREFERENCES_KEY = 'scenario';
+  public readonly router = inject(Router);
+  protected readonly scenarioExecutionService = inject(ScenarioExecutionService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
+  protected ngZone = inject(NgZone);
 
-  private filters: IFilterOptions = new FilterOptions();
-
-  constructor(
-    private ngZone: NgZone,
-    protected scenarioExecutionService: ScenarioExecutionService,
-    protected activatedRoute: ActivatedRoute,
-    public router: Router,
-  ) {}
-
-  trackId = (_index: number, item: IScenarioExecution): number => this.scenarioExecutionService.getScenarioExecutionIdentifier(item);
+  trackId = (item: IScenarioExecution): number => this.scenarioExecutionService.getScenarioExecutionIdentifier(item);
 
   ngOnInit(): void {
-    this.load();
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.predicate, this.ascending, filterOptions));
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(
+        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        tap(() => this.load()),
+      )
+      .subscribe();
+
+    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformation().subscribe({
+    this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
-    this.handleNavigation(this.page, this.predicate, this.ascending, this.filters.filterOptions);
+  navigateToWithComponentValues(event: SortState): void {
+    this.sortChange.emit(event);
+    this.handleNavigation(this.page, event, this.filters.filterOptions);
   }
 
-  navigateToPage(page = this.page): void {
-    this.handleNavigation(page, this.predicate, this.ascending, this.filters.filterOptions);
-  }
-
-  protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
-    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
-      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.filters.filterOptions)),
-    );
+  navigateToPage(page: number): void {
+    this.handleNavigation(page, this.sortState(), this.filters.filterOptions);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     this.filters.initializeFromParams(params);
-    this.displayFilters = formatDateTimeFilterOptions(this.filters);
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
-    this.scenarioExecutions = this.fillComponentAttributesFromResponseBody(response.body);
+    const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
+    this.scenarioExecutions.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IScenarioExecution[] | null): IScenarioExecution[] {
@@ -121,58 +104,43 @@ export class ScenarioExecutionComponent implements OnInit {
     this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
   }
 
-  protected queryBackend(
-    page?: number,
-    predicate?: string,
-    ascending?: boolean,
-    filterOptions?: IFilterOption[],
-  ): Observable<EntityArrayResponseType> {
+  protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { page, filters } = this;
+
     this.isLoading = true;
-    const pageToLoad: number = page ?? 1;
+    const pageToLoad: number = page;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(this.sortState()),
     };
-
-    filterOptions?.forEach(filterOption => {
+    filters.filterOptions.forEach(filterOption => {
       queryObject[filterOption.name] = filterOption.values;
     });
-
     return this.scenarioExecutionService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
+  protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {
     navigateToWithPagingInformation(
       page,
       this.itemsPerPage,
-      () => this.getSortQueryParam(predicate, ascending),
+      this.activatedRoute,
       this.ngZone,
       this.router,
-      this.activatedRoute,
-      predicate,
-      ascending,
+      this.sortService,
+      sortState,
       filterOptions,
     );
   }
 
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
+  getStatusBadgeClass(testResultStatus: ITestResultStatus):string {
+      switch (testResultStatus.name) {
+        case 'FAILURE':
+          return 'bg-danger';
+        case 'SUCCESS':
+          return 'bg-success';
+        default:
+          return 'bg-info';
+      }
     }
-  }
-
-  protected getStatusBadgeClass(status: ITestResultStatus): string {
-    switch (status.name) {
-      case 'FAILURE':
-        return 'bg-danger';
-      case 'SUCCESS':
-        return 'bg-success';
-      default:
-        return 'bg-info';
-    }
-  }
 }

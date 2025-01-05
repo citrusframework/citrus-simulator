@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { ScenarioExecutionComponent } from './list/scenario-execution.component';
-import { ScenarioExecutionDetailComponent } from './detail/scenario-execution-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import ScenarioExecutionResolve from './route/scenario-execution-routing-resolve.service';
 
 const scenarioExecutionRoute: Routes = [
   {
     path: '',
-    component: ScenarioExecutionComponent,
+    loadComponent: () => import('./list/scenario-execution.component').then(m => m.ScenarioExecutionComponent),
     data: {
-      defaultSort: 'executionId,' + ASC,
+      defaultSort: 'executionId,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':executionId/view',
-    component: ScenarioExecutionDetailComponent,
+    loadComponent: () => import('./detail/scenario-execution-detail.component').then(m => m.ScenarioExecutionDetailComponent),
     resolve: {
       scenarioExecution: ScenarioExecutionResolve,
     },

@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 
-import { EntityOrder } from 'app/config/navigation.constants';
+import { EntityOrder, toEntityOrder } from 'app/config/navigation.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 
@@ -9,6 +9,7 @@ import { ScenarioExecutionComponent } from 'app/entities/scenario-execution/list
 import SharedModule from 'app/shared/shared.module';
 
 import ScenarioExecutionFilterComponent from './filter/scenario-execution-filter.component';
+import { SortState } from '../shared/sort';
 
 @Component({
   standalone: true,
@@ -33,14 +34,14 @@ export default class ScenarioResultComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     if (this.scenarioExecutionComponent) {
       this.scenarioExecutionComponent.itemsPerPage = this.userPreferenceService.getPageSize(this.USER_PREFERENCES_KEY);
-      this.scenarioExecutionComponent.predicate = this.userPreferenceService.getPredicate(
-        this.USER_PREFERENCES_KEY,
-        this.scenarioExecutionComponent.predicate,
-      );
-      this.scenarioExecutionComponent.ascending =
-        this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY) === EntityOrder.ASCENDING;
 
-      this.scenarioExecutionComponent.navigateToWithComponentValues();
+      const predicate = this.userPreferenceService.getPredicate(
+        this.USER_PREFERENCES_KEY,
+        this.scenarioExecutionComponent.sortState().predicate ?? '',
+      );
+      const order = this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY);
+
+      this.scenarioExecutionComponent.navigateToWithComponentValues({ predicate, order });
     }
 
     this.changeDetector.detectChanges();
@@ -49,14 +50,15 @@ export default class ScenarioResultComponent implements AfterViewInit {
   protected pageSizeChanged(pageSize: number): void {
     if (this.scenarioExecutionComponent) {
       this.scenarioExecutionComponent.itemsPerPage = pageSize;
-      this.scenarioExecutionComponent.navigateToWithComponentValues();
+      this.scenarioExecutionComponent.navigateToWithComponentValues(this.scenarioExecutionComponent.sortState());
     }
   }
 
-  protected updateUserPreferences({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
-    // eslint-disable-next-line
-    this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
-    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
+  protected updateUserPreferences({ predicate, order }: SortState): void {
+    if (predicate && order) {
+      this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
+      this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, toEntityOrder(order) ?? EntityOrder.ASCENDING);
+    }
   }
 
   protected resetFilter(): void {

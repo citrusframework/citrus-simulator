@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { sampleWithRequiredData as sampleParameterWithRequiredData } from 'app/entities/scenario-parameter/scenario-parameter.test-samples';
 import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
@@ -7,6 +7,7 @@ import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-par
 import { IScenario } from '../scenario.model';
 import { ScenarioService } from './scenario.service';
 import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../scenario.test-samples';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('Scenario Service', () => {
   let service: ScenarioService;
@@ -14,7 +15,7 @@ describe('Scenario Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
 
     service = TestBed.inject(ScenarioService);
@@ -35,7 +36,7 @@ describe('Scenario Service', () => {
     });
 
     it('should launch a Scenario', () => {
-      const returnedFromService: number = 1234;
+      const returnedFromService = 1234;
       const scenarioName = 'scenario-name';
       const scenarioParameters: IScenarioParameter[] = [];
 

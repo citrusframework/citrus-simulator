@@ -3,29 +3,28 @@ import dayjs from 'dayjs/esm';
 import { IMessageHeader } from './message-header.model';
 
 export const sampleWithRequiredData: IMessageHeader = {
-  headerId: 29874,
-  name: 'rapidly challenge',
-  value: 'summon concerning',
-  createdDate: dayjs('2023-10-17T20:12'),
-  lastModifiedDate: dayjs('2023-10-18T16:07'),
+  headerId: 18898,
+  name: 'demob inasmuch section',
+  value: 'fooey',
+  createdDate: dayjs('2023-10-18T16:52'),
+  lastModifiedDate: dayjs('2023-10-17T23:18'),
 };
 
 export const sampleWithPartialData: IMessageHeader = {
-  headerId: 7534,
-  name: 'task',
-  value: 'exclude',
-  createdDate: dayjs('2023-10-17T22:05'),
-  lastModifiedDate: dayjs('2023-10-18T03:27'),
+  headerId: 1469,
+  name: 'modulo',
+  value: 'ugh',
+  createdDate: dayjs('2023-10-17T17:24'),
+  lastModifiedDate: dayjs('2023-10-17T20:04'),
 };
 
 export const sampleWithFullData: IMessageHeader = {
-  headerId: 32408,
-  name: 'but phooey since',
-  value: 'concerning spotlight',
-  createdDate: dayjs('2023-10-17T18:11'),
-  lastModifiedDate: dayjs('2023-10-18T15:28'),
+  headerId: 28119,
+  name: 'lest recklessly if',
+  value: 'blowgun',
+  createdDate: dayjs('2023-10-18T17:02'),
+  lastModifiedDate: dayjs('2023-10-18T09:29'),
 };
-
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

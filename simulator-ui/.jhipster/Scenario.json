@@ -6,12 +6,16 @@
     {
       "fieldName": "name",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "type",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,
@@ -19,13 +23,6 @@
   "pagination": "pagination",
   "readOnly": true,
   "relationships": [
-    {
-      "otherEntityName": "scenarioParameter",
-      "otherEntityRelationshipName": "scenario",
-      "relationshipName": "scenarioParameters",
-      "relationshipSide": "left",
-      "relationshipType": "one-to-many"
-    }
   ],
   "searchEngine": "no",
   "service": "serviceImpl"

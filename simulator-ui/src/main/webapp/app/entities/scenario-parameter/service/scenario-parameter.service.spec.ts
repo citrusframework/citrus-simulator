@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { IScenarioParameter } from '../scenario-parameter.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../scenario-parameter.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../scenario-parameter.test-samples';
 
-import { ScenarioParameterService, RestScenarioParameter } from './scenario-parameter.service';
+import { RestScenarioParameter, ScenarioParameterService } from './scenario-parameter.service';
 
 const requireRestSample: RestScenarioParameter = {
   ...sampleWithRequiredData,
@@ -18,7 +19,7 @@ describe('ScenarioParameter Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(ScenarioParameterService);
@@ -119,7 +120,7 @@ describe('ScenarioParameter Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { parameterId: 123 };
+        const entity1 = { parameterId: 31065 };
         const entity2 = null;
 
         const compareResult1 = service.compareScenarioParameter(entity1, entity2);
@@ -130,8 +131,8 @@ describe('ScenarioParameter Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { parameterId: 123 };
-        const entity2 = { parameterId: 456 };
+        const entity1 = { parameterId: 31065 };
+        const entity2 = { parameterId: 20461 };
 
         const compareResult1 = service.compareScenarioParameter(entity1, entity2);
         const compareResult2 = service.compareScenarioParameter(entity2, entity1);
@@ -141,8 +142,8 @@ describe('ScenarioParameter Service', () => {
       });
 
       it('should return false if primaryKey matches', () => {
-        const entity1 = { parameterId: 123 };
-        const entity2 = { parameterId: 123 };
+        const entity1 = { parameterId: 31065 };
+        const entity2 = { parameterId: 31065 };
 
         const compareResult1 = service.compareScenarioParameter(entity1, entity2);
         const compareResult2 = service.compareScenarioParameter(entity2, entity1);

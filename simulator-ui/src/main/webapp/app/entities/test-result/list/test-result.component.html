@@ -1,150 +1,156 @@
 <div>
-  <h2 id="page-heading" data-test="TestResultHeading">
+  <h2 id="page-heading" data-cy="TestResultHeading">
     <span jhiTranslate="citrusSimulatorApp.testResult.home.title">Test Results</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="citrusSimulatorApp.testResult.home.refreshListLabel">Refresh List</span>
+        <span jhiTranslate="citrusSimulatorApp.testResult.home.refreshListLabel">Refresh list</span>
       </button>
     </div>
   </h2>
 
-  <app-alert-error></app-alert-error>
+  <app-alert-error />
 
-  <app-alert></app-alert>
+  <app-alert />
 
-  <app-filter [filters]="displayFilters"></app-filter>
+  <app-filter [filters]="filters" />
 
-  <div class="alert alert-warning" id="no-result" *ngIf="testResults?.length === 0" data-test="noDataFound">
-    <span jhiTranslate="citrusSimulatorApp.testResult.home.notFound">No Test Results found</span>
-  </div>
+  @if (testResults().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="citrusSimulatorApp.testResult.home.notFound">No Test Results found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
 
-  <div class="table-responsive table-entities" id="entities" *ngIf="testResults && testResults.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="testResultEntitiesTable">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="id">
-            <div class="d-flex">
-              <span jhiTranslate="global.field.id">ID</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="status">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="testName">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="className">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="errorMessage">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="failureStack">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="failureType">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="createdDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let testResult of testResults; trackBy: trackId"
-          data-test="testResultEntitiesRow"
-          class="clickable-row"
-          [routerLink]="['/test-result', testResult.id, 'view']"
-        >
-          <td>
-            <a [routerLink]="['/test-result', testResult.id, 'view']" data-test="testResultEntitiesId">{{ testResult.id }}</a>
-          </td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="getStatusBadgeClass({ id: 0, name: testResult.status ?? 'UNKNOWN' })"
-              data-test="testResultEntitiesStatus"
-              >{{ testResult.status }}</span
-            >
-          </td>
-          <td data-test="testResultEntitiesTestName">{{ testResult.testName }}</td>
-          <td data-test="testResultEntitiesClassName">{{ testResult.className }}</td>
-          <td data-test="testResultEntitiesErrorMessage">{{ testResult.errorMessage }}</td>
-          <td data-test="testResultEntitiesStackTrace">{{ testResult.stackTrace }}</td>
-          <td data-test="testResultEntitiesFailureType">{{ testResult.failureType }}</td>
-          <td data-test="testResultEntitiesCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</td>
-          <td data-test="testResultEntitiesLastModifiedDate">{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
-          <td class="text-end">
-            <div class="btn-group" (click)="$event.stopPropagation()">
-              <a
-                [routerLink]="['/test-parameter']"
-                [queryParams]="{ 'filter[testResultId.in]': testResult.id }"
-                data-test="testResultEntitiesTestParametersLink"
-              >
-                <button type="button" class="btn btn-info btn-sm" data-test="testParametersButton">
-                  <fa-icon icon="cogs"></fa-icon>
-                  <span
-                    class="d-none d-md-inline"
-                    jhiTranslate="entity.action.show"
-                    [translateValues]="{ otherEntity: ('citrusSimulatorApp.testResult.testParameter' | translate) }"
-                    >Test Parameters</span
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="status">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="testName">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="className">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="errorMessage">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="stackTrace">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="failureType">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="createdDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lastModifiedDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (testResult of testResults(); track trackId(testResult)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/test-result', testResult.id, 'view']">{{ testResult.id }}</a>
+              </td>
+              <td>{{ testResult.status }}</td>
+              <td>{{ testResult.testName }}</td>
+              <td>{{ testResult.className }}</td>
+              <td>{{ testResult.errorMessage }}</td>
+              <td>{{ testResult.stackTrace }}</td>
+              <td>{{ testResult.failureType }}</td>
+              <td>{{ testResult.createdDate | formatMediumDatetime }}</td>
+              <td>{{ testResult.lastModifiedDate | formatMediumDatetime }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <button
+                    type="submit"
+                    [routerLink]="['/test-parameter']"
+                    [queryParams]="{ 'filter[testResultId.in]': testResult.id }"
+                    class="btn btn-info btn-sm"
+                    data-cy="filterOtherEntityButton"
                   >
-                </button>
-              </a>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="testResults && testResults.length > 0">
-    <div class="d-flex justify-content-center">
-      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+                    <fa-icon icon="eye"></fa-icon>
+                    <span
+                      class="d-none d-md-inline"
+                      jhiTranslate="entity.action.show"
+                      [translateValues]="{ otherEntity: ('citrusSimulatorApp.testResult.testParameter' | translate) }"
+                      >Show Test Parameter</span
+                    >
+                  </button>
+                  <a [routerLink]="['/test-result', testResult.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
+  }
+  @if (testResults().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <app-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [page]="page"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="navigateToPage($event)"
-      ></ngb-pagination>
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
     </div>
-  </div>
+  }
 </div>

@@ -1,105 +1,120 @@
 <div>
-  <h2 id="page-heading" data-test="ScenarioActionHeading">
+  <h2 id="page-heading" data-cy="ScenarioActionHeading">
     <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.title">Scenario Actions</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.refreshListLabel">Refresh List</span>
+        <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.refreshListLabel">Refresh list</span>
       </button>
     </div>
   </h2>
 
-  <app-alert-error></app-alert-error>
+  <app-alert-error />
 
-  <app-alert></app-alert>
+  <app-alert />
 
-  <app-filter [filters]="displayFilters"></app-filter>
+  <app-filter [filters]="filters" />
 
-  <div class="alert alert-warning" id="no-result" *ngIf="scenarioActions?.length === 0" data-test="noDataFound">
-    <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.notFound">No Scenario Actions found</span>
-  </div>
-
-  <div class="table-responsive table-entities" id="entities" *ngIf="scenarioActions && scenarioActions.length > 0">
-    <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="scenarioActionEntitiesTable">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="actionId">
-            <div class="d-flex">
-              <span jhiTranslate="global.field.id">ID</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="name">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="startDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="endDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="scenarioExecution.scenarioName">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let scenarioAction of scenarioActions; trackBy: trackId"
-          data-test="scenarioActionEntitiesRow"
-          class="clickable-row"
-          [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']"
-        >
-          <td>
-            <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']" data-test="scenarioActionEntitiesId">{{
-              scenarioAction.actionId
-            }}</a>
-          </td>
-          <td data-test="scenarioActionEntitiesName">{{ scenarioAction.name }}</td>
-          <td data-test="scenarioActionEntitiesStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</td>
-          <td data-test="scenarioActionEntitiesEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</td>
-          <td>
-            <div *ngIf="scenarioAction.scenarioExecution" (click)="$event.stopPropagation()">
-              <a
-                [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
-                data-test="scenarioActionEntitiesScenarioExecutionLink"
-                >{{ scenarioAction.scenarioExecution.scenarioName }}</a
-              >
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="scenarioActions && scenarioActions.length > 0">
-    <div class="d-flex justify-content-center">
-      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+  @if (scenarioActions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="citrusSimulatorApp.scenarioAction.home.notFound">No Scenario Actions found</span>
     </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="actionId">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [page]="page"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="navigateToPage($event)"
-      ></ngb-pagination>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="startDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="endDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="scenarioExecution.scenarioName">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (scenarioAction of scenarioActions(); track trackId(scenarioAction)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']">{{ scenarioAction.actionId }}</a>
+              </td>
+              <td>{{ scenarioAction.name }}</td>
+              <td>{{ scenarioAction.startDate | formatMediumDatetime }}</td>
+              <td>{{ scenarioAction.endDate | formatMediumDatetime }}</td>
+              <td>
+                @if (scenarioAction.scenarioExecution) {
+                  <div>
+                    <a [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.actionId, 'view']">{{
+                      scenarioAction.scenarioExecution.scenarioName
+                    }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/scenario-action', scenarioAction.actionId, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  </div>
+  }
+  @if (scenarioActions().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <app-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
 </div>
