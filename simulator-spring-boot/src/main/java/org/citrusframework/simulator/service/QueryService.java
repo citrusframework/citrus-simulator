@@ -102,6 +102,8 @@ public abstract class QueryService<ENTITY> {
     protected Specification<ENTITY> buildSpecification(StringFilter filter, Function<Root<ENTITY>, Expression<String>> metaclassFunction) {
         if (filter.getEquals() != null) {
             return equalsSpecification(metaclassFunction, filter.getEquals());
+        } else if (filter.getEqualsIgnoreCase() != null) {
+            return equalsUpperSpecification(metaclassFunction, filter.getEqualsIgnoreCase());
         } else if (filter.getIn() != null) {
             return valueIn(metaclassFunction, filter.getIn());
         } else if (filter.getNotIn() != null) {
@@ -361,6 +363,17 @@ public abstract class QueryService<ENTITY> {
     }
 
     /**
+     * Generic method, which based on a Root&lt;ENTITY&gt; returns an Expression which type is the same as the given 'value' type, ignoring case.
+     *
+     * @param metaclassFunction function which returns the column which is used for filtering.
+     * @param value             the actual value to filter for.
+     * @return a Specification.
+     */
+    protected Specification<ENTITY> equalsUpperSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction, String value) {
+        return (root, query, builder) -> builder.equal(builder.upper(metaclassFunction.apply(root).as(String.class)), value.toUpperCase());
+    }
+
+    /**
      * Generic method, which based on a Root&lt;ENTITY&gt; returns an Expression which type is the same as the given 'value' type.
      *
      * @param metaclassFunction function which returns the column which is used for filtering.
@@ -379,9 +392,8 @@ public abstract class QueryService<ENTITY> {
      * @param value a {@link java.lang.String} object.
      * @return a {@link org.springframework.data.jpa.domain.Specification} object.
      */
-    protected Specification<ENTITY> likeUpperSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction,
-                                                           String value) {
-        return (root, query, builder) -> builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value));
+    protected Specification<ENTITY> likeUpperSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction, String value) {
+        return (root, query, builder) -> builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value.toUpperCase()));
     }
 
     /**
@@ -391,9 +403,8 @@ public abstract class QueryService<ENTITY> {
      * @param value a {@link java.lang.String} object.
      * @return a {@link org.springframework.data.jpa.domain.Specification} object.
      */
-    protected Specification<ENTITY> doesNotContainSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction,
-                                                                String value) {
-        return (root, query, builder) -> builder.not(builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value)));
+    protected Specification<ENTITY> doesNotContainSpecification(Function<Root<ENTITY>, Expression<String>> metaclassFunction, String value) {
+        return (root, query, builder) -> builder.not(builder.like(builder.upper(metaclassFunction.apply(root).as(String.class)), wrapLikeQuery(value.toUpperCase())));
     }
 
     /**
