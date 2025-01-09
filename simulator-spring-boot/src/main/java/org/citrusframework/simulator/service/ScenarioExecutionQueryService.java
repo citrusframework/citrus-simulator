@@ -252,7 +252,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
         }
 
         Specification<ScenarioExecution> messageHeaderKeyEqualsSpecification = buildSpecification(
-            new StringFilter().setEquals(messageHeaderFilter.key),
+            new StringFilter().setEqualsIgnoreCase(messageHeaderFilter.key),
             root -> joinMessageHeaders(root).get(MessageHeader_.name));
 
         var messageHeaderValueSpecification = switch (messageHeaderFilter.operator) {

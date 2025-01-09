@@ -258,8 +258,10 @@ class ScenarioExecutionQueryServiceIT {
         public static Stream<Arguments> selectWithJoinToMessageHeader() {
             return Stream.of(
                 arguments("83def191b1dda4c79c00ae4c443f0ca2", 0),
-                arguments(TRACEPARENT + "=" + MESSAGE_1_TRACEPARENT, 1),
-                arguments(TRACEPARENT + "~1344094d192deb39a02025c6f9a67e3d", 2)
+                arguments(TRACEPARENT.toLowerCase() + "=" + MESSAGE_1_TRACEPARENT.toLowerCase(), 1),
+                arguments(TRACEPARENT.toLowerCase() + "=" + MESSAGE_1_TRACEPARENT.toUpperCase(), 1),
+                arguments(TRACEPARENT.toUpperCase() + "=" + MESSAGE_1_TRACEPARENT.toLowerCase(), 1),
+                arguments(TRACEPARENT.toLowerCase() + "~1344094d192deb39a02025c6f9a67e3d", 2)
             );
         }
 

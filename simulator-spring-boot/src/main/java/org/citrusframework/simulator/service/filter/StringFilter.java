@@ -40,6 +40,7 @@ public class StringFilter extends Filter<String> {
 
     private String contains;
     private String doesNotContain;
+    private String equalsIgnoreCase;
 
     /**
      * <p>Constructor for StringFilter.</p>
@@ -104,6 +105,15 @@ public class StringFilter extends Filter<String> {
         return this;
     }
 
+    public String getEqualsIgnoreCase() {
+        return equalsIgnoreCase;
+    }
+
+    public StringFilter setEqualsIgnoreCase(String equalsIgnoreCase) {
+        this.equalsIgnoreCase = equalsIgnoreCase;
+        return this;
+    }
+
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
@@ -117,14 +127,15 @@ public class StringFilter extends Filter<String> {
             return false;
         }
         StringFilter that = (StringFilter) o;
-        return Objects.equals(contains, that.contains) &&
-            Objects.equals(doesNotContain, that.doesNotContain);
+        return Objects.equals(contains, that.contains)
+            && Objects.equals(doesNotContain, that.doesNotContain)
+            && Objects.equals(equalsIgnoreCase, that.equalsIgnoreCase);
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), contains, doesNotContain);
+        return Objects.hash(super.hashCode(), contains, doesNotContain, equalsIgnoreCase);
     }
 
     /** {@inheritDoc} */
@@ -138,6 +149,7 @@ public class StringFilter extends Filter<String> {
             + (getNotIn() != null ? "notIn=" + getNotIn() + ", " : "")
             + (getContains() != null ? "contains=" + getContains() + ", " : "")
             + (getDoesNotContain() != null ? "doesNotContain=" + getDoesNotContain() : "")
+            + (getEqualsIgnoreCase() != null ? "equalsIgnoreCase=" + getEqualsIgnoreCase() : "")
             + "]";
     }
 }
