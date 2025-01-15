@@ -28,7 +28,21 @@ The endpoint `/api/test-results` additionally supports the `DELETE` request that
 === Receive SINGLE Test-Parameter
 
 A `TestParameter` is uniquely identified by a composite key, consisting of the `TestResult` ID and the `TestParameter` key.
-To retrieve a single `TestParameter`, use the `GET /{testResultId}/{key}` endpoint.
+To retrieve a single `TestParameter`, use the `GET /api/test-parameters/{testResultId}/{key}` endpoint. all recorded Test Results and Executions.
+
+[[receive-scenario-execution-details]]
+=== Receive Scenario Execution with Details
+
+The `ScenarioExecution` is also unique in regard to the amount of details that _could_ be extracted from it.
+However, more information (almost) always comes at the cost of performance.
+Thus, the `/api/scenario-executions` endpoint offers four unique boolean query parameters:
+
+* `includeActions`: When `true`, additionally fetches related `ScenarioAction`
+* `includeMessages`: When `true`, additionally fetches related `Message` (without `MessageHeader`)
+* `includeMessageHeaders`: When `true`, additionally fetches related `Message` and `MessageHeaders`
+* `includeParameters`: When `true`, additionally fetches related `ScenarioParameter`
+
+They are all being set to `false` by default.
 
 [[scenario-resource]]
 === Scenario Resource

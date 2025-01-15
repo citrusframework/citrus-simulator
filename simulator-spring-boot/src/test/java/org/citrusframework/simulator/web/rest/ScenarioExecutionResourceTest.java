@@ -16,11 +16,9 @@
 
 package org.citrusframework.simulator.web.rest;
 
-import org.citrusframework.simulator.model.Message;
-import org.citrusframework.simulator.model.ScenarioAction;
 import org.citrusframework.simulator.model.ScenarioExecution;
-import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.service.ScenarioExecutionQueryService;
+import org.citrusframework.simulator.service.ScenarioExecutionQueryService.ResultDetailsConfiguration;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.web.rest.dto.ScenarioExecutionDTO;
@@ -29,21 +27,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentCaptor.captor;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.context.request.RequestContextHolder.setRequestAttributes;
 
 @ExtendWith({MockitoExtension.class})
 class ScenarioExecutionResourceTest {
@@ -61,7 +64,8 @@ class ScenarioExecutionResourceTest {
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new ScenarioExecutionResource(scenarioExecutionServiceMock, scenarioExecutionQueryServiceMock, scenarioExecutionMapperMock);
+        fixture = new ScenarioExecutionResource(scenarioExecutionServiceMock,
+            scenarioExecutionQueryServiceMock, scenarioExecutionMapperMock);
     }
 
     @Nested
@@ -77,61 +81,87 @@ class ScenarioExecutionResourceTest {
         private ScenarioExecutionDTO scenarioExecutionDTOMock;
 
         private ScenarioExecution scenarioExecution;
+        private ArgumentCaptor<ResultDetailsConfiguration> resultDetailsConfigurationArgumentCaptor;
 
         @BeforeEach
         void beforeEachSetup() {
             var request = new MockHttpServletRequest();
-            RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+            setRequestAttributes(new ServletRequestAttributes(request));
 
             scenarioExecution = new ScenarioExecution();
-            scenarioExecution.getScenarioActions().add(mock(ScenarioAction.class));
-            scenarioExecution.getScenarioMessages().add(mock(Message.class));
-            scenarioExecution.getScenarioParameters().add(mock(ScenarioParameter.class));
-
             var scenarioExecutions = new PageImpl<>(singletonList(scenarioExecution));
-            doReturn(scenarioExecutions).when(scenarioExecutionQueryServiceMock).findByCriteria(criteriaMock, pageableMock);
 
-            doReturn(scenarioExecutionDTOMock).when(scenarioExecutionMapperMock).toDto(scenarioExecution);
+            resultDetailsConfigurationArgumentCaptor = captor();
+            doReturn(scenarioExecutions)
+                .when(scenarioExecutionQueryServiceMock)
+                .findByCriteria(eq(criteriaMock), eq(pageableMock), resultDetailsConfigurationArgumentCaptor.capture());
+
+            doReturn(scenarioExecutionDTOMock)
+                .when(scenarioExecutionMapperMock)
+                .toDto(scenarioExecution);
         }
 
         @Test
         void stripsIncludedActions() {
-            var response = fixture.getAllScenarioExecutions(criteriaMock, FALSE, TRUE, TRUE, pageableMock);
+            var response = fixture.getAllScenarioExecutions(criteriaMock, FALSE, TRUE, TRUE, TRUE, pageableMock);
+            verifyResponseContainsDtos(response);
 
-            assertThat(response)
+            assertThat(resultDetailsConfigurationArgumentCaptor.getValue())
+                .isNotNull()
                 .satisfies(
-                    r -> assertThat(r.getStatusCode()).isEqualTo(OK),
-                    r -> assertThat(r.getBody())
-                        .singleElement()
-                        .isEqualTo(scenarioExecutionDTOMock)
+                    r -> assertThat(r.includeActions()).isFalse(),
+                    r -> assertThat(r.includeMessages()).isTrue(),
+                    r -> assertThat(r.includeMessageHeaders()).isTrue(),
+                    r -> assertThat(r.includeParameters()).isTrue()
                 );
-
-            assertThat(scenarioExecution.getScenarioActions()).isEmpty();
-            assertThat(scenarioExecution.getScenarioMessages()).isNotEmpty();
-            assertThat(scenarioExecution.getScenarioParameters()).isNotEmpty();
         }
 
         @Test
         void stripsIncludedMessages() {
-            var response = fixture.getAllScenarioExecutions(criteriaMock, TRUE, FALSE, TRUE, pageableMock);
+            var response = fixture.getAllScenarioExecutions(criteriaMock, TRUE, FALSE, TRUE, TRUE, pageableMock);
+            verifyResponseContainsDtos(response);
 
-            assertThat(response)
+            assertThat(resultDetailsConfigurationArgumentCaptor.getValue())
+                .isNotNull()
                 .satisfies(
-                    r -> assertThat(r.getStatusCode()).isEqualTo(OK),
-                    r -> assertThat(r.getBody())
-                        .singleElement()
-                        .isEqualTo(scenarioExecutionDTOMock)
+                    r -> assertThat(r.includeActions()).isTrue(),
+                    r -> assertThat(r.includeMessages()).isFalse(),
+                    r -> assertThat(r.includeMessageHeaders()).isTrue(),
+                    r -> assertThat(r.includeParameters()).isTrue()
                 );
+        }
 
-            assertThat(scenarioExecution.getScenarioActions()).isNotEmpty();
-            assertThat(scenarioExecution.getScenarioMessages()).isEmpty();
-            assertThat(scenarioExecution.getScenarioParameters()).isNotEmpty();
+        @Test
+        void stripsIncludedMessageHeaderss() {
+            var response = fixture.getAllScenarioExecutions(criteriaMock, TRUE, TRUE, FALSE, TRUE, pageableMock);
+            verifyResponseContainsDtos(response);
+
+            assertThat(resultDetailsConfigurationArgumentCaptor.getValue())
+                .isNotNull()
+                .satisfies(
+                    r -> assertThat(r.includeActions()).isTrue(),
+                    r -> assertThat(r.includeMessages()).isTrue(),
+                    r -> assertThat(r.includeMessageHeaders()).isFalse(),
+                    r -> assertThat(r.includeParameters()).isTrue()
+                );
         }
 
         @Test
         void stripsIncludedParameters() {
-            var response = fixture.getAllScenarioExecutions(criteriaMock, TRUE, TRUE, FALSE, pageableMock);
+            var response = fixture.getAllScenarioExecutions(criteriaMock, TRUE, TRUE, TRUE, FALSE, pageableMock);
+            verifyResponseContainsDtos(response);
 
+            assertThat(resultDetailsConfigurationArgumentCaptor.getValue())
+                .isNotNull()
+                .satisfies(
+                    r -> assertThat(r.includeActions()).isTrue(),
+                    r -> assertThat(r.includeMessages()).isTrue(),
+                    r -> assertThat(r.includeMessageHeaders()).isTrue(),
+                    r -> assertThat(r.includeParameters()).isFalse()
+                );
+        }
+
+        private void verifyResponseContainsDtos(ResponseEntity<List<ScenarioExecutionDTO>> response) {
             assertThat(response)
                 .satisfies(
                     r -> assertThat(r.getStatusCode()).isEqualTo(OK),
@@ -139,10 +169,6 @@ class ScenarioExecutionResourceTest {
                         .singleElement()
                         .isEqualTo(scenarioExecutionDTOMock)
                 );
-
-            assertThat(scenarioExecution.getScenarioActions()).isNotEmpty();
-            assertThat(scenarioExecution.getScenarioMessages()).isNotEmpty();
-            assertThat(scenarioExecution.getScenarioParameters()).isEmpty();
         }
     }
 }
