@@ -99,6 +99,7 @@ public class MessageHeaderResourceIT {
             message = TestUtil.findAll(entityManager, Message.class).get(0);
         }
         messageHeader.setMessage(message);
+        message.addHeader(messageHeader);
         return messageHeader;
     }
 

@@ -52,7 +52,9 @@ import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
 import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
 import static org.citrusframework.simulator.web.rest.MessageResourceIT.DEFAULT_PAYLOAD;
 import static org.citrusframework.simulator.web.rest.MessageResourceIT.UPDATED_PAYLOAD;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -128,36 +130,43 @@ public class ScenarioExecutionResourceIT {
 
     @BeforeEach
     void beforeEachSetup() {
+        var scenarioParameter = ScenarioParameterResourceIT.createEntity(entityManager);
         var testResult = TestResultResourceIT.createEntity(entityManager);
+        var scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
+        var message = MessageHeaderResourceIT.createEntity(entityManager).getMessage();
 
         scenarioExecution = createEntity(entityManager)
-            .withTestResult(testResult);
+            .withTestResult(testResult)
+            .addScenarioParameter(scenarioParameter)
+            .addScenarioAction(scenarioAction)
+            .addScenarioMessage(message);
+
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
     }
 
     @Test
     @Transactional
-    void getAllScenarioExecutions() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
+    void getAllScenarioExecutions_withAllDetails() throws Exception {
         // Get all the scenarioExecutionList
         mockMvc
-            .perform(get(ENTITY_API_URL + "?sort=executionId,desc"))
+            .perform(get(ENTITY_API_URL + "?sort=executionId,desc&includeActions=true&includeMessages=true&includeMessageHeaders=true&includeParameters=true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].executionId").value(hasItem(scenarioExecution.getExecutionId().intValue())))
-            .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
-            .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
-            .andExpect(jsonPath("$.[*].scenarioName").value(hasItem(DEFAULT_SCENARIO_NAME)))
-            .andExpect(jsonPath("$.[*].testResult.status").value(SUCCESS.toString()));
+            .andExpect(jsonPath("$").value(hasSize(1)))
+            .andExpect(jsonPath("$.[0].executionId").value(equalTo(scenarioExecution.getExecutionId().intValue())))
+            .andExpect(jsonPath("$.[0].startDate").value(equalTo(DEFAULT_START_DATE.toString())))
+            .andExpect(jsonPath("$.[0].endDate").value(equalTo(DEFAULT_END_DATE.toString())))
+            .andExpect(jsonPath("$.[0].scenarioName").value(equalTo(DEFAULT_SCENARIO_NAME)))
+            .andExpect(jsonPath("$.[0].testResult.status").value(equalTo(SUCCESS.toString())))
+            .andExpect(jsonPath("$.[0].scenarioParameters").value(hasSize(1)))
+            .andExpect(jsonPath("$.[0].scenarioActions").value(hasSize(1)))
+            .andExpect(jsonPath("$.[0].scenarioMessages").value(hasSize(1)))
+            .andExpect(jsonPath("$.[0].scenarioMessages[0].headers").value(hasSize(1)));
     }
 
     @Test
     @Transactional
     void getScenarioExecution() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get the scenarioExecution
         mockMvc
             .perform(get(ENTITY_API_URL_ID, scenarioExecution.getExecutionId()))
@@ -173,9 +182,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getScenarioExecutionsByIdFiltering() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         Long executionId = scenarioExecution.getExecutionId();
 
         defaultScenarioExecutionShouldBeFound("executionId.equals=" + executionId);
@@ -191,9 +197,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStartDateIsEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where startDate equals to DEFAULT_START_DATE
         defaultScenarioExecutionShouldBeFound("startDate.equals=" + DEFAULT_START_DATE);
 
@@ -204,9 +207,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStartDateIsInShouldWork() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where startDate in DEFAULT_START_DATE or UPDATED_START_DATE
         defaultScenarioExecutionShouldBeFound("startDate.in=" + DEFAULT_START_DATE + "," + UPDATED_START_DATE);
 
@@ -217,9 +217,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStartDateIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where startDate is not null
         defaultScenarioExecutionShouldBeFound("startDate.specified=true");
 
@@ -230,9 +227,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllTestParametersByCreatedDateIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the testParameterList where startDate is greater than or equal to DEFAULT_CREATED_DATE
         defaultScenarioExecutionShouldBeFound("startDate.greaterThanOrEqual=" + DEFAULT_START_DATE);
 
@@ -243,9 +237,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllTestParametersByCreatedDateIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the testParameterList where startDate is less than or equal to DEFAULT_CREATED_DATE
         defaultScenarioExecutionShouldBeFound("startDate.lessThanOrEqual=" + DEFAULT_START_DATE);
 
@@ -256,9 +247,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByEndDateIsEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where endDate equals to DEFAULT_END_DATE
         defaultScenarioExecutionShouldBeFound("endDate.equals=" + DEFAULT_END_DATE);
 
@@ -269,9 +257,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByEndDateIsInShouldWork() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where endDate in DEFAULT_END_DATE or UPDATED_END_DATE
         defaultScenarioExecutionShouldBeFound("endDate.in=" + DEFAULT_END_DATE + "," + UPDATED_END_DATE);
 
@@ -282,9 +267,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByEndDateIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where endDate is not null
         defaultScenarioExecutionShouldBeFound("endDate.specified=true");
 
@@ -295,9 +277,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllTestParametersByLastModifiedDateIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the testParameterList where endDate is greater than or equal to DEFAULT_LAST_MODIFIED_DATE
         defaultScenarioExecutionShouldBeFound("endDate.greaterThanOrEqual=" + DEFAULT_END_DATE);
 
@@ -308,9 +287,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllTestParametersByLastModifiedDateIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the testParameterList where endDate is less than or equal to DEFAULT_LAST_MODIFIED_DATE
         defaultScenarioExecutionShouldBeFound("endDate.lessThanOrEqual=" + DEFAULT_END_DATE);
 
@@ -321,9 +297,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioNameIsEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where scenarioName equals to DEFAULT_SCENARIO_NAME
         defaultScenarioExecutionShouldBeFound("scenarioName.equals=" + DEFAULT_SCENARIO_NAME);
 
@@ -334,9 +307,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioNameIsInShouldWork() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where scenarioName in DEFAULT_SCENARIO_NAME or UPDATED_SCENARIO_NAME
         defaultScenarioExecutionShouldBeFound("scenarioName.in=" + DEFAULT_SCENARIO_NAME + "," + UPDATED_SCENARIO_NAME);
 
@@ -347,9 +317,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioNameIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where scenarioName is not null
         defaultScenarioExecutionShouldBeFound("scenarioName.specified=true");
 
@@ -360,9 +327,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioNameContainsSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where scenarioName contains DEFAULT_SCENARIO_NAME
         defaultScenarioExecutionShouldBeFound("scenarioName.contains=" + DEFAULT_SCENARIO_NAME);
 
@@ -373,9 +337,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioNameNotContainsSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where scenarioName does not contain DEFAULT_SCENARIO_NAME
         defaultScenarioExecutionShouldNotBeFound("scenarioName.doesNotContain=" + DEFAULT_SCENARIO_NAME);
 
@@ -386,9 +347,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStatusIsEqualToSomething() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where status equals to DEFAULT_STATUS
         defaultScenarioExecutionShouldBeFound("status.equals=" + DEFAULT_STATUS.getId());
 
@@ -399,9 +357,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStatusIsInShouldWork() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where status in DEFAULT_STATUS or UPDATED_STATUS
         defaultScenarioExecutionShouldBeFound("status.in=" + DEFAULT_STATUS.getId() + "," + UPDATED_STATUS.getId());
 
@@ -412,9 +367,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByStatusIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where status is not null
         defaultScenarioExecutionShouldBeFound("status.specified=true");
 
@@ -425,18 +377,8 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioActionIsEqualToSomething() throws Exception {
-        ScenarioAction scenarioAction;
-        if (TestUtil.findAll(entityManager, ScenarioAction.class).isEmpty()) {
-            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-            scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
-        } else {
-            scenarioAction = TestUtil.findAll(entityManager, ScenarioAction.class).get(0);
-        }
-        entityManager.persist(scenarioAction);
-        entityManager.flush();
-        scenarioExecution.addScenarioAction(scenarioAction);
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-        Long scenarioActionId = scenarioAction.getActionId();
+        Long scenarioActionId = TestUtil.findAll(entityManager, ScenarioAction.class).get(0).getActionId();
+
         // Get all the scenarioExecutionList where scenarioAction equals to scenarioActionId
         defaultScenarioExecutionShouldBeFound("scenarioActionsId.equals=" + scenarioActionId);
 
@@ -447,18 +389,8 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioMessagesIsEqualToSomething() throws Exception {
-        Message scenarioMessages;
-        if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
-            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-            scenarioMessages = MessageResourceIT.createEntity(entityManager);
-        } else {
-            scenarioMessages = TestUtil.findAll(entityManager, Message.class).get(0);
-        }
-        entityManager.persist(scenarioMessages);
-        entityManager.flush();
-        scenarioExecution.addScenarioMessage(scenarioMessages);
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-        Long scenarioMessagesId = scenarioMessages.getMessageId();
+        Long scenarioMessagesId = TestUtil.findAll(entityManager, Message.class).get(0).getMessageId();
+
         // Get all the scenarioExecutionList where scenarioMessages equals to scenarioMessagesId
         defaultScenarioExecutionShouldBeFound("scenarioMessagesId.equals=" + scenarioMessagesId);
 
@@ -469,18 +401,6 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioMessagesPayloadIsEqualToSomething() throws Exception {
-        Message scenarioMessages;
-        if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
-            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-            scenarioMessages = MessageResourceIT.createEntity(entityManager);
-        } else {
-            scenarioMessages = TestUtil.findAll(entityManager, Message.class).get(0);
-        }
-        entityManager.persist(scenarioMessages);
-        entityManager.flush();
-        scenarioExecution.addScenarioMessage(scenarioMessages);
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-
         // Get all the scenarioExecutionList where payload equals the default payload
         defaultScenarioExecutionShouldBeFound("scenarioMessagesPayload.equals=" + DEFAULT_PAYLOAD);
 
@@ -491,18 +411,8 @@ public class ScenarioExecutionResourceIT {
     @Test
     @Transactional
     void getAllScenarioExecutionsByScenarioParametersIsEqualToSomething() throws Exception {
-        ScenarioParameter scenarioParameters;
-        if (TestUtil.findAll(entityManager, ScenarioParameter.class).isEmpty()) {
-            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-            scenarioParameters = ScenarioParameterResourceIT.createEntity(entityManager);
-        } else {
-            scenarioParameters = TestUtil.findAll(entityManager, ScenarioParameter.class).get(0);
-        }
-        entityManager.persist(scenarioParameters);
-        entityManager.flush();
-        scenarioExecution.addScenarioParameter(scenarioParameters);
-        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
-        Long scenarioParametersId = scenarioParameters.getParameterId();
+        Long scenarioParametersId = TestUtil.findAll(entityManager, ScenarioParameter.class).get(0).getParameterId();
+
         // Get all the scenarioExecutionList where scenarioParameters equals to scenarioParametersId
         defaultScenarioExecutionShouldBeFound("scenarioParametersId.equals=" + scenarioParametersId);
 
@@ -570,6 +480,7 @@ public class ScenarioExecutionResourceIT {
         private MockMvc mockMvc;
 
         @Test
+        @Transactional
         void shouldInvokeScenario() throws Exception {
             String mockEndpointResult = mockMvc
                 .perform(get("/services/rest/api/v1/ZmNrqCkoGQ"))
@@ -581,7 +492,7 @@ public class ScenarioExecutionResourceIT {
             assertThat(mockEndpointResult).contains("E5a084sOZw7");
 
             String scenarioExecutionsResult = mockMvc
-                .perform(get("/api/scenario-executions?includeActions=true&includeMessages=true&includeParameters=true"))
+                .perform(get("/api/scenario-executions?includeActions=true&includeMessages=true&scenarioMessagesPayload.equals=E5a084sOZw7"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -606,6 +517,7 @@ public class ScenarioExecutionResourceIT {
 
         @Scenario("DEFAULT_SCENARIO")
         public static class HelloScenario extends AbstractSimulatorScenario {
+
             @Override
             public void run(ScenarioRunner scenario) {
                 scenario.$(scenario.http()

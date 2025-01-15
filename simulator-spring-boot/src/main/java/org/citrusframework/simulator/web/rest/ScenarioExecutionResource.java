@@ -18,6 +18,7 @@ package org.citrusframework.simulator.web.rest;
 
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.service.ScenarioExecutionQueryService;
+import org.citrusframework.simulator.service.ScenarioExecutionQueryService.ResultDetailsConfiguration;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.web.rest.dto.ScenarioExecutionDTO;
@@ -40,7 +41,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Boolean.FALSE;
 import static org.citrusframework.simulator.web.util.PaginationUtil.generatePaginationHttpHeaders;
 
 /**
@@ -77,21 +77,27 @@ public class ScenarioExecutionResource {
     @GetMapping("/scenario-executions")
     public ResponseEntity<List<ScenarioExecutionDTO>> getAllScenarioExecutions(
         ScenarioExecutionCriteria criteria,
-        @RequestParam(name = "includeActions", required = false, defaultValue = "false") Boolean includeActions,
-        @RequestParam(name = "includeMessages", required = false, defaultValue = "false") Boolean includeMessages,
-        @RequestParam(name = "includeParameters", required = false, defaultValue = "false") Boolean includeParameters,
+        @RequestParam(name = "includeActions", required = false, defaultValue = "false") boolean includeActions,
+        @RequestParam(name = "includeMessages", required = false, defaultValue = "false") boolean includeMessages,
+        @RequestParam(name = "includeMessageHeaders", required = false, defaultValue = "false") boolean includeMessageHeaders,
+        @RequestParam(name = "includeParameters", required = false, defaultValue = "false") boolean includeParameters,
         @ParameterObject Pageable pageable
     ) {
         logger.debug("REST request to get ScenarioExecutions by criteria: {}", criteria);
 
-        Page<ScenarioExecution> page = scenarioExecutionQueryService.findByCriteria(criteria, pageable);
+        Page<ScenarioExecution> page = scenarioExecutionQueryService.findByCriteria(
+            criteria,
+            pageable,
+            new ResultDetailsConfiguration(includeActions, includeMessages, includeMessageHeaders, includeParameters)
+        );
         HttpHeaders headers = generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok()
             .headers(headers)
-            .body(page.getContent().stream()
-                .map(scenarioExecution -> stripPageContents(scenarioExecution, includeActions, includeMessages, includeParameters))
-                .map(scenarioExecutionMapper::toDto)
-                .toList());
+            .body(
+                page.getContent().stream()
+                    .map(scenarioExecutionMapper::toDto)
+                    .toList()
+            );
     }
 
     /**
@@ -117,18 +123,5 @@ public class ScenarioExecutionResource {
         logger.debug("REST request to get ScenarioExecution : {}", id);
         Optional<ScenarioExecution> scenarioExecution = scenarioExecutionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(scenarioExecution.map(scenarioExecutionMapper::toDto));
-    }
-
-    private ScenarioExecution stripPageContents(ScenarioExecution scenarioExecution, Boolean includeActions, Boolean includeMessages, Boolean includeParameters) {
-        if (FALSE.equals(includeActions)) {
-            scenarioExecution.getScenarioActions().clear();
-        }
-        if (FALSE.equals(includeMessages)) {
-            scenarioExecution.getScenarioMessages().clear();
-        }
-        if (FALSE.equals(includeParameters)) {
-            scenarioExecution.getScenarioParameters().clear();
-        }
-        return scenarioExecution;
     }
 }

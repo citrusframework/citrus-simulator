@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
@@ -59,8 +60,8 @@ import static java.util.regex.Pattern.compile;
 import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.MessageHeaderFilter.fromFilterPattern;
 import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.Operator.parseOperator;
+import static org.citrusframework.simulator.service.ScenarioExecutionQueryService.ResultDetailsConfiguration.withAllDetails;
 import static org.citrusframework.util.StringUtils.isEmpty;
-import static org.springframework.data.domain.Pageable.unpaged;
 
 /**
  * Service for executing complex queries for {@link ScenarioExecution} entities in the database.
@@ -84,8 +85,49 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
         this.scenarioExecutionRepository = scenarioExecutionRepository;
     }
 
+    @VisibleForTesting
     static boolean isValidFilterPattern(String filterPattern) {
         return HEADER_FILTER_PATTERN.matcher(filterPattern).matches();
+    }
+
+    private static Specification<ScenarioExecution> withResultDetailsConfiguration(ResultDetailsConfiguration config) {
+        return (root, query, cb) -> {
+            assert query != null;
+
+            // Prevent duplicate joins in count queries
+            if (query.getResultType() == Long.class || query.getResultType() == long.class) {
+                return null;
+            }
+
+            root.fetch(ScenarioExecution_.testResult, JoinType.LEFT);
+
+            if (config.includeParameters()) {
+                root.fetch(ScenarioExecution_.scenarioParameters, JoinType.LEFT);
+            }
+
+            if (config.includeActions()) {
+                root.fetch(ScenarioExecution_.scenarioActions, JoinType.LEFT);
+            }
+
+            if (config.includeMessages() || config.includeMessageHeaders()) {
+                var messagesJoin = root.fetch(ScenarioExecution_.scenarioMessages, JoinType.LEFT);
+
+                if (config.includeMessageHeaders()) {
+                    messagesJoin.fetch(Message_.headers, JoinType.LEFT);
+                }
+            }
+
+            // Return no additional where clause
+            return null;
+        };
+    }
+
+    private static Specification<ScenarioExecution> withIds(List<Long> executionIds) {
+        return (root, query, builder) -> {
+            var in = builder.in(root.get(ScenarioExecution_.executionId));
+            executionIds.forEach(in::value);
+            return in;
+        };
     }
 
     /**
@@ -110,6 +152,19 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
      */
     @Transactional(readOnly = true)
     public Page<ScenarioExecution> findByCriteria(ScenarioExecutionCriteria criteria, Pageable page) {
+        return findByCriteria(criteria, page, withAllDetails());
+    }
+
+    /**
+     * Return a {@link Page} of {@link ScenarioExecution} which matches the criteria from the database.
+     *
+     * @param criteria                   The object which holds all the filters, which the entities should match.
+     * @param page                       The page, which should be returned.
+     * @param resultDetailsConfiguration Fetch-configuration of relationships
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<ScenarioExecution> findByCriteria(ScenarioExecutionCriteria criteria, Pageable page, ResultDetailsConfiguration resultDetailsConfiguration) {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
 
         var specification = createSpecification(criteria);
@@ -122,11 +177,20 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
         )
             .getResultList();
 
-        var scenarioExecutions = scenarioExecutionRepository.findAllWhereExecutionIdIn(scenarioExecutionIds, unpaged(page.getSort()));
+        if (scenarioExecutionIds.isEmpty()) {
+            return Page.empty(page);
+        }
+
+        var fetchSpec = withIds(scenarioExecutionIds)
+            .and(withResultDetailsConfiguration(resultDetailsConfiguration));
+
+        var scenarioExecutions = scenarioExecutionRepository.findAll(fetchSpec, page.getSort());
+
         return new PageImpl<>(
-            scenarioExecutions.getContent(),
+            scenarioExecutions,
             page,
-            scenarioExecutionRepository.count(specification));
+            scenarioExecutionRepository.count(specification)
+        );
     }
 
     /**
@@ -341,6 +405,18 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
 
         public InvalidPatternException(String filterPattern) {
             super(format("The header filter pattern '%s' does not comply with the regex '%s'!", filterPattern, HEADER_FILTER_PATTERN.pattern()));
+        }
+    }
+
+    public record ResultDetailsConfiguration(
+        boolean includeActions,
+        boolean includeMessages,
+        boolean includeMessageHeaders,
+        boolean includeParameters
+    ) {
+
+        static ResultDetailsConfiguration withAllDetails() {
+            return new ResultDetailsConfiguration(true, true, true, true);
         }
     }
 }
