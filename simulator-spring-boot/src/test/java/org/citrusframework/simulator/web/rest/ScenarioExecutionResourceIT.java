@@ -400,6 +400,29 @@ public class ScenarioExecutionResourceIT {
 
     @Test
     @Transactional
+    void getAllScenarioExecutionsByScenarioMessageDirectionIsEqualToSomething() throws Exception {
+        Message scenarioMessages;
+        if (TestUtil.findAll(entityManager, Message.class).isEmpty()) {
+            scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+            scenarioMessages = MessageResourceIT.createEntity(entityManager);
+        } else {
+            scenarioMessages = TestUtil.findAll(entityManager, Message.class).get(0);
+        }
+        scenarioMessages.setDirection(Message.Direction.INBOUND);
+        entityManager.persist(scenarioMessages);
+        entityManager.flush();
+        scenarioExecution.addScenarioMessage(scenarioMessages);
+        scenarioExecutionRepository.saveAndFlush(scenarioExecution);
+        int scenarioMessageDirection = scenarioMessages.getDirection().getId();
+        // Get all the scenarioExecutionList where scenarioMessagesDirection equals to scenarioMessagesDirection
+        defaultScenarioExecutionShouldBeFound("scenarioMessagesDirection.equals=" + scenarioMessageDirection);
+
+        // Get all the scenarioExecutionList where scenarioMessagesDirection equals to (scenarioMessagesDirection + 1)
+        defaultScenarioExecutionShouldNotBeFound("scenarioMessagesDirection.equals=" + (Message.Direction.UNKNOWN.getId()));
+    }
+
+    @Test
+    @Transactional
     void getAllScenarioExecutionsByScenarioMessagesPayloadIsEqualToSomething() throws Exception {
         // Get all the scenarioExecutionList where payload equals the default payload
         defaultScenarioExecutionShouldBeFound("scenarioMessagesPayload.equals=" + DEFAULT_PAYLOAD);

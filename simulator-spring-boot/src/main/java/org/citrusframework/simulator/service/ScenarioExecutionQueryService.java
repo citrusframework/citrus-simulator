@@ -258,6 +258,15 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
                         )
                     );
             }
+            if (nonNull(criteria.getScenarioMessagesDirection())) {
+                specification =
+                    specification.and(
+                        buildSpecification(
+                            criteria.getScenarioMessagesDirection(),
+                            root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.direction)
+                        )
+                    );
+            }
             if (nonNull(criteria.getScenarioParametersId())) {
                 specification =
                     specification.and(
