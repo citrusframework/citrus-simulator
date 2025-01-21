@@ -66,6 +66,8 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
 
     private @Nullable LongFilter scenarioMessagesId;
 
+    private @Nullable IntegerFilter scenarioMessagesDirection;
+
     private @Nullable LongFilter scenarioParametersId;
 
     private @Nullable String headers;
@@ -85,6 +87,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
         this.status = other.status == null ? null : other.status.copy();
         this.scenarioActionsId = other.scenarioActionsId == null ? null : other.scenarioActionsId.copy();
         this.scenarioMessagesId = other.scenarioMessagesId == null ? null : other.scenarioMessagesId.copy();
+        this.scenarioMessagesDirection = other.scenarioMessagesDirection == null ? null : other.scenarioMessagesDirection.copy();
         this.scenarioParametersId = other.scenarioParametersId == null ? null : other.scenarioParametersId.copy();
         this.headers = other.headers;
         this.scenarioMessagesPayload = other.scenarioMessagesPayload;
@@ -110,6 +113,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(status, scenarioExecutionCriteria.status)
             .append(scenarioActionsId, scenarioExecutionCriteria.scenarioActionsId)
             .append(scenarioMessagesId, scenarioExecutionCriteria.scenarioMessagesId)
+            .append(scenarioMessagesDirection, scenarioExecutionCriteria.scenarioMessagesDirection)
             .append(scenarioParametersId, scenarioExecutionCriteria.scenarioParametersId)
             .append(headers, scenarioExecutionCriteria.headers)
             .append(scenarioMessagesPayload, scenarioExecutionCriteria.scenarioMessagesPayload)
@@ -127,6 +131,7 @@ public class ScenarioExecutionCriteria implements Serializable, Criteria {
             .append(status)
             .append(scenarioActionsId)
             .append(scenarioMessagesId)
+            .append(scenarioMessagesDirection)
             .append(scenarioParametersId)
             .append(headers)
             .append(scenarioMessagesPayload)
