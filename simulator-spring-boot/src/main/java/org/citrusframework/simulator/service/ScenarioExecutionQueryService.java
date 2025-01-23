@@ -20,6 +20,7 @@ import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.SetJoin;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
 import org.citrusframework.simulator.service.criteria.ScenarioExecutionCriteria;
 import org.citrusframework.simulator.service.filter.Filter;
 import org.citrusframework.simulator.service.filter.LongFilter;
+import org.citrusframework.simulator.service.filter.RangeFilter;
 import org.citrusframework.simulator.service.filter.StringFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,6 +53,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import static java.lang.Boolean.TRUE;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
@@ -214,85 +217,130 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
      */
     protected Specification<ScenarioExecution> createSpecification(ScenarioExecutionCriteria criteria) {
         Specification<ScenarioExecution> specification = Specification.where(null);
-        if (nonNull(criteria)) {
-            // This has to be called first, because the distinct method returns null
-            if (nonNull(criteria.getDistinct())) {
-                specification = specification.and(distinct(criteria.getDistinct()));
-            }
-            if (nonNull(criteria.getExecutionId())) {
-                specification = specification.and(buildRangeSpecification(criteria.getExecutionId(), ScenarioExecution_.executionId));
-            }
-            if (nonNull(criteria.getStartDate())) {
-                specification = specification.and(buildRangeSpecification(criteria.getStartDate(), ScenarioExecution_.startDate));
-            }
-            if (nonNull(criteria.getEndDate())) {
-                specification = specification.and(buildRangeSpecification(criteria.getEndDate(), ScenarioExecution_.endDate));
-            }
-            if (nonNull(criteria.getScenarioName())) {
-                specification = specification.and(buildStringSpecification(criteria.getScenarioName(), ScenarioExecution_.scenarioName));
-            }
-            if (criteria.getStatus() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getStatus(),
-                            root -> root.join(ScenarioExecution_.testResult, JoinType.LEFT).get(TestResult_.status)
-                        )
+        if (isNull(criteria)) {
+            return specification;
+        }
+
+        // Apply distinct filter first
+        if (nonNull(criteria.getDistinct())) {
+            specification = specification.and(distinct(criteria.getDistinct()));
+        }
+
+        // Add basic range and string filters
+        if (nonNull(criteria.getExecutionId())) {
+            specification = specification.and(buildRangeSpecification(criteria.getExecutionId(), ScenarioExecution_.executionId));
+        }
+
+        if (nonNull(criteria.getStartDate())) {
+            specification = specification.and(buildRangeSpecification(criteria.getStartDate(), ScenarioExecution_.startDate));
+        }
+
+        if (nonNull(criteria.getEndDate())) {
+            specification = specification.and(buildRangeSpecification(criteria.getEndDate(), ScenarioExecution_.endDate));
+        }
+
+        if (nonNull(criteria.getScenarioName())) {
+            specification = specification.and(buildStringSpecification(criteria.getScenarioName(), ScenarioExecution_.scenarioName));
+        }
+
+        // Join testResult for status filter
+        if (nonNull(criteria.getStatus())) {
+            specification = specification.and(
+                buildSpecification(criteria.getStatus(), root -> root.join(ScenarioExecution_.testResult, JoinType.LEFT).get(TestResult_.status))
+            );
+        }
+
+        // Grouped join for scenarioMessages-related filters
+        if (nonNull(criteria.getScenarioMessagesId())
+            || nonNull(criteria.getScenarioMessagesDirection())
+            || nonNull(criteria.getScenarioMessagesPayload())) {
+
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                var messageJoin = root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT);
+                Predicate predicate = criteriaBuilder.conjunction();
+
+                if (nonNull(criteria.getScenarioMessagesId())) {
+                    predicate = criteriaBuilder.and(
+                        predicate, buildSpecification(criteria.getScenarioMessagesId(), messageJoin.get(Message_.messageId)).toPredicate(root, query, criteriaBuilder)
                     );
-            }
-            if (nonNull(criteria.getScenarioActionsId())) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getScenarioActionsId(),
-                            root -> root.join(ScenarioExecution_.scenarioActions, JoinType.LEFT).get(ScenarioAction_.actionId)
-                        )
-                    );
-            }
-            if (nonNull(criteria.getScenarioMessagesId())) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getScenarioMessagesId(),
-                            root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.messageId)
-                        )
-                    );
-            }
-            if (nonNull(criteria.getScenarioMessagesDirection())) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getScenarioMessagesDirection(),
-                            root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.direction)
-                        )
-                    );
-            }
-            if (nonNull(criteria.getScenarioParametersId())) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getScenarioParametersId(),
-                            root -> root.join(ScenarioExecution_.scenarioParameters, JoinType.LEFT).get(ScenarioParameter_.parameterId)
-                        )
-                    );
-            }
-            if (nonNull(criteria.getHeaders())) {
-                var messageHeaderSpecifications = createMessageHeaderSpecifications(criteria.getHeaders());
-                for (var messageHeaderSpecification : messageHeaderSpecifications) {
-                    specification = specification.and(messageHeaderSpecification);
                 }
-            }
-            if (nonNull(criteria.getScenarioMessagesPayload())) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getScenarioMessagesPayload(),
-                            root -> root.join(ScenarioExecution_.scenarioMessages, JoinType.LEFT).get(Message_.payload)
-                        )
+
+                if (nonNull(criteria.getScenarioMessagesDirection())) {
+                    predicate = criteriaBuilder.and(
+                        predicate, buildSpecification(criteria.getScenarioMessagesDirection(), messageJoin.get(Message_.direction)).toPredicate(root, query, criteriaBuilder)
                     );
+                }
+
+                if (nonNull(criteria.getScenarioMessagesPayload())) {
+                    predicate = criteriaBuilder.and(
+                        predicate, buildSpecification(criteria.getScenarioMessagesPayload(), messageJoin.get(Message_.payload)).toPredicate(root, query, criteriaBuilder)
+                    );
+                }
+
+                return predicate;
+            });
+        }
+
+        // Single join for scenarioActions
+        if (nonNull(criteria.getScenarioActionsId())) {
+            specification = specification.and(
+                buildSpecification(criteria.getScenarioActionsId(), root -> root.join(ScenarioExecution_.scenarioActions, JoinType.LEFT).get(ScenarioAction_.actionId))
+            );
+        }
+
+        // Single join for scenarioParameters
+        if (nonNull(criteria.getScenarioParametersId())) {
+            specification = specification.and(
+                buildSpecification(criteria.getScenarioParametersId(), root -> root.join(ScenarioExecution_.scenarioParameters, JoinType.LEFT).get(ScenarioParameter_.parameterId))
+            );
+        }
+
+        // Message headers filter
+        if (nonNull(criteria.getHeaders())) {
+            var messageHeaderSpecifications = createMessageHeaderSpecifications(criteria.getHeaders());
+            for (var messageHeaderSpecification : messageHeaderSpecifications) {
+                specification = specification.and(messageHeaderSpecification);
             }
         }
+
         return specification;
+    }
+
+    private <X> Specification<ScenarioExecution> buildSpecification(@Nonnull Filter<X> filter, Path<X> path) {
+        return (root, query, criteriaBuilder) -> {
+            if (filter.getEquals() != null) {
+                return criteriaBuilder.equal(path, filter.getEquals());
+            } else if (filter.getNotEquals() != null) {
+                return criteriaBuilder.notEqual(path, filter.getNotEquals());
+            } else if (filter.getIn() != null) {
+                return path.in(filter.getIn());
+            } else if (filter.getNotIn() != null) {
+                return criteriaBuilder.not(path.in(filter.getNotIn()));
+            } else if (filter.getSpecified() != null) {
+                return TRUE.equals(filter.getSpecified()) ? criteriaBuilder.isNotNull(path) : criteriaBuilder.isNull(path);
+            } else if (filter instanceof StringFilter stringFilter) {
+                if (nonNull(stringFilter.getEqualsIgnoreCase())){
+                    return criteriaBuilder.equal(criteriaBuilder.upper(path.as(String.class)), stringFilter.getEqualsIgnoreCase().toUpperCase());
+                } else if (nonNull(stringFilter.getContains())) {
+                    return criteriaBuilder.like(criteriaBuilder.upper(path.as(String.class)), wrapLikeQuery(stringFilter.getContains().toUpperCase()));
+                } else if (nonNull(stringFilter.getDoesNotContain())) {
+                    return criteriaBuilder.like(criteriaBuilder.upper(path.as(String.class)), wrapLikeQuery(stringFilter.getDoesNotContain().toUpperCase()));
+                }
+            } else if (filter instanceof RangeFilter rangeFilter) {
+                var comparableExpression = path.as(Comparable.class);
+                if (nonNull(rangeFilter.getGreaterThan())) {
+                    return criteriaBuilder.greaterThan(comparableExpression, rangeFilter.getGreaterThan());
+                } else if (nonNull(rangeFilter.getGreaterThanOrEqual())) {
+                    return criteriaBuilder.greaterThanOrEqualTo(comparableExpression, rangeFilter.getGreaterThanOrEqual());
+                } else if (nonNull(rangeFilter.getLessThan())) {
+                    return criteriaBuilder.lessThan(comparableExpression, rangeFilter.getLessThan());
+                } else if (nonNull(rangeFilter.getLessThanOrEqual())) {
+                    return criteriaBuilder.lessThanOrEqualTo(comparableExpression, rangeFilter.getLessThanOrEqual());
+                }
+            }
+
+            return null;
+        };
     }
 
     private List<Specification<ScenarioExecution>> createMessageHeaderSpecifications(String headers) {
