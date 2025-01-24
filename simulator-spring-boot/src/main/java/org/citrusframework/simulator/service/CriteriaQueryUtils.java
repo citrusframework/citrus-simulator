@@ -16,20 +16,22 @@
 
 package org.citrusframework.simulator.service;
 
-import static java.util.Objects.nonNull;
-import static org.springframework.data.domain.Pageable.unpaged;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.SingularAttribute;
-import java.util.ArrayList;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.nonNull;
+import static org.springframework.data.domain.Pageable.unpaged;
 
 final class CriteriaQueryUtils {
 
@@ -57,16 +59,16 @@ final class CriteriaQueryUtils {
      *
      * @see <a href="https://github.com/citrusframework/citrus-simulator/issues/255">problem with in-memory pagination when having high volume of data</a>
      */
-    static <R> TypedQuery<Long> newSelectIdBySpecificationQuery(Class<R> entityClass, SingularAttribute<R, Long> idAttribute, Specification<R> specification, Pageable page, EntityManager entityManager) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    static <E> List<Long> selectAllIds(Class<E> entityClass, SingularAttribute<E, Long> idAttribute, Specification<E> specification, Pageable page, EntityManager entityManager) {
+        var criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<R> root = criteriaQuery.from(entityClass);
+        Root<E> root = criteriaQuery.from(entityClass);
 
-        criteriaQuery = selectIdField(idAttribute, criteriaQuery, root);
+        criteriaQuery = selectIdField(idAttribute, root, criteriaQuery);
 
         criteriaQuery = whereSpecificationApplies(specification, root, criteriaQuery, criteriaBuilder);
 
-        criteriaQuery = orderByPageSort(page, root, criteriaBuilder, criteriaQuery);
+        criteriaQuery = orderBy(page.getSort(), root, criteriaQuery, criteriaBuilder);
 
         TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
 
@@ -74,7 +76,24 @@ final class CriteriaQueryUtils {
             query = selectPage(page, query);
         }
 
-        return query;
+        return query.getResultList();
+    }
+
+    /**
+     * Find all entities matching the {@link Specification}.
+     */
+    static <E> List<E> selectAll(Class<E> entityClass, Specification<E> specification, Pageable page, EntityManager entityManager) {
+        var criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+        Root<E> root = criteriaQuery.from(entityClass);
+
+        criteriaQuery = whereSpecificationApplies(specification, root, criteriaQuery, criteriaBuilder);
+
+        criteriaQuery = orderBy(page.getSort(), root, criteriaQuery, criteriaBuilder);
+
+        TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+
+        return query.getResultList();
     }
 
     /**
@@ -82,7 +101,7 @@ final class CriteriaQueryUtils {
      *
      * @return the modified {@link CriteriaQuery<Long>}.
      */
-    private static <R> CriteriaQuery<Long> selectIdField(SingularAttribute<R, Long> idAttribute, CriteriaQuery<Long> criteriaQuery, Root<R> root) {
+    private static <R> CriteriaQuery<Long> selectIdField(SingularAttribute<R, Long> idAttribute, Root<R> root, CriteriaQuery<Long> criteriaQuery) {
         return criteriaQuery.select(root.get(idAttribute));
     }
 
@@ -91,8 +110,8 @@ final class CriteriaQueryUtils {
      *
      * @return the modified {@link CriteriaQuery<Long>}.
      */
-    private static <R> CriteriaQuery<Long> whereSpecificationApplies(Specification<R> specification, Root<R> root, CriteriaQuery<Long> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        Predicate predicate = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
+    private static <E, R> CriteriaQuery<R> whereSpecificationApplies(Specification<E> specification, Root<E> root, CriteriaQuery<R> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+        var predicate = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
         if (nonNull(predicate)) {
             return criteriaQuery.where(predicate);
         }
@@ -104,15 +123,16 @@ final class CriteriaQueryUtils {
      *
      * @return the modified {@link CriteriaQuery<Long>}.
      */
-    private static <R> CriteriaQuery<Long> orderByPageSort(Pageable page, Root<R> root, CriteriaBuilder criteriaBuilder, CriteriaQuery<Long> criteriaQuery) {
+    private static <E,R> CriteriaQuery<E> orderBy(Sort sort, Root<R> root, CriteriaQuery<E> criteriaQuery, CriteriaBuilder criteriaBuilder) {
         var orders = new ArrayList<Order>();
-        for (var sortOrder : page.getSort()) {
+        for (var sortOrder : sort) {
             var path = root.get(sortOrder.getProperty());
             orders.add(sortOrder.isAscending() ? criteriaBuilder.asc(path) : criteriaBuilder.desc(path));
         }
         if (!orders.isEmpty()) {
             return criteriaQuery.orderBy(orders);
         }
+
         return criteriaQuery;
     }
 
@@ -121,7 +141,7 @@ final class CriteriaQueryUtils {
      *
      * @return The same {@link TypedQuery<Long>}.
      */
-    private static TypedQuery<Long> selectPage(Pageable page, TypedQuery<Long> query) {
+    private static <E> TypedQuery<E> selectPage(Pageable page, TypedQuery<E> query) {
         // Calculate the first result index based on the page number and page size
         var pageSize = page.getPageSize();
         var firstResult = page.getPageNumber() * pageSize;
