@@ -16,11 +16,10 @@
 
 package org.citrusframework.simulator.repository;
 
-import java.util.List;
-import java.util.Optional;
 import org.citrusframework.simulator.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +27,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data JPA repository for the {@link Message} entity.
@@ -64,5 +66,5 @@ public interface MessageRepository extends JpaRepository<Message, Long>, JpaSpec
 
     @Query("FROM Message WHERE messageId IN :messageIds")
     @EntityGraph(attributePaths = {"headers", "scenarioExecution", "scenarioExecution.testResult"})
-    Page<Message> findAllWhereMessageIdIn(@Param("messageIds") List<Long> messageIds, Pageable pageable);
+    List<Message> findAllWhereMessageIdIn(@Param("messageIds") List<Long> messageIds, Sort sort);
 }

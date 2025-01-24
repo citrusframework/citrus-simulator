@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.service;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
@@ -31,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
+
+import static java.util.Objects.isNull;
 
 /**
  * Base service for constructing and executing complex queries.
@@ -145,36 +148,35 @@ public abstract class QueryService<ENTITY> {
      * @param metaclassFunction lambda, which based on a Root&lt;ENTITY&gt; returns Expression - basicaly picks a column
      * @return a Specification
      */
-    protected <X extends Comparable<? super X>> Specification<ENTITY> buildSpecification(RangeFilter<X> filter,
-                                                                                         Function<Root<ENTITY>, Expression<X>> metaclassFunction) {
+    protected <X extends Comparable<? super X>> Specification<ENTITY> buildSpecification(
+            @Nullable RangeFilter<X> filter,
+            Function<Root<ENTITY>, Expression<X>> metaclassFunction
+    ) {
+        Specification<ENTITY> result = Specification.where(null);
+        if (isNull(filter)) {
+            return result;
+        }
+
         if (filter.getEquals() != null) {
             return equalsSpecification(metaclassFunction, filter.getEquals());
         } else if (filter.getIn() != null) {
             return valueIn(metaclassFunction, filter.getIn());
-        }
-
-        Specification<ENTITY> result = Specification.where(null);
-        if (filter.getSpecified() != null) {
+        } else if (filter.getSpecified() != null) {
             result = result.and(byFieldSpecified(metaclassFunction, filter.getSpecified()));
-        }
-        if (filter.getNotEquals() != null) {
+        } else if (filter.getNotEquals() != null) {
             result = result.and(notEqualsSpecification(metaclassFunction, filter.getNotEquals()));
-        }
-        if (filter.getNotIn() != null) {
+        } else if (filter.getNotIn() != null) {
             result = result.and(valueNotIn(metaclassFunction, filter.getNotIn()));
-        }
-        if (filter.getGreaterThan() != null) {
+        } else if (filter.getGreaterThan() != null) {
             result = result.and(greaterThan(metaclassFunction, filter.getGreaterThan()));
-        }
-        if (filter.getGreaterThanOrEqual() != null) {
+        } else if (filter.getGreaterThanOrEqual() != null) {
             result = result.and(greaterThanOrEqualTo(metaclassFunction, filter.getGreaterThanOrEqual()));
-        }
-        if (filter.getLessThan() != null) {
+        } else if (filter.getLessThan() != null) {
             result = result.and(lessThan(metaclassFunction, filter.getLessThan()));
-        }
-        if (filter.getLessThanOrEqual() != null) {
+        } else if (filter.getLessThanOrEqual() != null) {
             result = result.and(lessThanOrEqualTo(metaclassFunction, filter.getLessThanOrEqual()));
         }
+
         return result;
     }
 
@@ -533,7 +535,7 @@ public abstract class QueryService<ENTITY> {
      * @param txt a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
-    protected String wrapLikeQuery(String txt) {
+    protected static String wrapLikeQuery(String txt) {
         return "%" + txt.toUpperCase() + '%';
     }
 

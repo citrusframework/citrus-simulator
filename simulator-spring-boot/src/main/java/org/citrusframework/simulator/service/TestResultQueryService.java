@@ -33,8 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
-import static org.springframework.data.domain.Pageable.unpaged;
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.selectAllIds;
 
 /**
  * Service for executing complex queries for {@link TestResult} entities in the database.
@@ -66,17 +65,16 @@ public class TestResultQueryService extends QueryService<TestResult> {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
 
         var specification = createSpecification(criteria);
-        var testResultIds = newSelectIdBySpecificationQuery(
+        var testResultIds = selectAllIds(
             TestResult.class,
             TestResult_.id,
             specification,
             page,
             entityManager
-        )
-            .getResultList();
+        );
 
-        var testResults = testResultRepository.findAllWhereIdIn(testResultIds, unpaged(page.getSort()));
-        return new PageImpl<>(testResults.getContent(), page, testResultRepository.count(specification));
+        var testResults = testResultRepository.findAllWhereIdIn(testResultIds, page.getSort());
+        return new PageImpl<>(testResults, page, testResultRepository.count(specification));
     }
 
     /**

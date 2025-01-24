@@ -34,8 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.citrusframework.simulator.service.CriteriaQueryUtils.newSelectIdBySpecificationQuery;
-import static org.springframework.data.domain.Pageable.unpaged;
+import static org.citrusframework.simulator.service.CriteriaQueryUtils.selectAllIds;
 
 /**
  * Service for executing complex queries for {@link Message} entities in the database.
@@ -67,17 +66,16 @@ public class MessageQueryService extends QueryService<Message> {
         logger.debug("find by criteria : {}, page: {}", criteria, page);
 
         var specification = createSpecification(criteria);
-        var messageIds = newSelectIdBySpecificationQuery(
+        var messageIds = selectAllIds(
             Message.class,
             Message_.messageId,
             specification,
             page,
             entityManager
-        )
-            .getResultList();
+        );
 
-        var messages = messageRepository.findAllWhereMessageIdIn(messageIds, unpaged(page.getSort()));
-        return new PageImpl<>(messages.getContent(), page, messageRepository.count(specification));
+        var messages = messageRepository.findAllWhereMessageIdIn(messageIds, page.getSort());
+        return new PageImpl<>(messages, page, messageRepository.count(specification));
     }
 
     /**

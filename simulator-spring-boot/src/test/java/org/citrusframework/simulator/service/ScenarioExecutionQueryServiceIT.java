@@ -60,6 +60,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.citrusframework.simulator.model.Message.Direction.OUTBOUND;
 import static org.citrusframework.simulator.model.TestResult.Status.FAILURE;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.data.domain.Pageable.unpaged;
@@ -125,7 +126,8 @@ class ScenarioExecutionQueryServiceIT {
                 .addScenarioMessage(
                     MessageResourceIT.createEntityBuilder(entityManager)
                         .citrusMessageId("6eda9f2b-3a7a-423f-b19c-329ed3dd5ecc")
-                        .payload("bar")
+                        .direction(Message.Direction.OUTBOUND)
+                        .payload("pong")
                         .build()
                         .addHeader(MessageHeader.builder()
                             .name(TRACEPARENT)
@@ -323,6 +325,17 @@ class ScenarioExecutionQueryServiceIT {
 
             scenarioExecutionCriteria.setHeaders(scenarioExecutionCriteria.getHeaders() + "; " + TRACEPARENT + "=" + MESSAGE_1_TRACEPARENT);
             assertThatScenarioExecutionAtIndexSelectedByCriteria(scenarioExecutionCriteria, 1);
+        }
+
+        @Test
+        void selectWithDirectionalMessageFilter() {
+            var scenarioExecutionCriteria = new ScenarioExecutionCriteria();
+            scenarioExecutionCriteria.setScenarioMessagesDirection((IntegerFilter) new IntegerFilter().setEquals(OUTBOUND.getId()));
+
+            Page<ScenarioExecution> scenarioExecutionPage = fixture.findByCriteria(scenarioExecutionCriteria, unpaged());
+
+            assertThat(scenarioExecutionPage.getTotalPages()).isEqualTo(1);
+            assertThat(scenarioExecutionPage.getTotalElements()).isEqualTo(1L);
         }
 
         static Stream<Arguments> testPagination() {
