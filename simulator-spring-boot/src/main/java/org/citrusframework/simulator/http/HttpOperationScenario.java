@@ -16,431 +16,153 @@
 
 package org.citrusframework.simulator.http;
 
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.RefModel;
-import io.swagger.models.Response;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.FloatProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
-import org.citrusframework.http.actions.HttpServerRequestActionBuilder;
+import static org.citrusframework.actions.EchoAction.Builder.echo;
+
+import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.openapi.models.OasOperation;
+import io.apicurio.datamodels.openapi.models.OasResponse;
+import jakarta.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicReference;
+import lombok.Getter;
 import org.citrusframework.http.actions.HttpServerResponseActionBuilder;
-import org.citrusframework.http.message.HttpMessageHeaders;
+import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.MessageHeaders;
-import org.citrusframework.message.MessageType;
-import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.openapi.OpenApiSpecification;
+import org.citrusframework.openapi.actions.OpenApiActionBuilder;
+import org.citrusframework.openapi.actions.OpenApiServerActionBuilder;
+import org.citrusframework.openapi.actions.OpenApiServerRequestActionBuilder;
+import org.citrusframework.openapi.model.OasModelHelper;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.variable.dictionary.json.JsonPathMappingDataDictionary;
-import org.hamcrest.CustomMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+@Getter
+public class HttpOperationScenario extends AbstractSimulatorScenario implements HttpScenario {
 
-import static org.citrusframework.actions.EchoAction.Builder.echo;
+    private static final Logger logger = LoggerFactory.getLogger(HttpOperationScenario.class);
 
-public class HttpOperationScenario extends AbstractSimulatorScenario {
-
-    /** Operation in wsdl */
-    private final Operation operation;
-
-    /** Schema model definitions */
-    private final Map<String, Model> definitions;
-
-    /** Request path */
     private final String path;
 
-    /** Request method */
-    private final RequestMethod method;
+    private final String scenarioId;
 
-    /** Response */
-    private Response response;
+    private final OpenApiSpecification openApiSpecification;
 
-    /** Response status code */
-    private HttpStatus statusCode = HttpStatus.OK;
+    private final OasOperation operation;
+
+    private final String operationUid;
 
     private JsonPathMappingDataDictionary inboundDataDictionary;
+
     private JsonPathMappingDataDictionary outboundDataDictionary;
 
-    /**
-     * Default constructor.
-     * @param path
-     * @param method
-     * @param operation
-     * @param definitions
-     */
-    public HttpOperationScenario(String path, RequestMethod method, Operation operation, Map<String, Model> definitions) {
-        this.operation = operation;
-        this.definitions = definitions;
-        this.path = path;
-        this.method = method;
+    private final HttpResponseActionBuilderProvider httpResponseActionBuilderProvider;
 
-        if (operation.getResponses() != null) {
-            this.response = operation.getResponses().get("200");
-        }
+    public HttpOperationScenario(String path, String scenarioId, OpenApiSpecification openApiSpecification, OasOperation operation, HttpResponseActionBuilderProvider httpResponseActionBuilderProvider) {
+        this.path = path;
+        this.scenarioId = scenarioId;
+        this.openApiSpecification = openApiSpecification;
+        this.operation = operation;
+        this.httpResponseActionBuilderProvider = httpResponseActionBuilderProvider;
+
+        // Use the unique id of the operation instead of operationId. OperationId is
+        // not mandatory and might be null.
+        this.operationUid = openApiSpecification.getUniqueId(operation);
     }
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.name(operation.getOperationId());
-        scenario.$(echo("Generated scenario from swagger operation: " + operation.getOperationId()));
+        scenario.name(operationUid);
+        scenario.$(echo("Generated scenario from swagger operation: " + operationUid));
 
-        HttpServerRequestActionBuilder requestBuilder = switch (method) {
-            case GET -> scenario.http()
-                    .receive()
-                    .get();
-            case POST -> scenario.http()
-                    .receive()
-                    .post();
-            case PUT -> scenario.http()
-                    .receive()
-                    .put();
-            case HEAD -> scenario.http()
-                    .receive()
-                    .head();
-            case DELETE -> scenario.http()
-                    .receive()
-                    .delete();
-            default -> throw new SimulatorException("Unsupported request method: " + method.name());
-        };
+        OpenApiServerActionBuilder openApiServerActionBuilder = new OpenApiActionBuilder(
+            openApiSpecification).server(getScenarioEndpoint());
 
-        requestBuilder
+        HttpMessage receivedMessage = receive(scenario, openApiServerActionBuilder);
+        respond(scenario, openApiServerActionBuilder, receivedMessage);
+    }
+
+    private HttpMessage receive(ScenarioRunner scenarioRunner,
+        OpenApiServerActionBuilder openApiServerActionBuilder) {
+
+        OpenApiServerRequestActionBuilder requestActionBuilder = openApiServerActionBuilder.receive(
+            operationUid);
+
+        requestActionBuilder
             .message()
-            .type(MessageType.JSON)
-            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-            .header(HttpMessageHeaders.HTTP_REQUEST_URI, new CustomMatcher<String>(String.format("request path matching %s", path)) {
-                @Override
-                public boolean matches(Object item) {
-                    return ((item instanceof String) && new AntPathMatcher().match(path, (String) item));
-                }
-            });
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
 
-        if (operation.getParameters() != null) {
-            operation.getParameters().stream()
-                    .filter(p -> p instanceof HeaderParameter)
-                    .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.message().header(p.getName(), createValidationExpression(((HeaderParameter) p))));
-
-            String queryParams = operation.getParameters().stream()
-                    .filter(param -> param instanceof QueryParameter)
-                    .filter(Parameter::getRequired)
-                    .map(param -> "containsString(" + param.getName() + ")")
-                    .collect(Collectors.joining(", "));
-
-            if (StringUtils.hasText(queryParams)) {
-                requestBuilder.message().header(HttpMessageHeaders.HTTP_QUERY_PARAMS, "@assertThat(allOf(" + queryParams + "))@");
-            }
-
-            operation.getParameters().stream()
-                    .filter(p -> p instanceof BodyParameter)
-                    .filter(Parameter::getRequired)
-                    .forEach(p -> requestBuilder.message().body(createValidationPayload((BodyParameter) p)));
-
-            if (inboundDataDictionary != null) {
-                requestBuilder.message().dictionary(inboundDataDictionary);
-            }
+        if (operation.getParameters() != null && inboundDataDictionary != null) {
+            requestActionBuilder.message().dictionary(inboundDataDictionary);
         }
+
+        AtomicReference<HttpMessage> receivedMessage = new AtomicReference<>();
+        requestActionBuilder.getMessageProcessors().add(
+            (message, context) -> receivedMessage.set((HttpMessage)message));
 
         // Verify incoming request
-        scenario.$(requestBuilder);
+        scenarioRunner.$(requestActionBuilder);
 
-        HttpServerResponseActionBuilder responseBuilder = scenario.http()
-            .send()
-            .response(statusCode);
+        return receivedMessage.get();
+    }
 
+    private void respond(ScenarioRunner scenarioRunner,
+        OpenApiServerActionBuilder openApiServerActionBuilder, HttpMessage receivedMessage) {
+
+        HttpServerResponseActionBuilder responseBuilder = null;
+        if (httpResponseActionBuilderProvider != null) {
+            responseBuilder = httpResponseActionBuilderProvider.provideHttpServerResponseActionBuilder(scenarioRunner, this, receivedMessage);
+        }
+
+        if (responseBuilder == null) {
+            responseBuilder = createRandomMessageResponseBuilder(openApiServerActionBuilder, receivedMessage.getAccept());
+        }
+
+        scenarioRunner.$(responseBuilder);
+    }
+
+    /**
+     * Creates a builder that creates a random message based on OpenApi specification.
+     * @param openApiServerActionBuilder
+     * @return
+     */
+    private HttpServerResponseActionBuilder createRandomMessageResponseBuilder(
+        OpenApiServerActionBuilder openApiServerActionBuilder, String accept) {
+        HttpServerResponseActionBuilder responseBuilder;
+
+        OasResponse response = determineResponse(accept);
+
+        HttpStatus httpStatus = getStatusFromResponseOrDefault(response);
+        responseBuilder = openApiServerActionBuilder.send(operationUid, httpStatus, accept);
         responseBuilder.message()
-            .type(MessageType.JSON)
-            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true)
-            .contentType(MediaType.APPLICATION_JSON_VALUE);
+            .status(httpStatus)
+            .header(MessageHeaders.MESSAGE_PREFIX + "generated", true);
 
-        if (response != null) {
-            if (response.getHeaders() != null) {
-                for (Map.Entry<String, Property> header : response.getHeaders().entrySet()) {
-                    responseBuilder.message().header(header.getKey(), createRandomValue(header.getValue(), false));
-                }
-            }
+        return responseBuilder;
+    }
 
-            if (response.getSchema() != null) {
-                if (outboundDataDictionary != null &&
-                        (response.getSchema() instanceof RefProperty || response.getSchema() instanceof ArrayProperty)) {
-                    responseBuilder.message().dictionary(outboundDataDictionary);
-                }
+    private HttpStatus getStatusFromResponseOrDefault(@Nullable OasResponse response) {
+        return response != null && response.getStatusCode() != null ? HttpStatus.valueOf(
+            Integer.parseInt(response.getStatusCode())) : HttpStatus.OK;
+    }
 
-                responseBuilder.message().body(createRandomValue(response.getSchema(), false));
-            }
-        }
-
-        // Return generated response
-        scenario.$(responseBuilder);
+    OasResponse determineResponse(String accept) {
+        return OasModelHelper.getResponseForRandomGeneration(getOasDocument(), operation, null, accept).orElse(null);
     }
 
     /**
-     * Create payload from schema with random values.
-     * @param property
-     * @param quotes
-     * @return
-     */
-    private String createRandomValue(Property property, boolean quotes) {
-        StringBuilder payload = new StringBuilder();
-        if (property instanceof RefProperty) {
-            Model model = definitions.get(((RefProperty) property).getSimpleRef());
-            payload.append("{");
-
-            if (model.getProperties() != null) {
-                for (Map.Entry<String, Property> entry : model.getProperties().entrySet()) {
-                    payload.append("\"").append(entry.getKey()).append("\": ").append(createRandomValue(entry.getValue(), true)).append(",");
-                }
-            }
-
-            if (payload.toString().endsWith(",")) {
-                payload.replace(payload.length() - 1, payload.length(), "");
-            }
-
-            payload.append("}");
-        } else if (property instanceof ArrayProperty) {
-            payload.append("[");
-            payload.append(createRandomValue(((ArrayProperty) property).getItems(), true));
-            payload.append("]");
-        } else if (property instanceof StringProperty || property instanceof DateProperty || property instanceof DateTimeProperty) {
-            if (quotes) {
-                payload.append("\"");
-            }
-
-            if (property instanceof DateProperty) {
-                payload.append("citrus:currentDate()");
-            } else if (property instanceof DateTimeProperty) {
-                payload.append("citrus:currentDate('yyyy-MM-dd'T'hh:mm:ss')");
-            } else if (!CollectionUtils.isEmpty(((StringProperty) property).getEnum())) {
-                payload.append("citrus:randomEnumValue(").append(((StringProperty) property).getEnum().stream().map(value -> "'" + value + "'").collect(Collectors.joining(","))).append(")");
-            } else {
-                payload.append("citrus:randomString(").append(((StringProperty) property).getMaxLength() != null && ((StringProperty) property).getMaxLength() > 0 ? ((StringProperty) property).getMaxLength() : (((StringProperty) property).getMinLength() != null && ((StringProperty) property).getMinLength() > 0 ? ((StringProperty) property).getMinLength() : 10)).append(")");
-            }
-
-            if (quotes) {
-                payload.append("\"");
-            }
-        } else if (property instanceof IntegerProperty || property instanceof LongProperty) {
-            payload.append("citrus:randomNumber(10)");
-        } else if (property instanceof FloatProperty || property instanceof DoubleProperty) {
-            payload.append("citrus:randomNumber(10)");
-        } else if (property instanceof BooleanProperty) {
-            payload.append("citrus:randomEnumValue('true', 'false')");
-        } else {
-            if (quotes) {
-                payload.append("\"\"");
-            } else {
-                payload.append("");
-            }
-        }
-
-        return payload.toString();
-    }
-
-    /**
-     * Creates control payload for validation.
-     * @param parameter
-     * @return
-     */
-    private String createValidationPayload(BodyParameter parameter) {
-        StringBuilder payload = new StringBuilder();
-
-        Model model = parameter.getSchema();
-
-        if (model instanceof RefModel) {
-            model = definitions.get(((RefModel) model).getSimpleRef());
-        }
-
-        if (model instanceof ArrayModel) {
-            payload.append("[");
-            payload.append(createValidationExpression(((ArrayModel) model).getItems()));
-            payload.append("]");
-        } else {
-
-            payload.append("{");
-
-            if (model.getProperties() != null) {
-                for (Map.Entry<String, Property> entry : model.getProperties().entrySet()) {
-                    payload.append("\"").append(entry.getKey()).append("\": ").append(createValidationExpression(entry.getValue())).append(",");
-                }
-            }
-
-            if (payload.toString().endsWith(",")) {
-                payload.replace(payload.length() - 1, payload.length(), "");
-            }
-
-            payload.append("}");
-        }
-
-        return payload.toString();
-    }
-
-    /**
-     * Create validation expression using functions according to parameter type and format.
-     * @param property
-     * @return
-     */
-    private String createValidationExpression(Property property) {
-        StringBuilder payload = new StringBuilder();
-        if (property instanceof RefProperty) {
-            Model model = definitions.get(((RefProperty) property).getSimpleRef());
-            payload.append("{");
-
-            if (model.getProperties() != null) {
-                for (Map.Entry<String, Property> entry : model.getProperties().entrySet()) {
-                    payload.append("\"").append(entry.getKey()).append("\": ").append(createValidationExpression(entry.getValue())).append(",");
-                }
-            }
-
-            if (payload.toString().endsWith(",")) {
-                payload.replace(payload.length() - 1, payload.length(), "");
-            }
-
-            payload.append("}");
-        } else if (property instanceof ArrayProperty) {
-            payload.append("\"@ignore@\"");
-        } else if (property instanceof StringProperty) {
-            if (StringUtils.hasText(((StringProperty) property).getPattern())) {
-                payload.append("\"@matches(").append(((StringProperty) property).getPattern()).append(")@\"");
-            } else if (!CollectionUtils.isEmpty(((StringProperty) property).getEnum())) {
-                payload.append("\"@matches(").append(((StringProperty) property).getEnum().stream().collect(Collectors.joining("|"))).append(")@\"");
-            } else {
-                payload.append("\"@notEmpty()@\"");
-            }
-        } else if (property instanceof DateProperty) {
-            payload.append("\"@matchesDatePattern('yyyy-MM-dd')@\"");
-        } else if (property instanceof DateTimeProperty) {
-            payload.append("\"@matchesDatePattern('yyyy-MM-dd'T'hh:mm:ss')@\"");
-        } else if (property instanceof IntegerProperty || property instanceof LongProperty) {
-            payload.append("\"@isNumber()@\"");
-        } else if (property instanceof FloatProperty || property instanceof DoubleProperty) {
-            payload.append("\"@isNumber()@\"");
-        } else if (property instanceof BooleanProperty) {
-            payload.append("\"@matches(true|false)@\"");
-        } else {
-            payload.append("\"@ignore@\"");
-        }
-
-        return payload.toString();
-    }
-
-    /**
-     * Create validation expression using functions according to parameter type and format.
-     * @param parameter
-     * @return
-     */
-    private String createValidationExpression(AbstractSerializableParameter parameter) {
-        switch (parameter.getType()) {
-            case "integer":
-                return "@isNumber()@";
-            case "string":
-                if (parameter.getFormat() != null && parameter.getFormat().equals("date")) {
-                    return "\"@matchesDatePattern('yyyy-MM-dd')@\"";
-                } else if (parameter.getFormat() != null && parameter.getFormat().equals("date-time")) {
-                    return "\"@matchesDatePattern('yyyy-MM-dd'T'hh:mm:ss')@\"";
-                } else if (StringUtils.hasText(parameter.getPattern())) {
-                    return "\"@matches(" + parameter.getPattern() + ")@\"";
-                } else if (!CollectionUtils.isEmpty(parameter.getEnum())) {
-                    return "\"@matches(" + (parameter.getEnum().stream().collect(Collectors.joining("|"))) + ")@\"";
-                } else {
-                    return "@notEmpty()@";
-                }
-            case "boolean":
-                return "@matches(true|false)@";
-            default:
-                return "@ignore@";
-        }
-    }
-
-    /**
-     * Gets the operation.
+     * Gets the document.
      *
      * @return
      */
-    public Operation getOperation() {
-        return operation;
+    public OasDocument getOasDocument() {
+        return openApiSpecification.getOpenApiDoc(null);
     }
 
-    /**
-     * Gets the path.
-     *
-     * @return
-     */
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Gets the method.
-     *
-     * @return
-     */
-    public RequestMethod getMethod() {
-        return method;
-    }
-
-    /**
-     * Gets the response.
-     *
-     * @return
-     */
-    public Response getResponse() {
-        return response;
-    }
-
-    /**
-     * Sets the response.
-     *
-     * @param response
-     */
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    /**
-     * Gets the statusCode.
-     *
-     * @return
-     */
-    public HttpStatus getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * Sets the statusCode.
-     *
-     * @param statusCode
-     */
-    public void setStatusCode(HttpStatus statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
-     * Gets the inboundDataDictionary.
-     *
-     * @return
-     */
-    public JsonPathMappingDataDictionary getInboundDataDictionary() {
-        return inboundDataDictionary;
+    public String getMethod() {
+        return operation.getMethod() != null ? operation.getMethod().toUpperCase() : null;
     }
 
     /**
@@ -453,15 +175,6 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     }
 
     /**
-     * Gets the outboundDataDictionary.
-     *
-     * @return
-     */
-    public JsonPathMappingDataDictionary getOutboundDataDictionary() {
-        return outboundDataDictionary;
-    }
-
-    /**
      * Sets the outboundDataDictionary.
      *
      * @param outboundDataDictionary
@@ -469,4 +182,5 @@ public class HttpOperationScenario extends AbstractSimulatorScenario {
     public void setOutboundDataDictionary(JsonPathMappingDataDictionary outboundDataDictionary) {
         this.outboundDataDictionary = outboundDataDictionary;
     }
+
 }

@@ -16,6 +16,11 @@
 
 package org.citrusframework.simulator.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.citrusframework.simulator.events.ScenariosReloadedEvent;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.Scenario;
@@ -28,12 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Service for looking-up and accessing {@link Scenario}'s and {@link Starter}'s.
@@ -55,6 +54,7 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
      */
     private Map<String, ScenarioStarter> scenarioStarters;
 
+    private boolean scenarioListsInvalidated;
 
     public ScenarioLookupServiceImpl(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -64,7 +64,6 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
         return context.getBeansOfType(SimulatorScenario.class).entrySet().stream()
             .filter(map -> !map.getValue().getClass().isAnnotationPresent(Starter.class))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
     }
 
     private static Map<String, ScenarioStarter> getScenarioStarters(ApplicationContext context) {
@@ -129,4 +128,5 @@ public class ScenarioLookupServiceImpl implements InitializingBean, ScenarioLook
 
         return Collections.emptyList();
     }
+
 }

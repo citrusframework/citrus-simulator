@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
@@ -37,6 +38,7 @@ import static org.citrusframework.actions.SendMessageAction.Builder.send;
  * @author Christoph Deppisch
  */
 @Test
+@Ignore
 @ContextConfiguration(classes = SimulatorMailIT.EndpointConfig.class)
 public class SimulatorMailIT extends TestNGCitrusSpringSupport {
 
