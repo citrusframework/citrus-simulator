@@ -16,16 +16,24 @@
 
 package org.citrusframework.simulator.web.rest.dto.mapper;
 
+import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.web.rest.dto.ScenarioExecutionDTO;
 import org.citrusframework.simulator.web.rest.dto.ScenarioParameterDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
-@Mapper(componentModel = SPRING, uses = {HibernateCollectionUtils.class})
+@Mapper(componentModel = SPRING, uses = {HibernateCollectionUtils.class, TestParameterMapper.class})
 public interface ScenarioParameterMapper {
 
     ScenarioParameterDTO toDto(ScenarioParameter scenarioParameter);
+
+    @Mapping(target = "scenarioParameters", ignore = true)
+    @Mapping(target = "scenarioActions", ignore = true)
+    @Mapping(target = "scenarioMessages", ignore = true)
+    ScenarioExecutionDTO toScenarioExecutionDto(ScenarioExecution scenarioParameter);
 
     ScenarioParameter toEntity(ScenarioParameterDTO scenarioParameterDTO);
 }

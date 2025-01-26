@@ -25,6 +25,7 @@ public record ScenarioParameterDTO(
     String controlType,
     String value,
     List<ScenarioParameterOptionDTO> options,
+    ScenarioExecutionDTO scenarioExecution,
     Instant createdDate,
     Instant lastModifiedDate) {
 }

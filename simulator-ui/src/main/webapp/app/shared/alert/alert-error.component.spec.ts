@@ -55,11 +55,11 @@ describe('Alert Error Component', () => {
     it('should display an alert on generic error', () => {
       // GIVEN
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: { message: 'Error Message' } } });
-      eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: 'Second Error Message' } });
+      eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: { error: 'Second Error Message' } } });
       // THEN
       expect(comp.alerts.length).toBe(2);
-      expect(comp.alerts[0].translationKey).toBe('Error Message');
-      expect(comp.alerts[1].translationKey).toBe('Second Error Message');
+      expect(comp.alerts[0].message).toBe('Error Message');
+      expect(comp.alerts[1].message).toBe('Second Error Message');
     });
 
     it('should display an alert on status 400 for generic error', () => {

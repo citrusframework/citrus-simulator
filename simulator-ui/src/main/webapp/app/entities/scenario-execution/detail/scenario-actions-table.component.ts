@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe } from 'app/shared/date';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
 import SortDirective from 'app/shared/sort/sort.directive';
 import SortByDirective from 'app/shared/sort/sort-by.directive';
@@ -16,7 +15,7 @@ import { ScenarioActionService } from 'app/entities/scenario-action/service/scen
   standalone: true,
   selector: 'app-scenario-actions-table',
   templateUrl: './scenario-actions-table.component.html',
-  imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
+  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective],
 })
 export class ScenarioActionsTableComponent implements OnInit {
   @Input()

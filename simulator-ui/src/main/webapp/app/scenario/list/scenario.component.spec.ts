@@ -1,7 +1,4 @@
 import { DEBOUNCE_TIME_MILLIS } from '../../config/input.constants';
-
-jest.mock('app/core/util/alert.service');
-
 import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -22,6 +19,10 @@ import { AlertService } from 'app/core/util/alert.service';
 import { ScenarioService } from '../service/scenario.service';
 
 import { ScenarioComponent } from './scenario.component';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
+import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+
+jest.mock('app/core/util/alert.service');
 
 import SpyInstance = jest.SpyInstance;
 
@@ -355,36 +356,83 @@ describe('Scenario Management Component', () => {
 
   describe('launch', () => {
     const name = 'something I came up with';
+    const mockParams: IScenarioParameter[] = [
+      {
+        parameterId: 1,
+        name: 'TEXTBOX',
+        controlType: 1,
+        value: 'default',
+        createdDate: Date.now(),
+        lastModifiedDate: null,
+      },
+    ];
 
-    it('triggers scenario execution in backend', () => {
+    const mockModalRef = {
+      result: Promise.resolve([{ parameterId: 1, name: 'TEXTBOX', value: 'user-input' }]),
+      componentInstance: { params: mockParams },
+    } as NgbModalRef;
+
+    it('triggers scenario execution in backend', fakeAsync(() => {
+      jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
+
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef as any);
+
       // Configure mock alert service
       const scenarioId = 1234;
       service.launch = jest.fn().mockReturnValue(of(new HttpResponse({ body: scenarioId })));
 
       // @ts-ignore: Access private function for testing
-      component.launch({ name });
+      component['launch']({ name });
 
+      // Needed due combination of promises and observables
+      tick();
+
+      expect(service.launch).toHaveBeenCalledWith(name, [{ parameterId: 1, name: 'TEXTBOX', value: 'user-input' }]);
       expect(alertService.addAlert).toHaveBeenCalledWith({
         type: 'success',
         translationKey: 'citrusSimulatorApp.scenario.action.launchedSuccessfully',
-        translationParams: {
-          scenarioExecutionId: scenarioId,
-        },
+        translationParams: { scenarioExecutionId: scenarioId },
       });
-    });
+    }));
 
-    it('handles failures', () => {
+    it('handles failures', fakeAsync(() => {
+      jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
+
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef as any);
+
       // Configure mock alert service
       service.launch = jest.fn().mockReturnValue(throwError(() => new Error('Anything that happen during communication!')));
 
       // @ts-ignore: Access private function for testing
       component.launch({ name });
+      tick();
 
-      expect(service.launch).toHaveBeenCalledWith(name);
+      expect(service.launch).toHaveBeenCalledWith(name, [{ name: 'TEXTBOX', parameterId: 1, value: 'user-input' }]);
       expect(alertService.addAlert).toHaveBeenCalledWith({
         type: 'danger',
         translationKey: 'citrusSimulatorApp.scenario.action.launchFailed',
       });
-    });
+    }));
+
+    it('should not launch if modal is dismissed', fakeAsync(() => {
+      jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
+
+      // Mock modal dismissal
+      const mockModalRefRejection = {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+        result: Promise.reject('dismissed'),
+        componentInstance: { params: mockParams },
+      } as NgbModalRef;
+
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRefRejection as any);
+
+      const launchSpy = jest.spyOn(service, 'launch');
+
+      component['launch']({ name });
+      tick();
+
+      expect(launchSpy).not.toHaveBeenCalled();
+      expect(alertService.addAlert).not.toHaveBeenCalled();
+    }));
   });
 });

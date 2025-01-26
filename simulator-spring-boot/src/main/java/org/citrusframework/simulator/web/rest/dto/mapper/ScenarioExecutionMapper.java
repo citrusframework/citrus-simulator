@@ -22,7 +22,7 @@ import org.mapstruct.Mapper;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
-@Mapper(componentModel = SPRING, uses = {HibernateCollectionUtils.class})
+@Mapper(componentModel = SPRING, uses = {HibernateCollectionUtils.class, ScenarioParameterMapper.class})
 public interface ScenarioExecutionMapper {
 
     ScenarioExecutionDTO toDto(ScenarioExecution scenarioExecution);
