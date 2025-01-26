@@ -213,8 +213,8 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
             return Page.empty(page);
         }
 
-        var countSpec = withIdIn(scenarioExecutionIds).and(specification);
-        var fetchSpec = countSpec.and(withResultDetailsConfiguration(resultDetailsConfiguration));
+        var fetchSpec = withIdIn(scenarioExecutionIds)
+            .and(withResultDetailsConfiguration(resultDetailsConfiguration));
 
         var scenarioExecutions = selectAll(
             ScenarioExecution.class,
