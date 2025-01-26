@@ -141,26 +141,31 @@ test('should move to the scenario-execution page with right filter entered if cl
 test('should launch the scenario-execution and popup should be visible if clicked on the launch button', async ({ page }) => {
   const scenarioId = [7];
   const scenarioName = 'Test';
-  const urlRegex = new RegExp(`.*scenario-result\\?.*filter%5BexecutionId\\.in%5D=${scenarioId[0].toString()}`);
+  const urlRegex = new RegExp(`.*scenario-execution/${scenarioId[0].toString()}/view`);
   await mockBackendResponse(page, '**/api/scenarios**', [{ name: scenarioName, type: 'STARTER' }]);
+  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{name: 'param1', value: 'test'}]);
 
   await page.goto('http://localhost:9000/scenario');
   await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/launch**`, scenarioId);
   await page.getByTestId('scenarioLaunchButton').click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', {name: 'Launch'}).click();
   await expect(page.getByText('Scenario successfully launched')).toBeVisible();
   await page.getByText('view Execution').click();
 
   await expect(page).toHaveURL(urlRegex);
-  await expect(page.getByText('Following filters are set')).toBeVisible();
-  await expect(page.getByText('executionId.in: ' + scenarioId[0])).toBeVisible();
 });
 
 test('should show error message if launch failed after click on the launch button', async ({ page }) => {
   const scenarioName = 'Test';
   await mockBackendResponse(page, '**/api/scenarios**', [{ name: scenarioName, type: 'STARTER' }]);
+  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{name: 'param1', value: ''}]);
 
   await page.goto('http://localhost:9000/scenario');
   await page.getByTestId('scenarioLaunchButton').click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+
+  await page.getByRole('button', {name: 'Launch'}).click();
 
   await expect(page.getByText('Failed to launch Scenario!')).toBeVisible();
   await expect(page).toHaveURL(/.*localhost:9000\/scenario/);

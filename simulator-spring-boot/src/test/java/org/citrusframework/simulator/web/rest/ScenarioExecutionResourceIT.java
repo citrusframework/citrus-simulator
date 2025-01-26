@@ -137,16 +137,19 @@ public class ScenarioExecutionResourceIT {
     void beforeEachSetup() {
         transactionUtils.doWithinTransaction(
             () -> {
-                var scenarioParameter = ScenarioParameterResourceIT.createEntity(entityManager);
                 var testResult = TestResultResourceIT.createEntity(entityManager);
                 var scenarioAction = ScenarioActionResourceIT.createEntity(entityManager);
                 var message = MessageHeaderResourceIT.createEntity(entityManager).getMessage();
 
                 scenarioExecution = createEntity(entityManager)
                     .withTestResult(testResult)
-                    .addScenarioParameter(scenarioParameter)
                     .addScenarioAction(scenarioAction)
                     .addScenarioMessage(message);
+
+                var scenarioParameter = ScenarioParameterResourceIT.createEntityBuilder(entityManager, scenarioExecution).build();
+
+                scenarioExecution
+                    .addScenarioParameter(scenarioParameter);
 
                 scenarioExecutionRepository.saveAndFlush(scenarioExecution);
             }

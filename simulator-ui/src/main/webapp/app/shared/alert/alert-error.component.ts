@@ -87,7 +87,7 @@ export class AlertErrorComponent implements OnDestroy {
               httpErrorResponse.error.params,
             );
           } else {
-            this.addErrorAlert(httpErrorResponse.error, httpErrorResponse.error);
+            this.addErrorAlert(httpErrorResponse.error.error);
           }
       }
     });

@@ -185,5 +185,10 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
             scenarioParameter.options.add(new ScenarioParameterOption(key, value));
             return this;
         }
+
+        public ScenarioParameterBuilder scenarioExecution(ScenarioExecution scenarioExecution) {
+            scenarioParameter.scenarioExecution = scenarioExecution;
+            return this;
+        }
     }
 }

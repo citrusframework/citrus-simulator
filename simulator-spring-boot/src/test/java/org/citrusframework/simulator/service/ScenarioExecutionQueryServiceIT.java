@@ -110,7 +110,7 @@ class ScenarioExecutionQueryServiceIT {
                 .name(SOURCE)
                 .value(SOURCE_VALUE)
                 .build());
-        scenarioParameter = ScenarioParameterResourceIT.createEntityBuilder(entityManager)
+        scenarioParameter = ScenarioParameterResourceIT.createEntityBuilder(entityManager, null)
             .name("John")
             .value("Snow")
             .build();
@@ -147,7 +147,7 @@ class ScenarioExecutionQueryServiceIT {
                 .addScenarioAction(ScenarioActionResourceIT.createEntity(entityManager))
                 .addScenarioMessage(message)
                 .addScenarioParameter(
-                    ScenarioParameterResourceIT.createEntityBuilder(entityManager)
+                    ScenarioParameterResourceIT.createEntityBuilder(entityManager, null)
                         .name("another")
                         .value("parameter")
                         .build()));
@@ -176,7 +176,7 @@ class ScenarioExecutionQueryServiceIT {
                             .value(SOURCE_VALUE)
                             .build()))
                 .addScenarioParameter(
-                    ScenarioParameterResourceIT.createEntityBuilder(entityManager)
+                    ScenarioParameterResourceIT.createEntityBuilder(entityManager, null)
                         .name("foo")
                         .value("bar")
                         .build()));

@@ -19,11 +19,13 @@ package org.citrusframework.simulator.web.rest.dto.mapper;
 import org.citrusframework.simulator.model.TestParameter;
 import org.citrusframework.simulator.web.rest.dto.TestParameterDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 @Mapper(componentModel = SPRING, uses = {HibernateCollectionUtils.class})
 public interface TestParameterMapper {
 
+    @Mapping(target = "testResultId", expression = "java(testParameter.getTestResult().getId())")
     TestParameterDTO toDto(TestParameter testParameter);
 }

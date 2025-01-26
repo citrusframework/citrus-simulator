@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Scenario Parameters</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <div class="row mb-2">
+    <div class="col">
+      <strong><span class="form-control-plaintext">Name</span></strong>
+    </div>
+    <div class="col">
+      <strong><span class="form-control-plaintext">Value</span></strong>
+    </div>
+  </div>
+  <div *ngFor="let param of params; let i = index" class="row mb-2">
+    <div class="col">
+      <span class="form-control-plaintext">{{ param.name }}</span>
+    </div>
+    <div class="col">
+      <input [(ngModel)]="param.value" class="form-control" placeholder="Value" />
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" jhiTranslate="citrusSimulatorApp.scenario.action.launch" (click)="launch()">Launch</button>
+</div>

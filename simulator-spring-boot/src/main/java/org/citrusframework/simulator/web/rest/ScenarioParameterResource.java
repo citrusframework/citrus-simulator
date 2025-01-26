@@ -23,7 +23,6 @@ import org.citrusframework.simulator.service.criteria.ScenarioParameterCriteria;
 import org.citrusframework.simulator.web.rest.dto.ScenarioParameterDTO;
 import org.citrusframework.simulator.web.rest.dto.mapper.ScenarioParameterMapper;
 import org.citrusframework.simulator.web.util.PaginationUtil;
-import org.citrusframework.simulator.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -39,6 +38,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.citrusframework.simulator.web.util.ResponseUtil.wrapOrNotFound;
 
 /**
  * REST controller for managing {@link ScenarioParameter}.
@@ -101,6 +102,6 @@ public class ScenarioParameterResource {
     public ResponseEntity<ScenarioParameterDTO> getScenarioParameter(@PathVariable("id") Long id) {
         logger.debug("REST request to get ScenarioParameter : {}", id);
         Optional<ScenarioParameter> scenarioParameter = scenarioParameterService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(scenarioParameter.map(scenarioParameterMapper::toDto));
+        return wrapOrNotFound(scenarioParameter.map(scenarioParameterMapper::toDto));
     }
 }

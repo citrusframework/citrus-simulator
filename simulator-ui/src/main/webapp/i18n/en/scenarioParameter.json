@@ -13,7 +13,9 @@
       "name": "Name",
       "controlType": "Control Type",
       "value": "Value",
-      "scenarioExecution": "Scenario Execution"
+      "scenarioExecution": "Scenario Execution",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date"
     }
   }
 }

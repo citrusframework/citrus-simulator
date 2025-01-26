@@ -17,7 +17,7 @@
       "action": {
         "launch": "Launch",
         "launchFailed": "Failed to launch Scenario!",
-        "launchedSuccessfully": "Scenario successfully launched: <a href=\"/scenario-result?filter[executionId.in]={{scenarioExecutionId}}\">View Execution</a>."
+        "launchedSuccessfully": "Scenario successfully launched: <a href=\"/scenario-execution/{{scenarioExecutionId}}/view\">View Execution</a>."
       }
     }
   }

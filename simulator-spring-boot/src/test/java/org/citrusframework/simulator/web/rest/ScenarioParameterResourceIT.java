@@ -20,6 +20,7 @@ import jakarta.persistence.EntityManager;
 import org.citrusframework.simulator.IntegrationTest;
 import org.citrusframework.simulator.model.ScenarioExecution;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.repository.ScenarioParameterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import static org.citrusframework.simulator.web.rest.TestUtil.sameInstant;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -56,6 +59,9 @@ public class ScenarioParameterResourceIT {
 
     private static final String DEFAULT_VALUE = "AAAAAAAAAA";
     private static final String UPDATED_VALUE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_OPTION_KEY = "name";
+    private static final String DEFAULT_OPTION_VALUE = "bond";
 
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
@@ -80,10 +86,30 @@ public class ScenarioParameterResourceIT {
     private ScenarioParameter scenarioParameter;
 
     public static ScenarioParameter.ScenarioParameterBuilder createEntityBuilder(EntityManager entityManager) {
+        var scenarioExecution = persistScenarioExecutionIfNotExists(entityManager);
+        return createEntityBuilder(entityManager, scenarioExecution);
+    }
+
+    private static ScenarioExecution persistScenarioExecutionIfNotExists(EntityManager entityManager) {
+        ScenarioExecution scenarioExecution;
+        if (TestUtil.findAll(entityManager, TestResult.class).isEmpty()) {
+            scenarioExecution = ScenarioExecutionResourceIT.createEntity(entityManager);
+            entityManager.persist(scenarioExecution);
+            entityManager.flush();
+        } else {
+            scenarioExecution = TestUtil.findAll(entityManager, ScenarioExecution.class).get(0);
+        }
+
+        return scenarioExecution;
+    }
+
+    public static ScenarioParameter.ScenarioParameterBuilder createEntityBuilder(EntityManager entityManager, ScenarioExecution scenarioExecution) {
         return ScenarioParameter.builder()
             .name(DEFAULT_NAME)
             .controlType(DEFAULT_CONTROL_TYPE)
             .value(DEFAULT_VALUE)
+            .addOption(DEFAULT_OPTION_KEY, DEFAULT_OPTION_VALUE)
+            .scenarioExecution(scenarioExecution)
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE);
     }
@@ -135,7 +161,10 @@ public class ScenarioParameterResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].controlType").value(hasItem(DEFAULT_CONTROL_TYPE.toString())))
             .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].options[*].key").value(everyItem(equalTo(DEFAULT_OPTION_KEY))))
+            .andExpect(jsonPath("$.[*].options[*].value").value(everyItem(equalTo(DEFAULT_OPTION_VALUE))))
+            .andExpect(jsonPath("$.[*].scenarioExecution.executionId").value(everyItem(equalTo(scenarioParameter.getScenarioExecution().getExecutionId().intValue()))))
+            .andExpect(jsonPath("$.[*].scenarioExecution.scenarioName").value(everyItem(equalTo(scenarioParameter.getScenarioExecution().getScenarioName()))))
             .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(sameInstant(DEFAULT_LAST_MODIFIED_DATE))));
     }
 

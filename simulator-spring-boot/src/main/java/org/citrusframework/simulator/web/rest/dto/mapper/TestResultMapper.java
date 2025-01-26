@@ -22,7 +22,7 @@ import org.mapstruct.Mapper;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
-@Mapper(componentModel = SPRING, uses = {AuditingEntityMapper.class, HibernateCollectionUtils.class})
+@Mapper(componentModel = SPRING, uses = {AuditingEntityMapper.class, HibernateCollectionUtils.class, TestParameterMapper.class})
 public interface TestResultMapper {
 
     TestResultDTO toDto(TestResult testResult);

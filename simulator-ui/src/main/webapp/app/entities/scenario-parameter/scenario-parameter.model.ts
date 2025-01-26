@@ -6,7 +6,13 @@ export interface IScenarioParameter {
   name?: 'UNKNOWN' | 'TEXTBOX' | 'TEXTAREA' | 'DROPDOWN' | null;
   controlType?: number | null;
   value?: string | null;
+  options?: IScenarioParameterOption[];
+  scenarioExecution?: Pick<IScenarioExecution, 'executionId' | 'scenarioName'>;
   createdDate?: number | null;
   lastModifiedDate?: dayjs.Dayjs | null;
-  scenarioExecution?: Pick<IScenarioExecution, 'executionId' | 'scenarioName'> | null;
+}
+
+export interface IScenarioParameterOption {
+  key: string;
+  value: string;
 }
