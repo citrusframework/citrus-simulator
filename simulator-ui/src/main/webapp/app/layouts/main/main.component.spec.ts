@@ -1,11 +1,10 @@
-import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { Router, TitleStrategy } from '@angular/router';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { provideRouter, Router, TitleStrategy } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { RouterTestingModule } from '@angular/router/testing';
 import { DOCUMENT } from '@angular/common';
 import { Component } from '@angular/core';
 import { of } from 'rxjs';
-import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import MainComponent from './main.component';
@@ -21,7 +20,7 @@ describe('MainComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), RouterTestingModule],
+      imports: [TranslateModule.forRoot(), provideRouter()],
       declarations: [MainComponent],
       providers: [Title, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
     })

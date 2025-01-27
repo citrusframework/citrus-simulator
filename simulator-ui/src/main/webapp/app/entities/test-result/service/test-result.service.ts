@@ -54,6 +54,7 @@ export class TestResultService {
   }
 
   deleteAll(): Observable<HttpResponse<void>> {
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     return this.http.delete<void>(this.resourceUrl, { observe: 'response' });
   }
 

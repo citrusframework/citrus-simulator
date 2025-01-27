@@ -11,7 +11,7 @@ export interface Alert {
   type: AlertType;
   message?: string;
   translationKey?: string;
-  translationParams?: { [key: string]: unknown };
+  translationParams?: Record<string, unknown>;
   timeout?: number;
   toast?: boolean;
   position?: string;

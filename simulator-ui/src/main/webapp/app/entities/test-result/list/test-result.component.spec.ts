@@ -1,15 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { of } from 'rxjs';
 
 import { TestResultService } from '../service/test-result.service';
 
 import { TestResultComponent } from './test-result.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('TestResult Management Component', () => {
@@ -20,11 +18,7 @@ describe('TestResult Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'test-result', component: TestResultComponent }]),
-        HttpClientTestingModule,
-        TestResultComponent,
-      ],
+      imports: [provideRouter([{ path: 'test-result', component: TestResultComponent }]), provideHttpClientTesting(), TestResultComponent],
       providers: [
         {
           provide: ActivatedRoute,

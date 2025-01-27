@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { ScenarioExecutionDetailComponent } from './scenario-execution-detail.component';
@@ -8,7 +8,7 @@ import { ScenarioExecutionDetailComponent } from './scenario-execution-detail.co
 describe('ScenarioExecution Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScenarioExecutionDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [ScenarioExecutionDetailComponent, provideRouter([], withComponentInputBinding())],
       providers: [
         provideRouter(
           [

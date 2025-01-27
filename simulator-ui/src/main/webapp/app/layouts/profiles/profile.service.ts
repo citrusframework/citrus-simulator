@@ -37,7 +37,8 @@ export class ProfileService {
     }
 
     this.simulatorInfo$ = this.http.get<InfoResponse>(this.infoUrl).pipe(
-      map((response: InfoResponse) => ({ ...response.simulator })),
+      // eslint-disable-next-line @typescript-eslint/no-misused-spread
+      map((response: InfoResponse) => ({ ...response.simulator }) as SimulatorInfo),
       shareReplay(),
     );
 

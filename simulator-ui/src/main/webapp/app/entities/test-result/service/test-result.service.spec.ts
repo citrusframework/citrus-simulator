@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ITestResult } from '../test-result.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../test-result.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../test-result.test-samples';
 
-import { TestResultService, RestTestResult, TestResultsByStatus } from './test-result.service';
+import { RestTestResult, TestResultsByStatus, TestResultService } from './test-result.service';
 
 const requireRestSample: RestTestResult = {
   ...sampleWithRequiredData,
@@ -19,7 +19,7 @@ describe('TestResult Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(TestResultService);
@@ -61,7 +61,7 @@ describe('TestResult Service', () => {
       req.flush([returnedFromService]);
       httpMock.verify();
 
-      // @ts-ignore: Usage before assignment is ok
+      // @ts-expect-error: Usage before assignment is ok
       expect(actualResult).toMatchObject(actualResult);
     });
 

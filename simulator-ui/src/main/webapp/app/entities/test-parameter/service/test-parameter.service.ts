@@ -44,7 +44,7 @@ export class TestParameterService {
   }
 
   getTestParameterIdentifier(testParameter: Pick<ITestParameter, 'key' | 'testResult'>): number {
-    return this.hash((testParameter.testResult.id ? testParameter.testResult.id : 0) + '-' + testParameter.key);
+    return this.hash((testParameter.testResult.id ? testParameter.testResult.id : 0).toString() + '-' + testParameter.key!);
   }
 
   compareTestParameter(

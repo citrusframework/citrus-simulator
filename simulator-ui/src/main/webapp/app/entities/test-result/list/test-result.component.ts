@@ -5,15 +5,15 @@ import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/r
 
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { DEFAULT_SORT_DATA, EntityOrder, SORT } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
+import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
-import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { EntityArrayResponseType, TestResultService } from '../service/test-result.service';
 import { ITestResult, ITestResultStatus } from '../test-result.model';
@@ -30,9 +30,7 @@ import { navigateToWithPagingInformation } from '../../navigation-util';
     SharedModule,
     SortDirective,
     SortByDirective,
-    DurationPipe,
     FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
     FilterComponent,
     ItemCountComponent,
   ],
@@ -95,7 +93,7 @@ export class TestResultComponent implements OnInit {
     this.page = +(page ?? 1);
     const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
     this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.ascending = sort[1] === EntityOrder.ASCENDING;
     this.filters.initializeFromParams(params);
     this.displayFilters = formatDateTimeFilterOptions(this.filters);
   }
@@ -148,7 +146,7 @@ export class TestResultComponent implements OnInit {
   }
 
   protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
+    const ascendingQueryParam = ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING;
     if (predicate === '') {
       return [];
     } else {

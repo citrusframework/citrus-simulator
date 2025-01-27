@@ -1,10 +1,11 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { InfoResponse } from 'app/layouts/profiles/profile-info.model';
 
 import HomeComponent from './home.component';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('Home Component', () => {
   let applicationConfigService: ApplicationConfigService;
@@ -15,7 +16,7 @@ describe('Home Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HomeComponent, HttpClientTestingModule],
+      imports: [HomeComponent, provideHttpClient(), provideHttpClientTesting()],
       providers: [ApplicationConfigService],
     })
       .overrideTemplate(HomeComponent, '')

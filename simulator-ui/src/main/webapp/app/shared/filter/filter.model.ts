@@ -67,7 +67,7 @@ export class FilterOption implements IFilterOption {
 }
 
 export class FilterOptions implements IFilterOptions {
-  readonly filterChanges: Subject<FilterOption[]> = new Subject();
+  readonly filterChanges = new Subject<FilterOption[]>();
   private _filterOptions: FilterOption[];
 
   constructor(filterOptions: FilterOption[] = []) {
@@ -102,7 +102,7 @@ export class FilterOptions implements IFilterOptions {
       .forEach(matchingParam => {
         const matches = filterRegex.exec(matchingParam);
         if (matches && matches.length > 1) {
-          this.getFilterOptionByName(matches[1], true).addValue(...params.getAll(matchingParam));
+          this.getFilterOptionByName(matches[1], true)!.addValue(...params.getAll(matchingParam));
         }
       });
 
@@ -113,7 +113,7 @@ export class FilterOptions implements IFilterOptions {
   }
 
   addFilter(name: string, ...values: string[]): boolean {
-    if (this.getFilterOptionByName(name, true).addValue(...values)) {
+    if (this.getFilterOptionByName(name, true)!.addValue(...values)) {
       this.changed();
       return true;
     }
@@ -145,9 +145,6 @@ export class FilterOptions implements IFilterOptions {
     return new FilterOptions(this.filterOptions.map(option => new FilterOption(option.name, option.values.concat())));
   }
 
-  protected getFilterOptionByName(name: string, add: true): FilterOption;
-  protected getFilterOptionByName(name: string, add: false): FilterOption | null;
-  protected getFilterOptionByName(name: string): FilterOption | null;
   protected getFilterOptionByName(name: string, add = false): FilterOption | null {
     const addOption = (option: FilterOption): FilterOption => {
       this._filterOptions.push(option);

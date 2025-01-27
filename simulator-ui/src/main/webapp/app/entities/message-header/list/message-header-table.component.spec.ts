@@ -1,7 +1,6 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
 
@@ -11,7 +10,7 @@ import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
 
 import MessageHeaderTableComponent from './message-header-table.component';
-
+import { provideRouter } from '@angular/router';
 import SpyInstance = jest.SpyInstance;
 
 describe('MessageHeader Table Component', () => {
@@ -25,8 +24,8 @@ describe('MessageHeader Table Component', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([{ path: 'message-header', component: MessageHeaderTableComponent }]),
-        HttpClientTestingModule,
+        provideRouter([{ path: 'message-header', component: MessageHeaderTableComponent }]),
+        provideHttpClientTesting(),
         MessageHeaderTableComponent,
       ],
       providers: [],
@@ -100,7 +99,7 @@ describe('MessageHeader Table Component', () => {
       const messageHeaders = [{ headerId: 1234 }] as IMessageHeader[];
       component.messageHeaders = messageHeaders;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.emitSortChange();
 
       expect(sortSpy).toHaveBeenCalledWith(messageHeaders, 'headerId', true);
@@ -110,7 +109,7 @@ describe('MessageHeader Table Component', () => {
     it('emits event in non-standalone mode', () => {
       component.standalone = false;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.emitSortChange();
 
       expect(sortSpy).not.toHaveBeenCalled();

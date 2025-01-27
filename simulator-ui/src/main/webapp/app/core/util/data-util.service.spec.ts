@@ -20,6 +20,7 @@ describe('Data Utils Service Test', () => {
 
   describe('openFile', () => {
     it('should open the file in the new window', () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-spread
       const newWindow = { ...window };
       newWindow.document.write = jest.fn();
       window.open = jest.fn(() => newWindow);

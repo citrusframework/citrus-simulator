@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { IScenarioParameter } from '../scenario-parameter.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../scenario-parameter.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../scenario-parameter.test-samples';
 
-import { ScenarioParameterService, RestScenarioParameter } from './scenario-parameter.service';
+import { RestScenarioParameter, ScenarioParameterService } from './scenario-parameter.service';
 
 const requireRestSample: RestScenarioParameter = {
   ...sampleWithRequiredData,
@@ -18,7 +18,7 @@ describe('ScenarioParameter Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(ScenarioParameterService);

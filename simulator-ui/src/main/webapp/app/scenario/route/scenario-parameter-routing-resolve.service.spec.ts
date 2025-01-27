@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRouteSnapshot, ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap, provideRouter, Router } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -20,7 +19,7 @@ describe('ScenarioParameter routing resolve service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
+      imports: [provideHttpClientTesting(), provideRouter([])],
       providers: [
         {
           provide: ActivatedRoute,
@@ -55,7 +54,7 @@ describe('ScenarioParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.findParameters).toBeCalledWith('test-scenario');
+      expect(service.findParameters).toHaveBeenCalledWith('test-scenario');
       expect(resultParameters).toEqual([{ parameterId: 123 }]);
     });
 
@@ -74,7 +73,7 @@ describe('ScenarioParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.findParameters).not.toBeCalled();
+      expect(service.findParameters).not.toHaveBeenCalled();
       expect(resultParameters).toEqual(null);
     });
 
@@ -93,7 +92,7 @@ describe('ScenarioParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.findParameters).toBeCalledWith('test-scenario');
+      expect(service.findParameters).toHaveBeenCalledWith('test-scenario');
       expect(resultParameters).toEqual(undefined);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['404']);
     });

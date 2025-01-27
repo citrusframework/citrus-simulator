@@ -7,15 +7,14 @@ import { combineLatest, debounceTime, Observable, Subscription, switchMap, tap }
 import { filter, map } from 'rxjs/operators';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
-import { ASC, DEFAULT_SORT_DATA, DESC, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
+import { DEFAULT_SORT_DATA, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 import { AlertService } from 'app/core/util/alert.service';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
-import { FilterComponent, IFilterOption } from 'app/shared/filter';
+import { IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 
@@ -32,19 +31,7 @@ type ScenarioFilter = {
   standalone: true,
   selector: 'app-scenario',
   templateUrl: './scenario.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    FilterComponent,
-    ItemCountComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent, ReactiveFormsModule],
 })
 export class ScenarioComponent implements OnDestroy, OnInit {
   filterForm: FormGroup = new FormGroup({
@@ -192,7 +179,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
   }
 
   protected getSortQueryParam(predicate = this.predicate, ascending = true): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
+    const ascendingQueryParam = ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING;
     if (predicate === '') {
       return [];
     } else {
@@ -240,9 +227,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     });
   }
 
-  private getFilterQueryParameter({ nameContains }: ScenarioFilter): {
-    [id: string]: any;
-  } {
+  private getFilterQueryParameter({ nameContains }: ScenarioFilter): Record<string, any> {
     return {
       'filter[scenarioName.contains]': nameContains ?? undefined,
     };
