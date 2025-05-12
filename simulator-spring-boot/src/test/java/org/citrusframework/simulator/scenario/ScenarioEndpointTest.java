@@ -24,7 +24,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -49,7 +52,7 @@ class ScenarioEndpointTest {
         }
 
         @Test
-        void completesResponseFutureIfOneIsPresent() {
+        void completesResponseFutureIfOneIsPresent() throws ExecutionException, InterruptedException, TimeoutException {
             CompletableFuture<Message> responseFuture = new CompletableFuture<>();
             fixture.add(mock(Message.class), responseFuture);
 
@@ -58,10 +61,44 @@ class ScenarioEndpointTest {
 
             assertThat(responseFuture)
                 .isCompleted();
-            assertThat(responseFuture.join())
+            assertThat(responseFuture.get(1, MILLISECONDS))
                 .isInstanceOf(SimulationFailedUnexpectedlyException.class)
                 .extracting(Message::getPayload)
                 .isEqualTo(cause);
+        }
+
+        @Test
+        void completesResponseFuturesInFIFOOrder() throws ExecutionException, InterruptedException, TimeoutException {
+            CompletableFuture<Message> responseFuture1 = new CompletableFuture<>();
+            fixture.add(mock(Message.class), responseFuture1);
+
+            CompletableFuture<Message> responseFuture2 = new CompletableFuture<>();
+            fixture.add(mock(Message.class), responseFuture2);
+
+            var cause1 = mock(Throwable.class);
+            fixture.fail(cause1);
+
+            assertThat(responseFuture1)
+                .isCompleted();
+
+            assertThat(responseFuture2)
+                .isNotCompleted();
+
+            assertThat(responseFuture1.get(1, MILLISECONDS))
+                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
+                .extracting(Message::getPayload)
+                .isEqualTo(cause1);
+
+            var cause2 = mock(Throwable.class);
+            fixture.fail(cause2);
+
+            assertThat(responseFuture2)
+                .isCompleted();
+
+            assertThat(responseFuture2.get(1, MILLISECONDS))
+                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
+                .extracting(Message::getPayload)
+                .isEqualTo(cause2);
         }
     }
 }
