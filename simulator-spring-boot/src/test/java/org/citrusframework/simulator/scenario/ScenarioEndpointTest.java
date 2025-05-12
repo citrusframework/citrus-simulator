@@ -24,7 +24,6 @@ import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyExcept
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.spi.ReferenceResolver;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,7 +91,6 @@ class ScenarioEndpointTest {
     class Fail {
 
         @Test
-        @Disabled
         void shouldThrowException_ifNoResponseFutureIsPresent() {
             var testContextMock = mock(TestContext.class);
 
@@ -140,7 +138,6 @@ class ScenarioEndpointTest {
         }
 
         @Test
-        @Disabled
         void shouldResolveFuturesCorrectlyIn_FIFO_Order() {
             var params = addAndReceiveTwoMessagesInOrder();
 
@@ -191,7 +188,6 @@ class ScenarioEndpointTest {
         }
 
         @Test
-        @Disabled
         void shouldResolveFuturesCorrectlyIn_FIFO_Order() {
             var params = addAndReceiveTwoMessagesInOrder();
 
