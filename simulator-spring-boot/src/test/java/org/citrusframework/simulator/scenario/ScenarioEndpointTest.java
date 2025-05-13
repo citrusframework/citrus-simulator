@@ -20,8 +20,9 @@ import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
-import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
+import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyExceptionMessage;
 import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.citrusframework.spi.ReferenceResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -45,6 +47,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.citrusframework.simulator.scenario.ScenarioEndpoint.NO_REQUEST_RESPONSE_MAPPING_IN_TEST_CONTEXT_MESSAGE;
+import static org.citrusframework.simulator.scenario.ScenarioEndpoint.NO_RESPONSE_FUTURE_IN_TEST_CONTEXT_MESSAGE;
+import static org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.REQUEST_RESPONSE_MAPPING_VARIABLE_NAME;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -69,6 +74,13 @@ class ScenarioEndpointTest {
         fixture = new ScenarioEndpoint(scenarioEndpointConfigurationMock);
     }
 
+    @Test
+    void deprecatedConstructor() {
+        assertThat(new ScenarioEndpoint(scenarioEndpointConfigurationMock))
+            // Important asserted field is `citrus`!
+            .hasNoNullFieldsOrPropertiesExcept("actor");
+    }
+
     @Nested
     class CreateProducer {
 
@@ -91,48 +103,45 @@ class ScenarioEndpointTest {
     class Fail {
 
         @Test
-        void shouldThrowException_ifNoResponseFutureIsPresent() {
+        void shouldThrowException_ifNoRequestResponseMappingIsPresent() {
             var testContextMock = mock(TestContext.class);
 
-            assertThatThrownBy(() -> fixture.fail(new CitrusRuntimeException()))
+            assertThatThrownBy(() -> fixture.fail(new CitrusRuntimeException(), testContextMock))
                 .isInstanceOf(SimulatorException.class)
-                .hasMessage("Failed to receive scenario inbound message");
+                .hasMessage(NO_REQUEST_RESPONSE_MAPPING_IN_TEST_CONTEXT_MESSAGE);
 
-            verifyNoInteractions(testContextMock);
+            verify(testContextMock).getVariables();
         }
 
         @Test
-        void shouldPollNextMessageFromChannel_ifNoneHasBeenReceived() {
-            CompletableFuture<Message> responseFuture = mock();
-            fixture.add(mock(Message.class), responseFuture);
+        void shouldThrowException_ifNoResponseFutureIsPresent() {
+            var testContextMock = mock(TestContext.class);
 
-            var cause = mock(Throwable.class);
-            fixture.fail(cause);
+            addExecutionRequestAndResponse(testContextMock, null, null);
 
-            ArgumentCaptor<SimulationFailedUnexpectedlyException> responseMessageArgumentCaptor = captor();
-            verify(responseFuture).complete(responseMessageArgumentCaptor.capture());
+            assertThatThrownBy(() -> fixture.fail(new CitrusRuntimeException(), testContextMock))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage(NO_RESPONSE_FUTURE_IN_TEST_CONTEXT_MESSAGE);
 
-            assertThat(responseMessageArgumentCaptor.getValue())
-                .isNotNull()
-                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
-                .extracting(Message::getPayload)
-                .isEqualTo(cause);
+            verify(testContextMock).getVariables();
         }
 
         @Test
         void shouldCompleteSingleResponseFuture_ifOneIsPresent() {
+            var testContextMock = mockTestContext(false);
+
             CompletableFuture<Message> responseFuture = mock();
-            fixture.add(mock(Message.class), responseFuture);
+            addExecutionRequestAndResponse(testContextMock, null, responseFuture);
 
             var cause = mock(Throwable.class);
-            fixture.fail(cause);
+            fixture.fail(cause, testContextMock);
 
-            ArgumentCaptor<SimulationFailedUnexpectedlyException> responseMessageArgumentCaptor = captor();
+            ArgumentCaptor<SimulationFailedUnexpectedlyExceptionMessage> responseMessageArgumentCaptor = captor();
             verify(responseFuture).complete(responseMessageArgumentCaptor.capture());
 
             assertThat(responseMessageArgumentCaptor.getValue())
                 .isNotNull()
-                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
+                .isInstanceOf(SimulationFailedUnexpectedlyExceptionMessage.class)
                 .extracting(Message::getPayload)
                 .isEqualTo(cause);
         }
@@ -142,15 +151,15 @@ class ScenarioEndpointTest {
             var params = addAndReceiveTwoMessagesInOrder();
 
             var cause1 = mock(Throwable.class);
-            fixture.fail(cause1);
+            fixture.fail(cause1, params.testContext1());
 
-            verify(params.responseFuture1()).complete(any(SimulationFailedUnexpectedlyException.class));
+            verify(params.responseFuture1()).complete(any(SimulationFailedUnexpectedlyExceptionMessage.class));
             verifyNoInteractions(params.responseFuture2());
 
             var cause2 = mock(Throwable.class);
-            fixture.fail(cause2);
+            fixture.fail(cause2, params.testContext2());
 
-            verify(params.responseFuture2()).complete(any(SimulationFailedUnexpectedlyException.class));
+            verify(params.responseFuture2()).complete(any(SimulationFailedUnexpectedlyExceptionMessage.class));
             verifyNoMoreInteractions(params.responseFuture1(), params.responseFuture2());
         }
 
@@ -159,15 +168,15 @@ class ScenarioEndpointTest {
             var params = addAndReceiveTwoMessagesInOrder();
 
             var cause1 = mock(Throwable.class);
-            fixture.fail(cause1);
+            fixture.fail(cause1, params.testContext2());
 
-            verify(params.responseFuture2()).complete(any(SimulationFailedUnexpectedlyException.class));
+            verify(params.responseFuture2()).complete(any(SimulationFailedUnexpectedlyExceptionMessage.class));
             verifyNoInteractions(params.responseFuture1());
 
             var cause2 = mock(Throwable.class);
-            fixture.fail(cause2);
+            fixture.fail(cause2, params.testContext1());
 
-            verify(params.responseFuture1()).complete(any(SimulationFailedUnexpectedlyException.class));
+            verify(params.responseFuture1()).complete(any(SimulationFailedUnexpectedlyExceptionMessage.class));
             verifyNoMoreInteractions(params.responseFuture1(), params.responseFuture2());
         }
     }
@@ -176,15 +185,31 @@ class ScenarioEndpointTest {
     class Send {
 
         @Test
-        void shouldPollNextMessageFromChannel_ifNoneHasBeenReceived() {
-            var message = mock(Message.class);
-            CompletableFuture<Message> responseFuture = mock();
+        void shouldThrowException_ifNoRequestResponseMappingIsPresent() {
+            var testContextMock = mockTestContext();
 
-            fixture.add(message, responseFuture);
+            var messageMock = mock(Message.class);
 
-            fixture.send(message, mockTestContext());
+            assertThatThrownBy(() -> fixture.send(messageMock, testContextMock))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage(NO_REQUEST_RESPONSE_MAPPING_IN_TEST_CONTEXT_MESSAGE);
 
-            verify(responseFuture).complete(message);
+            verifyNoInteractions(messageMock);
+        }
+
+        @Test
+        void shouldThrowException_ifNoResponseFutureIsPresent() {
+            var testContextMock = mockTestContext();
+
+            addExecutionRequestAndResponse(testContextMock, null, null);
+
+            var messageMock = mock(Message.class);
+
+            assertThatThrownBy(() -> fixture.send(messageMock, testContextMock))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage(NO_RESPONSE_FUTURE_IN_TEST_CONTEXT_MESSAGE);
+
+            verifyNoInteractions(messageMock);
         }
 
         @Test
@@ -258,7 +283,7 @@ class ScenarioEndpointTest {
                 requests[i] = mock();
                 responses[i] = mock();
 
-                fixture.add(requests[i], (CompletableFuture<Message>) responseFutures[i]);
+                addExecutionRequestAndResponse(testContexts[i], requests[i], (CompletableFuture<Message>) responseFutures[i]);
             }
 
             for (int i = 0; i < threadCount; i++) {
@@ -296,18 +321,23 @@ class ScenarioEndpointTest {
         }
     }
 
+    private static void addExecutionRequestAndResponse(TestContext testContexts, Message message, CompletableFuture<Message> responseFuture) {
+        var variables = Map.of(REQUEST_RESPONSE_MAPPING_VARIABLE_NAME, new ScenarioExecutorService.ExecutionRequestAndResponse(message, responseFuture));
+        doReturn(variables).when(testContexts).getVariables();
+    }
+
     private ConcurrentTestExecutionParams addAndReceiveTwoMessagesInOrder() {
         var testContext1 = mockTestContext();
         var message1 = mock(Message.class);
         CompletableFuture<Message> responseFuture1 = mock();
 
-        fixture.add(message1, responseFuture1);
+        addExecutionRequestAndResponse(testContext1, message1, responseFuture1);
 
         var testContext2 = mockTestContext();
         var message2 = mock(Message.class);
         CompletableFuture<Message> responseFuture2 = mock();
 
-        fixture.add(message2, responseFuture2);
+        addExecutionRequestAndResponse(testContext2, message2, responseFuture2);
 
         var receiveMessage1 = fixture.receive(testContext1);
         assertThat(receiveMessage1)
@@ -323,11 +353,18 @@ class ScenarioEndpointTest {
     }
 
     private TestContext mockTestContext() {
-        var testContextMock = mock(TestContext.class);
-        var referenceResolverMock = mock(ReferenceResolver.class);
+        return mockTestContext(true);
+    }
 
-        doReturn(referenceResolverMock).when(testContextMock).getReferenceResolver();
-        doReturn(endpointMessageHandlerMock).when(referenceResolverMock).resolve(EndpointMessageHandler.class);
+    private TestContext mockTestContext(boolean withReferenceResolver) {
+        var testContextMock = mock(TestContext.class);
+
+        if (withReferenceResolver) {
+            var referenceResolverMock = mock(ReferenceResolver.class);
+
+            doReturn(referenceResolverMock).when(testContextMock).getReferenceResolver();
+            doReturn(endpointMessageHandlerMock).when(referenceResolverMock).resolve(EndpointMessageHandler.class);
+        }
 
         return testContextMock;
     }

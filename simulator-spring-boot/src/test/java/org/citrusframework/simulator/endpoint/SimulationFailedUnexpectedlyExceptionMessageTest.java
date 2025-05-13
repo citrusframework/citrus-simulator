@@ -21,23 +21,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException.EXCEPTION_TYPE;
+import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyExceptionMessage.EXCEPTION_TYPE;
 
-class SimulationFailedUnexpectedlyExceptionTest {
+class SimulationFailedUnexpectedlyExceptionMessageTest {
 
     private static final Throwable TEST_THROWABLE = new SimulatorException("Huston, we hav a problem!");
 
-    private SimulationFailedUnexpectedlyException fixture;
+    private SimulationFailedUnexpectedlyExceptionMessage fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new SimulationFailedUnexpectedlyException(TEST_THROWABLE);
+        fixture = new SimulationFailedUnexpectedlyExceptionMessage(TEST_THROWABLE);
     }
 
     @Test
     void typeIsStatic() {
         assertThat(fixture)
-            .extracting(SimulationFailedUnexpectedlyException::getType)
+            .extracting(SimulationFailedUnexpectedlyExceptionMessage::getType)
             .isEqualTo(EXCEPTION_TYPE);
     }
 }

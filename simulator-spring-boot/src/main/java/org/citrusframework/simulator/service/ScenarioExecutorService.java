@@ -17,10 +17,12 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
+import org.citrusframework.message.Message;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Service capable of executing test executables. It takes care on setting up the executable before execution. The given
@@ -40,7 +42,7 @@ public interface ScenarioExecutorService  {
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      * @return the scenario execution id
      */
-    Long run(String name, @Nullable List<ScenarioParameter> scenarioParameters);
+    Long run(String name, @Nullable List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse);
 
     /**
      * Starts a new scenario instance using the collection of supplied parameters.
@@ -50,5 +52,10 @@ public interface ScenarioExecutorService  {
      * @param scenarioParameters the list of parameters to pass to the scenario when starting
      * @return the scenario execution id
      */
-    Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters);
+    Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse);
+
+    record ExecutionRequestAndResponse(@Nullable Message requestMessage, @Nullable CompletableFuture<Message> responseFuture) {
+
+        public static ExecutionRequestAndResponse NOOP_EXECUTION = new ExecutionRequestAndResponse(null, null);
+    }
 }
