@@ -178,8 +178,9 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         assertEquals(executionId, scenarioRunner.getTestCaseRunner().getTestCase().getVariableDefinitions().get(ScenarioExecution.EXECUTION_ID));
 
         verify(testListenersMock).onTestStart(any(TestCase.class));
+        verify(testListenersMock).onTestExecutionEnd(any(TestCase.class));
         verify(testListenersMock).onTestSuccess(any(TestCase.class));
-        verify(testListenersMock).onTestFinish(any(TestCase.class));
+        verify(testListenersMock).onTestFinalization(any(TestCase.class));
         verifyNoMoreInteractions(testListenersMock);
     }
 }
