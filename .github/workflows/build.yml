@@ -37,7 +37,7 @@ on:
       - 'NOTICE'
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       BUILD_OPTS: '--no-transfer-progress'
     steps:
