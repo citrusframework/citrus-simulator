@@ -16,52 +16,46 @@
 
 package org.citrusframework.simulator.scenario;
 
+import com.google.common.annotations.VisibleForTesting;
+import jakarta.annotation.Nonnull;
+import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.endpoint.AbstractEndpoint;
 import org.citrusframework.message.Message;
 import org.citrusframework.messaging.Consumer;
 import org.citrusframework.messaging.Producer;
 import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
-import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
+import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyExceptionMessage;
 import org.citrusframework.simulator.exception.SimulatorException;
-
-import java.util.Stack;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
+import org.citrusframework.simulator.service.ScenarioExecutorService;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.Objects.nonNull;
+import static org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.REQUEST_RESPONSE_MAPPING_VARIABLE_NAME;
 
+@Slf4j
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
-    /**
-     * Internal im memory message channel
-     */
-    private final LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
+    @VisibleForTesting
+    static final String NO_REQUEST_RESPONSE_MAPPING_IN_TEST_CONTEXT_MESSAGE = "No request-response mapping found in test context! This may happen if you're using the deprecated `ScenarioEndpoint#fail(Throwable)` API.";
 
-    /**
-     * Stack of response futures to complete
-     */
-    private final Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
+    @VisibleForTesting
+    static final String NO_RESPONSE_FUTURE_IN_TEST_CONTEXT_MESSAGE = "Failed to match response futures to test context! This may happen if you're using the deprecated `ScenarioEndpoint#fail(Throwable)` API.";
 
-    /**
-     * Default constructor using endpoint configuration.
-     *
-     * @param endpointConfiguration
-     */
-    public ScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
-        super(endpointConfiguration);
+    private static @Nonnull ScenarioExecutorService.ExecutionRequestAndResponse getExecutionRequestAndResponse(TestContext testContext) {
+        var requestResponseMapping = testContext.getVariables().get(REQUEST_RESPONSE_MAPPING_VARIABLE_NAME);
+
+        if (nonNull(requestResponseMapping) &&
+            requestResponseMapping instanceof ScenarioExecutorService.ExecutionRequestAndResponse executionRequestAndResponse) {
+            return executionRequestAndResponse;
+        }
+
+        throw new SimulatorException(NO_REQUEST_RESPONSE_MAPPING_IN_TEST_CONTEXT_MESSAGE);
     }
 
-    /**
-     * Adds new message for direct message consumption.
-     *
-     * @param request
-     */
-    public void add(Message request, CompletableFuture<Message> future) {
-        responseFutures.push(future);
-        channel.add(request);
+    public ScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
+        super(endpointConfiguration);
     }
 
     @Override
@@ -81,38 +75,43 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     @Override
     public Message receive(TestContext context, long timeout) {
+        var message = pollMessageForExecution(context, timeout);
+        messageReceived(message, context);
+
+        return message;
+    }
+
+    @Override
+    public void send(Message message, TestContext testContext) {
+        messageSent(message, testContext);
+        completeNextResponseFuture(message, testContext);
+    }
+
+    void fail(Throwable e, TestContext testContext) {
+        completeNextResponseFuture(new SimulationFailedUnexpectedlyExceptionMessage(e), testContext);
+    }
+
+    private Message pollMessageForExecution(TestContext testContext, long timeout) {
         try {
-            Message message = channel.poll(timeout, MILLISECONDS);
-
-            if (isNull(message)) {
-                throw new SimulatorException("Failed to receive scenario inbound message");
-            }
-
-            messageReceived(message, context);
-
-            return message;
+            return receiveNextMessageFromChannel(testContext);
         } catch (InterruptedException e) {
             currentThread().interrupt();
             throw new SimulatorException(e);
         }
     }
 
-    @Override
-    public void send(Message message, TestContext context) {
-        messageSent(message, context);
-        completeNextResponseFuture(message);
+    private Message receiveNextMessageFromChannel(TestContext testContext) throws InterruptedException {
+        return getExecutionRequestAndResponse(testContext).requestMessage();
     }
 
-    void fail(Throwable e) {
-        completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e));
-    }
+    private void completeNextResponseFuture(Message message, TestContext testContext) {
+        var responseFuture = getExecutionRequestAndResponse(testContext).responseFuture();
 
-    private void completeNextResponseFuture(Message message) {
-        if (responseFutures.isEmpty()) {
-            throw new SimulatorException("Failed to process scenario response message - missing response consumer!");
-        } else {
-            responseFutures.pop().complete(message);
+        if (isNull(responseFuture)) {
+            throw new SimulatorException(NO_RESPONSE_FUTURE_IN_TEST_CONTEXT_MESSAGE);
         }
+
+        responseFuture.complete(message);
     }
 
     private void messageSent(Message message, TestContext context) {
