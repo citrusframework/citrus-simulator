@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ASC, EntityOrder, toEntityOrder } from 'app/config/navigation.constants';
+import { EntityOrder, toEntityOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +26,7 @@ export class UserPreferenceService {
   }
 
   public getEntityOrder(identifier: string): EntityOrder {
-    return toEntityOrder(localStorage.getItem(this.orderId(identifier)) ?? ASC) ?? EntityOrder.ASCENDING;
+    return toEntityOrder(localStorage.getItem(this.orderId(identifier)) ?? EntityOrder.ASCENDING) ?? EntityOrder.ASCENDING;
   }
 
   public setEntityOrder(identifier: string, entityOrder: EntityOrder): void {

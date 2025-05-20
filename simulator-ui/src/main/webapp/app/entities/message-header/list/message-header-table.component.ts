@@ -5,7 +5,7 @@ import { SortParameters } from 'app/core/util/sort-parameters.type';
 import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 
 import { IMessageHeader } from '../message-header.model';
@@ -15,7 +15,7 @@ import { MessageHeaderService } from '../service/message-header.service';
   standalone: true,
   selector: 'app-message-header-table',
   templateUrl: './message-header-table.component.html',
-  imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
+  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective],
 })
 export default class MessageHeaderTableComponent implements OnInit {
   @Input()
@@ -35,8 +35,7 @@ export default class MessageHeaderTableComponent implements OnInit {
   constructor(private messageHeaderService: MessageHeaderService) {}
 
   ngOnInit(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: string-property identifier
+    // @ts-expect-error: string-property identifier
     this.sortedMessageHeaders?.sort((a: IMessageHeader, b: IMessageHeader) => (a[this.predicate] as number) - b[this.predicate]);
   }
 

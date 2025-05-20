@@ -1,12 +1,12 @@
-import { ASC, DESC, EntityOrder, toEntityOrder } from './navigation.constants';
+import { EntityOrder, toEntityOrder } from './navigation.constants';
 
 describe('EntityOrder', () => {
-  it('ASCENDING compares to "ASC"', () => {
-    expect(EntityOrder.ASCENDING.toString() === ASC).toBeTruthy();
+  it('ASCENDING compares to "asc"', () => {
+    expect(EntityOrder.ASCENDING.toString() === 'asc').toBeTruthy();
   });
 
-  it('DESCENDING compares to "DESC"', () => {
-    expect(EntityOrder.DESCENDING.toString() === DESC).toBeTruthy();
+  it('DESCENDING compares to "desc"', () => {
+    expect(EntityOrder.DESCENDING.toString() === 'desc').toBeTruthy();
   });
 
   describe('toEntityOrder', () => {

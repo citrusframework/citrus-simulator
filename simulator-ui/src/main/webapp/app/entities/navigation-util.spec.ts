@@ -1,7 +1,6 @@
 import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 
 import { IFilterOption } from '../shared/filter';
 
@@ -15,7 +14,7 @@ describe('navigation-util', () => {
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [RouterTestingModule.withRoutes([])],
+        imports: [provideRouter([])],
         providers: [
           {
             provide: ActivatedRoute,

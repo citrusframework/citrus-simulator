@@ -7,8 +7,6 @@ import { sort } from 'app/core/util/operators';
 
 import { IMessage } from 'app/entities/message/message.model';
 import { MessageService } from 'app/entities/message/service/message.service';
-
-import { DurationPipe, FormatMediumDatePipe } from 'app/shared/date';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
 import SharedModule from 'app/shared/shared.module';
 import SortByDirective from 'app/shared/sort/sort-by.directive';
@@ -18,16 +16,7 @@ import SortDirective from 'app/shared/sort/sort.directive';
   standalone: true,
   selector: 'app-scenario-messages-table',
   templateUrl: './scenario-messages-table.component.html',
-  imports: [
-    RouterModule,
-    SharedModule,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    SortDirective,
-    SortByDirective,
-    HighlightAuto,
-  ],
+  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective, HighlightAuto],
 })
 export class ScenarioMessagesTableComponent implements OnInit {
   @Input()

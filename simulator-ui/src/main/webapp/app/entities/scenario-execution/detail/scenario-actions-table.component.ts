@@ -16,7 +16,7 @@ import { ScenarioActionService } from 'app/entities/scenario-action/service/scen
   standalone: true,
   selector: 'app-scenario-actions-table',
   templateUrl: './scenario-actions-table.component.html',
-  imports: [RouterModule, SharedModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe, SortDirective, SortByDirective],
+  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective],
 })
 export class ScenarioActionsTableComponent implements OnInit {
   @Input()

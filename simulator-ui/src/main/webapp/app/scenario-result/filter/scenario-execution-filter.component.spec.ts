@@ -77,7 +77,7 @@ describe('ScenarioExecution Filter Component', () => {
       const nameContains = 'nameContains';
       const headerFilter = 'header%3Dvalue';
 
-      // @ts-ignore: Access read-only property for testing
+      // @ts-expect-error: Access read-only property for testing
       activatedRoute.queryParamMap = of(
         convertToParamMap({
           'filter[scenarioName.contains]': nameContains,
@@ -112,17 +112,18 @@ describe('ScenarioExecution Filter Component', () => {
         headerFilter: string;
       }>();
       jest.spyOn(filterFormValueChangesSubject, 'subscribe');
-      // @ts-ignore: Override read-only property for testing
+      // @ts-expect-error: Override read-only property for testing
       component.filterForm.valueChanges = filterFormValueChangesSubject;
 
       component.ngOnInit();
 
       // VERIFY that the subscription has been made
 
-      // @ts-ignore: Access private property for testing
+      // @ts-expect-error: Access private property for testing
       expect(component.valueChanged).toBeFalsy();
-      // @ts-ignore: Access private property for testing
+      // @ts-expect-error: Access private property for testing
       expect(component.filterFormValueChanges).not.toBeNull();
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
 
       expect(component.filterForm.getRawValue()).toEqual({
@@ -170,7 +171,7 @@ describe('ScenarioExecution Filter Component', () => {
       const filterFormValueChanges = {
         unsubscribe: jest.fn(),
       };
-      // @ts-ignore: access private property
+      // @ts-expect-error: access private property
       component.filterFormValueChanges = filterFormValueChanges;
 
       component.ngOnDestroy();
@@ -194,7 +195,7 @@ describe('ScenarioExecution Filter Component', () => {
 
       dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.applyFilter();
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -211,7 +212,7 @@ describe('ScenarioExecution Filter Component', () => {
     it('should ignore undefined parameters', () => {
       component.filterForm.get('statusIn')?.setValue(STATUS_SUCCESS.name);
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.applyFilter();
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -227,7 +228,7 @@ describe('ScenarioExecution Filter Component', () => {
 
       component.filterForm.get('statusIn')?.setValue(STATUS_SUCCESS.name);
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.applyFilter();
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -243,7 +244,7 @@ describe('ScenarioExecution Filter Component', () => {
 
       component.filterForm.get('statusIn')?.setValue(undefined);
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.applyFilter();
 
       expect(router.navigate).toHaveBeenCalledWith([], {
@@ -260,7 +261,6 @@ describe('ScenarioExecution Filter Component', () => {
       jest.spyOn(component.filterForm, 'reset');
       jest.spyOn(component.filterForm, 'markAsPristine');
 
-      // @ts-ignore: Access protected function for testing
       component.resetFilter();
 
       expect(component.filterForm.reset).toHaveBeenCalled();

@@ -1,16 +1,14 @@
 import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { of } from 'rxjs';
 
 import { ScenarioExecutionService } from '../service/scenario-execution.service';
 
 import { ScenarioExecutionComponent } from './scenario-execution.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('ScenarioExecution Management Component', () => {
@@ -22,8 +20,8 @@ describe('ScenarioExecution Management Component', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
-        HttpClientTestingModule,
+        provideRouter([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
+        provideHttpClientTesting(),
         ScenarioExecutionComponent,
       ],
       providers: [

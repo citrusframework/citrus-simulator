@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { MessageHeaderDetailComponent } from './message-header-detail.component';
@@ -8,7 +8,7 @@ import { MessageHeaderDetailComponent } from './message-header-detail.component'
 describe('MessageHeader Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MessageHeaderDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [MessageHeaderDetailComponent, provideRouter([], withComponentInputBinding())],
       providers: [
         provideRouter(
           [
