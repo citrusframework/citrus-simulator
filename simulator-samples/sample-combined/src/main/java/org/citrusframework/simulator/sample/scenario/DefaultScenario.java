@@ -16,15 +16,14 @@
 
 package org.citrusframework.simulator.sample.scenario;
 
-import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
+import org.citrusframework.ws.message.SoapMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXParseException;
 
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Christoph Deppisch
@@ -36,40 +35,29 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        boolean isSoap = false;
-        try {
-            scenario.$(scenario.receive());
-        } catch (TestCaseFailedException e) {
-            if (getRootCause(e) instanceof SAXParseException saxParseException) {
-                logger.warn("Default Scenario request parsing failed, assuming unmatched SOAP request!", e);
-                scenario.$(
-                    scenario.soap()
-                        .sendFault()
-                        .message()
-                        .faultActor("SERVER")
-                        .faultCode("{http://localhost:8080/HelloService/v1}CITRUS:SIM-1100")
-                        .faultString("No matching scenario found")
-                );
-                isSoap = true;
-            }
-        }
+        final AtomicBoolean isSoap = new AtomicBoolean(false);
 
-        if (!isSoap) {
+        scenario.$(scenario.receive().message().validate((message, context) -> {
+            isSoap.set(message instanceof SoapMessage);
+        }));
+
+        if (isSoap.get()) {
             scenario.$(
-                scenario.send()
+                scenario.soap()
+                    .sendFault()
                     .message()
-                    .body("<DefaultResponse>This is a default response!</DefaultResponse>")
+                    .faultActor("SERVER")
+                    .faultCode("{http://localhost:8080/HelloService/v1}CITRUS:SIM-1100")
+                    .faultString("No matching scenario found")
             );
-        }
-    }
 
-    private Throwable getRootCause(Exception e) {
-        Throwable cause = e;
-
-        while (!Objects.isNull(cause.getCause())) {
-            cause = cause.getCause();
+            return;
         }
 
-        return cause;
+        scenario.$(
+            scenario.send()
+                .message()
+                .body("<DefaultResponse>This is a default response!</DefaultResponse>")
+        );
     }
 }
