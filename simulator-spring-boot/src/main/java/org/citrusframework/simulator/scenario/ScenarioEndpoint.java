@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.scenario;
 
+import lombok.extern.slf4j.Slf4j;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.endpoint.AbstractEndpoint;
 import org.citrusframework.message.Message;
@@ -25,43 +26,36 @@ import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
 import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
 import org.citrusframework.simulator.exception.SimulatorException;
 
-import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+@Slf4j
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
     /**
      * Internal im memory message channel
      */
-    private final LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<ExecutionParams> channel = new LinkedBlockingQueue<>();
 
-    /**
-     * Stack of response futures to complete
-     */
-    private final Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
+    private final ConcurrentHashMap<TestContext, CompletableFuture<Message>> pendingResponseFutures = new ConcurrentHashMap<>();
 
     /**
      * Default constructor using endpoint configuration.
-     *
-     * @param endpointConfiguration
      */
     public ScenarioEndpoint(ScenarioEndpointConfiguration endpointConfiguration) {
         super(endpointConfiguration);
     }
 
     /**
-     * Adds new message for direct message consumption.
-     *
-     * @param request
+     * Adds a new message for direct message consumption.
      */
-    public void add(Message request, CompletableFuture<Message> future) {
-        responseFutures.push(future);
-        channel.add(request);
+    public void add(Message requestMessage, CompletableFuture<Message> responseFuture) {
+        channel.add(new ExecutionParams(requestMessage, responseFuture));
     }
 
     @Override
@@ -81,38 +75,49 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     @Override
     public Message receive(TestContext context, long timeout) {
+        var message = pollMessageForExecution(context, timeout);
+        messageReceived(message, context);
+
+        return message;
+    }
+
+    @Override
+    public void send(Message message, TestContext testContext) {
+        messageSent(message, testContext);
+        completeNextResponseFuture(message, testContext);
+    }
+
+    void fail(Throwable e, TestContext testContext) {
+        completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e), testContext);
+    }
+
+    private Message pollMessageForExecution(TestContext testContext, long timeout) {
         try {
-            Message message = channel.poll(timeout, MILLISECONDS);
-
-            if (isNull(message)) {
-                throw new SimulatorException("Failed to receive scenario inbound message");
-            }
-
-            messageReceived(message, context);
-
-            return message;
+            return receiveNextMessageFromChannel(testContext, timeout);
         } catch (InterruptedException e) {
             currentThread().interrupt();
             throw new SimulatorException(e);
         }
     }
 
-    @Override
-    public void send(Message message, TestContext context) {
-        messageSent(message, context);
-        completeNextResponseFuture(message);
-    }
-
-    void fail(Throwable e) {
-        completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e));
-    }
-
-    private void completeNextResponseFuture(Message message) {
-        if (responseFutures.isEmpty()) {
-            throw new SimulatorException("Failed to process scenario response message - missing response consumer!");
-        } else {
-            responseFutures.pop().complete(message);
+    private Message receiveNextMessageFromChannel(TestContext testContext, long timeout) throws InterruptedException {
+        var executionParams = channel.poll(timeout, MILLISECONDS);
+        if (isNull(executionParams)) {
+            throw new SimulatorException("Failed to receive scenario inbound message");
         }
+
+        pendingResponseFutures.put(testContext, executionParams.responseFuture());
+
+        return executionParams.requestMessage();
+    }
+
+    private void completeNextResponseFuture(Message message, TestContext testContext) {
+        if (pendingResponseFutures.isEmpty()) {
+            logger.debug("Failed to process scenario response message, response consumer for testContext is missing; will poll next: {}", testContext);
+            receive(testContext);
+        }
+
+        pendingResponseFutures.get(testContext).complete(message);
     }
 
     private void messageSent(Message message, TestContext context) {
@@ -125,5 +130,8 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     private EndpointMessageHandler getEndpointMessageHandler(TestContext context) {
         return context.getReferenceResolver().resolve(EndpointMessageHandler.class);
+    }
+
+    public record ExecutionParams(Message requestMessage, CompletableFuture<Message> responseFuture) {
     }
 }

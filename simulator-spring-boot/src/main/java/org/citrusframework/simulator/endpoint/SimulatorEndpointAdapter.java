@@ -93,8 +93,8 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             scenarioName = simulatorConfiguration.getDefaultScenario();
             logger.info("Unable to find scenario for mapping '{}' - using default scenario '{}'", mappingName, scenarioName);
         }
-        scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
 
+        scenario = applicationContext.getBean(scenarioName, SimulatorScenario.class);
         scenario.getScenarioEndpoint().setName(scenarioName);
 
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();

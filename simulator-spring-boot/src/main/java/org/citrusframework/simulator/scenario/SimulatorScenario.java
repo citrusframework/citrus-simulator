@@ -51,9 +51,8 @@ public interface SimulatorScenario {
     default Void registerException(Throwable e) {
         if (nonNull(getTestCaseRunner()) && getTestCaseRunner() instanceof DefaultTestCaseRunner defaultTestCaseRunner) {
             defaultTestCaseRunner.getContext().addException(new CitrusRuntimeException(e));
+            getScenarioEndpoint().fail(e, defaultTestCaseRunner.getContext());
         }
-
-        getScenarioEndpoint().fail(e);
 
         return null;
     }

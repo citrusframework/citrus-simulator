@@ -54,7 +54,7 @@ class SimulatorScenarioTest {
 
             fixture.registerException(cause);
 
-            verify(scenarioEndpointMock).fail(cause);
+            verifyNoInteractions(scenarioEndpointMock);
         }
 
         @Test
@@ -67,7 +67,7 @@ class SimulatorScenarioTest {
 
             fixture.registerException(cause);
 
-            verify(scenarioEndpointMock).fail(cause);
+            verifyNoInteractions(scenarioEndpointMock);
             verifyNoInteractions(testCaseRunnerMock);
         }
 
@@ -83,7 +83,7 @@ class SimulatorScenarioTest {
 
             fixture.registerException(cause);
 
-            verify(scenarioEndpointMock).fail(cause);
+            verify(scenarioEndpointMock).fail(cause, testContextMock);
 
             ArgumentCaptor<CitrusRuntimeException> exceptionArgumentCaptor = captor();
             verify(testContextMock).addException(exceptionArgumentCaptor.capture());
