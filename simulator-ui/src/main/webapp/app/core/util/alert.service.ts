@@ -1,4 +1,4 @@
-import { Injectable, SecurityContext, NgZone } from '@angular/core';
+import { Injectable, NgZone, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -60,9 +60,9 @@ export class AlertService {
       // if translation key exists
       if (translatedMessage !== `${translationNotFoundMessage}[${alert.translationKey}]`) {
         alert.message = translatedMessage;
-      } else if (!alert.message) {
-        alert.message = alert.translationKey;
       }
+
+      alert.message ??= alert.translationKey;
     }
 
     alert.message = this.sanitizer.sanitize(SecurityContext.HTML, alert.message ?? '') ?? '';

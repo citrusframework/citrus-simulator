@@ -71,7 +71,7 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm ci --cache .npm --force
+        run: npm ci --cache .npm
         working-directory: simulator-ui
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
