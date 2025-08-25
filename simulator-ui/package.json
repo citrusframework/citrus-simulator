@@ -54,6 +54,7 @@
     "@ngx-translate/core": "15.0.0",
     "@ngx-translate/http-loader": "8.0.0",
     "@popperjs/core": "2.11.8",
+    "axios": "1.11.0",
     "bootstrap": "5.3.7",
     "bootswatch": "5.3.7",
     "dayjs": "1.11.13",
@@ -112,8 +113,5 @@
   },
   "cacheDirectories": [
     "node_modules"
-  ],
-  "overrides": {
-    "webpack": "5.88.2"
-  }
+  ]
 }
