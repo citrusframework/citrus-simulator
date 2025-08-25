@@ -64,6 +64,8 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultScenarioExecutorService.class);
 
+    public static final String REQUEST_RESPONSE_MAPPING_VARIABLE_NAME = "scenario-execution-message-to-response-future";
+
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
     private final ScenarioExecutionService scenarioExecutionService;
@@ -79,13 +81,14 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
      * the provided parameters. This method serves as an entry point for scenario execution, handling the entire
      * lifecycle from scenario lookup to execution completion.
      *
-     * @param name               the name of the scenario to execute, used to look up the corresponding {@link SimulatorScenario} bean
-     * @param scenarioParameters a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param name                        the name of the scenario to execute, used to look up the corresponding {@link SimulatorScenario} bean
+     * @param scenarioParameters          a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param executionRequestAndResponse mapping of request and response message
      * @return the unique identifier of the scenario execution, used for tracking and management purposes
      */
     @Override
-    public final Long run(String name, @Nullable List<ScenarioParameter> scenarioParameters) {
-        return run(applicationContext.getBean(name, SimulatorScenario.class), name, scenarioParameters);
+    public final Long run(String name, @Nullable List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse) {
+        return run(applicationContext.getBean(name, SimulatorScenario.class), name, scenarioParameters, executionRequestAndResponse);
     }
 
     /**
@@ -93,27 +96,29 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
      * the scenario execution process, including pre-execution preparation, scenario execution, and post-execution
      * cleanup, ensuring a consistent execution environment for each scenario.
      *
-     * @param scenario           the {@link SimulatorScenario} to execute
-     * @param name               the name of the scenario, used for logging and tracking purposes
-     * @param scenarioParameters a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param scenario                    the {@link SimulatorScenario} to execute
+     * @param name                        the name of the scenario, used for logging and tracking purposes
+     * @param scenarioParameters          a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param executionRequestAndResponse mapping of request and response message
      * @return the unique identifier of the scenario execution
      */
     @Override
-    public final Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters) {
+    public final Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse) {
         ScenarioExecution scenarioExecution = scenarioExecutionService.createAndSaveExecutionScenario(name, scenarioParameters);
 
         prepareBeforeExecution(scenario);
 
-        startScenario(scenarioExecution.getExecutionId(), name, scenario, scenarioParameters);
+        startScenario(scenarioExecution.getExecutionId(), name, scenario, scenarioParameters, executionRequestAndResponse);
 
         return scenarioExecution.getExecutionId();
     }
 
-    protected void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
+    protected void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse) {
         logger.info("Starting scenario : {}", name);
 
-        var context = createTestContext();
-        createAndRunScenarioRunner(context, executionId, name, scenario, scenarioParameters);
+        var testContext = createTestContext();
+        testContext.setVariable(REQUEST_RESPONSE_MAPPING_VARIABLE_NAME, executionRequestAndResponse);
+        createAndRunScenarioRunner(testContext, executionId, name, scenario, scenarioParameters);
 
         logger.debug("Scenario completed: {}", name);
     }

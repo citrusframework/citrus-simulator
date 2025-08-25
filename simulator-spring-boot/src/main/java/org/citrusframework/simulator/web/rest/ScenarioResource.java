@@ -49,6 +49,7 @@ import java.util.Set;
 import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
+import static org.citrusframework.simulator.service.ScenarioExecutorService.ExecutionRequestAndResponse.NOOP_EXECUTION;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.MESSAGE_TRIGGERED;
 import static org.citrusframework.simulator.web.rest.ScenarioResource.Scenario.ScenarioType.STARTER;
 import static org.citrusframework.simulator.web.util.PaginationUtil.createPage;
@@ -140,7 +141,7 @@ public class ScenarioResource {
     @PostMapping("scenarios/{scenarioName}/launch")
     public Long launchScenario(@NotEmpty @PathVariable("scenarioName") String scenarioName, @RequestBody(required = false) List<ScenarioParameterDTO> scenarioParameters) {
         logger.debug("REST request to launch Scenario '{}' with Parameters: {}", scenarioName, scenarioParameters);
-        return scenarioExecutorService.run(scenarioName, scenarioParameters.stream().map(scenarioParameterMapper::toEntity).toList());
+        return scenarioExecutorService.run(scenarioName, scenarioParameters.stream().map(scenarioParameterMapper::toEntity).toList(), NOOP_EXECUTION);
     }
 
     public record Scenario(String name, ScenarioResource.Scenario.ScenarioType type) {

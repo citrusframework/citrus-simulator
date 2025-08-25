@@ -31,6 +31,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.citrusframework.simulator.model.TestResult.Status.SUCCESS;
+import static org.citrusframework.simulator.service.ScenarioExecutorService.ExecutionRequestAndResponse.NOOP_EXECUTION;
 
 @IntegrationTest
 class DefaultScenarioExecutorServiceIT {
@@ -54,14 +55,14 @@ class DefaultScenarioExecutorServiceIT {
     void throwsExceptionGivenInexistendScenarioName() {
         var beanName = "sherlock";
 
-        assertThatThrownBy(() -> scenarioExecutorService.run(beanName, emptyList()))
+        assertThatThrownBy(() -> scenarioExecutorService.run(beanName, emptyList(), NOOP_EXECUTION))
             .isInstanceOf(NoSuchBeanDefinitionException.class)
             .hasMessage("No bean named '%s' available".formatted(beanName));
     }
 
     @Test
     void resultsBeingPersistedSynchronously() {
-        var executionId = scenarioExecutorService.run(SCENARIO_NAME, emptyList());
+        var executionId = scenarioExecutorService.run(SCENARIO_NAME, emptyList(), NOOP_EXECUTION);
 
         assertThat(scenarioExecutionRepository.findOneByExecutionId(executionId))
             .hasValueSatisfying(scenarioExecution -> assertThat(scenarioExecution)
