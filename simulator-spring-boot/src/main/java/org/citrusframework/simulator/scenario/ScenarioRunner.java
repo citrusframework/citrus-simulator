@@ -17,18 +17,28 @@
 package org.citrusframework.simulator.scenario;
 
 import lombok.Getter;
+import org.citrusframework.DefaultTestActions;
 import org.citrusframework.DefaultTestCaseRunner;
 import org.citrusframework.GherkinTestActionRunner;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestActionBuilder;
+import org.citrusframework.TestActionContainers;
+import org.citrusframework.TestActionRunner;
+import org.citrusframework.TestActions;
 import org.citrusframework.TestBehavior;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.actions.ReceiveMessageAction;
 import org.citrusframework.actions.SendMessageAction;
 import org.citrusframework.context.TestContext;
+import org.citrusframework.message.DefaultMessageProcessors;
+import org.citrusframework.message.Processors;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
 import org.citrusframework.simulator.http.HttpScenarioActionBuilder;
 import org.citrusframework.simulator.ws.SoapScenarioActionBuilder;
+import org.citrusframework.validation.DefaultValidations;
+import org.citrusframework.validation.Validations;
+import org.citrusframework.variable.DefaultVariableExtractors;
+import org.citrusframework.variable.VariableExtractors;
 import org.springframework.context.ApplicationContext;
 
 import static org.citrusframework.container.FinallySequence.Builder.doFinally;
@@ -53,24 +63,8 @@ public class ScenarioRunner implements GherkinTestActionRunner {
         this.delegate = new DefaultTestCaseRunner(context);
     }
 
-    public SendMessageAction.Builder send() {
-        return SendMessageAction.Builder.send().endpoint(scenarioEndpoint);
-    }
-
-    public ReceiveMessageAction.Builder receive() {
-        return ReceiveMessageAction.Builder.receive().endpoint(scenarioEndpoint);
-    }
-
-    public HttpScenarioActionBuilder http() {
-        return new HttpScenarioActionBuilder(scenarioEndpoint);
-    }
-
-    public SoapScenarioActionBuilder soap() {
-        return new SoapScenarioActionBuilder(scenarioEndpoint);
-    }
-
     @Override
-    public <T extends TestAction> T run(TestActionBuilder<T> builder) {
+    public <T extends TestAction> TestActionRunner run(TestActionBuilder<T> builder) {
         if (builder instanceof CorrelationHandlerBuilder correlationHandlerBuilder) {
             correlationHandlerBuilder.setApplicationContext(applicationContext);
             delegate.run(doFinally().actions(((CorrelationHandlerBuilder) builder).stop()));
@@ -82,6 +76,31 @@ public class ScenarioRunner implements GherkinTestActionRunner {
     @Override
     public <T extends TestAction> TestActionBuilder<T> applyBehavior(TestBehavior behavior) {
         return delegate.applyBehavior(behavior);
+    }
+
+    @Override
+    public TestActions actions() {
+        return new DefaultTestActions();
+    }
+
+    @Override
+    public TestActionContainers containers() {
+        return new DefaultTestActions();
+    }
+
+    @Override
+    public Validations validation() {
+        return new DefaultValidations();
+    }
+
+    @Override
+    public VariableExtractors extractor() {
+        return new DefaultVariableExtractors();
+    }
+
+    @Override
+    public Processors processor() {
+        return new DefaultMessageProcessors();
     }
 
     public TestCaseRunner getTestCaseRunner() {
@@ -102,5 +121,21 @@ public class ScenarioRunner implements GherkinTestActionRunner {
 
     public void name(String name) {
         delegate.name(name);
+    }
+
+    public SendMessageAction.Builder send() {
+        return SendMessageAction.Builder.send().endpoint(scenarioEndpoint);
+    }
+
+    public ReceiveMessageAction.Builder receive() {
+        return ReceiveMessageAction.Builder.receive().endpoint(scenarioEndpoint);
+    }
+
+    public HttpScenarioActionBuilder http() {
+        return new HttpScenarioActionBuilder(scenarioEndpoint);
+    }
+
+    public SoapScenarioActionBuilder soap() {
+        return new SoapScenarioActionBuilder(scenarioEndpoint);
     }
 }
