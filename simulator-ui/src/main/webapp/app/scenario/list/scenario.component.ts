@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
@@ -7,17 +7,16 @@ import { combineLatest, debounceTime, Observable, Subscription, switchMap, tap }
 import { filter, map } from 'rxjs/operators';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
-import { ASC, DEFAULT_SORT_DATA, DESC, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
+import { DEFAULT_SORT_DATA, EntityOrder, SORT, toEntityOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 import { AlertService } from 'app/core/util/alert.service';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
-import { FilterComponent, IFilterOption } from 'app/shared/filter';
+import { IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
-import { SortByDirective, SortDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal } from 'app/shared/sort';
 
 import { EntityArrayResponseType, ScenarioService } from '../service/scenario.service';
 import { IScenario } from '../scenario.model';
@@ -32,19 +31,7 @@ type ScenarioFilter = {
   standalone: true,
   selector: 'app-scenario',
   templateUrl: './scenario.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    FilterComponent,
-    ItemCountComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent, ReactiveFormsModule],
 })
 export class ScenarioComponent implements OnDestroy, OnInit {
   filterForm: FormGroup = new FormGroup({
@@ -54,9 +41,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
   scenarios?: IScenario[];
   isLoading = false;
 
-  predicate = 'name';
-  ascending = true;
-  entityOrder: EntityOrder = EntityOrder.ASCENDING;
+  sortState = sortStateSignal({});
 
   itemsPerPage = ITEMS_PER_PAGE;
 
@@ -67,25 +52,25 @@ export class ScenarioComponent implements OnDestroy, OnInit {
 
   private filterFormValueChanges: Subscription | null = null;
 
-  constructor(
-    public router: Router,
-    protected scenarioService: ScenarioService,
-    protected activatedRoute: ActivatedRoute,
-    private alertService: AlertService,
-    private ngZone: NgZone,
-    private userPreferenceService: UserPreferenceService,
-    private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly alertService = inject(AlertService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+  private readonly router = inject(Router);
+  private readonly scenarioService = inject(ScenarioService);
+  private readonly sortService = inject(SortService);
+  private readonly userPreferenceService = inject(UserPreferenceService);
 
   trackId = (_index: number, item: IScenario): string => this.scenarioService.getScenarioIdentifier(item);
 
   ngOnInit(): void {
     this.itemsPerPage = this.userPreferenceService.getPageSize(this.USER_PREFERENCES_KEY);
-    this.predicate = this.userPreferenceService.getPredicate(this.USER_PREFERENCES_KEY, this.predicate);
-    this.entityOrder = this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY);
-    this.ascending = this.entityOrder === EntityOrder.ASCENDING;
 
-    this.navigateToWithComponentValues({ predicate: this.predicate, ascending: this.ascending });
+    const predicate = this.userPreferenceService.getPredicate(this.USER_PREFERENCES_KEY, 'name');
+    const order = this.userPreferenceService.getEntityOrder(this.USER_PREFERENCES_KEY);
+    this.sortState.set({ predicate, order });
+
+    this.navigateToWithComponentValues(this.sortState());
     this.load();
     this.changeDetectorRef.detectChanges();
 
@@ -122,19 +107,21 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     this.applyFilter();
   }
 
-  protected navigateToWithComponentValues({ predicate, ascending }: { predicate: string; ascending: boolean }): void {
-    this.updateUserPreferences(predicate, ascending);
-    this.handleNavigation(this.page, predicate, ascending);
+  protected navigateToWithComponentValues({ predicate, order }: SortState): void {
+    if (predicate && order) {
+      this.updateUserPreferences(predicate, order);
+      this.handleNavigation(this.page, { predicate, order });
+    }
   }
 
   protected navigateToPage(page = this.page): void {
-    this.handleNavigation(page, this.predicate, this.ascending);
+    this.handleNavigation(page, this.sortState());
   }
 
   protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending)),
+      switchMap(() => this.queryBackend(this.sortState(), this.page)),
     );
   }
 
@@ -142,9 +129,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.entityOrder = toEntityOrder(sort[1]) ?? EntityOrder.ASCENDING;
-    this.ascending = this.entityOrder === EntityOrder.ASCENDING;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -161,13 +146,13 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
   }
 
-  protected queryBackend(page?: number, predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
+  protected queryBackend(sortState: SortState, page?: number): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(sortState),
     };
 
     if (this.filterForm.value.nameContains) {
@@ -177,27 +162,17 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     return this.scenarioService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
+  protected handleNavigation(page = this.page, sortState: SortState, filterOptions?: IFilterOption[]): void {
     navigateToWithPagingInformation(
       page,
       this.itemsPerPage,
-      () => this.getSortQueryParam(predicate, ascending),
+      this.activatedRoute,
       this.ngZone,
       this.router,
-      this.activatedRoute,
-      predicate,
-      ascending,
+      this.sortService,
+      sortState,
       filterOptions,
     );
-  }
-
-  protected getSortQueryParam(predicate = this.predicate, ascending = true): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
   }
 
   protected launch(scenario: IScenario): void {
@@ -229,9 +204,9 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     this.load();
   }
 
-  private updateUserPreferences(predicate: string, ascending: boolean): void {
+  private updateUserPreferences(predicate: string, order: string): void {
     this.userPreferenceService.setPredicate(this.USER_PREFERENCES_KEY, predicate);
-    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, ascending ? EntityOrder.ASCENDING : EntityOrder.DESCENDING);
+    this.userPreferenceService.setEntityOrder(this.USER_PREFERENCES_KEY, toEntityOrder(order) ?? EntityOrder.ASCENDING);
   }
 
   private automaticApplyOnFormValueChanges(): void {
@@ -240,9 +215,7 @@ export class ScenarioComponent implements OnDestroy, OnInit {
     });
   }
 
-  private getFilterQueryParameter({ nameContains }: ScenarioFilter): {
-    [id: string]: any;
-  } {
+  private getFilterQueryParameter({ nameContains }: ScenarioFilter): Record<string, any> {
     return {
       'filter[scenarioName.contains]': nameContains ?? undefined,
     };

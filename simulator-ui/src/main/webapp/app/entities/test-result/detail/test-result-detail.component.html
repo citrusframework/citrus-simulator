@@ -1,56 +1,58 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="testResult">
-      <h2 data-test="testResultDetailsHeading"><span jhiTranslate="citrusSimulatorApp.testResult.detail.title">Test Result</span></h2>
+    @if (testResult(); as testResultRef) {
+      <div>
+        <h2 data-cy="testResultDetailsHeading"><span jhiTranslate="citrusSimulatorApp.testResult.detail.title">Test Result</span></h2>
 
-      <hr />
+        <hr />
 
-      <app-alert-error></app-alert-error>
+        <app-alert-error />
 
-      <app-alert></app-alert>
+        <app-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span data-test="testResultDetailsId">{{ testResult.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
-        <dd>
-          <span data-test="testResultDetailsStatus">{{ testResult.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span></dt>
-        <dd>
-          <span data-test="testResultDetailsTestName">{{ testResult.testName }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span></dt>
-        <dd>
-          <span data-test="testResultDetailsClassName">{{ testResult.className }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
-        <dd>
-          <span data-test="testResultDetailsErrorMessage">{{ testResult.errorMessage }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span></dt>
-        <dd>
-          <span data-test="testResultDetailsStackTrace">{{ testResult.stackTrace }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span></dt>
-        <dd>
-          <span data-test="testResultDetailsFailureType">{{ testResult.failureType }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span></dt>
-        <dd>
-          <span data-test="testResultDetailsCreatedDate">{{ testResult.createdDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span></dt>
-        <dd>
-          <span data-test="testResultDetailsLastModified">{{ testResult.lastModifiedDate | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ testResultRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.status">Status</span></dt>
+          <dd>
+            <span>{{ testResultRef.status }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.testName">Test Name</span></dt>
+          <dd>
+            <span>{{ testResultRef.testName }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.className">Class Name</span></dt>
+          <dd>
+            <span>{{ testResultRef.className }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.errorMessage">Error Message</span></dt>
+          <dd>
+            <span>{{ testResultRef.errorMessage }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.stackTrace">Failure Stack</span></dt>
+          <dd>
+            <span>{{ testResultRef.stackTrace }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.failureType">Failure Type</span></dt>
+          <dd>
+            <span>{{ testResultRef.failureType }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ testResultRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testResult.lastModifiedDate">Last Modified Date</span></dt>
+          <dd>
+            <span>{{ testResultRef.lastModifiedDate | formatMediumDatetime }}</span>
+          </dd>
+        </dl>
 
-      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-      </button>
-    </div>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

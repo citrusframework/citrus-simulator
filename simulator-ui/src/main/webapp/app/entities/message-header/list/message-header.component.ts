@@ -1,101 +1,93 @@
+import { Component, inject, NgZone, OnInit, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { Component, NgZone, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-
-import { combineLatest, Observable, switchMap, tap } from 'rxjs';
-
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-
-import { SortParameters } from 'app/core/util/sort-parameters.type';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest, Observable, Subscription, tap } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
-import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
-import { ItemCountComponent } from 'app/shared/pagination';
+import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import { DEFAULT_SORT_DATA, SORT } from 'app/config/navigation.constants';
+import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
 import { EntityArrayResponseType, MessageHeaderService } from '../service/message-header.service';
 import { IMessageHeader } from '../message-header.model';
-
-import MessageHeaderTableComponent from './message-header-table.component';
-
-import { navigateToWithPagingInformation } from '../../navigation-util';
+import { ItemCountComponent } from '../../../shared/pagination';
 
 @Component({
-  standalone: true,
   selector: 'app-message-header',
   templateUrl: './message-header.component.html',
-  imports: [FormsModule, SharedModule, FilterComponent, ItemCountComponent, MessageHeaderTableComponent],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    ItemCountComponent,
+    FilterComponent,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatetimePipe,
+    FilterComponent,
+  ],
 })
 export class MessageHeaderComponent implements OnInit {
-  messageHeaders?: IMessageHeader[];
+  subscription: Subscription | null = null;
+  messageHeaders = signal<IMessageHeader[]>([]);
   isLoading = false;
 
-  predicate = 'headerId';
-  ascending = true;
-
-  displayFilters: IFilterOptions = new FilterOptions();
+  sortState = sortStateSignal({});
+  filters: IFilterOptions = new FilterOptions();
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
 
-  private filters: IFilterOptions = new FilterOptions();
+  public readonly router = inject(Router);
+  protected readonly messageHeaderService = inject(MessageHeaderService);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  protected readonly sortService = inject(SortService);
+  protected ngZone = inject(NgZone);
 
-  constructor(
-    private ngZone: NgZone,
-    protected messageHeaderService: MessageHeaderService,
-    protected activatedRoute: ActivatedRoute,
-    public router: Router,
-  ) {}
+  trackId = (item: IMessageHeader): number => this.messageHeaderService.getMessageHeaderIdentifier(item);
 
   ngOnInit(): void {
-    this.load();
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(
+        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        tap(() => this.load()),
+      )
+      .subscribe();
 
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.predicate, this.ascending, filterOptions));
+    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformation().subscribe({
+    this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
     });
   }
 
-  navigateToWithComponentValues({ predicate, ascending }: SortParameters): void {
-    this.predicate = predicate;
-    this.ascending = ascending;
-
-    this.handleNavigation(this.page, predicate, ascending, this.filters.filterOptions);
+  navigateToWithComponentValues(event: SortState): void {
+    this.handleNavigation(this.page, event, this.filters.filterOptions);
   }
 
-  navigateToPage(page = this.page): void {
-    this.handleNavigation(page, this.predicate, this.ascending, this.filters.filterOptions);
-  }
-
-  protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
-    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
-      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.filters.filterOptions)),
-    );
+  navigateToPage(page: number): void {
+    this.handleNavigation(page, this.sortState(), this.filters.filterOptions);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     this.filters.initializeFromParams(params);
-    this.displayFilters = formatDateTimeFilterOptions(this.filters);
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.messageHeaders = dataFromBody;
+    this.messageHeaders.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseBody(data: IMessageHeader[] | null): IMessageHeader[] {
@@ -106,46 +98,39 @@ export class MessageHeaderComponent implements OnInit {
     this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
   }
 
-  protected queryBackend(
-    page?: number,
-    predicate?: string,
-    ascending?: boolean,
-    filterOptions?: IFilterOption[],
-  ): Observable<EntityArrayResponseType> {
+  protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { page, filters } = this;
+
     this.isLoading = true;
-    const pageToLoad: number = page ?? 1;
+    const pageToLoad: number = page;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
       eagerload: true,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(this.sortState()),
     };
-    filterOptions?.forEach(filterOption => {
+    filters.filterOptions.forEach(filterOption => {
       queryObject[filterOption.name] = filterOption.values;
     });
     return this.messageHeaderService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    navigateToWithPagingInformation(
+  protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {
+    const queryParamsObj: any = {
       page,
-      this.itemsPerPage,
-      () => this.getSortQueryParam(predicate, ascending),
-      this.ngZone,
-      this.router,
-      this.activatedRoute,
-      predicate,
-      ascending,
-      filterOptions,
-    );
-  }
+      size: this.itemsPerPage,
+      sort: this.sortService.buildSortParam(sortState),
+    };
 
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
+    filterOptions?.forEach(filterOption => {
+      queryParamsObj[filterOption.nameAsQueryParam()] = filterOption.values;
+    });
+
+    this.ngZone.run(() => {
+      this.router.navigate(['./'], {
+        relativeTo: this.activatedRoute,
+        queryParams: queryParamsObj,
+      });
+    });
   }
 }

@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { ITestResult } from '../test-result.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../test-result.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../test-result.test-samples';
 
-import { TestResultService, RestTestResult, TestResultsByStatus } from './test-result.service';
+import { RestTestResult, TestResultService } from './test-result.service';
 
 const requireRestSample: RestTestResult = {
   ...sampleWithRequiredData,
@@ -19,7 +20,7 @@ describe('TestResult Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(TestResultService);
@@ -49,20 +50,6 @@ describe('TestResult Service', () => {
       req.flush([returnedFromService]);
       httpMock.verify();
       expect(expectedResult).toMatchObject([expected]);
-    });
-
-    it('should return results count by status', () => {
-      const returnedFromService: TestResultsByStatus = { total: 3, successful: 2, failed: 1 };
-
-      let actualResult: TestResultsByStatus | null;
-      service.countByStatus().subscribe(resp => (actualResult = resp.body));
-
-      const req = httpMock.expectOne({ method: 'GET' });
-      req.flush([returnedFromService]);
-      httpMock.verify();
-
-      // @ts-ignore: Usage before assignment is ok
-      expect(actualResult).toMatchObject(actualResult);
     });
 
     describe('addTestResultToCollectionIfMissing', () => {
@@ -134,7 +121,7 @@ describe('TestResult Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { id: 123 };
+        const entity1 = { id: 15012 };
         const entity2 = null;
 
         const compareResult1 = service.compareTestResult(entity1, entity2);
@@ -145,8 +132,8 @@ describe('TestResult Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 456 };
+        const entity1 = { id: 15012 };
+        const entity2 = { id: 8705 };
 
         const compareResult1 = service.compareTestResult(entity1, entity2);
         const compareResult2 = service.compareTestResult(entity2, entity1);
@@ -155,9 +142,9 @@ describe('TestResult Service', () => {
         expect(compareResult2).toEqual(false);
       });
 
-      it('should return true if primaryKey matches', () => {
-        const entity1 = { id: 123 };
-        const entity2 = { id: 123 };
+      it('should return false if primaryKey matches', () => {
+        const entity1 = { id: 15012 };
+        const entity2 = { id: 15012 };
 
         const compareResult1 = service.compareTestResult(entity1, entity2);
         const compareResult2 = service.compareTestResult(entity2, entity1);

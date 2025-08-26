@@ -20,9 +20,7 @@
       "errorMessage": "Error Message",
       "stackTrace": "Stack Trace",
       "failureType": "Failure Type",
-      "testParameter": "Test Parameters",
-      "createdDate": "Created Date",
-      "lastModifiedDate": "Last Modified Date"
+      "testParameters": "Test Parameters"
     }
   }
 }

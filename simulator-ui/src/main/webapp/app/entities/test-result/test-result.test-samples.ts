@@ -3,37 +3,35 @@ import dayjs from 'dayjs/esm';
 import { ITestResult } from './test-result.model';
 
 export const sampleWithRequiredData: ITestResult = {
-  id: 22758,
-  status: 'SUCCESS',
-  testName: 'breadcrumb',
-  className: 'newspaper',
-  createdDate: dayjs('2023-09-26T09:11'),
-  lastModifiedDate: dayjs('2023-09-26T14:25'),
+  id: 25564,
+  status: 10607,
+  testName: 'why drag arrogantly',
+  className: 'mash flight supposing',
+  createdDate: dayjs('2023-09-26T04:15'),
+  lastModifiedDate: dayjs('2023-09-26T09:35'),
 };
 
 export const sampleWithPartialData: ITestResult = {
-  id: 1008,
-  status: 'FAILURE',
-  testName: 'zowie',
-  className: 'regarding openly',
-  errorMessage: 'toward',
-  stackTrace: 'whose',
-  createdDate: dayjs('2023-09-26T13:39'),
-  lastModifiedDate: dayjs('2023-09-26T15:03'),
+  id: 23416,
+  status: 12959,
+  testName: 'including',
+  className: 'untidy excepting',
+  errorMessage: 'revitalise of',
+  createdDate: dayjs('2023-09-25T22:16'),
+  lastModifiedDate: dayjs('2023-09-26T01:57'),
 };
 
 export const sampleWithFullData: ITestResult = {
-  id: 11970,
-  status: 'SKIP',
-  testName: 'peruse probable display',
-  className: 'dining',
-  errorMessage: 'reproachfully better what',
-  stackTrace: 'flugelhorn over',
-  failureType: 'aha',
-  createdDate: dayjs('2023-09-26T07:09'),
-  lastModifiedDate: dayjs('2023-09-26T09:18'),
+  id: 8640,
+  status: 1743,
+  testName: 'upon',
+  className: 'each eek',
+  errorMessage: 'anenst starboard',
+  stackTrace: 'mmm mobilise because',
+  failureType: 'gah measly amongst',
+  createdDate: dayjs('2023-09-26T06:30'),
+  lastModifiedDate: dayjs('2023-09-26T12:13'),
 };
-
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

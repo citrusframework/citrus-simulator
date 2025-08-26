@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { IMessageHeader } from '../message-header.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../message-header.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../message-header.test-samples';
 
 import { MessageHeaderService, RestMessageHeader } from './message-header.service';
 
@@ -19,7 +20,7 @@ describe('MessageHeader Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(MessageHeaderService);
@@ -120,7 +121,7 @@ describe('MessageHeader Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { headerId: 123 };
+        const entity1 = { headerId: 21098 };
         const entity2 = null;
 
         const compareResult1 = service.compareMessageHeader(entity1, entity2);
@@ -131,8 +132,8 @@ describe('MessageHeader Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { headerId: 123 };
-        const entity2 = { headerId: 456 };
+        const entity1 = { headerId: 21098 };
+        const entity2 = { headerId: 6180 };
 
         const compareResult1 = service.compareMessageHeader(entity1, entity2);
         const compareResult2 = service.compareMessageHeader(entity2, entity1);
@@ -142,8 +143,8 @@ describe('MessageHeader Service', () => {
       });
 
       it('should return false if primaryKey matches', () => {
-        const entity1 = { headerId: 123 };
-        const entity2 = { headerId: 123 };
+        const entity1 = { headerId: 21098 };
+        const entity2 = { headerId: 21098 };
 
         const compareResult1 = service.compareMessageHeader(entity1, entity2);
         const compareResult2 = service.compareMessageHeader(entity2, entity1);

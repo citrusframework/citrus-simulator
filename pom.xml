@@ -2,528 +2,531 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.citrusframework</groupId>
-  <artifactId>citrus-simulator</artifactId>
-  <name>${project.artifactId}</name>
-  <version>3.1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <description>Citrus Simulator</description>
-  <url>https://citrusframework.org</url>
-  <inceptionYear>2017</inceptionYear>
+    <groupId>org.citrusframework</groupId>
+    <artifactId>citrus-simulator</artifactId>
+    <name>${project.artifactId}</name>
+    <version>3.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <description>Citrus Simulator</description>
+    <url>https://citrusframework.org</url>
+    <inceptionYear>2017</inceptionYear>
 
-  <properties>
-    <java.version>17</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <properties>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <javadoc.doclint>none</javadoc.doclint>
+        <javadoc.doclint>none</javadoc.doclint>
 
-    <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
-    <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
-    <lombok.version>1.18.34</lombok.version>
-    <citrus.version>4.7.0</citrus.version>
+        <lombok.version>1.18.34</lombok.version>
+        <citrus.version>4.7.0</citrus.version>
 
-    <spring-boot.version>3.5.3</spring-boot.version>
-    <testng.version>7.11.0</testng.version>
-    <wsdl4j.version>1.6.3</wsdl4j.version>
-    <xerces.version>2.12.2</xerces.version>
-    <xstream.version>1.4.21</xstream.version>
+        <spring-boot.version>3.5.3</spring-boot.version>
+        <testng.version>7.11.0</testng.version>
+        <wsdl4j.version>1.6.3</wsdl4j.version>
+        <xerces.version>2.12.2</xerces.version>
+        <xstream.version>1.4.21</xstream.version>
 
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.5.3 -->
-    <log4j2.version>2.24.3</log4j2.version>
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.3 -->
-    <logback.classic.version>1.5.18</logback.classic.version>
+        <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.5.3 -->
+        <log4j2.version>2.24.3</log4j2.version>
+        <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.3 -->
+        <logback.classic.version>1.5.18</logback.classic.version>
 
-    <node.version>v22.4.1</node.version>
-    <npm.version>10.8.1</npm.version>
+        <node.version>v24.2.0</node.version>
+        <npm.version>11.3.0</npm.version>
 
-    <skip.gpg>false</skip.gpg>
-    <reuseForks>true</reuseForks>
-  </properties>
+        <skip.gpg>false</skip.gpg>
+        <reuseForks>true</reuseForks>
+    </properties>
 
-  <licenses>
-    <license>
-      <name>The Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>manual</distribution>
-      <comments>Citrus is published free of charge under Apache License, Version 2.0. You are allowed to use Citrus to test any kind of software
-        (also commercial applications). If you do this, we kindly ask you to tell us about it so that we can add you to our references
-        list. You may also use our "Tested using Citrus" logo in your online or printed documentation.</comments>
-    </license>
-  </licenses>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+            <comments>Citrus is published free of charge under Apache License, Version 2.0. You are allowed to use
+                Citrus to test any kind of software
+                (also commercial applications). If you do this, we kindly ask you to tell us about it so that we can add
+                you to our references
+                list. You may also use our "Tested using Citrus" logo in your online or printed documentation.
+            </comments>
+        </license>
+    </licenses>
 
-  <ciManagement>
-    <system>Jenkins</system>
-    <url>http://labs-build.consol.de/view/Citrus/</url>
-    <notifiers>
-      <notifier>
-        <type>mail</type>
-        <address>citrus-dev-l@consol.de</address>
-      </notifier>
-    </notifiers>
-  </ciManagement>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://labs-build.consol.de/view/Citrus/</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <address>citrus-dev-l@consol.de</address>
+            </notifier>
+        </notifiers>
+    </ciManagement>
 
-  <modules>
-    <module>simulator-spring-boot</module>
-    <module>simulator-ui</module>
-    <module>simulator-docs</module>
-    <module>simulator-samples</module>
-    <module>simulator-archetypes</module>
-  </modules>
+    <modules>
+        <module>simulator-spring-boot</module>
+        <module>simulator-ui</module>
+        <module>simulator-docs</module>
+        <module>simulator-samples</module>
+        <module>simulator-archetypes</module>
+    </modules>
 
-  <developers>
-    <developer>
-      <id>christophd</id>
-      <name>Christoph Deppisch</name>
-      <email>citrus-dev@googlegroups.com</email>
-      <organization>Red Hat</organization>
-      <organizationUrl>https://www.redhat.com/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>bbortt</id>
-      <name>Timon Borter</name>
-      <email>citrus-dev@googlegroups.com</email>
-      <organization>PostFinance AG</organization>
-      <organizationUrl>https://www.postfinance.ch/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>tschlat</id>
-      <name>Thorsten Schlathoelter</name>
-      <email>citrus-dev@googlegroups.com</email>
-      <organization>PostFinance AG</organization>
-      <organizationUrl>https://www.postfinance.ch/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>maherma</id>
-      <name>Martin Maher</name>
-      <email>citrus-dev@googlegroups.com</email>
-      <organization>SwissLife</organization>
-      <organizationUrl>https://www.swisslife.de/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>joroboro</id>
-      <name>Georgi Todorov</name>
-      <email>citrus-dev@googlegroups.com</email>
-      <organization>BMW Group</organization>
-      <organizationUrl>https://www.bmwgroup.com/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>christophd</id>
+            <name>Christoph Deppisch</name>
+            <email>citrus-dev@googlegroups.com</email>
+            <organization>Red Hat</organization>
+            <organizationUrl>https://www.redhat.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>bbortt</id>
+            <name>Timon Borter</name>
+            <email>citrus-dev@googlegroups.com</email>
+            <organization>PostFinance AG</organization>
+            <organizationUrl>https://www.postfinance.ch/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>tschlat</id>
+            <name>Thorsten Schlathoelter</name>
+            <email>citrus-dev@googlegroups.com</email>
+            <organization>PostFinance AG</organization>
+            <organizationUrl>https://www.postfinance.ch/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>maherma</id>
+            <name>Martin Maher</name>
+            <email>citrus-dev@googlegroups.com</email>
+            <organization>SwissLife</organization>
+            <organizationUrl>https://www.swisslife.de/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>joroboro</id>
+            <name>Georgi Todorov</name>
+            <email>citrus-dev@googlegroups.com</email>
+            <organization>BMW Group</organization>
+            <organizationUrl>https://www.bmwgroup.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-  <scm>
-    <connection>scm:git:git@github.com:citrusframework/citrus-simulator.git</connection>
-    <developerConnection>scm:git:git@github.com/citrusframework/citrus-simulator.git</developerConnection>
-    <url>http://github.com/citrusframework/citrus-simulator.git</url>
-  </scm>
+    <scm>
+        <connection>scm:git:git@github.com:citrusframework/citrus-simulator.git</connection>
+        <developerConnection>scm:git:git@github.com/citrusframework/citrus-simulator.git</developerConnection>
+        <url>http://github.com/citrusframework/citrus-simulator.git</url>
+    </scm>
 
-  <organization>
-    <name>ConSol Software GmbH</name>
-    <url>http://www.consol.com/</url>
-  </organization>
+    <organization>
+        <name>ConSol Software GmbH</name>
+        <url>http://www.consol.com/</url>
+    </organization>
 
-  <mailingLists>
-    <mailingList>
-      <name>Project Announcements</name>
-    </mailingList>
-    <mailingList>
-      <name>Project Development List</name>
-      <post>citrus-dev@googlegroups.com</post>
-    </mailingList>
-    <mailingList>
-      <name>Project User List</name>
-      <post>citrus-users@googlegroups.com</post>
-    </mailingList>
-  </mailingLists>
+    <mailingLists>
+        <mailingList>
+            <name>Project Announcements</name>
+        </mailingList>
+        <mailingList>
+            <name>Project Development List</name>
+            <post>citrus-dev@googlegroups.com</post>
+        </mailingList>
+        <mailingList>
+            <name>Project User List</name>
+            <post>citrus-users@googlegroups.com</post>
+        </mailingList>
+    </mailingLists>
 
-  <dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Citrus -->
+            <dependency>
+                <groupId>org.citrusframework</groupId>
+                <artifactId>citrus-bom</artifactId>
+                <version>${citrus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Citrus Simulator -->
+            <dependency>
+                <groupId>org.citrusframework</groupId>
+                <artifactId>citrus-spring-boot-simulator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.citrusframework</groupId>
+                <artifactId>citrus-simulator-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.interceptor</groupId>
+                <artifactId>jakarta.interceptor-api</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.10.11</version>
+            </dependency>
+
+            <dependency>
+                <groupId>wsdl4j</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>${wsdl4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>5.2.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.swagger.parser.v3</groupId>
+                <artifactId>swagger-parser</artifactId>
+                <version>2.1.24</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.classic.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+
+            <!-- Test scoped -->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Global dependencies -->
     <dependencies>
-      <!-- Citrus -->
-      <dependency>
-        <groupId>org.citrusframework</groupId>
-        <artifactId>citrus-bom</artifactId>
-        <version>${citrus.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <!-- Spring Boot -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <!-- Citrus Simulator -->
-      <dependency>
-        <groupId>org.citrusframework</groupId>
-        <artifactId>citrus-spring-boot-simulator</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.citrusframework</groupId>
-        <artifactId>citrus-simulator-ui</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>jakarta.interceptor</groupId>
-        <artifactId>jakarta.interceptor-api</artifactId>
-        <version>2.2.0</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.transaction</groupId>
-        <artifactId>jakarta.transaction-api</artifactId>
-        <version>2.0.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.ant</groupId>
-        <artifactId>ant</artifactId>
-        <version>1.10.11</version>
-      </dependency>
-
-      <dependency>
-        <groupId>wsdl4j</groupId>
-        <artifactId>wsdl4j</artifactId>
-        <version>${wsdl4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xmlbeans</groupId>
-        <artifactId>xmlbeans</artifactId>
-        <version>5.2.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>io.swagger.parser.v3</groupId>
-        <artifactId>swagger-parser</artifactId>
-        <version>2.1.24</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <!-- Logging -->
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.classic.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j2.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-to-slf4j</artifactId>
-        <version>${log4j2.version}</version>
-      </dependency>
-
-      <!-- Test scoped -->
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>${testng.version}</version>
-        <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
-  </dependencyManagement>
 
-  <!-- Global dependencies -->
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-  </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>true</addMavenDescriptor>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.11.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
-          <configuration>
-            <encoding>${project.build.sourceEncoding}</encoding>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.0</version>
-          <configuration>
-            <archive>
-              <addMavenDescriptor>true</addMavenDescriptor>
-            </archive>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-scm-plugin</artifactId>
-          <version>1.11.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.7.6</version>
+                </plugin>
 
-        <plugin>
-          <groupId>com.github.eirslett</groupId>
-          <artifactId>frontend-maven-plugin</artifactId>
-          <version>1.7.6</version>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.1.0</version>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <doclint>${javadoc.doclint}</doclint>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.0</version>
-          <configuration>
-            <doclint>${javadoc.doclint}</doclint>
-          </configuration>
-          <executions>
-            <execution>
-              <id>attach-javadocs</id>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*IT.java</exclude>
+                        </excludes>
+                        <failIfNoTests>false</failIfNoTests>
+                        <forkCount>1</forkCount>
+                        <reuseForks>${reuseForks}</reuseForks>
+                    </configuration>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
-          <configuration>
-            <excludes>
-              <exclude>**/*IT.java</exclude>
-            </excludes>
-            <failIfNoTests>false</failIfNoTests>
-            <forkCount>1</forkCount>
-            <reuseForks>${reuseForks}</reuseForks>
-          </configuration>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <failIfNoTests>false</failIfNoTests>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.2</version>
-          <configuration>
-            <failIfNoTests>false</failIfNoTests>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <useAgent>true</useAgent>
+                        <keyname>dev@citrusframework.org</keyname>
+                        <skip>${skip.gpg}</skip>
+                        <gpgArguments>
+                            <arg>--allow-weak-digest-algos</arg>
+                        </gpgArguments>
+                    </configuration>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.6</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <useAgent>true</useAgent>
-            <keyname>dev@citrusframework.org</keyname>
-            <skip>${skip.gpg}</skip>
-            <gpgArguments>
-              <arg>--allow-weak-digest-algos</arg>
-            </gpgArguments>
-          </configuration>
-        </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${maven.nexus-staging.plugin.version}</version>
+                    <dependencies>
+                        <!--
+                          TODO: Remove after OSSRH-66257, NEXUS-26993 are fixed,
+                        -->
+                        <dependency>
+                            <groupId>com.thoughtworks.xstream</groupId>
+                            <artifactId>xstream</artifactId>
+                            <version>${xstream.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <serverId>sonatype-nexus-staging</serverId>
+                        <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
+                        <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.13</version>
+                    <configuration>
+                        <includes>
+                            <include>**/*.java</include>
+                        </includes>
+                        <excludeSubProjects>false</excludeSubProjects>
+                    </configuration>
+                </plugin>
 
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${maven.nexus-staging.plugin.version}</version>
-          <dependencies>
-              <!--
-                TODO: Remove after OSSRH-66257, NEXUS-26993 are fixed,
-              -->
-              <dependency>
-                  <groupId>com.thoughtworks.xstream</groupId>
-                  <artifactId>xstream</artifactId>
-                  <version>${xstream.version}</version>
-              </dependency>
-          </dependencies>
-          <configuration>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <serverId>sonatype-nexus-staging</serverId>
-              <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
-              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.13</version>
-          <configuration>
-            <includes>
-              <include>**/*.java</include>
-            </includes>
-            <excludeSubProjects>false</excludeSubProjects>
-          </configuration>
-        </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.7</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <!-- Default plugins for all modules -->
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
-    </plugins>
-
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh-external</artifactId>
-        <version>3.3.3</version>
-      </extension>
-    </extensions>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>release-central</id>
-      <build>
+        <!-- Default plugins for all modules -->
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-          </plugin>
-
-          <!-- Deploy using the sonatype nexus staging maven plugin -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-deploy</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
 
-  </profiles>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>3.3.3</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release-central</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+
+                    <!-- Deploy using the sonatype nexus staging maven plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>

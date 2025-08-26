@@ -1,20 +1,17 @@
-import { Component, Input } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { ITestParameter } from '../test-parameter.model';
 
 @Component({
-  standalone: true,
   selector: 'app-test-parameter-detail',
   templateUrl: './test-parameter-detail.component.html',
-  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
+  imports: [SharedModule, RouterModule, FormatMediumDatetimePipe],
 })
 export class TestParameterDetailComponent {
-  @Input() testParameter: ITestParameter | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  testParameter = input<ITestParameter | null>(null);
 
   previousState(): void {
     window.history.back();

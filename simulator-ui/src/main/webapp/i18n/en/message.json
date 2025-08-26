@@ -14,9 +14,7 @@
       "payload": "Payload",
       "citrusMessageId": "Citrus Message Id",
       "scenarioExecution": "Scenario Execution",
-      "headers": "Headers",
-      "createdDate": "Created Date",
-      "lastModifiedDate": "Last Modified Date"
+      "headers": "Headers"
     }
   }
 }

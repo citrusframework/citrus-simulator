@@ -6,7 +6,9 @@
     {
       "fieldName": "direction",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "payload",
@@ -15,17 +17,23 @@
     {
       "fieldName": "citrusMessageId",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "createdDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "lastModifiedDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,
@@ -39,13 +47,6 @@
       "relationshipName": "headers",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityField": "scenarioName",
-      "otherEntityName": "scenarioExecution",
-      "relationshipName": "scenarioExecution",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no",

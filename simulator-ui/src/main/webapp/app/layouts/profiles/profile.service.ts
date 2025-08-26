@@ -6,7 +6,7 @@ import { map, shareReplay } from 'rxjs/operators';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 
-import { InfoResponse, SimulatorInfo, SimulatorConfiguration } from './profile-info.model';
+import { InfoResponse, SimulatorConfiguration, SimulatorInfo } from './profile-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -37,7 +37,7 @@ export class ProfileService {
     }
 
     this.simulatorInfo$ = this.http.get<InfoResponse>(this.infoUrl).pipe(
-      map((response: InfoResponse) => ({ ...response.simulator })),
+      map((response: InfoResponse) => ({ ...response.simulator }) as SimulatorInfo),
       shareReplay(),
     );
 

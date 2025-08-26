@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { ITestParameter } from '../test-parameter.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../test-parameter.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../test-parameter.test-samples';
 
-import { TestParameterService, RestTestParameter } from './test-parameter.service';
+import { RestTestParameter, TestParameterService } from './test-parameter.service';
 
 const requireRestSample: RestTestParameter = {
   ...sampleWithRequiredData,
@@ -19,7 +20,7 @@ describe('TestParameter Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(TestParameterService);
@@ -31,7 +32,7 @@ describe('TestParameter Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.find(123, 'key').subscribe(resp => (expectedResult = resp.body));
+      service.find(123).subscribe(resp => (expectedResult = resp.body));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -120,7 +121,7 @@ describe('TestParameter Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { key: 'key', testResult: { id: 123 } };
+        const entity1 = { id: 3696 };
         const entity2 = null;
 
         const compareResult1 = service.compareTestParameter(entity1, entity2);
@@ -131,24 +132,19 @@ describe('TestParameter Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { key: 'key', testResult: { id: 123 } };
-        const entity2 = { key: 'another key', testResult: { id: 123 } };
-        const entity3 = { key: 'key', testResult: { id: 234 } };
+        const entity1 = { id: 3696 };
+        const entity2 = { id: 10882 };
 
         const compareResult1 = service.compareTestParameter(entity1, entity2);
-        const compareResult2 = service.compareTestParameter(entity1, entity3);
-        const compareResult3 = service.compareTestParameter(entity2, entity1);
-        const compareResult4 = service.compareTestParameter(entity2, entity3);
+        const compareResult2 = service.compareTestParameter(entity2, entity1);
 
         expect(compareResult1).toEqual(false);
         expect(compareResult2).toEqual(false);
-        expect(compareResult3).toEqual(false);
-        expect(compareResult4).toEqual(false);
       });
 
-      it('should return true if primaryKey matches', () => {
-        const entity1 = { key: 'key', testResult: { id: 123 } };
-        const entity2 = { key: 'key', testResult: { id: 123 } };
+      it('should return false if primaryKey matches', () => {
+        const entity1 = { id: 3696 };
+        const entity2 = { id: 3696 };
 
         const compareResult1 = service.compareTestParameter(entity1, entity2);
         const compareResult2 = service.compareTestParameter(entity2, entity1);

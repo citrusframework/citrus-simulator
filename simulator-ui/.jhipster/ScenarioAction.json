@@ -6,12 +6,16 @@
     {
       "fieldName": "name",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "startDate",
       "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "endDate",
@@ -23,13 +27,6 @@
   "pagination": "pagination",
   "readOnly": true,
   "relationships": [
-    {
-      "otherEntityField": "scenarioName",
-      "otherEntityName": "scenarioExecution",
-      "relationshipName": "scenarioExecution",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
-    }
   ],
   "searchEngine": "no",
   "service": "serviceImpl"

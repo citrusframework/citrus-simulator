@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import SharedModule from 'app/shared/shared.module';
-import { VERSION } from 'app/app.constants';
+import { environment } from 'environments/environment';
 import { LANGUAGES } from 'app/config/language.constants';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 
@@ -12,7 +12,6 @@ import ActiveMenuDirective from './active-menu.directive';
 import NavbarItem from './navbar-item.model';
 
 @Component({
-  standalone: true,
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
@@ -28,6 +27,7 @@ export default class NavbarComponent implements OnInit {
     private translateService: TranslateService,
     private stateStorageService: StateStorageService,
   ) {
+    const { VERSION } = environment;
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }

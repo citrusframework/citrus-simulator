@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { IMessage } from '../message.model';
-import { sampleWithRequiredData, sampleWithPartialData, sampleWithFullData } from '../message.test-samples';
+import { sampleWithFullData, sampleWithPartialData, sampleWithRequiredData } from '../message.test-samples';
 
 import { MessageService, RestMessage } from './message.service';
 
@@ -19,7 +20,7 @@ describe('Message Service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     expectedResult = null;
     service = TestBed.inject(MessageService);
@@ -120,7 +121,7 @@ describe('Message Service', () => {
       });
 
       it('should return false if one entity is null', () => {
-        const entity1 = { messageId: 123 };
+        const entity1 = { messageId: 6456 };
         const entity2 = null;
 
         const compareResult1 = service.compareMessage(entity1, entity2);
@@ -131,8 +132,8 @@ describe('Message Service', () => {
       });
 
       it('should return false if primaryKey differs', () => {
-        const entity1 = { messageId: 123 };
-        const entity2 = { messageId: 456 };
+        const entity1 = { messageId: 6456 };
+        const entity2 = { messageId: 11110 };
 
         const compareResult1 = service.compareMessage(entity1, entity2);
         const compareResult2 = service.compareMessage(entity2, entity1);
@@ -142,8 +143,8 @@ describe('Message Service', () => {
       });
 
       it('should return false if primaryKey matches', () => {
-        const entity1 = { messageId: 123 };
-        const entity2 = { messageId: 123 };
+        const entity1 = { messageId: 6456 };
+        const entity2 = { messageId: 6456 };
 
         const compareResult1 = service.compareMessage(entity1, entity2);
         const compareResult2 = service.compareMessage(entity2, entity1);

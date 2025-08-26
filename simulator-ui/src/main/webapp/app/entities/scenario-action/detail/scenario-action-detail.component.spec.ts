@@ -1,21 +1,24 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { ScenarioActionDetailComponent } from './scenario-action-detail.component';
 
 describe('ScenarioAction Management Detail Component', () => {
+  let comp: ScenarioActionDetailComponent;
+  let fixture: ComponentFixture<ScenarioActionDetailComponent>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScenarioActionDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [ScenarioActionDetailComponent],
       providers: [
         provideRouter(
           [
             {
               path: '**',
-              component: ScenarioActionDetailComponent,
-              resolve: { scenarioAction: () => of({ actionId: 123 }) },
+              loadComponent: () => import('./scenario-action-detail.component').then(m => m.ScenarioActionDetailComponent),
+              resolve: { scenarioAction: () => of({ actionId: 2674 }) },
             },
           ],
           withComponentInputBinding(),
@@ -26,13 +29,26 @@ describe('ScenarioAction Management Detail Component', () => {
       .compileComponents();
   });
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ScenarioActionDetailComponent);
+    comp = fixture.componentInstance;
+  });
+
   describe('OnInit', () => {
     it('should load scenarioAction on init', async () => {
       const harness = await RouterTestingHarness.create();
       const instance = await harness.navigateByUrl('/', ScenarioActionDetailComponent);
 
       // THEN
-      expect(instance.scenarioAction).toEqual(expect.objectContaining({ actionId: 123 }));
+      expect(instance.scenarioAction()).toEqual(expect.objectContaining({ actionId: 2674 }));
+    });
+  });
+
+  describe('PreviousState', () => {
+    it('should navigate to previous state', () => {
+      jest.spyOn(window.history, 'back');
+      comp.previousState();
+      expect(window.history.back).toHaveBeenCalled();
     });
   });
 });

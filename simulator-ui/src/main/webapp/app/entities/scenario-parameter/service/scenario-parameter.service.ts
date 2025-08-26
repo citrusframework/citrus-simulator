@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-import { map } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
@@ -22,12 +20,10 @@ export type EntityArrayResponseType = HttpResponse<IScenarioParameter[]>;
 
 @Injectable({ providedIn: 'root' })
 export class ScenarioParameterService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenario-parameters');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenario-parameters');
 
   find(parameterId: number): Observable<EntityResponseType> {
     return this.http
@@ -73,6 +69,13 @@ export class ScenarioParameterService {
       return [...scenarioParametersToAdd, ...scenarioParameterCollection];
     }
     return scenarioParameterCollection;
+  }
+
+  protected convertDateFromClient<T extends IScenarioParameter>(scenarioParameter: T): RestOf<T> {
+    return {
+      ...scenarioParameter,
+      lastModifiedDate: scenarioParameter.lastModifiedDate?.toJSON() ?? null,
+    };
   }
 
   protected convertDateFromServer(restScenarioParameter: RestScenarioParameter): IScenarioParameter {

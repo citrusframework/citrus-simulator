@@ -1,8 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRouteSnapshot, ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 
 import { ITestParameter } from '../test-parameter.model';
@@ -18,8 +16,8 @@ describe('TestParameter routing resolve service', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
       providers: [
+        provideHttpClient(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -39,11 +37,9 @@ describe('TestParameter routing resolve service', () => {
 
   describe('resolve', () => {
     it('should return ITestParameter returned by find', () => {
-      const expectedResult: ITestParameter = { key: 'key', testResult: { id: 123 } };
-
       // GIVEN
-      service.find = jest.fn((testResultId, key) => of(new HttpResponse({ body: { key, testResult: { id: testResultId } } })));
-      mockActivatedRouteSnapshot.params = { testResultId: expectedResult.testResult.id, key: expectedResult.key };
+      service.find = jest.fn(id => of(new HttpResponse({ body: { id } })));
+      mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
       TestBed.runInInjectionContext(() => {
@@ -55,8 +51,8 @@ describe('TestParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.find).toBeCalledWith(expectedResult.testResult.id, expectedResult.key);
-      expect(resultTestParameter).toEqual(expectedResult);
+      expect(service.find).toHaveBeenCalledWith(123);
+      expect(resultTestParameter).toEqual({ id: 123 });
     });
 
     it('should return null if id is not provided', () => {
@@ -74,14 +70,14 @@ describe('TestParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.find).not.toBeCalled();
+      expect(service.find).not.toHaveBeenCalled();
       expect(resultTestParameter).toEqual(null);
     });
 
     it('should route to 404 page if data not found in server', () => {
       // GIVEN
       jest.spyOn(service, 'find').mockReturnValue(of(new HttpResponse<ITestParameter>({ body: null })));
-      mockActivatedRouteSnapshot.params = { testResultId: 123, key: 'key' };
+      mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
       TestBed.runInInjectionContext(() => {
@@ -93,7 +89,7 @@ describe('TestParameter routing resolve service', () => {
       });
 
       // THEN
-      expect(service.find).toBeCalledWith(123, 'key');
+      expect(service.find).toHaveBeenCalledWith(123);
       expect(resultTestParameter).toEqual(undefined);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['404']);
     });

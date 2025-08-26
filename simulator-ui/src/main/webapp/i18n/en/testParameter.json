@@ -16,9 +16,7 @@
       "id": "ID",
       "key": "Key",
       "value": "Value",
-      "testResult": "Test Result",
-      "createdDate": "Created Date",
-      "lastModifiedDate": "Last Modified Date"
+      "testResult": "Test Result"
     }
   }
 }

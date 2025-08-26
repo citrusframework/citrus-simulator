@@ -6,27 +6,37 @@
     {
       "fieldName": "name",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "controlType",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "value",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "createdDate",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "lastModifiedDate",
       "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,
@@ -34,13 +44,6 @@
   "pagination": "pagination",
   "readOnly": true,
   "relationships": [
-    {
-      "otherEntityField": "scenarioName",
-      "otherEntityName": "scenarioExecution",
-      "relationshipName": "scenarioExecution",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
-    }
   ],
   "searchEngine": "no",
   "service": "serviceImpl"

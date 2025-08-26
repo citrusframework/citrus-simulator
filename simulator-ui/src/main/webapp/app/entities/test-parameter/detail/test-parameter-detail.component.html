@@ -1,44 +1,46 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="testParameter">
-      <h2 data-test="testParameterDetailsHeading">
-        <span jhiTranslate="citrusSimulatorApp.testParameter.detail.title">Test Parameter</span>
-      </h2>
+    @if (testParameter(); as testParameterRef) {
+      <div>
+        <h2 data-cy="testParameterDetailsHeading">
+          <span jhiTranslate="citrusSimulatorApp.testParameter.detail.title">Test Parameter</span>
+        </h2>
 
-      <hr />
+        <hr />
 
-      <app-alert-error></app-alert-error>
+        <app-alert-error />
 
-      <app-alert></app-alert>
+        <app-alert />
 
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span></dt>
-        <dd>
-          <span data-test="testParameterDetailsKey">{{ testParameter.key }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span></dt>
-        <dd>
-          <span data-test="testParameterDetailsValue">{{ testParameter.value }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span></dt>
-        <dd>
-          <span data-test="testParameterDetailsCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span></dt>
-        <dd>
-          <span data-test="testParameterDetailsLastModified">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span></dt>
-        <dd>
-          <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-test="testParameterDetailsTestResultsId">{{
-            testParameter.testResult.id
-          }}</a>
-        </dd>
-      </dl>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span></dt>
+          <dd>
+            <span>{{ testParameterRef.key }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span></dt>
+          <dd>
+            <span>{{ testParameterRef.value }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ testParameterRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span></dt>
+          <dd>
+            <span>{{ testParameterRef.lastModifiedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span></dt>
+          <dd>
+              <div>
+                <a [routerLink]="['/test-result', testParameter()!.testResultId, 'view']">{{ testParameterRef.testResultId }}</a>
+              </div>
+          </dd>
+        </dl>
 
-      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-      </button>
-    </div>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

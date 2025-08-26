@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { ScenarioActionComponent } from './list/scenario-action.component';
-import { ScenarioActionDetailComponent } from './detail/scenario-action-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import ScenarioActionResolve from './route/scenario-action-routing-resolve.service';
 
 const scenarioActionRoute: Routes = [
   {
     path: '',
-    component: ScenarioActionComponent,
+    loadComponent: () => import('./list/scenario-action.component').then(m => m.ScenarioActionComponent),
     data: {
-      defaultSort: 'actionId,' + ASC,
+      defaultSort: 'actionId,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':actionId/view',
-    component: ScenarioActionDetailComponent,
+    loadComponent: () => import('./detail/scenario-action-detail.component').then(m => m.ScenarioActionDetailComponent),
     resolve: {
       scenarioAction: ScenarioActionResolve,
     },

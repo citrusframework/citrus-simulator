@@ -3,32 +3,31 @@ import dayjs from 'dayjs/esm';
 import { IScenarioParameter } from './scenario-parameter.model';
 
 export const sampleWithRequiredData: IScenarioParameter = {
-  parameterId: 13246,
-  name: 'TEXTBOX',
-  controlType: 26023,
-  value: 'underexpose since commerce',
-  createdDate: 21593,
-  lastModifiedDate: dayjs('2023-10-28T20:48'),
+  parameterId: 9777,
+  name: 'freely and',
+  controlType: 29065,
+  value: 'short-term orchid',
+  createdDate: 22088,
+  lastModifiedDate: dayjs('2023-10-29T06:27'),
 };
 
 export const sampleWithPartialData: IScenarioParameter = {
-  parameterId: 25616,
-  name: 'TEXTAREA',
-  controlType: 3663,
-  value: 'outside hastily',
-  createdDate: 26077,
-  lastModifiedDate: dayjs('2023-10-28T23:22'),
+  parameterId: 25519,
+  name: 'robust',
+  controlType: 24972,
+  value: 'quick-witted',
+  createdDate: 26724,
+  lastModifiedDate: dayjs('2023-10-29T07:44'),
 };
 
 export const sampleWithFullData: IScenarioParameter = {
-  parameterId: 16729,
-  name: 'DROPDOWN',
-  controlType: 21298,
-  value: 'coarse',
-  createdDate: 9490,
-  lastModifiedDate: dayjs('2023-10-29T08:59'),
+  parameterId: 12100,
+  name: 'sniveling blowgun',
+  controlType: 23759,
+  value: 'hm economise',
+  createdDate: 23081,
+  lastModifiedDate: dayjs('2023-10-29T12:21'),
 };
-
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);
 Object.freeze(sampleWithFullData);

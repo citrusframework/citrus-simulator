@@ -1,16 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-import { map } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
+import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { isPresent } from 'app/core/util/operators';
-import { MessageHeaderService, RestMessageHeader } from 'app/entities/message-header/service/message-header.service';
-
 import { IMessage } from '../message.model';
 
 type RestOf<T extends IMessage> = Omit<T, 'createdDate' | 'lastModifiedDate'> & {
@@ -25,13 +21,10 @@ export type EntityArrayResponseType = HttpResponse<IMessage[]>;
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/messages');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-    private messageHeaderService: MessageHeaderService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/messages');
 
   find(messageId: number): Observable<EntityResponseType> {
     return this.http
@@ -74,14 +67,19 @@ export class MessageService {
     return messageCollection;
   }
 
+  protected convertDateFromClient<T extends IMessage>(message: T): RestOf<T> {
+    return {
+      ...message,
+      createdDate: message.createdDate?.toJSON() ?? null,
+      lastModifiedDate: message.lastModifiedDate?.toJSON() ?? null,
+    };
+  }
+
   protected convertDateFromServer(restMessage: RestMessage): IMessage {
     return {
       ...restMessage,
       createdDate: restMessage.createdDate ? dayjs(restMessage.createdDate) : undefined,
       lastModifiedDate: restMessage.lastModifiedDate ? dayjs(restMessage.lastModifiedDate) : undefined,
-      headers: restMessage.headers
-        ? restMessage.headers.map(messageHeader => messageHeader as RestMessageHeader).map(this.messageHeaderService.convertDateFromServer)
-        : undefined,
     };
   }
 

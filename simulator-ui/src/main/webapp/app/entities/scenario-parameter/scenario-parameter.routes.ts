@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { ScenarioParameterComponent } from './list/scenario-parameter.component';
-import { ScenarioParameterDetailComponent } from './detail/scenario-parameter-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import ScenarioParameterResolve from './route/scenario-parameter-routing-resolve.service';
 
 const scenarioParameterRoute: Routes = [
   {
     path: '',
-    component: ScenarioParameterComponent,
+    loadComponent: () => import('./list/scenario-parameter.component').then(m => m.ScenarioParameterComponent),
     data: {
-      defaultSort: 'parameterId,' + ASC,
+      defaultSort: 'parameterId,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':parameterId/view',
-    component: ScenarioParameterDetailComponent,
+    loadComponent: () => import('./detail/scenario-parameter-detail.component').then(m => m.ScenarioParameterDetailComponent),
     resolve: {
       scenarioParameter: ScenarioParameterResolve,
     },

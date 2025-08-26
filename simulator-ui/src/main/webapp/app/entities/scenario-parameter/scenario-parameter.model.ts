@@ -1,12 +1,16 @@
 import dayjs from 'dayjs/esm';
-import { IScenarioExecution } from 'app/entities/scenario-execution/scenario-execution.model';
 
 export interface IScenarioParameter {
   parameterId: number;
-  name?: 'UNKNOWN' | 'TEXTBOX' | 'TEXTAREA' | 'DROPDOWN' | null;
+  name?: string | null;
   controlType?: number | null;
   value?: string | null;
+  options?: IScenarioParameterOption[];
   createdDate?: number | null;
   lastModifiedDate?: dayjs.Dayjs | null;
-  scenarioExecution?: Pick<IScenarioExecution, 'executionId' | 'scenarioName'> | null;
+}
+
+export interface IScenarioParameterOption {
+  key: string;
+  value: string;
 }

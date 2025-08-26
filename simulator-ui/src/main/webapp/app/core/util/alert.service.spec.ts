@@ -1,6 +1,6 @@
 import { inject, TestBed } from '@angular/core/testing';
 
-import { TranslateModule, TranslateService, MissingTranslationHandler } from '@ngx-translate/core';
+import { MissingTranslationHandler, TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { missingTranslationHandler } from 'app/config/translation.config';
 
@@ -22,7 +22,7 @@ describe('Alert service test', () => {
         ],
       });
       const translateService = TestBed.inject(TranslateService);
-      translateService.setDefaultLang('en');
+      translateService.setFallbackLang('en');
       jest.useFakeTimers();
       extAlerts = [];
     });

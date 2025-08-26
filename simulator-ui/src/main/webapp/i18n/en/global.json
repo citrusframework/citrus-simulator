@@ -24,7 +24,9 @@
       "language": "Language"
     },
     "field": {
-      "id": "ID"
+      "id": "ID",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date"
     },
     "footer": {
       "findUsOn": "Find us on:"

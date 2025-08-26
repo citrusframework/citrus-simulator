@@ -1,22 +1,27 @@
 import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 
 import { IFilterOption } from '../shared/filter';
+import type { SortState } from '../shared/sort';
+import { SortService } from '../shared/sort';
 
 import { navigateToWithPagingInformation } from './navigation-util';
+import { EntityOrder } from '../config/navigation.constants';
 
 describe('navigation-util', () => {
   describe('navigateToWithPagingInformation', () => {
+    const sortState: SortState = { predicate: 'id', order: EntityOrder.ASCENDING };
+
     let ngZone: NgZone;
     let router: Router;
     let activatedRoute: ActivatedRoute;
+    let sortService: jest.Mocked<SortService>;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [RouterTestingModule.withRoutes([])],
         providers: [
+          provideRouter([]),
           {
             provide: ActivatedRoute,
             useValue: {
@@ -32,14 +37,18 @@ describe('navigation-util', () => {
       router = TestBed.inject(Router);
       jest.spyOn(router, 'navigate');
       activatedRoute = TestBed.inject(ActivatedRoute);
+      sortService = { buildSortParam: jest.fn() } as Partial<SortService> as jest.Mocked<SortService>;
     });
 
     it('should navigate with page and itemsPerPage', () => {
       const page = 2;
       const itemsPerPage = 10;
 
-      navigateToWithPagingInformation(page, itemsPerPage, () => [], ngZone, router, activatedRoute);
+      sortService.buildSortParam.mockReturnValueOnce([]);
 
+      navigateToWithPagingInformation(page, itemsPerPage, activatedRoute, ngZone, router, sortService, sortState);
+
+      expect(sortService.buildSortParam).toHaveBeenCalledWith(sortState);
       expect(ngZone.run).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['./'], {
         relativeTo: activatedRoute,
@@ -50,12 +59,12 @@ describe('navigation-util', () => {
     it('should navigate with sort parameters', () => {
       const page = 1;
       const itemsPerPage = 25;
-      const predicate = 'name';
-      const ascending = true;
-      const getSortQueryParam = jest.fn().mockReturnValueOnce(['name,asc']);
 
-      navigateToWithPagingInformation(page, itemsPerPage, getSortQueryParam, ngZone, router, activatedRoute, predicate, ascending);
+      sortService.buildSortParam.mockReturnValueOnce(['name,asc']);
 
+      navigateToWithPagingInformation(page, itemsPerPage, activatedRoute, ngZone, router, sortService, sortState);
+
+      expect(sortService.buildSortParam).toHaveBeenCalledWith(sortState);
       expect(ngZone.run).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['./'], {
         relativeTo: activatedRoute,
@@ -73,7 +82,9 @@ describe('navigation-util', () => {
         { name: 'price', values: ['100-200'], nameAsQueryParam: () => 'price' },
       ];
 
-      navigateToWithPagingInformation(page, itemsPerPage, () => [], ngZone, router, activatedRoute, undefined, undefined, filterOptions);
+      sortService.buildSortParam.mockReturnValueOnce([]);
+
+      navigateToWithPagingInformation(page, itemsPerPage, activatedRoute, ngZone, router, sortService, sortState, filterOptions);
 
       expect(ngZone.run).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['./'], {

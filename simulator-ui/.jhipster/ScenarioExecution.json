@@ -6,7 +6,9 @@
     {
       "fieldName": "startDate",
       "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "endDate",
@@ -15,17 +17,9 @@
     {
       "fieldName": "scenarioName",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "status",
-      "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "errorMessage",
-      "fieldType": "String",
-      "fieldValidateRules": []
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,
@@ -33,6 +27,20 @@
   "pagination": "pagination",
   "readOnly": true,
   "relationships": [
+    {
+      "otherEntityName": "testResult",
+      "otherEntityRelationshipName": "scenarioExecution",
+      "relationshipName": "testResult",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "scenarioParameter",
+      "otherEntityRelationshipName": "scenarioExecution",
+      "relationshipName": "scenarioParameters",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
     {
       "otherEntityName": "scenarioAction",
       "otherEntityRelationshipName": "scenarioExecution",
@@ -44,13 +52,6 @@
       "otherEntityName": "message",
       "otherEntityRelationshipName": "scenarioExecution",
       "relationshipName": "scenarioMessages",
-      "relationshipSide": "left",
-      "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityName": "scenarioParameter",
-      "otherEntityRelationshipName": "scenarioExecution",
-      "relationshipName": "scenarioParameters",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     }

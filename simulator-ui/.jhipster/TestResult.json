@@ -6,24 +6,30 @@
     {
       "fieldName": "status",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "testName",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "className",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "errorMessage",
       "fieldType": "String"
     },
     {
-      "fieldName": "failureStack",
+      "fieldName": "stackTrace",
       "fieldType": "String"
     },
     {
@@ -33,12 +39,16 @@
     {
       "fieldName": "createdDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "lastModifiedDate",
       "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "jpaMetamodelFiltering": true,

@@ -21,6 +21,7 @@ describe('Data Utils Service Test', () => {
   describe('openFile', () => {
     it('should open the file in the new window', () => {
       const newWindow = { ...window };
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       newWindow.document.write = jest.fn();
       window.open = jest.fn(() => newWindow);
       window.URL.createObjectURL = jest.fn();

@@ -1,21 +1,19 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { TestResultComponent } from './list/test-result.component';
-import { TestResultDetailComponent } from './detail/test-result-detail.component';
+import { EntityOrder } from 'app/config/navigation.constants';
 import TestResultResolve from './route/test-result-routing-resolve.service';
 
 const testResultRoute: Routes = [
   {
     path: '',
-    component: TestResultComponent,
+    loadComponent: () => import('./list/test-result.component').then(m => m.TestResultComponent),
     data: {
-      defaultSort: 'id,' + ASC,
+      defaultSort: 'id,' + EntityOrder.ASCENDING,
     },
   },
   {
     path: ':id/view',
-    component: TestResultDetailComponent,
+    loadComponent: () => import('./detail/test-result-detail.component').then(m => m.TestResultDetailComponent),
     resolve: {
       testResult: TestResultResolve,
     },
