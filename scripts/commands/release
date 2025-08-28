@@ -44,7 +44,6 @@ release::usage() {
                               Works only when on a branch, not when checked out directly.
     --log <log-file>          Write full log to <log-file>, only print progress to screen
     --skip-tests              Do not run tests
-    --keep-staging-repo       Do not drop the staging repo (for manual review of what has been uploaded on a dry run)
     --no-strict-checksums     Do not insist on strict checksum policy for downloaded Maven artifacts
 -q  --quiet                   Adds quiet option to Maven options - only show errors
 EOT
@@ -54,7 +53,6 @@ EOT
 release::run() {
     source "$(basedir)/commands/util/git_funcs"
     source "$(basedir)/commands/util/version_funcs"
-    source "$(basedir)/commands/util/maven_central_funcs"
 
     # Main application directory
     local working_dir=$(appdir)
@@ -115,10 +113,6 @@ release::run() {
 
     # For a test run, we are done
     if [ $(hasflag --dry-run -n) ]; then
-        if [ ! $(hasflag --snapshot-release) ] && [ ! $(hasflag --local-release) ] && [ ! $(hasflag --keep-staging-repo) ]; then
-            drop_staging_repo "$working_dir" "$maven_opts"
-        fi
-
         echo "==== Dry run finished, nothing has been committed"
         echo "==== Use 'git reset --hard' to cleanup"
         exit 0
@@ -129,10 +123,6 @@ release::run() {
     # --------------------------
 
     if [ ! $(hasflag --local-release) ] && [ ! $(hasflag --snapshot-release) ]; then
-        # Release staging repo
-        # NOTE: not working recently (because of timeouts) - fallback to doing this manually
-        # release_staging_repo "$working_dir" "$maven_opts"
-
         # Push everything (if configured)
         git_push "$working_dir" "$release_version"
 
@@ -213,9 +203,12 @@ build_and_stage_artifacts() {
     elif [ $(hasflag --snapshot-release) ]; then
         echo "==== Release snapshot to local"
         ./mvnw ${maven_opts} install -DskipFrontend=false
+    elif [ $(hasflag --dry-run -n) ]; then
+        echo "==== Release to Maven Central - dry run"
+        ./mvnw ${maven_opts} install deploy -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -DfailIfNoTests=false -Dtest -Dit.test -Prelease-central
     else
-        echo "==== Release to Maven central and stage artifacts to Sonatype"
-        ./mvnw ${maven_opts} install deploy -DskipFrontend=false -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -Dtest -Dit.test -Prelease-central -DstagingDescription="Staging Citrus for v$release_version"
+        echo "==== Release to Maven central"
+        ./mvnw ${maven_opts} install deploy -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -DfailIfNoTests=false -Dtest -Dit.test -DautoPublish=true -Prelease-central
     fi
 }
 
@@ -246,7 +239,7 @@ extract_maven_opts() {
 
     if [ $(hasflag --skip-tests) ]; then
         # Do not run any tests but compile test sources
-        maven_opts="$maven_opts -Dtest -Dit.test -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false"
+        maven_opts="$maven_opts -Dtest -Dit.test -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false"
     fi
 
     if [ ! $(hasflag --no-strict-checksums) ]; then

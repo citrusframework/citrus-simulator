@@ -20,8 +20,10 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
-    <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
-    <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
+    <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+    <maven.sonatype.central.plugin.version>0.8.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.34</lombok.version>
     <citrus.version>4.8.0</citrus.version>
@@ -324,7 +326,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <version>${maven.deploy.plugin.version}</version>
         </plugin>
 
         <plugin>
@@ -398,46 +400,30 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.6</version>
+          <version>${maven.gpg.plugin.version}</version>
           <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
+              <execution>
+                  <id>sign-artifacts</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>sign</goal>
+                  </goals>
+              </execution>
           </executions>
           <configuration>
-            <useAgent>true</useAgent>
-            <keyname>dev@citrusframework.org</keyname>
-            <skip>${skip.gpg}</skip>
-            <gpgArguments>
-              <arg>--allow-weak-digest-algos</arg>
-            </gpgArguments>
+              <useAgent>true</useAgent>
+              <keyname>dev@citrusframework.org</keyname>
+              <skip>${skip.gpg}</skip>
+              <gpgArguments>
+                  <arg>--allow-weak-digest-algos</arg>
+              </gpgArguments>
           </configuration>
         </plugin>
 
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${maven.nexus-staging.plugin.version}</version>
-          <dependencies>
-              <!--
-                TODO: Remove after OSSRH-66257, NEXUS-26993 are fixed,
-              -->
-              <dependency>
-                  <groupId>com.thoughtworks.xstream</groupId>
-                  <artifactId>xstream</artifactId>
-                  <version>${xstream.version}</version>
-              </dependency>
-          </dependencies>
-          <configuration>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <serverId>sonatype-nexus-staging</serverId>
-              <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
-              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-          </configuration>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${maven.sonatype.central.plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -490,39 +476,49 @@
   </build>
 
   <profiles>
+    <!-- Distribution Management -->
     <profile>
-      <id>release-central</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-          </plugin>
+        <id>release-central</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                </plugin>
 
-          <!-- Deploy using the sonatype nexus staging maven plugin -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
+                <!-- Deploy using the sonatype nexus staging maven plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
 
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-deploy</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>sonatype-central</publishingServerId>
+                        <excludeArtifacts>
+                            <artifact>citrus-simulator-samples</artifact>
+                            <artifact>citrus-simulator-sample-bank-service</artifact>
+                            <artifact>citrus-simulator-sample-combined</artifact>
+                            <artifact>citrus-simulator-sample-jms</artifact>
+                            <artifact>citrus-simulator-sample-jms-fax</artifact>
+                            <artifact>citrus-simulator-sample-mail</artifact>
+                            <artifact>citrus-simulator-sample-rest</artifact>
+                            <artifact>citrus-simulator-sample-swagger</artifact>
+                            <artifact>citrus-simulator-sample-ws</artifact>
+                            <artifact>citrus-simulator-sample-ws-client</artifact>
+                            <artifact>citrus-simulator-sample-wsdl</artifact>
+                            <artifact>citrus-simulator-docs</artifact>
+                        </excludeArtifacts>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
     </profile>
 
   </profiles>

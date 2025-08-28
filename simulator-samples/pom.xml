@@ -46,13 +46,13 @@
       </plugins>
     </pluginManagement>
 
+    <!-- Do not deploy this module to Maven central -->
     <plugins>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <!-- Do not deploy sample modules to Maven central -->
-          <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+            <skip>true</skip>
         </configuration>
       </plugin>
 
