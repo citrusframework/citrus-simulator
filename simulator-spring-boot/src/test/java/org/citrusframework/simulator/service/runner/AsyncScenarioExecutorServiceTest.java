@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.service.runner;
 
 import org.citrusframework.TestCase;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.report.TestListeners;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.exception.SimulatorException;
@@ -36,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.citrusframework.simulator.service.ScenarioExecutorService.ExecutionRequestAndResponse.NOOP_EXECUTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,20 +98,20 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         Long executionId = mockScenarioExecutionCreation();
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        Long result = fixture.run(scenarioName, parameters);
+        Long result = fixture.run(scenarioName, parameters, NOOP_EXECUTION);
         assertEquals(executionId, result);
 
         ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = captor();
         verify(executorServiceMock).execute(scenarioRunnableArgumentCaptor.capture());
 
         // Now, we need more mocks!
-        mockCitrusTestContext();
+        var testContextMock = mockCitrusTestContext();
 
         // This invokes the scenario execution with the captured runnable
         scenarioRunnableArgumentCaptor.getValue().run();
 
         verifyTestCaseRunnerHasBeenConfigured(simulatorScenarioMock);
-        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock, testContextMock);
         verifyNoMoreInteractions(simulatorScenarioMock);
     }
 
@@ -120,10 +122,10 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         var simulatorScenarioMock = getSimulatorScenarioMock();
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters);
-        verifyScenarioExecution(executionId, result, simulatorScenarioMock);
+        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters, NOOP_EXECUTION);
+        var testContextMock = verifyScenarioExecution(executionId, result, simulatorScenarioMock);
 
-        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock, testContextMock);
     }
 
     @Test
@@ -138,7 +140,7 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
         // This method-invocation may not throw, despite the above exception!
-        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters);
+        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters, NOOP_EXECUTION);
         verifyScenarioExecution(executionId, result, simulatorScenarioMock);
 
         verify(simulatorScenarioMock).registerException(cause);
@@ -156,7 +158,7 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         verify(executorServiceMock).shutdownNow();
     }
 
-    private void verifyScenarioExecution(Long executionId, Long result, SimulatorScenario simulatorScenario) {
+    private TestContext verifyScenarioExecution(Long executionId, Long result, SimulatorScenario simulatorScenario) {
         assertEquals(executionId, result);
 
         ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = captor();
@@ -182,5 +184,7 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         verify(testListenersMock).onTestSuccess(any(TestCase.class));
         verify(testListenersMock).onTestFinalization(any(TestCase.class));
         verifyNoMoreInteractions(testListenersMock);
+
+        return testContextMock;
     }
 }
