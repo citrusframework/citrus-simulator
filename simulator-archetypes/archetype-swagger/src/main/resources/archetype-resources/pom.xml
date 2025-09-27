@@ -14,10 +14,10 @@
     <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.version>4.0.2</citrus.version>
+    <citrus.version>4.8.1</citrus.version>
     <citrus.simulator.version>3.2.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>3.1.2</spring.boot.version>
-    <testng.version>7.7.0</testng.version>
+    <spring.boot.version>3.5.5</spring.boot.version>
+    <testng.version>7.11.0</testng.version>
   </properties>
 
   <dependencyManagement>

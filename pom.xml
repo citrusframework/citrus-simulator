@@ -26,7 +26,7 @@
     <maven.sonatype.central.plugin.version>0.8.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.34</lombok.version>
-    <citrus.version>4.8.0</citrus.version>
+    <citrus.version>4.8.1</citrus.version>
 
     <spring-boot.version>3.5.5</spring-boot.version>
     <testng.version>7.11.0</testng.version>
