@@ -61,7 +61,7 @@ apply plugin: 'org.springframework.boot'
 jar {
     group = "org.citrusframework.simulator"
     baseName = 'citrus-simulator-sample'
-    version =  '1.2-SNAPSHOT'
+    version =  '3.2.0-SNAPSHOT'
 }
 
 repositories {
