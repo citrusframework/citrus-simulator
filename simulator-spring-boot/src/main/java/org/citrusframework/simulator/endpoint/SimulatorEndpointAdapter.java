@@ -39,7 +39,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException.EXCEPTION_TYPE;
+import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyExceptionMessage.EXCEPTION_TYPE;
 import static org.citrusframework.util.StringUtils.hasText;
 
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter {
@@ -79,7 +79,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
     private Message handleMessageWithCorrelation(Message request, CorrelationHandler handler) {
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();
-        handler.getScenarioEndpoint().add(request, responseFuture);
+//        handler.getScenarioEndpoint().add(request, responseFuture);
 
         return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName());
     }
@@ -98,10 +98,13 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         scenario.getScenarioEndpoint().setName(scenarioName);
 
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();
-        scenario.getScenarioEndpoint().add(message, responseFuture);
-
         try {
-            scenarioExecutorService.run(scenario, scenarioName, emptyList());
+            scenarioExecutorService.run(
+                scenario,
+                scenarioName,
+                emptyList(),
+                new ScenarioExecutorService.ExecutionRequestAndResponse(message, responseFuture)
+            );
         } catch (Exception e) {
             throw getResponseStatusException(e);
         }

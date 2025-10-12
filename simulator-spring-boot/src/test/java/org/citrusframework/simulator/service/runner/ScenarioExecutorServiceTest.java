@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
@@ -101,10 +102,11 @@ abstract class ScenarioExecutorServiceTest {
 
         var testListenersMock = mock(TestListeners.class);
         lenient().doReturn(testListenersMock).when(testContextMock).getTestListeners();
+
         return testContextMock;
     }
 
-    protected void verifyScenarioHasBeenRunWithScenarioRunner(SimulatorScenario simulatorScenarioMock) {
+    protected void verifyScenarioHasBeenRunWithScenarioRunner(SimulatorScenario simulatorScenarioMock, TestContext testContextMock) {
         ArgumentCaptor<ScenarioRunner> scenarioRunnerArgumentCaptor = captor();
         verify(simulatorScenarioMock).run(scenarioRunnerArgumentCaptor.capture());
 
@@ -112,7 +114,13 @@ abstract class ScenarioExecutorServiceTest {
             .hasNoNullFieldsOrProperties()
             .satisfies(
                 r -> assertThat(r.getScenarioEndpoint()).isEqualTo(scenarioEndpointMock),
-                r -> assertThat(r.getApplicationContext()).isEqualTo(applicationContextMock)
+                r -> assertThat(r.getApplicationContext()).isEqualTo(applicationContextMock),
+                r -> assertThat(r.getTestCaseRunner())
+                    .isNotNull()
+                    .asInstanceOf(type(DefaultTestCaseRunner.class))
+                    .extracting(DefaultTestCaseRunner::getContext)
+                    .isNotNull()
+                    .isEqualTo(testContextMock)
             );
     }
 }

@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.endpoint;
 
 import org.assertj.core.api.ThrowingConsumer;
-import org.citrusframework.context.TestContextFactory;
+import org.citrusframework.DefaultTestCaseRunner;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.IntegrationTest;
@@ -86,16 +86,13 @@ abstract class SimulatorEndpointAdapterIT {
     @Scenario(SUCCESS_SCENARIO_NAME)
     private static class SuccessScenario extends AbstractSimulatorScenario {
 
-        private final TestContextFactory testContextFactory;
-
-        private SuccessScenario(TestContextFactory testContextFactory) {
-            this.testContextFactory = testContextFactory;
-        }
-
         @Override
         public void run(ScenarioRunner runner) {
-            var context = testContextFactory.getObject();
-            getScenarioEndpoint().send(new DefaultMessage(), context);
+            if (!(runner.getTestCaseRunner() instanceof DefaultTestCaseRunner defaultTestCaseRunner)) {
+                throw new IllegalStateException(FAIL_WITH_PURPOSE);
+            }
+
+            getScenarioEndpoint().send(new DefaultMessage(), defaultTestCaseRunner.getContext());
         }
     }
 

@@ -33,9 +33,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.citrusframework.simulator.service.ScenarioExecutorService.ExecutionRequestAndResponse.NOOP_EXECUTION;
+import static org.citrusframework.simulator.service.runner.DefaultScenarioExecutorService.REQUEST_RESPONSE_MAPPING_VARIABLE_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -69,14 +72,14 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
         Long executionId = mockScenarioExecutionCreation();
 
-        mockCitrusTestContext();
+        var testContextMock = mockCitrusTestContext();
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        Long result = fixture.run(scenarioName, parameters);
+        Long result = fixture.run(scenarioName, parameters, NOOP_EXECUTION);
         assertEquals(executionId, result);
 
         verifyTestCaseRunnerHasBeenConfigured(simulatorScenarioMock);
-        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock, testContextMock);
         verifyNoMoreInteractions(simulatorScenarioMock);
     }
 
@@ -91,10 +94,12 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         doReturn(testListenersMock).when(testContextMock).getTestListeners();
 
         // Note that this does not actually "run" the scenario (because of the mocked executor service), it just creates it.
-        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters);
+        Long result = fixture.run(simulatorScenarioMock, scenarioName, parameters, NOOP_EXECUTION);
         verifyScenarioExecution(executionId, result, simulatorScenarioMock, testListenersMock);
 
-        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock);
+        verifyScenarioHasBeenRunWithScenarioRunner(simulatorScenarioMock, testContextMock);
+
+        verify(testContextMock).setVariable(eq(REQUEST_RESPONSE_MAPPING_VARIABLE_NAME), any(ScenarioExecutorService.ExecutionRequestAndResponse.class));
     }
 
     @Test
@@ -111,7 +116,7 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         var cause = mock(SimulatorException.class);
         doThrow(cause).when(simulatorScenarioMock).run(any(ScenarioRunner.class));
 
-        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters))
+        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters, NOOP_EXECUTION))
             .isEqualTo(cause);
         verifyScenarioExecution(executionId, null, simulatorScenarioMock, testListenersMock);
 

@@ -26,11 +26,11 @@ import org.citrusframework.message.DefaultMessage;
  *
  * @see SimulatorEndpointAdapter
  */
-public class SimulationFailedUnexpectedlyException extends DefaultMessage {
+public class SimulationFailedUnexpectedlyExceptionMessage extends DefaultMessage {
 
-    public static final String EXCEPTION_TYPE = SimulationFailedUnexpectedlyException.class.getSimpleName() + ":Exception";
+    public static final String EXCEPTION_TYPE = SimulationFailedUnexpectedlyExceptionMessage.class.getSimpleName() + ":Exception";
 
-    public SimulationFailedUnexpectedlyException(Throwable e) {
+    public SimulationFailedUnexpectedlyExceptionMessage(Throwable e) {
         super(e);
     }
 
