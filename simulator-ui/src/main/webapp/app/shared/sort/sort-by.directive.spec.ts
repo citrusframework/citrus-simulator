@@ -6,8 +6,10 @@ import { fas, faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-i
 
 import SortByDirective from './sort-by.directive';
 import SortDirective from './sort.directive';
+import { NgIf } from '@angular/common';
 
 @Component({
+  imports: [FaIconComponent, NgIf, SortDirective, SortByDirective],
   template: `
     <table>
       <thead>
@@ -37,8 +39,7 @@ describe('Directive: SortByDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [FaIconComponent, SortDirective, SortByDirective],
-      declarations: [TestSortByDirectiveComponent],
+      imports: [TestSortByDirectiveComponent],
     });
     fixture = TestBed.createComponent(TestSortByDirectiveComponent);
     component = fixture.componentInstance;

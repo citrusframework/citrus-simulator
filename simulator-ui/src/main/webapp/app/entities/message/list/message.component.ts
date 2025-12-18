@@ -11,7 +11,7 @@ import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.consta
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
@@ -32,9 +32,7 @@ import { navigateToWithPagingInformation } from '../../navigation-util';
     SharedModule,
     SortDirective,
     SortByDirective,
-    DurationPipe,
     FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
     FilterComponent,
     ItemCountComponent,
     HighlightAuto,

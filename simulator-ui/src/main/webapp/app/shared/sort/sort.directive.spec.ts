@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import SortDirective from './sort.directive';
 
 @Component({
+  imports: [SortDirective],
   template: `
     <table>
       <thead>
@@ -26,8 +27,7 @@ describe('Directive: SortDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SortDirective],
-      declarations: [TestSortDirectiveComponent],
+      imports: [TestSortDirectiveComponent],
     });
     fixture = TestBed.createComponent(TestSortDirectiveComponent);
     component = fixture.componentInstance;
