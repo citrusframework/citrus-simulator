@@ -3,11 +3,14 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import dayjs from 'dayjs/esm';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import SharedModule from '../../shared/shared.module';
+import FooterComponent from '../footer/footer.component';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
+  imports: [SharedModule, RouterModule, FooterComponent],
   providers: [AppPageTitleStrategy],
 })
 export default class MainComponent implements OnInit {

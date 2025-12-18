@@ -1,7 +1,6 @@
 import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router, TitleStrategy } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { RouterTestingModule } from '@angular/router/testing';
 import { DOCUMENT } from '@angular/common';
 import { Component } from '@angular/core';
 import { of } from 'rxjs';
@@ -21,8 +20,7 @@ describe('MainComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), RouterTestingModule],
-      declarations: [MainComponent],
+      imports: [TranslateModule.forRoot(), MainComponent],
       providers: [Title, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
     })
       .overrideTemplate(MainComponent, '')

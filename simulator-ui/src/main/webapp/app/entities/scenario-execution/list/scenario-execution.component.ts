@@ -10,7 +10,7 @@ import { ASC, DEFAULT_SORT_DATA, DESC, SORT } from 'app/config/navigation.consta
 
 import SharedModule from 'app/shared/shared.module';
 import { FilterComponent, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
@@ -32,9 +32,7 @@ import { ITestResultStatus } from '../../test-result/test-result.model';
     SharedModule,
     SortDirective,
     SortByDirective,
-    DurationPipe,
     FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
     FilterComponent,
     ItemCountComponent,
   ],

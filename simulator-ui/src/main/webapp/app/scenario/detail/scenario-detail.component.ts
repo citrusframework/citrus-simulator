@@ -4,13 +4,12 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 import { ScenarioParameterService } from 'app/entities/scenario-parameter/service/scenario-parameter.service';
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
 
 @Component({
   standalone: true,
   selector: 'app-scenario-detail',
   templateUrl: './scenario-detail.component.html',
-  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
+  imports: [SharedModule, RouterModule],
 })
 export class ScenarioDetailComponent {
   @Input() name: string | null = null;
