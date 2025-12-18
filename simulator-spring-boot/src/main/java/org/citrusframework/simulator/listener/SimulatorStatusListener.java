@@ -124,6 +124,9 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
         }
     }
 
+    @Override
+    public void onTestActionFailed(TestCase testCase, TestAction testAction, Throwable throwable) {
+    }
 
     @Override
     public void onTestActionSkipped(TestCase testCase, TestAction testAction) {
