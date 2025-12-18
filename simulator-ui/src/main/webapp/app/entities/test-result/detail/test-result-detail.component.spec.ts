@@ -8,7 +8,7 @@ import { TestResultDetailComponent } from './test-result-detail.component';
 describe('TestResult Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestResultDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [TestResultDetailComponent],
       providers: [
         provideRouter(
           [

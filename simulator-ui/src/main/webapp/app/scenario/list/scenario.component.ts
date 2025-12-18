@@ -13,8 +13,7 @@ import { UserPreferenceService } from 'app/core/config/user-preference.service';
 import { AlertService } from 'app/core/util/alert.service';
 
 import SharedModule from 'app/shared/shared.module';
-import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
-import { FilterComponent, IFilterOption } from 'app/shared/filter';
+import { IFilterOption } from 'app/shared/filter';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { SortByDirective, SortDirective } from 'app/shared/sort';
 import { ParamsDialogComponent } from '../params/params-dialog.component';
@@ -34,19 +33,7 @@ type ScenarioFilter = {
   standalone: true,
   selector: 'app-scenario',
   templateUrl: './scenario.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    FilterComponent,
-    ItemCountComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent, ReactiveFormsModule],
 })
 export class ScenarioComponent implements OnDestroy, OnInit {
   filterForm: FormGroup = new FormGroup({
