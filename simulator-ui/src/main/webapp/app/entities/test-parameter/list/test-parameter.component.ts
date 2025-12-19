@@ -1,19 +1,19 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 
-import { ASC, DESC, SORT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { DEFAULT_SORT_DATA, SORT } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
 import { formatDateTimeFilterOptions } from 'app/shared/date/format-date-time-filter-options';
-import { FilterComponent, FilterOptions, IFilterOptions, IFilterOption } from 'app/shared/filter';
-import { ItemCountComponent } from 'app/shared/pagination';
-import { SortDirective, SortByDirective } from 'app/shared/sort';
+import { Filter, FilterOptions, IFilterOption, IFilterOptions } from 'app/shared/filter';
+import { ItemCount } from 'app/shared/pagination';
+import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal } from 'app/shared/sort';
 
 import { EntityArrayResponseType, TestParameterService } from '../service/test-parameter.service';
 import { ITestParameter } from '../test-parameter.model';
@@ -24,23 +24,13 @@ import { navigateToWithPagingInformation } from '../../navigation-util';
   standalone: true,
   selector: 'app-test-parameter',
   templateUrl: './test-parameter.component.html',
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatetimePipe,
-    FilterComponent,
-    ItemCountComponent,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, Filter, ItemCount],
 })
 export class TestParameterComponent implements OnInit {
   testParameters?: ITestParameter[];
   isLoading = false;
 
-  predicate = 'createdDate';
-  ascending = true;
+  sortState = sortStateSignal({ predicate: 'createdDate' });
 
   displayFilters: IFilterOptions = new FilterOptions();
 
@@ -48,21 +38,21 @@ export class TestParameterComponent implements OnInit {
   totalItems = 0;
   page = 1;
 
-  private filters: IFilterOptions = new FilterOptions();
+  readonly router = inject(Router);
+  protected readonly activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected testParameterService: TestParameterService,
-    protected activatedRoute: ActivatedRoute,
-    private ngZone: NgZone,
-    public router: Router,
-  ) {}
+  protected readonly sortService = inject(SortService);
+
+  protected readonly testParameterService = inject(TestParameterService);
+
+  private filters: IFilterOptions = new FilterOptions();
 
   trackId = (_index: number, item: ITestParameter): number => this.testParameterService.getTestParameterIdentifier(item);
 
   ngOnInit(): void {
     this.load();
 
-    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.predicate, this.ascending, filterOptions));
+    this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
   }
 
   load(): void {
@@ -74,34 +64,31 @@ export class TestParameterComponent implements OnInit {
   }
 
   navigateToWithComponentValues(): void {
-    this.handleNavigation(this.page, this.predicate, this.ascending, this.filters.filterOptions);
+    this.handleNavigation(this.page);
   }
 
   navigateToPage(page = this.page): void {
-    this.handleNavigation(page, this.predicate, this.ascending, this.filters.filterOptions);
+    this.handleNavigation(page);
   }
 
   protected loadFromBackendWithRouteInformation(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.filters.filterOptions)),
+      switchMap(() => this.queryBackend(this.page)),
     );
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     this.filters.initializeFromParams(params);
     this.displayFilters = formatDateTimeFilterOptions(this.filters);
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
-    const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
-    this.testParameters = dataFromBody;
+    this.testParameters = this.fillComponentAttributesFromResponseBody(response.body);
   }
 
   protected fillComponentAttributesFromResponseBody(data: ITestParameter[] | null): ITestParameter[] {
@@ -112,45 +99,27 @@ export class TestParameterComponent implements OnInit {
     this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
   }
 
-  protected queryBackend(
-    page?: number,
-    predicate?: string,
-    ascending?: boolean,
-    filterOptions?: IFilterOption[],
-  ): Observable<EntityArrayResponseType> {
+  protected queryBackend(page?: number): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(this.sortState()),
     };
-    filterOptions?.forEach(filterOption => {
+
+    this.filters.filterOptions.forEach(filterOption => {
       queryObject[filterOption.name] = filterOption.values;
     });
+
     return this.testParameterService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, filterOptions?: IFilterOption[]): void {
-    navigateToWithPagingInformation(
-      page,
-      this.itemsPerPage,
-      () => this.getSortQueryParam(predicate, ascending),
-      this.ngZone,
-      this.router,
-      this.activatedRoute,
-      predicate,
-      ascending,
-      filterOptions,
-    );
-  }
-
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
+  protected handleNavigation(
+    page: number,
+    sortState: SortState = this.sortState(),
+    filterOptions: IFilterOption[] = this.filters.filterOptions,
+  ): void {
+    navigateToWithPagingInformation(page, this.itemsPerPage, this.sortService, sortState, this.router, this.activatedRoute, filterOptions);
   }
 }

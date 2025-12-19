@@ -1,7 +1,7 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedActions && sortedActions.length > 0; else noParameters">
   <table class="table table-striped table-hover" data-test="scenarioActionsEntityTable" aria-describedby="page-heading">
     <thead>
-      <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortActions()">
+      <tr jhiSort [(sortState)]="sortState" (sortChange)="sortActions()">
         <th scope="col" jhiSortBy="actionId">
           <div class="d-flex">
             <span jhiTranslate="global.field.id">ID</span>

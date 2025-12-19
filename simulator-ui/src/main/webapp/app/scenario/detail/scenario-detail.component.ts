@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
@@ -17,10 +17,8 @@ export class ScenarioDetailComponent {
 
   @Input() scenarioParameters: IScenarioParameter[] | null = null;
 
-  constructor(
-    protected activatedRoute: ActivatedRoute,
-    private scenarioParameterService: ScenarioParameterService,
-  ) {}
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  private readonly scenarioParameterService = inject(ScenarioParameterService);
 
   trackId = (_index: number, item: IScenarioParameter): number => this.scenarioParameterService.getScenarioParameterIdentifier(item);
 

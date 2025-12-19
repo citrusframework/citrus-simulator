@@ -8,7 +8,7 @@ import { ScenarioActionDetailComponent } from './scenario-action-detail.componen
 describe('ScenarioAction Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScenarioActionDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [ScenarioActionDetailComponent],
       providers: [
         provideRouter(
           [

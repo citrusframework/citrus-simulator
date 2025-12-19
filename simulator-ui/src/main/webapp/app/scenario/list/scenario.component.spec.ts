@@ -1,16 +1,15 @@
-import { DEBOUNCE_TIME_MILLIS } from '../../config/input.constants';
+import { DEBOUNCE_TIME_MILLIS } from '../app/config/input.constants';
 import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { EMPTY, of, Subject, throwError } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ASC, DESC, EntityOrder } from 'app/config/navigation.constants';
+import { ASC, DESC, SortOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
@@ -20,7 +19,7 @@ import { ScenarioService } from '../service/scenario.service';
 
 import { ScenarioComponent } from './scenario.component';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
-import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 
 jest.mock('app/core/util/alert.service');
 
@@ -38,13 +37,10 @@ describe('Scenario Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'scenario', component: ScenarioComponent }]),
-        HttpClientTestingModule,
-        ScenarioComponent,
-        TranslateModule.forRoot(),
-      ],
+      imports: [ScenarioComponent, TranslateModule.forRoot()],
       providers: [
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'scenario', component: ScenarioComponent }]),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -61,8 +57,8 @@ describe('Scenario Management Component', () => {
             getPageSize: jest.fn(),
             getPredicate: jest.fn(),
             setPredicate: jest.fn(),
-            getEntityOrder: jest.fn(),
-            setEntityOrder: jest.fn(),
+            getSortOrder: jest.fn(),
+            setSortOrder: jest.fn(),
           },
         },
       ],
@@ -91,7 +87,7 @@ describe('Scenario Management Component', () => {
   });
 
   describe('ngOnInit', () => {
-    let detectChangesSpy: SpyInstance<any>;
+    let detectChangesSpy: SpyInstance;
 
     beforeEach(() => {
       const changeDetectorRef = fixture.debugElement.injector.get(ChangeDetectorRef);
@@ -102,10 +98,10 @@ describe('Scenario Management Component', () => {
       // Mock the default return value behaviour
       (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(ITEMS_PER_PAGE);
       (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce('id');
-      (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(EntityOrder.ASCENDING);
+      (userPreferenceService.getSortOrder as unknown as SpyInstance).mockReturnValueOnce(SortOrder.ASCENDING);
 
       // Mock the activated route accordingly, note the absence of page and sort
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           size: ITEMS_PER_PAGE,
@@ -122,7 +118,7 @@ describe('Scenario Management Component', () => {
 
       // And the user preferences have been saved
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', 'id');
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', 'asc');
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', SortOrder.ASCENDING);
 
       expect(detectChangesSpy).toHaveBeenCalled();
     });
@@ -133,11 +129,11 @@ describe('Scenario Management Component', () => {
       (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
       const predicate = 'some-predicate';
       (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce(predicate);
-      (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(EntityOrder.DESCENDING);
+      (userPreferenceService.getSortOrder as unknown as SpyInstance).mockReturnValueOnce(SortOrder.DESCENDING);
 
       // Mock the activated route accordingly
       const sort = predicate + ',desc';
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           page: '1',
@@ -152,7 +148,7 @@ describe('Scenario Management Component', () => {
       // This is the initial read
       expect(userPreferenceService.getPageSize).toHaveBeenCalledWith('scenario');
       expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario', 'name');
-      expect(userPreferenceService.getEntityOrder).toHaveBeenCalledWith('scenario');
+      expect(userPreferenceService.getSortOrder).toHaveBeenCalledWith('scenario');
 
       // Then follows the update of the route
       expect(routerNavigateSpy).toHaveBeenCalledWith(
@@ -172,7 +168,7 @@ describe('Scenario Management Component', () => {
 
       // And the user preferences must be saved
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', 'desc');
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', SortOrder.DESCENDING);
 
       // Verify that the changes have been registered
       expect(detectChangesSpy).toHaveBeenCalled();
@@ -180,7 +176,7 @@ describe('Scenario Management Component', () => {
       // And finally make sure the values have been persisted
       expect(component.itemsPerPage).toEqual(itemsPerPage);
       expect(component.predicate).toEqual(predicate);
-      expect(component.entityOrder).toEqual(DESC);
+      expect(component.sortOrder).toEqual(DESC);
       expect(component.ascending).toBeFalsy();
     });
 
@@ -189,18 +185,19 @@ describe('Scenario Management Component', () => {
         nameContains: string;
       }>();
       jest.spyOn(filterFormValueChangesSubject, 'subscribe');
-      // @ts-ignore: Override read-only property for testing
+      // @ts-expect-error: Override read-only property for testing
       component.filterForm.valueChanges = filterFormValueChangesSubject;
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = EMPTY;
 
       component.ngOnInit();
 
       // VERIFY that the subscription has been made
 
-      // @ts-ignore: Access private member for testing
+      // @ts-expect-error: Access private member for testing
       expect(component.filterFormValueChanges).not.toBeNull();
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
 
       expect(component.filterForm.getRawValue()).toEqual({ nameContains: null });
@@ -219,7 +216,7 @@ describe('Scenario Management Component', () => {
   describe('ngOnDestroy', () => {
     it('unsubscribes from form value changes', () => {
       const unsubscribe = jest.fn();
-      // @ts-ignore: Access private member for testing
+      // @ts-expect-error: Access private member for testing
       component.filterFormValueChanges = {
         unsubscribe,
       };
@@ -237,7 +234,7 @@ describe('Scenario Management Component', () => {
       const predicate = 'some-predicate';
       const sort = predicate + ',desc';
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           page,
@@ -256,7 +253,7 @@ describe('Scenario Management Component', () => {
       const predicate = 'some-predicate';
       const sort = predicate + ',desc';
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           page,
@@ -291,7 +288,7 @@ describe('Scenario Management Component', () => {
       jest.spyOn(component.filterForm, 'reset');
       jest.spyOn(component.filterForm, 'markAsPristine');
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.resetFilter();
 
       expect(component.filterForm.reset).toHaveBeenCalled();
@@ -305,7 +302,7 @@ describe('Scenario Management Component', () => {
       { predicate: 'name', ascending: true, expectedSort: 'name,asc' },
       { predicate: 'name', ascending: false, expectedSort: 'name,desc' },
     ])('should calculate the sort attribute for ascending=$ascending', ({ predicate, ascending, expectedSort }) => {
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.navigateToWithComponentValues({ predicate, ascending });
 
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(
@@ -317,13 +314,13 @@ describe('Scenario Management Component', () => {
         }),
       );
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
     });
   });
 
   describe('navigateToPage', () => {
     it('should load a page', () => {
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.navigateToPage(1);
 
       expect(routerNavigateSpy).toHaveBeenCalled();
@@ -333,7 +330,7 @@ describe('Scenario Management Component', () => {
   describe('pageSizeChanged', () => {
     it('should adapt to page size changes', () => {
       // Mock the activated route accordingly, note the absence of page and sort
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       activatedRoute.queryParamMap = of(
         jest.requireActual('@angular/router').convertToParamMap({
           size: ITEMS_PER_PAGE,
@@ -345,7 +342,7 @@ describe('Scenario Management Component', () => {
       const itemsPerPage = 1234;
 
       // WHEN
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.pageSizeChanged(itemsPerPage);
 
       // Make sure new value has been correctly persisted and used
@@ -381,7 +378,7 @@ describe('Scenario Management Component', () => {
       const scenarioId = 1234;
       service.launch = jest.fn().mockReturnValue(of(new HttpResponse({ body: scenarioId })));
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component['launch']({ name });
 
       // Needed due combination of promises and observables
@@ -403,7 +400,7 @@ describe('Scenario Management Component', () => {
       // Configure mock alert service
       service.launch = jest.fn().mockReturnValue(throwError(() => new Error('Anything that happen during communication!')));
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.launch({ name });
       tick();
 

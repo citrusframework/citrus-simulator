@@ -23,7 +23,7 @@
   <div class="table-responsive table-entities" id="entities" *ngIf="scenarioExecutions && scenarioExecutions.length > 0">
     <table class="table table-striped table-hover" data-test="scenarioExecutionEntityTable" aria-describedby="page-heading">
       <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+        <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="executionId">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.scenarioExecution.id">ID</span>

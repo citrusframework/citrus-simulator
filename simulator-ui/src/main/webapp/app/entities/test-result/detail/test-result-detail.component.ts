@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
@@ -13,8 +13,7 @@ import { ITestResult } from '../test-result.model';
 })
 export class TestResultDetailComponent {
   @Input() testResult: ITestResult | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  protected activatedRoute = inject(ActivatedRoute);
 
   previousState(): void {
     window.history.back();

@@ -74,7 +74,7 @@ export const mockBackendResponse = async (
   page: Page,
   apiURL: string,
   responseJson: object,
-  headers?: { [key: string]: string },
+  headers?: Record<string, string>,
 ): Promise<void> => {
   await page.route(apiURL, async route => {
     if (headers) {

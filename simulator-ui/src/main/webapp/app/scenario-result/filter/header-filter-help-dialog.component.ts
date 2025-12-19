@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -11,7 +11,7 @@ import SharedModule from 'app/shared/shared.module';
   imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export default class HeaderFilterHelpDialogComponent {
-  constructor(protected activeModal: NgbActiveModal) {}
+  protected readonly activeModal = inject(NgbActiveModal);
 
   protected cancel(): void {
     this.activeModal.dismiss();

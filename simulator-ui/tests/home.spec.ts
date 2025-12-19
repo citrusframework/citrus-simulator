@@ -163,7 +163,7 @@ const checkIfSummaryTabsAreDisplayingRightNumbers = async (
   totalTests: number,
   successfulTests: number,
   failedTests: number,
-): Promise<any> => {
+): Promise<void> => {
   const summarySelectorToAbsoluteValueMapping: {
     testSelector: string;
     value: number;
@@ -184,11 +184,10 @@ const checkIfSummaryTabsAreDisplayingRightNumbers = async (
 
   for (const percentageDisplay of summarySelectorToAbsoluteValueMapping) {
     await expect(page.getByTestId(percentageDisplay.testSelector)).toHaveText(
-      percentageDisplay.value +
-        ` (${((percentageDisplay.value / totalTests) * 100).toLocaleString(undefined, {
-          maximumFractionDigits: 2,
-          minimumFractionDigits: 0,
-        })} %)`,
+      `${String(percentageDisplay.value)} (${((percentageDisplay.value / totalTests) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+      })} %)`,
     );
   }
 };

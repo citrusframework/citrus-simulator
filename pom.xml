@@ -39,8 +39,8 @@
     <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.8 -->
     <logback.classic.version>1.5.21</logback.classic.version>
 
-    <node.version>v22.4.1</node.version>
-    <npm.version>10.8.1</npm.version>
+    <node.version>v22.21.1</node.version>
+    <npm.version>10.9.4</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>

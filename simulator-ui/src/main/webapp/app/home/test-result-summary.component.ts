@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -38,11 +38,9 @@ export default class TestResultSummaryComponent implements OnInit {
     .getSimulatorConfiguration()
     .pipe(map((simulatorConfiguration: SimulatorConfiguration) => simulatorConfiguration.resetResultsEnabled));
 
-  constructor(
-    private modalService: NgbModal,
-    private profileService: ProfileService,
-    private testResultService: TestResultService,
-  ) {}
+  private modalService = inject(NgbModal);
+  private profileService = inject(ProfileService);
+  private testResultService = inject(TestResultService);
 
   ngOnInit(): void {
     this.load();

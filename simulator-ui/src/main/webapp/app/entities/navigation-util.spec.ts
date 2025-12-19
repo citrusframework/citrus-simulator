@@ -1,9 +1,9 @@
 import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { IFilterOption } from '../shared/filter';
+import { IFilterOption } from 'app/shared/filter';
 
 import { navigateToWithPagingInformation } from './navigation-util';
 
@@ -15,8 +15,8 @@ describe('navigation-util', () => {
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [RouterTestingModule.withRoutes([])],
         providers: [
+          provideRouter([]),
           {
             provide: ActivatedRoute,
             useValue: {

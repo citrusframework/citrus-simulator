@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { HighlightAuto } from 'ngx-highlightjs';
@@ -19,7 +19,7 @@ import { FormatMediumDatetimePipe } from 'app/shared/date';
 export class MessageDetailComponent {
   @Input() message: IMessage | null = null;
 
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  protected activatedRoute = inject(ActivatedRoute);
 
   previousState(): void {
     window.history.back();

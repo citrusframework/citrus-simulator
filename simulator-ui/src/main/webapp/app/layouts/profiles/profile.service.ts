@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
@@ -10,14 +10,12 @@ import { InfoResponse, SimulatorInfo, SimulatorConfiguration } from './profile-i
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private infoUrl = this.applicationConfigService.getEndpointFor('api/manage/info');
-
   private simulatorInfo$?: Observable<SimulatorInfo>;
 
-  constructor(
-    private http: HttpClient,
-    private applicationConfigService: ApplicationConfigService,
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly applicationConfigService = inject(ApplicationConfigService);
+
+  private infoUrl = this.applicationConfigService.getEndpointFor('api/manage/info');
 
   getSimulatorConfiguration(): Observable<SimulatorConfiguration> {
     return this.http.get<InfoResponse>(this.infoUrl).pipe(

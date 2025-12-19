@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -29,12 +29,10 @@ export type TestResultsByStatus = {
 
 @Injectable({ providedIn: 'root' })
 export class TestResultService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-results');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-results');
 
   find(id: number): Observable<EntityResponseType> {
     return this.http
@@ -54,6 +52,7 @@ export class TestResultService {
   }
 
   deleteAll(): Observable<HttpResponse<void>> {
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     return this.http.delete<void>(this.resourceUrl, { observe: 'response' });
   }
 

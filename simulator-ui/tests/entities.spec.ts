@@ -100,7 +100,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
 ];
 
 entityPageContentMap.forEach((contentObject: EntityPageContentObject) => {
-  test(`${contentObject.testName}`, async ({ page }) => {
+  test(contentObject.testName, async ({ page }) => {
     await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
     await page.goto(contentObject.entityUrl);

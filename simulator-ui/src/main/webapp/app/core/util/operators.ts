@@ -1,17 +1,21 @@
 import dayjs from 'dayjs/esm';
+import { SortOrder, SortState } from '../../shared/sort';
 
 /*
  * Function used to workaround https://github.com/microsoft/TypeScript/issues/16069
  * es2019 alternative `const filteredArr = myArr.flatMap((x) => x ? x : []);`
  */
-export function isPresent<T>(t: T | undefined | null | void): t is T {
+export function isPresent<T>(t: T | undefined | null): t is T {
   return t !== undefined && t !== null;
 }
 
-export const filterNaN = (input: number): number => (isNaN(input) ? 0 : input);
+export const filterNaN = (input: number): number => (Number.isNaN(input) ? 0 : input);
 
-export const sort = (array: any[] | null, predicate: string, ascending: boolean = true): any[] | undefined =>
-  array?.sort((a: any, b: any) => {
+export const sort = <T>(array: T[] | null, sortState: SortState, defaultPredicate: string): T[] | undefined => {
+  const predicate = sortState.predicate ?? defaultPredicate;
+  const ascending = (sortState.order ?? SortOrder.ASCENDING) === SortOrder.ASCENDING;
+
+  return array?.sort((a: any, b: any) => {
     const aValue = a[predicate];
     const bValue = b[predicate];
 
@@ -45,3 +49,4 @@ export const sort = (array: any[] | null, predicate: string, ascending: boolean 
     console.error('Attempting to sort by a property that is not uniformly a number, string, or dayjs date');
     return 0;
   });
+};
