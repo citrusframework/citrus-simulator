@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 
 import { MessageService } from '../service/message.service';
 
-import { MessageComponent } from './message.component';
+import MessageComponent from './message.component';
 
 import SpyInstance = jest.SpyInstance;
 

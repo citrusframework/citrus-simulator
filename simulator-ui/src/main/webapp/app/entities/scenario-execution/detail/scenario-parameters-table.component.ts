@@ -1,14 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { sort } from 'app/core/util/operators';
-
 import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 import { ScenarioParameterService } from 'app/entities/scenario-parameter/service/scenario-parameter.service';
 
 import SharedModule from 'app/shared/shared.module';
-import SortByDirective from 'app/shared/sort/sort-by.directive';
-import SortDirective from '../../../shared/sort/sort.directive';
+import { SortByDirective, SortDirective, sortStateSignal } from 'app/shared/sort';
+import { sort } from 'app/core/util/operators';
 
 @Component({
   standalone: true,
@@ -17,11 +15,10 @@ import SortDirective from '../../../shared/sort/sort.directive';
   imports: [RouterModule, SharedModule, SortByDirective, SortDirective],
 })
 export class ScenarioParametersTableComponent implements OnInit {
-  @Input()
-  ascending = true;
+  private predicate = 'parameterId';
 
   @Input()
-  predicate = 'parameterId';
+  sortState = sortStateSignal({ predicate: this.predicate });
 
   sortedParameters: IScenarioParameter[] | null = null;
 
@@ -39,6 +36,6 @@ export class ScenarioParametersTableComponent implements OnInit {
   trackId = (_index: number, item: IScenarioParameter): number => this.scenarioParameterService.getScenarioParameterIdentifier(item);
 
   sortParameters(): void {
-    sort(this.sortedParameters, this.predicate, this.ascending);
+    sort(this.sortedParameters, this.sortState(), this.predicate);
   }
 }

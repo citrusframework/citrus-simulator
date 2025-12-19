@@ -1,4 +1,4 @@
-import { DEBOUNCE_TIME_MILLIS } from '../../config/input.constants';
+import { DEBOUNCE_TIME_MILLIS } from '../app/config/input.constants';
 import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -10,7 +10,7 @@ import { EMPTY, of, Subject, throwError } from 'rxjs';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ASC, DESC, EntityOrder } from 'app/config/navigation.constants';
+import { ASC, DESC, SortOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
@@ -20,7 +20,7 @@ import { ScenarioService } from '../service/scenario.service';
 
 import { ScenarioComponent } from './scenario.component';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
-import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 
 jest.mock('app/core/util/alert.service');
 
@@ -61,8 +61,8 @@ describe('Scenario Management Component', () => {
             getPageSize: jest.fn(),
             getPredicate: jest.fn(),
             setPredicate: jest.fn(),
-            getEntityOrder: jest.fn(),
-            setEntityOrder: jest.fn(),
+            getSortOrder: jest.fn(),
+            setSortOrder: jest.fn(),
           },
         },
       ],
@@ -102,7 +102,7 @@ describe('Scenario Management Component', () => {
       // Mock the default return value behaviour
       (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(ITEMS_PER_PAGE);
       (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce('id');
-      (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(EntityOrder.ASCENDING);
+      (userPreferenceService.getSortOrder as unknown as SpyInstance).mockReturnValueOnce(SortOrder.ASCENDING);
 
       // Mock the activated route accordingly, note the absence of page and sort
       // @ts-ignore: Access private function for testing
@@ -122,7 +122,7 @@ describe('Scenario Management Component', () => {
 
       // And the user preferences have been saved
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', 'id');
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', 'asc');
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', SortOrder.ASCENDING);
 
       expect(detectChangesSpy).toHaveBeenCalled();
     });
@@ -133,7 +133,7 @@ describe('Scenario Management Component', () => {
       (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
       const predicate = 'some-predicate';
       (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce(predicate);
-      (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(EntityOrder.DESCENDING);
+      (userPreferenceService.getSortOrder as unknown as SpyInstance).mockReturnValueOnce(SortOrder.DESCENDING);
 
       // Mock the activated route accordingly
       const sort = predicate + ',desc';
@@ -152,7 +152,7 @@ describe('Scenario Management Component', () => {
       // This is the initial read
       expect(userPreferenceService.getPageSize).toHaveBeenCalledWith('scenario');
       expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario', 'name');
-      expect(userPreferenceService.getEntityOrder).toHaveBeenCalledWith('scenario');
+      expect(userPreferenceService.getSortOrder).toHaveBeenCalledWith('scenario');
 
       // Then follows the update of the route
       expect(routerNavigateSpy).toHaveBeenCalledWith(
@@ -172,7 +172,7 @@ describe('Scenario Management Component', () => {
 
       // And the user preferences must be saved
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', 'desc');
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', SortOrder.DESCENDING);
 
       // Verify that the changes have been registered
       expect(detectChangesSpy).toHaveBeenCalled();
@@ -180,7 +180,7 @@ describe('Scenario Management Component', () => {
       // And finally make sure the values have been persisted
       expect(component.itemsPerPage).toEqual(itemsPerPage);
       expect(component.predicate).toEqual(predicate);
-      expect(component.entityOrder).toEqual(DESC);
+      expect(component.sortOrder).toEqual(DESC);
       expect(component.ascending).toBeFalsy();
     });
 
@@ -317,7 +317,7 @@ describe('Scenario Management Component', () => {
         }),
       );
       expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario', predicate);
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
+      expect(userPreferenceService.setSortOrder).toHaveBeenCalledWith('scenario', ascending ? ASC : DESC);
     });
   });
 

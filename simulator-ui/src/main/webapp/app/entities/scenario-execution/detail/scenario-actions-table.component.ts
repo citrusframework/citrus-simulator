@@ -5,8 +5,7 @@ import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
-import SortDirective from 'app/shared/sort/sort.directive';
-import SortByDirective from 'app/shared/sort/sort-by.directive';
+import { SortByDirective, SortDirective, sortStateSignal } from 'app/shared/sort';
 
 import { IScenarioAction } from 'app/entities/scenario-action/scenario-action.model';
 import { ScenarioActionService } from 'app/entities/scenario-action/service/scenario-action.service';
@@ -18,11 +17,10 @@ import { ScenarioActionService } from 'app/entities/scenario-action/service/scen
   imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective],
 })
 export class ScenarioActionsTableComponent implements OnInit {
-  @Input()
-  ascending = true;
+  private predicate = 'actionId';
 
   @Input()
-  predicate = 'actionId';
+  sortState = sortStateSignal({ predicate: this.predicate });
 
   sortedActions: IScenarioAction[] | null = null;
 
@@ -40,6 +38,6 @@ export class ScenarioActionsTableComponent implements OnInit {
   trackId = (_index: number, item: IScenarioAction): number => this.scenarioActionService.getScenarioActionIdentifier(item);
 
   sortActions(): void {
-    sort(this.sortedActions, this.predicate, this.ascending);
+    sort(this.sortedActions, this.sortState(), this.predicate);
   }
 }

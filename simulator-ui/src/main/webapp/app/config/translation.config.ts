@@ -6,13 +6,9 @@ export const translationNotFoundMessage = 'translation-not-found';
 
 export class MissingTranslationHandlerImpl implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams): string {
-    const key = params.key;
+    const { key } = params;
     return `${translationNotFoundMessage}[${key}]`;
   }
-}
-
-export function translatePartialLoader(http: HttpClient): TranslateLoader {
-  return new TranslateHttpLoader(http, 'i18n/', `.json?_=${I18N_HASH}`);
 }
 
 export function missingTranslationHandler(): MissingTranslationHandler {

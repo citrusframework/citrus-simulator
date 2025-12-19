@@ -7,10 +7,10 @@ import { UserPreferenceService } from 'app/core/config/user-preference.service';
 @Component({
   standalone: true,
   selector: 'app-select-page-size',
-  templateUrl: './select-page-size.component.html',
+  templateUrl: './select-page-size.html',
   imports: [ReactiveFormsModule],
 })
-export default class SelectPageSizeComponent implements OnInit {
+export default class SelectPageSize implements OnInit {
   @Input()
   public key: string | null = null;
 

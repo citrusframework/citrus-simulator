@@ -8,7 +8,7 @@ import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
 
 import { IScenario } from '../scenario.model';
-import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 
 export type RestScenario = IScenario;
 

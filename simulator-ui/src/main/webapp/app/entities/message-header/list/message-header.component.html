@@ -23,9 +23,7 @@
   <app-message-header-table
     *ngIf="messageHeaders?.length !== 0"
     [messageHeaders]="messageHeaders!"
-    [predicate]="predicate"
-    [ascending]="ascending"
-    (sortChange)="navigateToWithComponentValues($event)"
+    [sortState]="sortState"
   ></app-message-header-table>
 
   <div *ngIf="messageHeaders && messageHeaders.length > 0">

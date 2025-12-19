@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { SortParameters } from 'app/core/util/sort-parameters.type';
 import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { SortByDirective, SortDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective, SortState, sortStateSignal } from 'app/shared/sort';
 
 import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
@@ -18,14 +17,10 @@ import { MessageHeaderService } from '../service/message-header.service';
   imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective],
 })
 export default class MessageHeaderTableComponent implements OnInit {
-  @Input()
-  ascending = true;
+  private predicate = 'headerId';
 
   @Input()
-  predicate = 'headerId';
-
-  @Output()
-  sortChange = new EventEmitter<SortParameters>();
+  sortState = sortStateSignal({ predicate: this.predicate });
 
   sortedMessageHeaders: IMessageHeader[] | null = null;
 
@@ -52,9 +47,7 @@ export default class MessageHeaderTableComponent implements OnInit {
 
   protected emitSortChange(): void {
     if (this.standalone) {
-      sort(this.sortedMessageHeaders, this.predicate, this.ascending);
-    } else {
-      this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
+      sort(this.sortedMessageHeaders, this.sortState(), this.predicate);
     }
   }
 }

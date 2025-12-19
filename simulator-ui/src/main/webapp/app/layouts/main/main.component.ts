@@ -4,7 +4,7 @@ import dayjs from 'dayjs/esm';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import { Router, RouterModule } from '@angular/router';
-import SharedModule from '../../shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 import FooterComponent from '../footer/footer.component';
 
 @Component({
