@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -35,7 +35,7 @@ export type HeaderFilter = {
 export default class HeaderFilterDialogComponent implements OnInit {
   public headerFilters: FormGroup<HeaderFilter>[] = [];
 
-  constructor(protected activeModal: NgbActiveModal) {}
+  protected readonly activeModal = inject(NgbActiveModal);
 
   ngOnInit(): void {
     if (this.headerFilters.length === 0) {

@@ -2,8 +2,8 @@ import { HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 
-import { of, EMPTY, Observable, from } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { of, EMPTY, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 
 import { IMessage } from 'app/entities/message/message.model';
 import { MessageService } from 'app/entities/message/service/message.service';

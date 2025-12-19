@@ -1,5 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 import {
   goToAllNavigationTabsAndOptionallyValidateContent,
   mockBackendResponse,
@@ -8,6 +10,10 @@ import {
 
 test.beforeEach(async ({ page }) => {
   await mockResponseForAllNavbarLinkedSites(page, mockEmptyResponseForApiURL);
+  await page.goto('http://localhost:9000/');
+});
+
+test.afterEach(async ({ page }) => {
   await page.goto('http://localhost:9000/');
 });
 

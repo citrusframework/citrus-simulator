@@ -6,6 +6,10 @@ test.beforeEach(async ({ page }) => {
   await page.goto('http://localhost:9000/');
 });
 
+test.afterEach(async ({ page }) => {
+  await page.goto('http://localhost:9000/');
+});
+
 test('should move to all pages as intended', async ({ page }) => {
   await goToAllNavigationTabsAndOptionallyValidateContent(page);
 });

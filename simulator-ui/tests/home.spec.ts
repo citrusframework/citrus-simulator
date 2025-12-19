@@ -1,5 +1,7 @@
 import { expect, Page, Route, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 import { clickOnLinkAndCheckIfTabOpensWithCorrectURL, mockBackendResponse } from './helpers/helper-functions';
 
 let nbOfSuccessfulTests: number;
@@ -26,6 +28,7 @@ test.beforeEach(async ({ page }) => {
     config: { 'reset-results-enabled': 'true' },
   });
   await page.goto('http://localhost:9000/');
+  await expect(page).toHaveURL('http://localhost:9000/');
 });
 
 test('should have title, disclaimer, refresh button, reset button, feedback option, summary-tabs and footer', async ({ page }) => {
@@ -163,7 +166,7 @@ const checkIfSummaryTabsAreDisplayingRightNumbers = async (
   totalTests: number,
   successfulTests: number,
   failedTests: number,
-): Promise<any> => {
+): Promise<void> => {
   const summarySelectorToAbsoluteValueMapping: {
     testSelector: string;
     value: number;
@@ -184,11 +187,10 @@ const checkIfSummaryTabsAreDisplayingRightNumbers = async (
 
   for (const percentageDisplay of summarySelectorToAbsoluteValueMapping) {
     await expect(page.getByTestId(percentageDisplay.testSelector)).toHaveText(
-      percentageDisplay.value +
-        ` (${((percentageDisplay.value / totalTests) * 100).toLocaleString(undefined, {
-          maximumFractionDigits: 2,
-          minimumFractionDigits: 0,
-        })} %)`,
+      `${String(percentageDisplay.value)} (${((percentageDisplay.value / totalTests) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+      })} %)`,
     );
   }
 };

@@ -16,5 +16,5 @@ export class SimulatorInfo {
 }
 
 export class SimulatorConfiguration {
-  constructor(public resetResultsEnabled: boolean = true) {}
+  constructor(public resetResultsEnabled = true) {}
 }

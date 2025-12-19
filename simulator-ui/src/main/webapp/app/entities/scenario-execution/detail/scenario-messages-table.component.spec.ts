@@ -1,13 +1,13 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import * as operators from 'app/core/util/operators';
 
 import { IMessage } from 'app/entities/message/message.model';
 
 import { ScenarioMessagesTableComponent } from './scenario-messages-table.component';
-
+import { provideRouter } from '@angular/router';
 import SpyInstance = jest.SpyInstance;
 
 describe('Message Table Component', () => {
@@ -18,12 +18,12 @@ describe('Message Table Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'message', component: ScenarioMessagesTableComponent }]),
-        HttpClientTestingModule,
-        ScenarioMessagesTableComponent,
+      imports: [ScenarioMessagesTableComponent],
+      providers: [
+        provideRouter([{ path: 'message', component: ScenarioMessagesTableComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
-      providers: [],
     })
       .overrideTemplate(ScenarioMessagesTableComponent, '')
       .compileComponents();
@@ -48,7 +48,7 @@ describe('Message Table Component', () => {
       component.messages = messages;
 
       expect(component.sortedMessages).toEqual(messages);
-      expect(sortSpy).toHaveBeenCalledWith(messages, 'messageId', true);
+      expect(sortSpy).toHaveBeenCalledWith(messages, { predicate: 'messageId' }, 'messageId');
     });
   });
 
@@ -62,6 +62,6 @@ describe('Message Table Component', () => {
 
     whenFunction();
 
-    expect(sortSpy).toHaveBeenCalledWith(messages, 'messageId', true);
+    expect(sortSpy).toHaveBeenCalledWith(messages, { predicate: 'messageId' }, 'messageId');
   };
 });

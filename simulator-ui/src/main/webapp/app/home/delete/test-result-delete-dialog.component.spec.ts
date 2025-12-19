@@ -1,8 +1,9 @@
 jest.mock('@ng-bootstrap/ng-bootstrap');
 
-import { ComponentFixture, TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -21,8 +22,8 @@ describe('Test Result Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, TestResultDeleteDialogComponent],
-      providers: [NgbActiveModal],
+      imports: [TestResultDeleteDialogComponent],
+      providers: [NgbActiveModal, provideHttpClient(), provideHttpClientTesting()],
     })
       .overrideTemplate(TestResultDeleteDialogComponent, '')
       .compileComponents();

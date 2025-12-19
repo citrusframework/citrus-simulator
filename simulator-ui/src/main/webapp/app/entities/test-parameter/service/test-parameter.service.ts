@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -23,12 +23,10 @@ export type EntityArrayResponseType = HttpResponse<ITestParameter[]>;
 
 @Injectable({ providedIn: 'root' })
 export class TestParameterService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-parameters');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/test-parameters');
 
   find(testResultId: number, key: string): Observable<EntityResponseType> {
     return this.http
@@ -44,7 +42,7 @@ export class TestParameterService {
   }
 
   getTestParameterIdentifier(testParameter: Pick<ITestParameter, 'key' | 'testResult'>): number {
-    return this.hash((testParameter.testResult.id ? testParameter.testResult.id : 0) + '-' + testParameter.key);
+    return this.hash(`${testParameter.testResult.id ? testParameter.testResult.id : 0}-${testParameter.key}`);
   }
 
   compareTestParameter(

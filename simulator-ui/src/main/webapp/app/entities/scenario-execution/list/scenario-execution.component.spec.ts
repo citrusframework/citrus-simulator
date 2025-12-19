@@ -1,16 +1,16 @@
 import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
+
+import { SortOrder } from 'app/shared/sort';
 
 import { of } from 'rxjs';
 
 import { ScenarioExecutionService } from '../service/scenario-execution.service';
 
 import { ScenarioExecutionComponent } from './scenario-execution.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('ScenarioExecution Management Component', () => {
@@ -21,12 +21,11 @@ describe('ScenarioExecution Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
-        HttpClientTestingModule,
-        ScenarioExecutionComponent,
-      ],
+      imports: [ScenarioExecutionComponent],
       providers: [
+        provideRouter([{ path: 'scenario-execution', component: ScenarioExecutionComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -116,14 +115,15 @@ describe('ScenarioExecution Management Component', () => {
     it('should calculate the sort attribute for a non-id attribute', () => {
       // GIVEN
       const predicate = 'name';
-      comp.predicate = predicate;
-      comp.sortChange = { emit: jest.fn() } as unknown as EventEmitter<any>;
+      comp.sortState.set({ predicate, order: SortOrder.ASCENDING });
+      comp.sortChange = new EventEmitter<any>();
+      jest.spyOn(comp.sortChange, 'emit');
 
       // WHEN
       comp.navigateToWithComponentValues();
 
       // THEN
-      expect(comp.sortChange.emit).toHaveBeenCalledWith({ predicate, ascending: true });
+      expect(comp.sortChange.emit).toHaveBeenCalledWith({ predicate, order: SortOrder.ASCENDING });
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(
         expect.anything(),
         expect.objectContaining({
