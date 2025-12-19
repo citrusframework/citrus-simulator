@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { of } from 'rxjs';
+
+import { SortOrder } from 'app/shared/sort';
 
 import { TestParameterService } from '../service/test-parameter.service';
 
 import { TestParameterComponent } from './test-parameter.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('TestParameter Management Component', () => {
@@ -20,12 +20,11 @@ describe('TestParameter Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'test-parameter', component: TestParameterComponent }]),
-        HttpClientTestingModule,
-        TestParameterComponent,
-      ],
+      imports: [TestParameterComponent],
       providers: [
+        provideRouter([{ path: 'test-parameter', component: TestParameterComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -101,7 +100,7 @@ describe('TestParameter Management Component', () => {
 
   it('should calculate the sort attribute for a non-id attribute', () => {
     // GIVEN
-    comp.predicate = 'name';
+    comp.sortState.set({ predicate: 'name', order: SortOrder.ASCENDING });
 
     // WHEN
     comp.navigateToWithComponentValues();

@@ -3,53 +3,53 @@ import { NavbarElementLinkPair } from './helper-interfaces';
 
 // a list of every navbar link-pair, which appears under the "Entity" dropdown
 export const entityChildLinks: NavbarElementLinkPair[] = [
-  { testName: 'navigationEntitiesMessageLink', expectedLinkRegex: /.*\/message*/, linkSuffix: '/message', apiLink: '**/api/messages*' },
+  { testName: 'navigationEntitiesMessageLink', expectedLinkRegex: /.*\/message*/, linkSuffix: '/message', apiLink: '**/api/messages**' },
   {
     testName: 'navigationEntitiesMessageHeaderLink',
     expectedLinkRegex: /.*\/message-header*/,
     linkSuffix: '/message-header',
-    apiLink: '**/api/message-headers*',
+    apiLink: '**/api/message-headers**',
   },
   {
     testName: 'navigationEntitiesScenarioExecutionLink',
     expectedLinkRegex: /.*\/scenario-execution*/,
     linkSuffix: '/scenario-execution',
-    apiLink: '**/api/scenario-executions*',
+    apiLink: '**/api/scenario-executions**',
   },
   {
     testName: 'navigationEntitiesScenarioActionLink',
     expectedLinkRegex: /.*\/scenario-action*/,
     linkSuffix: '/scenario-action',
-    apiLink: '**/api/scenario-actions*',
+    apiLink: '**/api/scenario-actions**',
   },
   {
     testName: 'navigationEntitiesScenarioParameterLink',
     expectedLinkRegex: /.*\/scenario-parameter*/,
     linkSuffix: '/scenario-parameter',
-    apiLink: '**/api/scenario-parameters*',
+    apiLink: '**/api/scenario-parameters**',
   },
   {
     testName: 'navigationEntitiesTestResultLink',
     expectedLinkRegex: /.*\/test-result*/,
     linkSuffix: '/test-result',
-    apiLink: '**/api/test-results*',
+    apiLink: '**/api/test-results**',
   },
   {
     testName: 'navigationEntitiesParameterLink',
     expectedLinkRegex: /.*\/test-parameter*/,
     linkSuffix: '/test-parameter',
-    apiLink: '**/api/test-parameters*',
+    apiLink: '**/api/test-parameters**',
   },
 ];
 
 // a list of every navbar element, which leads directly to another page
 export const navbarElementLinkPairs: NavbarElementLinkPair[] = [
-  { testName: 'navigationScenariosLink', expectedLinkRegex: /.*\/scenario*/, linkSuffix: '/scenario', apiLink: '**/api/scenarios*' },
+  { testName: 'navigationScenariosLink', expectedLinkRegex: /.*\/scenario*/, linkSuffix: '/scenario', apiLink: '**/api/scenarios**' },
   {
     testName: 'navigationScenarioExecutionsLink',
     expectedLinkRegex: /.*\/scenario-result*/,
     linkSuffix: '/scenario-result',
-    apiLink: '**/api/scenario-executions*',
+    apiLink: '**/api/scenario-executions**',
   },
   { testName: 'navigationEntitiesLink', childElements: entityChildLinks },
 ];
@@ -74,7 +74,7 @@ export const mockBackendResponse = async (
   page: Page,
   apiURL: string,
   responseJson: object,
-  headers?: { [key: string]: string },
+  headers?: Record<string, string>,
 ): Promise<void> => {
   await page.route(apiURL, async route => {
     if (headers) {
@@ -111,6 +111,12 @@ export const goToAllNavigationTabsAndOptionallyValidateContent = async (
     if (element.childElements) {
       for (const child of element.childElements) {
         await page.getByTestId(element.testName).click();
+        // If toggle closed an already-open dropdown, re-open it
+        try {
+          await page.getByTestId(child.testName).waitFor({ state: 'visible', timeout: 500 });
+        } catch {
+          await page.getByTestId(element.testName).click();
+        }
         await clickOnNavbarElementAndOptionallyValidateContent(page, child, validatePageContent);
       }
     }

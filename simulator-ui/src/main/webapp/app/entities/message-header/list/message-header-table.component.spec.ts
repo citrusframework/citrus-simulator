@@ -1,7 +1,6 @@
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
 
@@ -11,7 +10,7 @@ import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
 
 import MessageHeaderTableComponent from './message-header-table.component';
-
+import { provideRouter } from '@angular/router';
 import SpyInstance = jest.SpyInstance;
 
 describe('MessageHeader Table Component', () => {
@@ -24,12 +23,12 @@ describe('MessageHeader Table Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'message-header', component: MessageHeaderTableComponent }]),
-        HttpClientTestingModule,
-        MessageHeaderTableComponent,
+      imports: [MessageHeaderTableComponent],
+      providers: [
+        provideRouter([{ path: 'message-header', component: MessageHeaderTableComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
-      providers: [],
     })
       .overrideTemplate(MessageHeaderTableComponent, '')
       .compileComponents();
@@ -72,7 +71,7 @@ describe('MessageHeader Table Component', () => {
       component.messageHeaders = messageHeaders;
 
       expect(component.sortedMessageHeaders).toEqual(messageHeaders);
-      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, 'headerId', true);
+      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, expect.anything(), 'headerId');
     });
 
     it('sets the message header list only in non-standalone mode', () => {
@@ -88,33 +87,25 @@ describe('MessageHeader Table Component', () => {
   });
 
   describe('emitSortChange', () => {
-    let sortChange: SpyInstance;
-
-    beforeEach(() => {
-      sortChange = jest.spyOn(component.sortChange, 'emit');
-    });
-
     it('sorts in place in standalone mode', () => {
       component.standalone = true;
 
       const messageHeaders = [{ headerId: 1234 }] as IMessageHeader[];
       component.messageHeaders = messageHeaders;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.emitSortChange();
 
-      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, 'headerId', true);
-      expect(sortChange).not.toHaveBeenCalled();
+      expect(sortSpy).toHaveBeenCalledWith(messageHeaders, expect.anything(), 'headerId');
     });
 
-    it('emits event in non-standalone mode', () => {
+    it('does nothing in non-standalone mode', () => {
       component.standalone = false;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.emitSortChange();
 
       expect(sortSpy).not.toHaveBeenCalled();
-      expect(sortChange).toHaveBeenCalledWith({ predicate: 'headerId', ascending: true });
     });
   });
 });

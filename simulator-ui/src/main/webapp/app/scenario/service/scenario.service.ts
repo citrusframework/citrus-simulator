@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
@@ -8,21 +8,18 @@ import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
 
 import { IScenario } from '../scenario.model';
-import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 
 export type RestScenario = IScenario;
 
-export type EntityResponseType = HttpResponse<IScenario>;
 export type EntityArrayResponseType = HttpResponse<IScenario[]>;
 
 @Injectable({ providedIn: 'root' })
 export class ScenarioService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenarios');
+  protected readonly http = inject(HttpClient);
+  protected readonly applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenarios');
 
   findParameters(name: string): Observable<HttpResponse<IScenarioParameter[]>> {
     return this.http.get<IScenarioParameter[]>(`${this.resourceUrl}/${name}/parameters`, { observe: 'response' });

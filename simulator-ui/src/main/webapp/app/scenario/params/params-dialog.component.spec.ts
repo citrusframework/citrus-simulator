@@ -1,5 +1,7 @@
-import { ParamsDialogComponent } from './params-dialog.component';
+import { TestBed } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { ParamsDialogComponent } from './params-dialog.component';
 
 describe('ParamsDialogComponent', () => {
   let component: ParamsDialogComponent;
@@ -11,7 +13,12 @@ describe('ParamsDialogComponent', () => {
       dismiss: jest.fn(),
     } as unknown as NgbActiveModal;
 
-    component = new ParamsDialogComponent(mockActiveModal);
+    TestBed.configureTestingModule({
+      imports: [ParamsDialogComponent, TranslateModule.forRoot()],
+      providers: [{ provide: NgbActiveModal, useValue: mockActiveModal }],
+    });
+
+    component = TestBed.createComponent(ParamsDialogComponent).componentInstance;
   });
 
   it('should initialize with an empty params array', () => {

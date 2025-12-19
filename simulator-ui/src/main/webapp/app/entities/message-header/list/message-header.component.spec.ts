@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
+
+import { SortOrder } from 'app/shared/sort';
 
 import { of } from 'rxjs';
 
 import { MessageHeaderService } from '../service/message-header.service';
 
 import { MessageHeaderComponent } from './message-header.component';
-
 import SpyInstance = jest.SpyInstance;
 
 describe('MessageHeader Management Component', () => {
@@ -21,12 +21,11 @@ describe('MessageHeader Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'message-header', component: MessageHeaderComponent }]),
-        HttpClientTestingModule,
-        MessageHeaderComponent,
-      ],
+      imports: [MessageHeaderComponent],
       providers: [
+        provideRouter([{ path: 'message-header', component: MessageHeaderComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -94,7 +93,8 @@ describe('MessageHeader Management Component', () => {
   describe('navigateToWithComponentValues', () => {
     it('should calculate the sort attribute for a non-id attribute', () => {
       // WHEN
-      component.navigateToWithComponentValues({ ascending: true, predicate: 'name' });
+      // @ts-expect-error: Access protected method for testing
+      component.navigateToWithComponentValues({ predicate: 'name', order: SortOrder.ASCENDING });
 
       // THEN
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(
@@ -109,7 +109,8 @@ describe('MessageHeader Management Component', () => {
 
     it('should respect given ascending and predicated', () => {
       // WHEN
-      component.navigateToWithComponentValues({ ascending: false, predicate: 'messageHeaderId' });
+      // @ts-expect-error: Access protected method for testing
+      component.navigateToWithComponentValues({ predicate: 'messageHeaderId', order: SortOrder.DESCENDING });
 
       // THEN
       expect(routerNavigateSpy).toHaveBeenLastCalledWith(

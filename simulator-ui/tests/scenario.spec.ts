@@ -1,5 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 import { mockBackendResponse } from './helpers/helper-functions';
 
 const scenarioJson = [
@@ -83,13 +85,13 @@ test('should display all scenario information of a non-starter scenario', async 
 });
 
 test('should have the first 10 of 13 elements displayed in the table and display right nb of visible elements', async ({ page }) => {
-  await checkIfAllJsonContentIsVisible(page, 10, availableScenarios, scenarioJson);
+  await checkIfAllJsonContentIsVisible(page, 10, availableScenarios);
 });
 
 test('should have the last 3 of 13 elements displayed in the table after clicking on 2. page', async ({ page }) => {
   await mockBackendResponse(page, '**/api/scenarios**page=1**', addititonalPageJson);
   await page.getByRole('link', { name: '2' }).click();
-  await checkIfAllJsonContentIsVisible(page, 10, availableScenarios, addititonalPageJson);
+  await checkIfAllJsonContentIsVisible(page, 10, availableScenarios);
 });
 
 test('see if frontend trusts backend to send only as much data as requested', async ({ page }) => {
@@ -101,13 +103,13 @@ test('see if frontend trusts backend to send only as much data as requested', as
 
   await page.getByTestId('itemsPerPageSelect').selectOption(selectedPageSize.toString());
 
-  await checkIfAllJsonContentIsVisible(page, selectedPageSize, availableScenarios, scenarioJson);
+  await checkIfAllJsonContentIsVisible(page, selectedPageSize, availableScenarios);
   await expect(page.getByTestId('itemsPerPageSelect')).toHaveValue(selectedPageSize.toString());
   scenarioJson.pop();
 });
 
 test('text filter input should apply and clear filter button should reset it', async ({ page }) => {
-  await applyFilterAAndCheckCorrectness(page);
+  await applyFilterAndCheckCorrectness(page);
   await page.getByTestId('clearFilterButton').click();
 
   await expect(page.getByTestId('scenarioFilterByNameInput')).toHaveValue('');
@@ -121,7 +123,7 @@ test('should have updated displayed scenarios after refresh button was clicked a
     await mockBackendResponse(page, '**/api/scenarios**', scenarioJson, { 'x-total-count': scenarioJson.length.toString() });
 
     await page.getByTestId('refreshListButton').click();
-    await checkIfAllJsonContentIsVisible(page, option, scenarioJson.length, scenarioJson);
+    await checkIfAllJsonContentIsVisible(page, option, scenarioJson.length);
     scenarioJson.push({ name: 'HiStarter', type: 'STARTER' });
   }
 });
@@ -143,13 +145,13 @@ test('should launch the scenario-execution and popup should be visible if clicke
   const scenarioName = 'Test';
   const urlRegex = new RegExp(`.*scenario-execution/${scenarioId[0].toString()}/view`);
   await mockBackendResponse(page, '**/api/scenarios**', [{ name: scenarioName, type: 'STARTER' }]);
-  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{name: 'param1', value: 'test'}]);
+  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{ name: 'param1', value: 'test' }]);
 
   await page.goto('http://localhost:9000/scenario');
   await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/launch**`, scenarioId);
   await page.getByTestId('scenarioLaunchButton').click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await page.getByRole('button', {name: 'Launch'}).click();
+  await page.getByRole('button', { name: 'Launch' }).click();
   await expect(page.getByText('Scenario successfully launched')).toBeVisible();
   await page.getByText('view Execution').click();
 
@@ -159,13 +161,14 @@ test('should launch the scenario-execution and popup should be visible if clicke
 test('should show error message if launch failed after click on the launch button', async ({ page }) => {
   const scenarioName = 'Test';
   await mockBackendResponse(page, '**/api/scenarios**', [{ name: scenarioName, type: 'STARTER' }]);
-  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{name: 'param1', value: ''}]);
+  await mockBackendResponse(page, `**/api/scenarios/${scenarioName}/parameters**`, [{ name: 'param1', value: '' }]);
 
   await page.goto('http://localhost:9000/scenario');
   await page.getByTestId('scenarioLaunchButton').click();
   await expect(page.getByRole('dialog')).toBeVisible();
 
-  await page.getByRole('button', {name: 'Launch'}).click();
+  await page.route(`**/api/scenarios/${scenarioName}/launch**`, route => route.fulfill({ status: 500 }));
+  await page.getByRole('button', { name: 'Launch' }).click();
 
   await expect(page.getByText('Failed to launch Scenario!')).toBeVisible();
   await expect(page).toHaveURL(/.*localhost:9000\/scenario/);
@@ -218,26 +221,19 @@ test('should go to detail view of a scenario type STARTER check for content and 
   await expect(page).toHaveURL(/.*scenario/);
 });
 
-const checkIfAllJsonContentIsVisible = async (
-  page: Page,
-  selectedPageSize: number,
-  totalElementsAvailable: number,
-  responseJson: {
-    name: string;
-    type: string;
-  }[],
-): Promise<any> => {
+const checkIfAllJsonContentIsVisible = async (page: Page, selectedPageSize: number, totalElementsAvailable: number): Promise<void> => {
   const nbOfDisplayedElems = selectedPageSize >= totalElementsAvailable ? totalElementsAvailable : selectedPageSize;
 
   await expect(page.getByTestId('itemsPerPageSelect')).toHaveValue(selectedPageSize.toString());
   for (const element of scenarioJson) {
     await expect(page.getByText(element.name)).toBeVisible();
   }
-  await expect(page.getByText(`Showing 1 - ${nbOfDisplayedElems} of ${totalElementsAvailable} items`)).toBeVisible();
+
+  await expect(page.getByText(`Showing 1 - ${String(nbOfDisplayedElems)} of ${String(totalElementsAvailable)} items`)).toBeVisible();
 };
 
-const applyFilterAAndCheckCorrectness = async (page: Page): Promise<any> => {
-  const pageSize: number = 20;
+const applyFilterAndCheckCorrectness = async (page: Page): Promise<void> => {
+  const pageSize = 20;
   await page.getByTestId('itemsPerPageSelect').selectOption(pageSize.toString());
   await checkIfAllJsonContentIsVisible(page, pageSize, availableScenarios, scenarioJson);
   await mockBackendResponse(page, '**/api/scenarios?**nameContains=a&sort=id,asc', orderedJson, { 'x-total-count': '5' });
@@ -251,5 +247,6 @@ const applyFilterAAndCheckCorrectness = async (page: Page): Promise<any> => {
       await expect(page.getByText(element.name)).toBeHidden();
     }
   }
+
   await expect(page.getByText('Showing 1 - 5 of 5 Items')).toBeVisible();
 };

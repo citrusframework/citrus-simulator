@@ -40,11 +40,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [ 19, 21 ]
+        version: [ 21, 25 ]
         os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up JDK 17
+      - name: Set up JDK ${{ matrix.version }}
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'

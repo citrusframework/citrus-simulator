@@ -69,9 +69,9 @@ describe('TestResultSummaryComponent', () => {
       component.ngOnInit();
       tick();
 
-      expect(component.testResults).toEqual(mockData.body);
-      expect(component.successfulPercentage).toEqual('66.67');
-      expect(component.failedPercentage).toEqual('33.33');
+      expect(component.testResults()).toEqual(mockData.body);
+      expect(component.successfulPercentage()).toEqual('66.67');
+      expect(component.failedPercentage()).toEqual('33.33');
     }));
 
     it('should return even numbers with even results', fakeAsync(() => {
@@ -88,9 +88,9 @@ describe('TestResultSummaryComponent', () => {
       component.ngOnInit();
       tick();
 
-      expect(component.testResults).toEqual(mockData.body);
-      expect(component.successfulPercentage).toEqual('50');
-      expect(component.failedPercentage).toEqual('50');
+      expect(component.testResults()).toEqual(mockData.body);
+      expect(component.successfulPercentage()).toEqual('50');
+      expect(component.failedPercentage()).toEqual('50');
     }));
 
     it('default to a zero-result', fakeAsync(() => {
@@ -101,14 +101,14 @@ describe('TestResultSummaryComponent', () => {
       component.ngOnInit();
       tick();
 
-      expect(component.testResults).toEqual({
+      expect(component.testResults()).toEqual({
         total: 0,
         successful: 0,
         failed: 0,
       });
 
-      expect(component.successfulPercentage).toEqual('0');
-      expect(component.failedPercentage).toEqual('0');
+      expect(component.successfulPercentage()).toEqual('0');
+      expect(component.failedPercentage()).toEqual('0');
     }));
   });
 });

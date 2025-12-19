@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
@@ -7,10 +7,10 @@ import { UserPreferenceService } from 'app/core/config/user-preference.service';
 @Component({
   standalone: true,
   selector: 'app-select-page-size',
-  templateUrl: './select-page-size.component.html',
+  templateUrl: './select-page-size.html',
   imports: [ReactiveFormsModule],
 })
-export default class SelectPageSizeComponent implements OnInit {
+export default class SelectPageSize implements OnInit {
   @Input()
   public key: string | null = null;
 
@@ -21,7 +21,7 @@ export default class SelectPageSizeComponent implements OnInit {
     pageSize: new FormControl(ITEMS_PER_PAGE),
   });
 
-  constructor(private userPreferenceService: UserPreferenceService) {}
+  private readonly userPreferenceService = inject(UserPreferenceService);
 
   ngOnInit(): void {
     if (this.key) {

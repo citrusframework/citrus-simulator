@@ -4,7 +4,7 @@ import { mockResponseForAllNavbarLinkedSites, navbarElementLinkPairs } from './h
 import { NavbarElementLinkPair } from './helpers/helper-interfaces';
 
 const goToSiteAndVerifyErrorBannerIsVisible = (site: NavbarElementLinkPair): void => {
-  test(`${site.testName}`, async ({ page }) => {
+  test(site.testName, async ({ page }) => {
     if (site.apiLink && site.linkSuffix) {
       await mock500ErrorResponseForApiURL(page, site.apiLink);
       await page.goto(`http://localhost:9000${site.linkSuffix}`);

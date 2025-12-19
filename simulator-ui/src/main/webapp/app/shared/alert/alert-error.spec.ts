@@ -1,33 +1,32 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { TranslateModule } from '@ngx-translate/core';
 
+import { AlertModel, AlertService } from 'app/core/util/alert.service';
 import { EventManager } from 'app/core/util/event-manager.service';
-import { Alert, AlertService } from 'app/core/util/alert.service';
 
-import { AlertErrorComponent } from './alert-error.component';
+import { AlertError } from './alert-error';
 
 describe('Alert Error Component', () => {
-  let comp: AlertErrorComponent;
-  let fixture: ComponentFixture<AlertErrorComponent>;
+  let comp: AlertError;
+  let fixture: ComponentFixture<AlertError>;
   let eventManager: EventManager;
   let alertService: AlertService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), AlertErrorComponent],
+      imports: [TranslateModule.forRoot()],
       providers: [EventManager, AlertService],
-    })
-      .overrideTemplate(AlertErrorComponent, '')
-      .compileComponents();
-  }));
+    });
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AlertErrorComponent);
+    fixture = TestBed.createComponent(AlertError);
     comp = fixture.componentInstance;
     eventManager = TestBed.inject(EventManager);
     alertService = TestBed.inject(AlertService);
-    alertService.addAlert = (alert: Alert, alerts?: Alert[]) => {
+    alertService.addAlert = (alert: AlertModel, alerts?: AlertModel[]) => {
       if (alerts) {
         alerts.push(alert);
       }
@@ -40,26 +39,26 @@ describe('Alert Error Component', () => {
       // GIVEN
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { status: 0 } });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('error.server.not.reachable');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('error.server.not.reachable');
     });
 
     it('should display an alert on status 404', () => {
       // GIVEN
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { status: 404 } });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('error.url.not.found');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('error.url.not.found');
     });
 
     it('should display an alert on generic error', () => {
       // GIVEN
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: { message: 'Error Message' } } });
-      eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: { error: 'Second Error Message' } } });
+      eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: { error: 'Second Error Message' } });
       // THEN
-      expect(comp.alerts.length).toBe(2);
-      expect(comp.alerts[0].message).toBe('Error Message');
-      expect(comp.alerts[1].message).toBe('Second Error Message');
+      expect(comp.alerts().length).toBe(2);
+      expect(comp.alerts()[0].translationKey).toBe('Error Message');
+      expect(comp.alerts()[1].translationKey).toBe('Second Error Message');
     });
 
     it('should display an alert on status 400 for generic error', () => {
@@ -70,7 +69,7 @@ describe('Alert Error Component', () => {
         status: 400,
         statusText: 'Bad Request',
         error: {
-          type: 'https://www.jhipster.tech/problem/constraint-violation',
+          type: 'https://www.jhipster.tech/problem/problem-with-message',
           title: 'Bad Request',
           status: 400,
           path: '/api/foos',
@@ -79,8 +78,8 @@ describe('Alert Error Component', () => {
       });
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: response });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('error.validation');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('error.validation');
     });
 
     it('should display an alert on status 400 for generic error without message', () => {
@@ -93,8 +92,8 @@ describe('Alert Error Component', () => {
       });
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: response });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('Bad Request');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('Bad Request');
     });
 
     it('should display an alert on status 400 for invalid parameters', () => {
@@ -105,7 +104,7 @@ describe('Alert Error Component', () => {
         status: 400,
         statusText: 'Bad Request',
         error: {
-          type: 'https://www.jhipster.tech/problem/constraint-violation',
+          type: 'https://www.jhipster.tech/problem/problem-with-message',
           title: 'Method argument not valid',
           status: 400,
           path: '/api/foos',
@@ -115,8 +114,8 @@ describe('Alert Error Component', () => {
       });
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: response });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('error.Size');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('error.Size');
     });
 
     it('should display an alert on status 400 for error headers', () => {
@@ -133,8 +132,8 @@ describe('Alert Error Component', () => {
       });
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: response });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('Error Message');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('Error Message');
     });
 
     it('should display an alert on status 500 with detail', () => {
@@ -152,8 +151,8 @@ describe('Alert Error Component', () => {
       });
       eventManager.broadcast({ name: 'citrusSimulatorApp.httpError', content: response });
       // THEN
-      expect(comp.alerts.length).toBe(1);
-      expect(comp.alerts[0].translationKey).toBe('error.http.500');
+      expect(comp.alerts().length).toBe(1);
+      expect(comp.alerts()[0].translationKey).toBe('error.http.500');
     });
   });
 });

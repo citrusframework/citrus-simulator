@@ -1,15 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { SortParameters } from 'app/core/util/sort-parameters.type';
 import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { SortByDirective, SortDirective } from 'app/shared/sort';
+import { SortByDirective, SortDirective, sortStateSignal } from 'app/shared/sort';
 
 import { IMessageHeader } from '../message-header.model';
 import { MessageHeaderService } from '../service/message-header.service';
+
+const predicate = 'headerId';
 
 @Component({
   standalone: true,
@@ -19,24 +20,17 @@ import { MessageHeaderService } from '../service/message-header.service';
 })
 export default class MessageHeaderTableComponent implements OnInit {
   @Input()
-  ascending = true;
-
-  @Input()
-  predicate = 'headerId';
-
-  @Output()
-  sortChange = new EventEmitter<SortParameters>();
+  sortState = sortStateSignal({ predicate });
 
   sortedMessageHeaders: IMessageHeader[] | null = null;
 
   @Input()
   standalone = false;
 
-  constructor(private messageHeaderService: MessageHeaderService) {}
+  private messageHeaderService = inject(MessageHeaderService);
 
   ngOnInit(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: string-property identifier
+    // @ts-expect-error: string-property identifier
     this.sortedMessageHeaders?.sort((a: IMessageHeader, b: IMessageHeader) => (a[this.predicate] as number) - b[this.predicate]);
   }
 
@@ -52,9 +46,7 @@ export default class MessageHeaderTableComponent implements OnInit {
 
   protected emitSortChange(): void {
     if (this.standalone) {
-      sort(this.sortedMessageHeaders, this.predicate, this.ascending);
-    } else {
-      this.sortChange.emit({ predicate: this.predicate, ascending: this.ascending });
+      sort(this.sortedMessageHeaders, this.sortState(), predicate);
     }
   }
 }

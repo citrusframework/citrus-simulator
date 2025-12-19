@@ -8,9 +8,8 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const WebpackNotifierPlugin = require('webpack-notifier');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-
-const environment = require('./environment');
-const proxyConfig = require('./proxy.conf');
+const environment = require('./environment.cjs');
+const proxyConfig = require('./proxy.conf.cjs');
 
 module.exports = async (config, options, targetOptions) => {
   const languagesHash = await hashElement(path.resolve(__dirname, '../src/main/webapp/i18n'), {

@@ -1,5 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 import {
   goToAllNavigationTabsAndOptionallyValidateContent,
   mockBackendResponse,

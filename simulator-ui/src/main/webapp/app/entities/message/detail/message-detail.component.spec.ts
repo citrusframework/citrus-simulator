@@ -8,7 +8,7 @@ import { MessageDetailComponent } from './message-detail.component';
 describe('Message Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MessageDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [MessageDetailComponent],
       providers: [
         provideRouter(
           [

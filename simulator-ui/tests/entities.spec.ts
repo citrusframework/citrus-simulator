@@ -4,11 +4,11 @@ import { messageHeaderJson, messageJson, scenarioActionJson, scenarioExecutionJs
 import { EntityPageContentObject } from './helpers/helper-interfaces';
 import { mockBackendResponse } from './helpers/helper-functions';
 
-const exampleDate = '23 Aug 2024 08:25:31';
+const exampleDate = '23 Aug 2024 09:25:31';
 const entityPageContentMap: EntityPageContentObject[] = [
   {
     testName: 'should display table of messages and refresh button should work',
-    apiUrl: '**/api/messages*',
+    apiUrl: '**/api/messages**',
     entityUrl: 'http://localhost:9000/message',
     contentJson: messageJson,
     locators: [
@@ -31,7 +31,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
   },
   {
     testName: 'should display table of message headers and refresh button should work',
-    apiUrl: '**/api/message-headers*',
+    apiUrl: '**/api/message-headers**',
     entityUrl: 'http://localhost:9000/message-header',
     contentJson: messageHeaderJson,
     locators: ['th :text("Name")', 'th :text("Value")'],
@@ -44,7 +44,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
   },
   {
     testName: 'should display table of scenario executions and refresh button should work',
-    apiUrl: '**/api/scenario-executions*',
+    apiUrl: '**/api/scenario-executions**',
     entityUrl: 'http://localhost:9000/scenario-execution',
     contentJson: scenarioExecutionJson,
     locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Status")', 'th :text("Error Message")'],
@@ -60,7 +60,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
   },
   {
     testName: 'should display table of scenario actions and refresh button should work',
-    apiUrl: '**/api/scenario-actions*',
+    apiUrl: '**/api/scenario-actions**',
     entityUrl: 'http://localhost:9000/scenario-action',
     contentJson: scenarioActionJson,
     locators: ['th :text("Name")', 'th :text("Start Date")', 'th :text("End Date")', 'th :text("Scenario Execution")'],
@@ -74,7 +74,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
   },
   {
     testName: 'should display table of test results and refresh button should work',
-    apiUrl: '**/api/test-results*',
+    apiUrl: '**/api/test-results**',
     entityUrl: 'http://localhost:9000/test-result',
     contentJson: testResultJson,
     locators: [
@@ -100,7 +100,7 @@ const entityPageContentMap: EntityPageContentObject[] = [
 ];
 
 entityPageContentMap.forEach((contentObject: EntityPageContentObject) => {
-  test(`${contentObject.testName}`, async ({ page }) => {
+  test(contentObject.testName, async ({ page }) => {
     await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
 
     await page.goto(contentObject.entityUrl);
@@ -150,8 +150,8 @@ const checkEntityPageContentValueAndVisibility = async (page: Page, contentObjec
 };
 
 const checkIfRefreshButtonWorks = async (page: Page, contentObject: EntityPageContentObject): Promise<void> => {
-  contentObject.contentJson.pop();
-  await mockBackendResponse(page, contentObject.apiUrl, contentObject.contentJson);
+  const reducedContent = contentObject.contentJson.slice(0, -1);
+  await mockBackendResponse(page, contentObject.apiUrl, reducedContent);
 
   await page.getByTestId('refreshListButton').click();
 
