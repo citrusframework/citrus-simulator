@@ -1,7 +1,7 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedMessages && sortedMessages.length > 0; else noMessages">
   <table class="table table-striped table-hover" data-test="scenarioMessagesEntityTable" aria-describedby="page-heading">
     <thead>
-      <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="sortMessages()">
+      <tr jhiSort [(sortState)]="sortState" (sortChange)="sortMessages()">
         <th scope="col" jhiSortBy="messageId">
           <div class="d-flex">
             <span jhiTranslate="citrusSimulatorApp.message.id">ID</span>

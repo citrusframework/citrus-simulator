@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal } from '@angular/core';
 
-import { ASC, EntityOrder, toEntityOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+import { SortOrder, SortState, sortStateSignal, toSortOrder } from 'app/shared/sort';
 
 @Injectable({ providedIn: 'root' })
 export class UserPreferenceService {
@@ -17,19 +17,34 @@ export class UserPreferenceService {
     localStorage.setItem(this.paginationId(identifier), size.toString());
   }
 
-  public getPredicate(identifier: string, defaultValue: string): string {
-    return localStorage.getItem(this.predicateId(identifier)) ?? defaultValue;
+  public getSortState(identifier: string, defaultPredicate: string): WritableSignal<SortState> {
+    const predicate = this.getPredicate(identifier, defaultPredicate);
+    const order = this.getSortOrder(identifier);
+    return sortStateSignal({ predicate, order });
   }
 
-  public setPredicate(identifier: string, predicate: string): void {
+  public setSortState(identifier: string, sortState: SortState): void {
+    if (sortState.predicate) {
+      this.setPredicate(identifier, sortState.predicate);
+    }
+    if (sortState.order) {
+      this.setSortOrder(identifier, sortState.order);
+    }
+  }
+
+  private getPredicate(identifier: string, defaultPredicate: string): string {
+    return localStorage.getItem(this.predicateId(identifier)) ?? defaultPredicate;
+  }
+
+  private setPredicate(identifier: string, predicate: string): void {
     localStorage.setItem(this.predicateId(identifier), predicate);
   }
 
-  public getEntityOrder(identifier: string): EntityOrder {
-    return toEntityOrder(localStorage.getItem(this.orderId(identifier)) ?? ASC) ?? EntityOrder.ASCENDING;
+  private getSortOrder(identifier: string): SortOrder {
+    return toSortOrder(localStorage.getItem(this.orderId(identifier)) ?? SortOrder.ASCENDING) ?? SortOrder.ASCENDING;
   }
 
-  public setEntityOrder(identifier: string, entityOrder: EntityOrder): void {
+  private setSortOrder(identifier: string, entityOrder: SortOrder): void {
     localStorage.setItem(this.orderId(identifier), entityOrder.toString());
   }
 

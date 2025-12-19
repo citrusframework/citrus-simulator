@@ -1,10 +1,9 @@
-import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserPreferenceService } from 'app/core/config/user-preference.service';
 import { ScenarioExecutionComponent } from 'app/entities/scenario-execution/list/scenario-execution.component';
 
-import { EntityOrder } from '../config/navigation.constants';
+import { SortOrder, sortStateSignal } from 'app/shared/sort';
 
 import ScenarioResultComponent from './scenario-result.component';
 
@@ -28,10 +27,8 @@ describe('ScenarioResult Component', () => {
           provide: UserPreferenceService,
           useValue: {
             getPageSize: jest.fn(),
-            getPredicate: jest.fn(),
-            setPredicate: jest.fn(),
-            getEntityOrder: jest.fn(),
-            setEntityOrder: jest.fn(),
+            getSortState: jest.fn().mockReturnValue(sortStateSignal({ predicate: 'executionId', order: SortOrder.ASCENDING })),
+            setSortState: jest.fn(),
           },
         },
       ],
@@ -41,6 +38,7 @@ describe('ScenarioResult Component', () => {
 
     scenarioExecutionComponent = {
       itemsPerPage: 0,
+      sortState: sortStateSignal({ predicate: 'executionId' }),
       navigateToWithComponentValues: jest.fn(),
       load: jest.fn(),
     } as unknown as ScenarioExecutionComponent;
@@ -52,36 +50,26 @@ describe('ScenarioResult Component', () => {
   });
 
   describe('ngAfterViewInit', () => {
-    let detectChangesSpy: SpyInstance<any>;
-
-    beforeEach(() => {
-      const changeDetectorRef = fixture.debugElement.injector.get(ChangeDetectorRef);
-      detectChangesSpy = jest.spyOn(changeDetectorRef.constructor.prototype, 'detectChanges');
-    });
-
-    test.each([{ entityOrder: EntityOrder.ASCENDING }, { entityOrder: EntityOrder.DESCENDING }])(
+    test.each([{ entityOrder: SortOrder.ASCENDING }, { entityOrder: SortOrder.DESCENDING }])(
       'initially loads page size',
       ({ entityOrder }) => {
         (userPreferenceService.getPageSize as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
-        (userPreferenceService.getPredicate as unknown as SpyInstance).mockReturnValueOnce(itemsPerPage);
-        (userPreferenceService.getEntityOrder as unknown as SpyInstance).mockReturnValueOnce(entityOrder);
+        (userPreferenceService.getSortState as unknown as SpyInstance).mockReturnValueOnce(
+          sortStateSignal({ predicate: 'executionId', order: entityOrder }),
+        );
 
         const defaultPredicate = 'default-predicate';
-        scenarioExecutionComponent.predicate = defaultPredicate;
+        scenarioExecutionComponent.sortState.set({ ...scenarioExecutionComponent.sortState(), predicate: defaultPredicate });
 
         component.scenarioExecutionComponent = scenarioExecutionComponent;
 
         component.ngAfterViewInit();
 
-        expect(userPreferenceService.getPredicate).toHaveBeenCalledWith('scenario-result', defaultPredicate);
+        expect(userPreferenceService.getSortState).toHaveBeenCalledWith('scenario-result', defaultPredicate);
 
         expect(scenarioExecutionComponent.itemsPerPage).toEqual(itemsPerPage);
-        expect(scenarioExecutionComponent.predicate).toEqual(itemsPerPage);
-        expect(scenarioExecutionComponent.ascending).toEqual(entityOrder === EntityOrder.ASCENDING);
 
         expect(scenarioExecutionComponent.navigateToWithComponentValues).toHaveBeenCalled();
-
-        expect(detectChangesSpy).toHaveBeenCalled();
       },
     );
   });
@@ -90,7 +78,7 @@ describe('ScenarioResult Component', () => {
     it('reloads the component if it exists', () => {
       component.scenarioExecutionComponent = scenarioExecutionComponent;
 
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.pageSizeChanged(itemsPerPage);
 
       expect(scenarioExecutionComponent.itemsPerPage).toEqual(itemsPerPage);
@@ -98,7 +86,7 @@ describe('ScenarioResult Component', () => {
     });
 
     it('does nothing if component does not exist', () => {
-      // @ts-ignore: Access private function for testing
+      // @ts-expect-error: Access private function for testing
       component.pageSizeChanged(itemsPerPage);
       expect(scenarioExecutionComponent.itemsPerPage).toEqual(0);
       expect(scenarioExecutionComponent.load).not.toHaveBeenCalled();
@@ -107,14 +95,13 @@ describe('ScenarioResult Component', () => {
 
   describe('updateUserPreferences', () => {
     test.each([
-      { predicate: 'predicate', ascending: true, expectedEntityOrder: EntityOrder.ASCENDING },
-      { predicate: 'predicate', ascending: false, expectedEntityOrder: EntityOrder.DESCENDING },
-    ])('persists the values into the user service', ({ predicate, ascending, expectedEntityOrder }) => {
-      // @ts-ignore: Access private function for testing
-      component.updateUserPreferences({ predicate, ascending });
+      { predicate: 'predicate', ascending: true, expectedSortOrder: SortOrder.ASCENDING },
+      { predicate: 'predicate', ascending: false, expectedSortOrder: SortOrder.DESCENDING },
+    ])('persists the values into the user service', ({ predicate, ascending, expectedSortOrder }) => {
+      // @ts-expect-error: Access private function for testing
+      component.updateUserPreferences({ predicate, order: ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING });
 
-      expect(userPreferenceService.setPredicate).toHaveBeenCalledWith('scenario-result', predicate);
-      expect(userPreferenceService.setEntityOrder).toHaveBeenCalledWith('scenario-result', expectedEntityOrder);
+      expect(userPreferenceService.setSortState).toHaveBeenCalledWith('scenario-result', { predicate, order: expectedSortOrder });
     });
   });
 
@@ -124,7 +111,7 @@ describe('ScenarioResult Component', () => {
         resetFilter: jest.fn(),
       } as unknown as ScenarioExecutionFilterComponent;
 
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.resetFilter();
 
       expect(component.scenarioExecutionFilterComponent.resetFilter).toHaveBeenCalled();

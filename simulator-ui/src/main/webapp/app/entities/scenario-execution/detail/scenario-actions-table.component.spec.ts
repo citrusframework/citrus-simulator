@@ -1,13 +1,13 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import * as operators from 'app/core/util/operators';
 
 import { IScenarioAction } from 'app/entities/scenario-action/scenario-action.model';
 
 import { ScenarioActionsTableComponent } from './scenario-actions-table.component';
-
+import { provideRouter } from '@angular/router';
 import SpyInstance = jest.SpyInstance;
 
 describe('Message Table Component', () => {
@@ -18,12 +18,12 @@ describe('Message Table Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([{ path: 'message', component: ScenarioActionsTableComponent }]),
-        HttpClientTestingModule,
-        ScenarioActionsTableComponent,
+      imports: [ScenarioActionsTableComponent],
+      providers: [
+        provideRouter([{ path: 'message', component: ScenarioActionsTableComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
-      providers: [],
     })
       .overrideTemplate(ScenarioActionsTableComponent, '')
       .compileComponents();
@@ -48,7 +48,7 @@ describe('Message Table Component', () => {
       component.actions = actions;
 
       expect(component.sortedActions).toEqual(actions);
-      expect(sortSpy).toHaveBeenCalledWith(actions, 'actionId', true);
+      expect(sortSpy).toHaveBeenCalledWith(actions, { predicate: 'actionId' }, 'actionId');
     });
   });
 
@@ -62,6 +62,6 @@ describe('Message Table Component', () => {
 
     whenFunction();
 
-    expect(sortSpy).toHaveBeenCalledWith(actions, 'actionId', true);
+    expect(sortSpy).toHaveBeenCalledWith(actions, { predicate: 'actionId' }, 'actionId');
   };
 });

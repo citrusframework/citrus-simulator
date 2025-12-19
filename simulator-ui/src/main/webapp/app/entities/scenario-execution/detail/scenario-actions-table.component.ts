@@ -1,15 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { sort } from 'app/core/util/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
-import SortDirective from 'app/shared/sort/sort.directive';
-import SortByDirective from 'app/shared/sort/sort-by.directive';
+import { SortByDirective, SortDirective, sortStateSignal } from 'app/shared/sort';
 
 import { IScenarioAction } from 'app/entities/scenario-action/scenario-action.model';
 import { ScenarioActionService } from 'app/entities/scenario-action/service/scenario-action.service';
+
+const predicate = 'actionId';
 
 @Component({
   standalone: true,
@@ -19,14 +20,13 @@ import { ScenarioActionService } from 'app/entities/scenario-action/service/scen
 })
 export class ScenarioActionsTableComponent implements OnInit {
   @Input()
-  ascending = true;
-
-  @Input()
-  predicate = 'actionId';
+  sortState = sortStateSignal({ predicate });
 
   sortedActions: IScenarioAction[] | null = null;
 
-  constructor(protected scenarioActionService: ScenarioActionService) {}
+  protected scenarioActionService = inject(ScenarioActionService);
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.sortActions();
@@ -35,11 +35,12 @@ export class ScenarioActionsTableComponent implements OnInit {
   @Input() set actions(actions: IScenarioAction[] | null) {
     this.sortedActions = actions ? actions.slice() : [];
     this.sortActions();
+    this.cdr.markForCheck();
   }
 
   trackId = (_index: number, item: IScenarioAction): number => this.scenarioActionService.getScenarioActionIdentifier(item);
 
   sortActions(): void {
-    sort(this.sortedActions, this.predicate, this.ascending);
+    sort(this.sortedActions, this.sortState(), predicate);
   }
 }

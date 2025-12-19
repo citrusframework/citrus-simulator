@@ -32,7 +32,7 @@ describe('HeaderFilterDialogComponent', () => {
 
   describe('cancel', () => {
     it('should dismiss the modal on cancel', () => {
-      // @ts-ignore: Access protected function for testing
+      // @ts-expect-error: Access protected function for testing
       component.cancel();
 
       expect(activeModal.dismiss).toHaveBeenCalled();

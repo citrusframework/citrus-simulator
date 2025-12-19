@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 
@@ -102,12 +102,10 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
   });
   private filterFormValueChanges: Subscription | null = null;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private changeDetector: ChangeDetectorRef,
-    private router: Router,
-    public modalService: NgbModal,
-  ) {}
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly modalService = inject(NgbModal);
 
   ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(params => this.initializeFilterOptionsFromActivatedRoute(params)).unsubscribe();
@@ -208,7 +206,7 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
     });
   }
 
-  private mergeParamsRemoveUndefinedValues(queryParams: Params, filterQueryParams: { [id: string]: any }): { [id: string]: any } {
+  private mergeParamsRemoveUndefinedValues(queryParams: Params, filterQueryParams: Record<string, any>): Record<string, any> {
     return Object.fromEntries(
       Object.entries({
         ...queryParams,
@@ -217,9 +215,13 @@ export default class ScenarioExecutionFilterComponent implements OnInit, OnDestr
     );
   }
 
-  private getFilterQueryParameter({ nameContains, fromDate, toDate, statusIn, headerFilter }: ScenarioExecutionFilter): {
-    [id: string]: any;
-  } {
+  private getFilterQueryParameter({
+    nameContains,
+    fromDate,
+    toDate,
+    statusIn,
+    headerFilter,
+  }: ScenarioExecutionFilter): Record<string, any> {
     return {
       'filter[scenarioName.contains]': nameContains ?? undefined,
       'filter[startDate.greaterThanOrEqual]': fromDate ? fromDate.toJSON() : undefined,

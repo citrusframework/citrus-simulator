@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -24,10 +24,10 @@ export default class NavbarComponent implements OnInit {
   version = '';
   entitiesNavbarItems: NavbarItem[] = [];
 
-  constructor(
-    private translateService: TranslateService,
-    private stateStorageService: StateStorageService,
-  ) {
+  private translateService = inject(TranslateService);
+  private stateStorageService = inject(StateStorageService);
+
+  constructor() {
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }

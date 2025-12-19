@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -25,13 +25,12 @@ export type EntityArrayResponseType = HttpResponse<IMessage[]>;
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
+
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/messages');
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-    private messageHeaderService: MessageHeaderService,
-  ) {}
+  private messageHeaderService = inject(MessageHeaderService);
 
   find(messageId: number): Observable<EntityResponseType> {
     return this.http

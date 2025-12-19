@@ -8,7 +8,7 @@ import { ScenarioExecutionDetailComponent } from './scenario-execution-detail.co
 describe('ScenarioExecution Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScenarioExecutionDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [ScenarioExecutionDetailComponent],
       providers: [
         provideRouter(
           [

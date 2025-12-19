@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -18,12 +18,10 @@ import TestResultSummaryComponent from './test-result-summary.component';
 export default class HomeComponent implements OnInit {
   simulatorInfo: SimulatorInfo | null = null;
 
-  private infoUrl = this.applicationConfigService.getEndpointFor('api/manage/info');
+  private applicationConfigService = inject(ApplicationConfigService);
+  private http = inject(HttpClient);
 
-  constructor(
-    private applicationConfigService: ApplicationConfigService,
-    private http: HttpClient,
-  ) {}
+  private infoUrl = this.applicationConfigService.getEndpointFor('api/manage/info');
 
   ngOnInit(): void {
     this.http.get<InfoResponse>(this.infoUrl).subscribe((response: InfoResponse) => {

@@ -23,7 +23,7 @@
   <div class="table-responsive table-entities" id="entities" *ngIf="testParameters && testParameters.length > 0">
     <table class="table table-striped table-hover" data-test="testParameterEntityTable" aria-describedby="page-heading">
       <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+        <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="key">
             <div class="d-flex">
               <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>

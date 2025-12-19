@@ -5,15 +5,15 @@
 
     <div class="d-flex justify-content-end">
       <div class="btn-group">
-        <button class="btn btn-info" (click)="load()" [disabled]="isLoading" data-test="refreshListButton">
-          <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <button class="btn btn-info" (click)="load()" [disabled]="isLoading()" data-test="refreshListButton">
+          <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined"></fa-icon>
           <span jhiTranslate="citrusSimulatorApp.scenarioExecution.home.refreshListLabel">Refresh List</span>
         </button>
         <button
           *ngIf="resetEnabled | async"
           class="btn btn-secondary"
           (click)="reset()"
-          [disabled]="testResults?.total === 0"
+          [disabled]="testResults()?.total === 0"
           data-test="resetButton"
         >
           <fa-icon icon="trash-alt"></fa-icon>
@@ -23,7 +23,7 @@
     </div>
   </h3>
 
-  <div class="row" *ngIf="testResults?.total !== 0; else infoNoSimulationsRanYet">
+  <div class="row" *ngIf="testResults()?.total !== 0; else infoNoSimulationsRanYet">
     <div class="col-md-3">
       <a class="link-no-text-style" [routerLink]="['/scenario-result']">
         <ngb-alert type="info" [dismissible]="false">
@@ -31,7 +31,7 @@
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.total">Total:</h4>
               <h5 data-test="totalSimulationsPercentage">
-                {{ testResults?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small>
+                {{ testResults()?.total ?? 0 }}&emsp;<small class="text-secondary">(100 %)</small>
               </h5>
             </div>
             <div class="col d-flex justify-content-end">
@@ -52,7 +52,7 @@
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.successful">Successful:</h4>
               <h5 data-test="successfulSimulationsPercentage">
-                {{ testResults?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage }} %)</small>
+                {{ testResults()?.successful ?? 0 }}&emsp;<small class="text-secondary">({{ successfulPercentage() }} %)</small>
               </h5>
             </div>
             <div class="col d-flex justify-content-end">
@@ -73,7 +73,7 @@
             <div class="col">
               <h4 jhiTranslate="home.simulations.results.failed">Failed:</h4>
               <h5 data-test="failedSimulationsPercentage">
-                {{ testResults?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage }} %)</small>
+                {{ testResults()?.failed ?? 0 }}&emsp;<small class="text-secondary">({{ failedPercentage() }} %)</small>
               </h5>
             </div>
             <div class="col d-flex justify-content-end">

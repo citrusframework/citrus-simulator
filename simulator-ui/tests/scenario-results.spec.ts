@@ -1,5 +1,7 @@
 import { expect, Locator, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
+
 import { mockBackendResponse } from './helpers/helper-functions';
 import {
   messageHeaderJson,
@@ -40,7 +42,7 @@ test('should filter with input form', async ({ page }) => {
   await page.getByTestId('scenarioExecutionHeaderFilterInput').fill('Test Headers');
 });
 
-const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<any> => {
+const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<void> => {
   await dateField.click();
   await dateField.pressSequentially(date);
   await dateField.press('Tab');
@@ -48,7 +50,7 @@ const fillDatePickerField = async (dateField: Locator, date: string, time: strin
 };
 
 test('should display table headers for scenario executions', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenario-executions*', scenarioExecutionJsonWithoutDetails);
+  await mockBackendResponse(page, '**/api/scenario-executions**', scenarioExecutionJsonWithoutDetails);
 
   await page.goto('http://localhost:9000/scenario-result/');
 
@@ -61,14 +63,14 @@ test('should display table headers for scenario executions', async ({ page }) =>
 });
 
 test('should display table row for scenario executions', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenario-executions*', scenarioExecutionJsonWithoutDetails);
+  await mockBackendResponse(page, '**/api/scenario-executions**', scenarioExecutionJsonWithoutDetails);
 
   await page.goto('http://localhost:9000/scenario-result/');
 
   await expect(page.locator('tr :text("752603")')).toHaveCount(1);
   await expect(page.locator('tr :text("Default")')).toHaveCount(1);
-  await expect(page.locator('tr :text("27 Jun 2024 10:59:03")')).toHaveCount(1);
-  await expect(page.locator('tr :text("27 Jun 2024 11:05:21")')).toHaveCount(1);
+  await expect(page.locator('tr :text("27 Jun 2024 11:59:03")')).toHaveCount(1);
+  await expect(page.locator('tr :text("27 Jun 2024 12:05:21")')).toHaveCount(1);
   await expect(page.locator('tr :text("FAILURE")')).toHaveCount(1);
   await expect(
     page.locator(
@@ -154,7 +156,7 @@ test('should clear all filters with button', async ({ page }) => {
 });
 
 test('should display detail view of scenario execution', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenario-executions*', scenarioExecutionJsonWithoutDetails);
+  await mockBackendResponse(page, '**/api/scenario-executions**', scenarioExecutionJsonWithoutDetails);
   await mockBackendResponse(page, '**/api/scenario-executions/752603', scenarioExecutionJsonWithDetails);
 
   await page.goto('http://localhost:9000/scenario-result/');
@@ -162,8 +164,8 @@ test('should display detail view of scenario execution', async ({ page }) => {
   await page.getByRole('link', { name: '752603' }).click();
   await expect(page).toHaveURL('http://localhost:9000/scenario-execution/752603/view');
   await expect(page.getByTestId('scenarioExecutionId')).toHaveText('752603');
-  await expect(page.getByTestId('scenarioExecutionStartDate')).toHaveText('27 Jun 2024 10:59:03');
-  await expect(page.getByTestId('scenarioExecutionEndDate')).toHaveText('27 Jun 2024 11:05:21');
+  await expect(page.getByTestId('scenarioExecutionStartDate')).toHaveText('27 Jun 2024 11:59:03');
+  await expect(page.getByTestId('scenarioExecutionEndDate')).toHaveText('27 Jun 2024 12:05:21');
   await expect(page.getByTestId('scenarioExecutionName')).toHaveText('Default');
   await expect(page.getByTestId('scenarioExecutionStatus')).toHaveText('FAILURE');
   await expect(page.getByTestId('scenarioExecutionErrorMessage')).toHaveText(
@@ -190,20 +192,20 @@ test('should display detail view of message', async ({ page }) => {
   await expect(page.getByTestId('messageDetailDirection')).toHaveText('INBOUND');
   await expect(page.getByTestId('messageDetailPayload')).toBeEmpty();
   await expect(page.getByTestId('messageDetailCitrusMessageId')).toHaveText('c65cdf92-7075-44d6-b0f2-42a556d12f80');
-  await expect(page.getByTestId('messageDetailCreatedDate')).toHaveText('22 Aug 2024 08:38:56');
-  await expect(page.getByTestId('messageDetailLastModifiedDate')).toHaveText('22 Aug 2024 08:38:56');
+  await expect(page.getByTestId('messageDetailCreatedDate')).toHaveText('22 Aug 2024 09:38:56');
+  await expect(page.getByTestId('messageDetailLastModifiedDate')).toHaveText('22 Aug 2024 09:38:56');
 
   await expect(page.locator('tr :text("214")')).toHaveCount(1);
   await expect(page.locator('tr :text("accept")')).toHaveCount(1);
   await expect(page.locator('tr :text("application/json")')).toHaveCount(1);
-  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(0)).toHaveCount(1);
-  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(1)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 09:38:56")').nth(0)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 09:38:56")').nth(1)).toHaveCount(1);
 
   await expect(page.locator('tr :text("207")')).toHaveCount(1);
   await expect(page.locator('tr :text("deflect-encoding")')).toHaveCount(1);
   await expect(page.locator('tr :text("gzip, x-gzip, deflate")')).toHaveCount(1);
-  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(2)).toHaveCount(1);
-  await expect(page.locator('tr :text("22 Aug 2024 08:38:56")').nth(3)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 09:38:56")').nth(2)).toHaveCount(1);
+  await expect(page.locator('tr :text("22 Aug 2024 09:38:56")').nth(3)).toHaveCount(1);
 });
 
 test('should display detail view of message header', async ({ page }) => {
@@ -222,12 +224,12 @@ test('should display detail view of message header', async ({ page }) => {
   await expect(page.getByTestId('messageHeaderDetailsId')).toHaveText('214');
   await expect(page.getByTestId('messageHeaderDetailsName')).toHaveText('accept');
   await expect(page.getByTestId('messageHeaderDetailsValue')).toHaveText('application/json');
-  await expect(page.getByTestId('messageHeaderDetailsCreatedDate')).toHaveText('22 Aug 2024 08:38:56');
-  await expect(page.getByTestId('messageHeaderDetailsLastModified')).toHaveText('22 Aug 2024 08:38:56');
+  await expect(page.getByTestId('messageHeaderDetailsCreatedDate')).toHaveText('22 Aug 2024 09:38:56');
+  await expect(page.getByTestId('messageHeaderDetailsLastModified')).toHaveText('22 Aug 2024 09:38:56');
 });
 
 test('should display detail view of scenario action', async ({ page }) => {
-  await mockBackendResponse(page, '**/api/scenario-executions*', scenarioExecutionJsonWithoutDetails);
+  await mockBackendResponse(page, '**/api/scenario-executions**', scenarioExecutionJsonWithoutDetails);
   await mockBackendResponse(page, '**/api/scenario-executions/752603', scenarioExecutionJsonWithDetails);
   await mockBackendResponse(page, '**/api/scenario-actions/29', scenarioActionJson);
 
@@ -239,6 +241,6 @@ test('should display detail view of scenario action', async ({ page }) => {
   await expect(page).toHaveURL('http://localhost:9000/scenario-action/29/view');
   await expect(page.getByTestId('scenarioActionDetailsId')).toHaveText('29');
   await expect(page.getByTestId('scenarioActionDetailName')).toHaveText('http:receive-request');
-  await expect(page.getByTestId('scenarioActionDetailsStartDate')).toHaveText('27 Jun 2024 15:10:03');
-  await expect(page.getByTestId('scenarioActionDetailsEndDate')).toHaveText('15 Aug 2024 15:10:03');
+  await expect(page.getByTestId('scenarioActionDetailsStartDate')).toHaveText('27 Jun 2024 16:10:03');
+  await expect(page.getByTestId('scenarioActionDetailsEndDate')).toHaveText('15 Aug 2024 16:10:03');
 });
