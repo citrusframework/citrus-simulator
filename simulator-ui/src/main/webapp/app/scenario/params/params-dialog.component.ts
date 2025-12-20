@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import SharedModule from '../../shared/shared.module';
+import SharedModule from 'app/shared/shared.module';
 
 @Component({
   standalone: true,

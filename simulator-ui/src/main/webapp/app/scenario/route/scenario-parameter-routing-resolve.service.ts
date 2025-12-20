@@ -6,7 +6,7 @@ import { map, mergeMap } from 'rxjs/operators';
 
 import { IScenario } from '../scenario.model';
 import { ScenarioService } from '../service/scenario.service';
-import { IScenarioParameter } from '../../entities/scenario-parameter/scenario-parameter.model';
+import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-parameter.model';
 
 const scenarioParameterByNameComparator = (a: IScenarioParameter, b: IScenarioParameter): number => a.name!.localeCompare(b.name!);
 

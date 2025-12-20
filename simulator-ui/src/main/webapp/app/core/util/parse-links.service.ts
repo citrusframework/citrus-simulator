@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 /**
- * An utility service for link parsing.
+ * A utility service for link parsing.
  */
 @Injectable({
   providedIn: 'root',
@@ -10,38 +10,50 @@ export class ParseLinks {
   /**
    * Method to parse the links
    */
-  parse(header: string): { [key: string]: number } {
+  parseAll(header: string): Record<string, Record<string, string | undefined> | undefined> {
     if (header.length === 0) {
       throw new Error('input must not be of zero length');
     }
 
     // Split parts by comma
     const parts: string[] = header.split(',');
-    const links: { [key: string]: number } = {};
 
     // Parse each part into a named link
-    parts.forEach(p => {
-      const section: string[] = p.split(';');
+    return Object.fromEntries(
+      parts.map(p => {
+        const section: string[] = p.split(';');
 
-      if (section.length !== 2) {
-        throw new Error('section could not be split on ";"');
-      }
-
-      const url: string = section[0].replace(/<(.*)>/, '$1').trim(); // NOSONAR
-      const queryString: { [key: string]: string | undefined } = {};
-
-      url.replace(/([^?=&]+)(=([^&]*))?/g, (_$0: string, $1: string | undefined, _$2: string | undefined, $3: string | undefined) => {
-        if ($1 !== undefined) {
-          queryString[$1] = $3;
+        if (section.length !== 2) {
+          throw new Error('section could not be split on ";"');
         }
-        return $3 ?? '';
-      });
 
-      if (queryString.page !== undefined) {
+        const url: string = section[0].replace(/<(.*)>/, '$1').trim(); // NOSONAR
+        const queryString: Record<string, string> = {};
+
+        url.replaceAll(/([^?=&]+)(=([^&]*))?/g, (_$0: string, $1: string | undefined, _$2: string | undefined, $3: string | undefined) => {
+          if ($1 !== undefined && $3 !== undefined) {
+            queryString[$1] = decodeURIComponent($3);
+          }
+          return $3 ?? '';
+        });
+
         const name: string = section[1].replace(/rel="(.*)"/, '$1').trim();
-        links[name] = parseInt(queryString.page, 10);
+        return [name, queryString];
+      }),
+    );
+  }
+
+  /**
+   * Method to parse the links
+   */
+  parse(header: string): Record<string, number> {
+    const sections = this.parseAll(header);
+    const links: Record<string, number> = {};
+    for (const [name, queryParams] of Object.entries(sections)) {
+      if (queryParams?.page !== undefined) {
+        links[name] = Number.parseInt(queryParams.page, 10);
       }
-    });
+    }
     return links;
   }
 }

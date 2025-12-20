@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EntityOrder } from 'app/config/navigation.constants';
+import { SortOrder } from 'app/config/navigation.constants';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 import { UserPreferenceService } from './user-preference.service';
@@ -82,26 +82,26 @@ describe('UserPreferenceService', () => {
     });
   });
 
-  describe('getEntityOrder', () => {
+  describe('getSortOrder', () => {
     it('should return the entity order from localStorage', () => {
       mockLocalStorage.getItem.mockReturnValueOnce('DESC');
-      const order = service.getEntityOrder('key');
-      expect(order).toEqual(EntityOrder.DESCENDING);
+      const order = service.getSortOrder('key');
+      expect(order).toEqual(SortOrder.DESCENDING);
       expect(mockLocalStorage.getItem).toHaveBeenCalledWith('order-key');
     });
 
     it('should return the default entity order if none is in localStorage', () => {
       mockLocalStorage.getItem.mockReturnValueOnce(null);
-      const order = service.getEntityOrder('key');
-      expect(order).toEqual(EntityOrder.ASCENDING);
+      const order = service.getSortOrder('key');
+      expect(order).toEqual(SortOrder.ASCENDING);
       expect(mockLocalStorage.getItem).toHaveBeenCalledWith('order-key');
     });
   });
 
-  describe('setEntityOrder', () => {
+  describe('setSortOrder', () => {
     it('should save the entity order in localStorage', () => {
-      service.setEntityOrder('key', EntityOrder.ASCENDING);
-      expect(mockLocalStorage.setItem).toHaveBeenCalledWith('order-key', 'asc');
+      service.setSortOrder('key', SortOrder.ASCENDING);
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith('order-key', SortOrder.ASCENDING);
     });
   });
 });

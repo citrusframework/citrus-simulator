@@ -26,7 +26,7 @@
             "outputPath": "target/classes/static/simulator-ui",
             "index": "src/main/webapp/index.html",
             "main": "src/main/webapp/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -58,7 +58,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "320kb"
+                  "maximumError": "400kb"
                 }
               ]
             },
