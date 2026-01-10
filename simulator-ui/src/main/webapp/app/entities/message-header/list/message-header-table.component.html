@@ -1,7 +1,7 @@
 <div class="table-responsive table-entities" id="entities" *ngIf="sortedMessageHeaders && sortedMessageHeaders.length > 0">
   <table class="table table-striped table-hover" aria-describedby="page-heading" data-test="messageHeaderEntityTable">
     <thead>
-      <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="emitSortChange()">
+      <tr jhiSort [(sortState)]="sortState" (sortChange)="emitSortChange()">
         <th scope="col" jhiSortBy="headerId">
           <div class="d-flex">
             <span jhiTranslate="citrusSimulatorApp.messageHeader.id">ID</span>

@@ -23,10 +23,10 @@
             "customWebpackConfig": {
               "path": "./webpack/webpack.custom.js"
             },
-            "outputPath": "target/classes/static/simulator-ui",
+            "outputPath": "target/classes/static/",
             "index": "src/main/webapp/index.html",
             "main": "src/main/webapp/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -58,7 +58,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "320kb"
+                  "maximumError": "400kb"
                 }
               ]
             },
@@ -77,7 +77,7 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "buildTarget": "citrus-simulator:build:development",
-            "port": 4200
+            "port": 9060
           },
           "configurations": {
             "production": {
@@ -92,7 +92,8 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "configPath": "jest.conf.js"
+            "configPath": "jest.conf.js",
+            "tsConfig": "tsconfig.spec.json"
           }
         }
       }

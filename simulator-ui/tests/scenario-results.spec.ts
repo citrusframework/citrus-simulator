@@ -40,7 +40,7 @@ test('should filter with input form', async ({ page }) => {
   await page.getByTestId('scenarioExecutionHeaderFilterInput').fill('Test Headers');
 });
 
-const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<any> => {
+const fillDatePickerField = async (dateField: Locator, date: string, time: string): Promise<void> => {
   await dateField.click();
   await dateField.pressSequentially(date);
   await dateField.press('Tab');

@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { MessageComponent } from './list/message.component';
+import MessageComponent from './list/message.component';
 import { MessageDetailComponent } from './detail/message-detail.component';
 import MessageResolve from './route/message-routing-resolve.service';
+import { SortOrder } from 'app/shared/sort';
 
 const messageRoute: Routes = [
   {
     path: '',
     component: MessageComponent,
     data: {
-      defaultSort: 'messageId,' + ASC,
+      defaultSort: 'messageId,' + SortOrder.ASCENDING,
     },
   },
   {

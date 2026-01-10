@@ -1,5 +1,6 @@
-import { convertToParamMap, ParamMap, Params } from '@angular/router';
-import { FilterOptions, FilterOption } from './filter.model';
+import { ParamMap, Params, convertToParamMap } from '@angular/router';
+
+import { FilterOption, FilterOptions } from './filter.model';
 
 describe('FilterModel Tests', () => {
   describe('FilterOption', () => {
@@ -19,7 +20,7 @@ describe('FilterModel Tests', () => {
         expect(filterOption.values).toMatchObject(['bar', 'bar2', 'bar3', 'bar4']);
         expect(ret).toBe(true);
       });
-      it("doesn't adds duplicated values and return false", () => {
+      it("doesn't add duplicated values and return false", () => {
         const ret = filterOption.addValue('bar', 'bar2');
         expect(filterOption.values).toMatchObject(['bar', 'bar2']);
         expect(ret).toBe(false);
@@ -27,12 +28,12 @@ describe('FilterModel Tests', () => {
     });
 
     describe('removeValue', () => {
-      it('removes the exiting value and return true', () => {
+      it('removes the existing value and return true', () => {
         const ret = filterOption.removeValue('bar');
         expect(filterOption.values).toMatchObject(['bar2']);
         expect(ret).toBe(true);
       });
-      it("doesn't removes the value and return false", () => {
+      it("doesn't remove the value and return false", () => {
         const ret = filterOption.removeValue('foo');
         expect(filterOption.values).toMatchObject(['bar', 'bar2']);
         expect(ret).toBe(false);
@@ -75,13 +76,13 @@ describe('FilterModel Tests', () => {
     });
 
     describe('clear', () => {
-      it("removes empty filters and dosn't emit next element", () => {
+      it("removes empty filters and doesn't emit next element", () => {
         const filters = new FilterOptions([new FilterOption('foo'), new FilterOption('bar')]);
         jest.spyOn(filters.filterChanges, 'next');
 
         filters.clear();
 
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([]);
       });
       it('removes empty filters and emits next element', () => {
@@ -128,7 +129,7 @@ describe('FilterModel Tests', () => {
         const result = filters.addFilter('foo', 'existingFoo1', 'existingFoo2');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
     });
@@ -151,7 +152,7 @@ describe('FilterModel Tests', () => {
         const result = filters.removeFilter('foo', 'nonExisting1');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
       it("doesn't remove a non existing FilterOptions returns false", () => {
@@ -161,7 +162,7 @@ describe('FilterModel Tests', () => {
         const result = filters.removeFilter('nonExisting', 'nonExisting1');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
     });
@@ -211,7 +212,7 @@ describe('FilterModel Tests', () => {
         expect(filters.filterOptions).toMatchObject([]);
       });
 
-      it('should parse from Params and have a parameter with 2 values and one aditional value', () => {
+      it('should parse from Params and have a parameter with 2 values and one additional value', () => {
         const filters: FilterOptions = new FilterOptions([new FilterOption('hello.in', ['world'])]);
         jest.spyOn(filters.filterChanges, 'next');
 

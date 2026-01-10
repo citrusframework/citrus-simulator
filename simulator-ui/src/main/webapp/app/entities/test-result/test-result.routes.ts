@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
 import { TestResultComponent } from './list/test-result.component';
 import { TestResultDetailComponent } from './detail/test-result-detail.component';
 import TestResultResolve from './route/test-result-routing-resolve.service';
+import { SortOrder } from 'app/shared/sort';
 
 const testResultRoute: Routes = [
   {
     path: '',
     component: TestResultComponent,
     data: {
-      defaultSort: 'id,' + ASC,
+      defaultSort: 'id,' + SortOrder.ASCENDING,
     },
   },
   {

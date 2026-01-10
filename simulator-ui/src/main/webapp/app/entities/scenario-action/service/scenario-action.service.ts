@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -23,12 +23,10 @@ export type EntityArrayResponseType = HttpResponse<IScenarioAction[]>;
 
 @Injectable({ providedIn: 'root' })
 export class ScenarioActionService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenario-actions');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/scenario-actions');
 
   find(actionId: number): Observable<EntityResponseType> {
     return this.http

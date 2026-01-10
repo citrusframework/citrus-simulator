@@ -71,7 +71,7 @@ describe('Message routing resolve service', () => {
       });
 
       // THEN
-      expect(messageService.find).toBeCalledWith(123);
+      expect(messageService.find).toHaveBeenCalledWith(123);
       expect(codeFormatterService.formatCode).not.toHaveBeenCalled();
       expect(resultMessage).toEqual({ messageId: 123 });
     });
@@ -111,7 +111,7 @@ describe('Message routing resolve service', () => {
       });
 
       // THEN
-      expect(messageService.find).toBeCalledWith(123);
+      expect(messageService.find).toHaveBeenCalledWith(123);
       expect(codeFormatterService.formatCode).toHaveBeenCalledWith('foo');
       expect(resultMessage).toEqual({ messageId: 123, payload: 'bar' });
     });
@@ -131,7 +131,7 @@ describe('Message routing resolve service', () => {
       });
 
       // THEN
-      expect(messageService.find).toBeCalledWith(123);
+      expect(messageService.find).toHaveBeenCalledWith(123);
       expect(resultMessage).toEqual(undefined);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['404']);
     });

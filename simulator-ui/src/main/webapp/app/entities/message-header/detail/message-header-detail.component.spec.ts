@@ -8,7 +8,7 @@ import { MessageHeaderDetailComponent } from './message-header-detail.component'
 describe('MessageHeader Management Detail Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MessageHeaderDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [MessageHeaderDetailComponent],
       providers: [
         provideRouter(
           [

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "src/main/webapp/",
-    "outDir": "./target/classes/static/simulator-ui",
+    "outDir": "./target/out-tsc/root",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "strictNullChecks": true,
@@ -11,7 +11,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -19,7 +19,7 @@
     "target": "es2022",
     "module": "es2020",
     "types": [],
-    "lib": ["es2018", "es2020", "dom"]
+    "lib": ["es2018", "es2020", "es2021", "dom"]
   },
   "references": [
     {

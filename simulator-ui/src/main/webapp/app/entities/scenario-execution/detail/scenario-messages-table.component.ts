@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { HighlightAuto } from 'ngx-highlightjs';
@@ -8,37 +8,24 @@ import { sort } from 'app/core/util/operators';
 import { IMessage } from 'app/entities/message/message.model';
 import { MessageService } from 'app/entities/message/service/message.service';
 
-import { DurationPipe, FormatMediumDatePipe } from 'app/shared/date';
 import FormatMediumDatetimePipe from 'app/shared/date/format-medium-datetime.pipe';
 import SharedModule from 'app/shared/shared.module';
-import SortByDirective from 'app/shared/sort/sort-by.directive';
-import SortDirective from 'app/shared/sort/sort.directive';
+import { SortByDirective, SortDirective, sortStateSignal } from 'app/shared/sort';
+
+const predicate = 'messageId';
 
 @Component({
   standalone: true,
   selector: 'app-scenario-messages-table',
   templateUrl: './scenario-messages-table.component.html',
-  imports: [
-    RouterModule,
-    SharedModule,
-    DurationPipe,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
-    SortDirective,
-    SortByDirective,
-    HighlightAuto,
-  ],
+  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, SortDirective, SortByDirective, HighlightAuto],
 })
 export class ScenarioMessagesTableComponent implements OnInit {
   @Input()
-  ascending = true;
-
-  @Input()
-  predicate = 'messageId';
+  sortState = sortStateSignal({ predicate });
 
   sortedMessages: IMessage[] | null = null;
-
-  constructor(protected messageService: MessageService) {}
+  protected messageService = inject(MessageService);
 
   ngOnInit(): void {
     this.sortMessages();
@@ -52,6 +39,6 @@ export class ScenarioMessagesTableComponent implements OnInit {
   trackId = (_index: number, item: IMessage): number => this.messageService.getMessageIdentifier(item);
 
   sortMessages(): void {
-    sort(this.sortedMessages, this.predicate, this.ascending);
+    sort(this.sortedMessages, this.sortState(), predicate);
   }
 }
