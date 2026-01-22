@@ -32,6 +32,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -101,30 +102,30 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
     }
 
     /**
-     * Overrides the {@link DefaultScenarioExecutorService#startScenario(Long, String, SimulatorScenario, List)} method
+     * Overrides the {@link DefaultScenarioExecutorService#startScenario(Long, String, SimulatorScenario, List, ExecutionRequestAndResponse)} method
      * to execute the scenario asynchronously using the executor service.
      *
-     * @param executionId          the unique identifier for the scenario execution
-     * @param name                 the name of the scenario to start
-     * @param scenario             the scenario instance to execute
-     * @param scenarioParameters   the list of parameters to pass to the scenario when starting
+     * @param executionId        the unique identifier for the scenario execution
+     * @param name               the name of the scenario to start
+     * @param scenario           the scenario instance to execute
+     * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
     @Override
-    public void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-        startScenarioAsync(executionId, name, scenario, scenarioParameters);
+    public void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse) {
+        startScenarioAsync(executionId, name, scenario, scenarioParameters, executionRequestAndResponse);
     }
 
     /**
      * Submits the scenario execution task to the executor service for asynchronous execution.
      *
-     * @param executionId          the unique identifier for the scenario execution
-     * @param name                 the name of the scenario to start
-     * @param scenario             the scenario instance to execute
-     * @param scenarioParameters   the list of parameters to pass to the scenario when starting
+     * @param executionId        the unique identifier for the scenario execution
+     * @param name               the name of the scenario to start
+     * @param scenario           the scenario instance to execute
+     * @param scenarioParameters the list of parameters to pass to the scenario when starting
      */
-    private void startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-       runAsync(() -> super.startScenario(executionId, name, scenario, scenarioParameters), executorService)
-           .exceptionally(scenario::registerException);
+    private void startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters, ExecutionRequestAndResponse executionRequestAndResponse) {
+        runAsync(() -> super.startScenario(executionId, name, scenario, scenarioParameters, executionRequestAndResponse), executorService)
+            .exceptionally(scenario::registerException);
     }
 
     private void shutdownExecutor() {
