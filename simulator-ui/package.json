@@ -67,9 +67,9 @@
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "18.0.0",
-    "@angular-builders/jest": "18.0.0",
-    "@angular-devkit/build-angular": "18.2.20",
+    "@angular-builders/custom-webpack": "21.0.3",
+    "@angular-builders/jest": "21.0.3",
+    "@angular-devkit/build-angular": "21.1.3",
     "@angular-eslint/eslint-plugin": "18.4.3",
     "@angular/cli": "18.2.20",
     "@angular/compiler-cli": "18.2.13",
