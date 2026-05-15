@@ -16,82 +16,88 @@
 
   <app-filter [filters]="displayFilters"></app-filter>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="testParameters?.length === 0" data-test="noDataFound">
-    <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
-  </div>
-
-  <div class="table-responsive table-entities" id="entities" *ngIf="testParameters && testParameters.length > 0">
-    <table class="table table-striped table-hover" data-test="testParameterEntityTable" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="key">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="value">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="testResult.id">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="createdDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedDate">
-            <div class="d-flex">
-              <span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span>
-              <fa-icon class="p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let testParameter of testParameters; trackBy: trackId"
-          data-test="testParameterEntityRow"
-          class="clickable-row"
-          [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
-        >
-          <td data-test="testParameterEntityKey">{{ testParameter.key }}</td>
-          <td data-test="testParameterEntityValue">{{ testParameter.value }}</td>
-          <td data-test="testParameterEntityCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</td>
-          <td data-test="testParameterEntityLastModifiedDate">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
-          <td>
-            <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-test="testParameterEntityTestResultLink">{{
-              testParameter.testResult.id
-            }}</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="testParameters && testParameters.length > 0">
-    <div class="d-flex justify-content-center">
-      <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+  @if (testParameters?.length === 0) {
+    <div class="alert alert-warning" id="no-result" data-test="noDataFound">
+      <span jhiTranslate="citrusSimulatorApp.testParameter.home.notFound">No Test Parameters found</span>
     </div>
+  }
 
-    <div class="d-flex justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [page]="page"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="navigateToPage($event)"
-      ></ngb-pagination>
+  @if (testParameters && testParameters.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped table-hover" data-test="testParameterEntityTable" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="key">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.key">Key</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="value">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.value">Value</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="testResult.id">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.testResult">Test Result</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="createdDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.createdDate">Created Date</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lastModifiedDate">
+              <div class="d-flex">
+                <span jhiTranslate="citrusSimulatorApp.testParameter.lastModifiedDate">Last Modified Date</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (testParameter of testParameters; track trackId($index, testParameter)) {
+            <tr
+              data-test="testParameterEntityRow"
+              class="clickable-row"
+              [routerLink]="['/test-result', testParameter.testResult.id, 'view']"
+            >
+              <td data-test="testParameterEntityKey">{{ testParameter.key }}</td>
+              <td data-test="testParameterEntityValue">{{ testParameter.value }}</td>
+              <td data-test="testParameterEntityCreatedDate">{{ testParameter.createdDate | formatMediumDatetime }}</td>
+              <td data-test="testParameterEntityLastModifiedDate">{{ testParameter.lastModifiedDate | formatMediumDatetime }}</td>
+              <td>
+                <a [routerLink]="['/test-result', testParameter.testResult.id, 'view']" data-test="testParameterEntityTestResultLink">{{
+                  testParameter.testResult.id
+                }}</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  </div>
+  }
+
+  @if (testParameters && testParameters.length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <app-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></app-item-count>
+      </div>
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
 </div>

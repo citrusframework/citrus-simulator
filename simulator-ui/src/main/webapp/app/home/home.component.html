@@ -6,15 +6,17 @@
   <div class="col-md-9">
     <div class="row">
       <h1 class="display-4">
-        <i *ngIf="simulatorInfo; else defaultTitle">{{ simulatorInfo!.name }}</i>
-
-        <ng-template #defaultTitle>
+        @if (simulatorInfo) {
+          <i>{{ simulatorInfo!.name }}</i>
+        } @else {
           <span jhiTranslate="home.title">Citrus Simulator</span>
-        </ng-template>
+        }
       </h1>
 
       <p>
-        <b *ngIf="simulatorInfo" jhiTranslate="home.version" [translateValues]="{ version: simulatorInfo!.version }"></b>
+        @if (simulatorInfo) {
+          <b jhiTranslate="home.version" [translateValues]="{ version: simulatorInfo!.version }"></b>
+        }
       </p>
 
       <ngb-alert class="mt-3" type="info" data-test="disclaimer" [dismissible]="false">

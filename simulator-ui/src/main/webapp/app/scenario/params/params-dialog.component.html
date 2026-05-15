@@ -11,14 +11,16 @@
       <strong><span class="form-control-plaintext">Value</span></strong>
     </div>
   </div>
-  <div *ngFor="let param of params; let i = index" class="row mb-2">
-    <div class="col">
-      <span class="form-control-plaintext">{{ param.name }}</span>
+  @for (param of params; track param; let i = $index) {
+    <div class="row mb-2">
+      <div class="col">
+        <span class="form-control-plaintext">{{ param.name }}</span>
+      </div>
+      <div class="col">
+        <input [(ngModel)]="param.value" class="form-control" placeholder="Value" />
+      </div>
     </div>
-    <div class="col">
-      <input [(ngModel)]="param.value" class="form-control" placeholder="Value" />
-    </div>
-  </div>
+  }
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" jhiTranslate="citrusSimulatorApp.scenario.action.launch" (click)="launch()">Launch</button>

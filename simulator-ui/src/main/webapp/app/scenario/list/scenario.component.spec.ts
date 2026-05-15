@@ -1,5 +1,5 @@
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
@@ -171,37 +171,42 @@ describe('Scenario Management Component', () => {
       expect(component.sortState().order).toEqual(SortOrder.DESCENDING);
     });
 
-    it('subscribes to form value changes', fakeAsync(() => {
-      const filterFormValueChangesSubject = new Subject<{
-        nameContains: string;
-      }>();
-      jest.spyOn(filterFormValueChangesSubject, 'subscribe');
-      // @ts-expect-error: Override read-only property for testing
-      component.filterForm.valueChanges = filterFormValueChangesSubject;
+    it('subscribes to form value changes', () => {
+      jest.useFakeTimers();
+      try {
+        const filterFormValueChangesSubject = new Subject<{
+          nameContains: string;
+        }>();
+        jest.spyOn(filterFormValueChangesSubject, 'subscribe');
+        // @ts-expect-error: Override read-only property for testing
+        component.filterForm.valueChanges = filterFormValueChangesSubject;
 
-      // @ts-expect-error: Access private function for testing
-      activatedRoute.queryParamMap = EMPTY;
+        // @ts-expect-error: Access private function for testing
+        activatedRoute.queryParamMap = EMPTY;
 
-      component.ngOnInit();
+        component.ngOnInit();
 
-      // VERIFY that the subscription has been made
+        // VERIFY that the subscription has been made
 
-      // @ts-expect-error: Access private member for testing
-      expect(component.filterFormValueChanges).not.toBeNull();
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
+        // @ts-expect-error: Access private member for testing
+        expect(component.filterFormValueChanges).not.toBeNull();
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
 
-      expect(component.filterForm.getRawValue()).toEqual({ nameContains: null });
+        expect(component.filterForm.getRawValue()).toEqual({ nameContains: null });
 
-      // TRIGGER subscription and expect reload of data
+        // TRIGGER subscription and expect reload of data
 
-      const nameContains = 'name filter';
-      filterFormValueChangesSubject.next({ nameContains });
+        const nameContains = 'name filter';
+        filterFormValueChangesSubject.next({ nameContains });
 
-      tick(DEBOUNCE_TIME_MILLIS);
+        jest.advanceTimersByTime(DEBOUNCE_TIME_MILLIS);
 
-      expect(routerNavigateSpy).toHaveBeenNthCalledWith(2, [], { queryParams: { 'filter[scenarioName.contains]': nameContains } });
-    }));
+        expect(routerNavigateSpy).toHaveBeenNthCalledWith(2, [], { queryParams: { 'filter[scenarioName.contains]': nameContains } });
+      } finally {
+        jest.useRealTimers();
+      }
+    });
   });
 
   describe('ngOnDestroy', () => {
@@ -362,10 +367,10 @@ describe('Scenario Management Component', () => {
       componentInstance: { params: mockParams },
     } as NgbModalRef;
 
-    it('triggers scenario execution in backend', fakeAsync(() => {
+    it('triggers scenario execution in backend', async () => {
       jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
 
-      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef as any);
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef);
 
       // Configure mock alert service
       const scenarioId = 1234;
@@ -373,8 +378,9 @@ describe('Scenario Management Component', () => {
 
       component['launch']({ name });
 
-      // Needed due combination of promises and observables
-      tick();
+      // Two flushes: first resolves the modal Promise, second delivers the value into the switchMap
+      await Promise.resolve();
+      await Promise.resolve();
 
       expect(service.launch).toHaveBeenCalledWith(name, [{ parameterId: 1, name: 'TEXTBOX', value: 'user-input' }]);
       expect(alertService.addAlert).toHaveBeenCalledWith({
@@ -382,28 +388,29 @@ describe('Scenario Management Component', () => {
         translationKey: 'citrusSimulatorApp.scenario.action.launchedSuccessfully',
         translationParams: { scenarioExecutionId: scenarioId },
       });
-    }));
+    });
 
-    it('handles failures', fakeAsync(() => {
+    it('handles failures', async () => {
       jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
 
-      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef as any);
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRef);
 
       // Configure mock alert service
       service.launch = jest.fn().mockReturnValue(throwError(() => new Error('Anything that happen during communication!')));
 
       // @ts-expect-error: Access private function for testing
       component.launch({ name });
-      tick();
+      await Promise.resolve();
+      await Promise.resolve();
 
       expect(service.launch).toHaveBeenCalledWith(name, [{ name: 'TEXTBOX', parameterId: 1, value: 'user-input' }]);
       expect(alertService.addAlert).toHaveBeenCalledWith({
         type: 'danger',
         translationKey: 'citrusSimulatorApp.scenario.action.launchFailed',
       });
-    }));
+    });
 
-    it('should not launch if modal is dismissed', fakeAsync(() => {
+    it('should not launch if modal is dismissed', async () => {
       jest.spyOn(service, 'findParameters').mockReturnValue(of(new HttpResponse({ body: mockParams })));
 
       // Mock modal dismissal
@@ -413,15 +420,16 @@ describe('Scenario Management Component', () => {
         componentInstance: { params: mockParams },
       } as NgbModalRef;
 
-      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRefRejection as any);
+      jest.spyOn(component['modalService'], 'open').mockReturnValue(mockModalRefRejection);
 
       const launchSpy = jest.spyOn(service, 'launch');
 
       component['launch']({ name });
-      tick();
+      await Promise.resolve();
+      await Promise.resolve();
 
       expect(launchSpy).not.toHaveBeenCalled();
       expect(alertService.addAlert).not.toHaveBeenCalled();
-    }));
+    });
   });
 });

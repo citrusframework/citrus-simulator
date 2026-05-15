@@ -1,48 +1,47 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="scenarioAction">
-      <h2 data-test="scenarioActionDetailsHeading">
-        <span jhiTranslate="citrusSimulatorApp.scenarioAction.detail.title">Scenario Action</span>
-      </h2>
-
-      <hr />
-
-      <app-alert-error></app-alert-error>
-
-      <app-alert></app-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span data-test="scenarioActionDetailsId">{{ scenarioAction.actionId }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span></dt>
-        <dd>
-          <span data-test="scenarioActionDetailName">{{ scenarioAction.name }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span></dt>
-        <dd>
-          <span data-test="scenarioActionDetailsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span></dt>
-        <dd>
-          <span data-test="scenarioActionDetailsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span></dt>
-        <dd>
-          <div *ngIf="scenarioAction.scenarioExecution">
-            <a
-              [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
-              data-test="scenarioActionDetailsScenarioExecutionsLink"
-              >{{ scenarioAction.scenarioExecution.scenarioName }}</a
-            >
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-      </button>
-    </div>
+    @if (scenarioAction) {
+      <div>
+        <h2 data-test="scenarioActionDetailsHeading">
+          <span jhiTranslate="citrusSimulatorApp.scenarioAction.detail.title">Scenario Action</span>
+        </h2>
+        <hr />
+        <app-alert-error></app-alert-error>
+        <app-alert></app-alert>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span data-test="scenarioActionDetailsId">{{ scenarioAction.actionId }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.name">Name</span></dt>
+          <dd>
+            <span data-test="scenarioActionDetailName">{{ scenarioAction.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.startDate">Start Date</span></dt>
+          <dd>
+            <span data-test="scenarioActionDetailsStartDate">{{ scenarioAction.startDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.endDate">End Date</span></dt>
+          <dd>
+            <span data-test="scenarioActionDetailsEndDate">{{ scenarioAction.endDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioAction.scenarioExecution">Scenario Execution</span></dt>
+          <dd>
+            @if (scenarioAction.scenarioExecution) {
+              <div>
+                <a
+                  [routerLink]="['/scenario-execution', scenarioAction.scenarioExecution.executionId, 'view']"
+                  data-test="scenarioActionDetailsScenarioExecutionsLink"
+                  >{{ scenarioAction.scenarioExecution.scenarioName }}</a
+                >
+              </div>
+            }
+          </dd>
+        </dl>
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

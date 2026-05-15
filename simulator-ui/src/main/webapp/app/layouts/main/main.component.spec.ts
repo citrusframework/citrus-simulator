@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, TitleStrategy } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
@@ -18,14 +18,14 @@ describe('MainComponent', () => {
   let router: Router;
   let document: Document;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), MainComponent],
       providers: [Title, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
     })
       .overrideTemplate(MainComponent, '')
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MainComponent);
@@ -51,29 +51,21 @@ describe('MainComponent', () => {
     });
 
     describe('navigation end', () => {
-      it('should set page title to default title if pageTitle is missing on routes', fakeAsync(() => {
-        // WHEN
-        router.navigateByUrl('');
-        tick();
+      it('should set page title to default title if pageTitle is missing on routes', async () => {
+        await router.navigateByUrl('');
 
-        // THEN
         expect(document.title).toBe(defaultPageTitle + ' translated');
-      }));
+      });
 
-      it('should set page title to root route pageTitle if there is no child routes', fakeAsync(() => {
-        // GIVEN
+      it('should set page title to root route pageTitle if there is no child routes', async () => {
         router.resetConfig([{ path: '', title: parentRoutePageTitle, component: BlankComponent }]);
 
-        // WHEN
-        router.navigateByUrl('');
-        tick();
+        await router.navigateByUrl('');
 
-        // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
-      }));
+      });
 
-      it('should set page title to child route pageTitle if child routes exist and pageTitle is set for child route', fakeAsync(() => {
-        // GIVEN
+      it('should set page title to child route pageTitle if child routes exist and pageTitle is set for child route', async () => {
         router.resetConfig([
           {
             path: 'home',
@@ -82,16 +74,12 @@ describe('MainComponent', () => {
           },
         ]);
 
-        // WHEN
-        router.navigateByUrl('home');
-        tick();
+        await router.navigateByUrl('home');
 
-        // THEN
         expect(document.title).toBe(childRoutePageTitle + ' translated');
-      }));
+      });
 
-      it('should set page title to parent route pageTitle if child routes exists but pageTitle is not set for child route data', fakeAsync(() => {
-        // GIVEN
+      it('should set page title to parent route pageTitle if child routes exists but pageTitle is not set for child route data', async () => {
         router.resetConfig([
           {
             path: 'home',
@@ -100,13 +88,10 @@ describe('MainComponent', () => {
           },
         ]);
 
-        // WHEN
-        router.navigateByUrl('home');
-        tick();
+        await router.navigateByUrl('home');
 
-        // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
-      }));
+      });
     });
 
     describe('language change', () => {
@@ -118,16 +103,13 @@ describe('MainComponent', () => {
         expect(document.title).toBe(defaultPageTitle + ' translated');
       });
 
-      it('should set page title to root route pageTitle if there is no child routes', fakeAsync(() => {
+      it('should set page title to root route pageTitle if there is no child routes', async () => {
         // GIVEN
         routerState.snapshot.root.data = { pageTitle: parentRoutePageTitle };
         router.resetConfig([{ path: '', title: parentRoutePageTitle, component: BlankComponent }]);
 
-        // WHEN
-        router.navigateByUrl('');
-        tick();
+        await router.navigateByUrl('');
 
-        // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
 
         // GIVEN
@@ -138,9 +120,9 @@ describe('MainComponent', () => {
 
         // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
-      }));
+      });
 
-      it('should set page title to child route pageTitle if child routes exist and pageTitle is set for child route', fakeAsync(() => {
+      it('should set page title to child route pageTitle if child routes exist and pageTitle is set for child route', async () => {
         // GIVEN
         router.resetConfig([
           {
@@ -150,11 +132,8 @@ describe('MainComponent', () => {
           },
         ]);
 
-        // WHEN
-        router.navigateByUrl('home');
-        tick();
+        await router.navigateByUrl('home');
 
-        // THEN
         expect(document.title).toBe(childRoutePageTitle + ' translated');
 
         // GIVEN
@@ -165,9 +144,9 @@ describe('MainComponent', () => {
 
         // THEN
         expect(document.title).toBe(childRoutePageTitle + ' translated');
-      }));
+      });
 
-      it('should set page title to parent route pageTitle if child routes exists but pageTitle is not set for child route data', fakeAsync(() => {
+      it('should set page title to parent route pageTitle if child routes exists but pageTitle is not set for child route data', async () => {
         // GIVEN
         router.resetConfig([
           {
@@ -177,11 +156,8 @@ describe('MainComponent', () => {
           },
         ]);
 
-        // WHEN
-        router.navigateByUrl('home');
-        tick();
+        await router.navigateByUrl('home');
 
-        // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
 
         // GIVEN
@@ -192,7 +168,7 @@ describe('MainComponent', () => {
 
         // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
-      }));
+      });
     });
   });
 
