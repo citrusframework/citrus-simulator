@@ -4,7 +4,6 @@ const { baseUrl = './' } = config.compilerOptions;
 
 export default {
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|dayjs/esm)'],
-  resolver: 'jest-preset-angular/build/resolvers/ng-jest-resolver.js',
   globals: {
     __VERSION__: 'test',
     __DEBUG_INFO_ENABLED__: false,

@@ -83,34 +83,32 @@
                       <option value="~" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.contains">
                         CONTAINS
                       </option>
-                      <option
-                        *ngIf="getHeaderValueInputType(i) === 'number'"
-                        value=">"
-                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThan"
-                      >
-                        GREATER THAN
-                      </option>
-                      <option
-                        *ngIf="getHeaderValueInputType(i) === 'number'"
-                        value=">="
-                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThanOrEqualTo"
-                      >
-                        GREATER THAN OR EQUAL TO
-                      </option>
-                      <option
-                        *ngIf="getHeaderValueInputType(i) === 'number'"
-                        value="<"
-                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThan"
-                      >
-                        LESS THAN
-                      </option>
-                      <option
-                        *ngIf="getHeaderValueInputType(i) === 'number'"
-                        value="<="
-                        jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThanOrEqualTo"
-                      >
-                        LESS THAN OR EQUAL TO
-                      </option>
+                      @if (getHeaderValueInputType(i) === 'number') {
+                        <option value=">" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThan">
+                          GREATER THAN
+                        </option>
+                      }
+                      @if (getHeaderValueInputType(i) === 'number') {
+                        <option
+                          value=">="
+                          jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.greaterThanOrEqualTo"
+                        >
+                          GREATER THAN OR EQUAL TO
+                        </option>
+                      }
+                      @if (getHeaderValueInputType(i) === 'number') {
+                        <option value="<" jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThan">
+                          LESS THAN
+                        </option>
+                      }
+                      @if (getHeaderValueInputType(i) === 'number') {
+                        <option
+                          value="<="
+                          jhiTranslate="citrusSimulatorApp.scenarioExecution.filter.headerDialog.comparator.lessThanOrEqualTo"
+                        >
+                          LESS THAN OR EQUAL TO
+                        </option>
+                      }
                     </select>
                   </div>
                   <div class="col-md-4">

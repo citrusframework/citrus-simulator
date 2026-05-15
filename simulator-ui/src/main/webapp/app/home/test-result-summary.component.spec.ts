@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -55,7 +55,7 @@ describe('TestResultSummaryComponent', () => {
       expect(component.resetEnabled).toBeTruthy();
     });
 
-    it('should correctly calculate fixed percentages', fakeAsync(() => {
+    it('should correctly calculate fixed percentages', () => {
       const mockData = new HttpResponse({
         body: {
           total: 3,
@@ -67,14 +67,13 @@ describe('TestResultSummaryComponent', () => {
       testResultService.countByStatus.mockReturnValue(of(mockData));
 
       component.ngOnInit();
-      tick();
 
       expect(component.testResults()).toEqual(mockData.body);
       expect(component.successfulPercentage()).toEqual('66.67');
       expect(component.failedPercentage()).toEqual('33.33');
-    }));
+    });
 
-    it('should return even numbers with even results', fakeAsync(() => {
+    it('should return even numbers with even results', () => {
       const mockData = new HttpResponse({
         body: {
           total: 2,
@@ -86,20 +85,18 @@ describe('TestResultSummaryComponent', () => {
       testResultService.countByStatus.mockReturnValue(of(mockData));
 
       component.ngOnInit();
-      tick();
 
       expect(component.testResults()).toEqual(mockData.body);
       expect(component.successfulPercentage()).toEqual('50');
       expect(component.failedPercentage()).toEqual('50');
-    }));
+    });
 
-    it('default to a zero-result', fakeAsync(() => {
+    it('default to a zero-result', () => {
       const mockData = new HttpResponse<TestResultsByStatus>({ body: null });
 
       testResultService.countByStatus.mockReturnValue(of(mockData));
 
       component.ngOnInit();
-      tick();
 
       expect(component.testResults()).toEqual({
         total: 0,
@@ -109,6 +106,6 @@ describe('TestResultSummaryComponent', () => {
 
       expect(component.successfulPercentage()).toEqual('0');
       expect(component.failedPercentage()).toEqual('0');
-    }));
+    });
   });
 });

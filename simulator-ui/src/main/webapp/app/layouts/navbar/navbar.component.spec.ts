@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -9,14 +9,14 @@ describe('Navbar Component', () => {
   let fixture: ComponentFixture<NavbarComponent>;
   let component: NavbarComponent;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [NavbarComponent, TranslateModule.forRoot()],
       providers: [provideRouter([])],
     })
       .overrideTemplate(NavbarComponent, '')
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NavbarComponent);

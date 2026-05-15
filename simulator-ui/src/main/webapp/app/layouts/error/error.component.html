@@ -7,9 +7,11 @@
     <div class="col-md-8">
       <h1 jhiTranslate="error.title">Error page!</h1>
 
-      <div *ngIf="errorMessage">
-        <div class="alert alert-danger">{{ errorMessage }}</div>
-      </div>
+      @if (errorMessage) {
+        <div>
+          <div class="alert alert-danger">{{ errorMessage }}</div>
+        </div>
+      }
     </div>
   </div>
 </div>

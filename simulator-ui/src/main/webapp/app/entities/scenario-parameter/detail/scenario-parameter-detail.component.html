@@ -1,54 +1,53 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <div *ngIf="scenarioParameter">
-      <h2 data-test="scenarioParameterDetailsHeading">
-        <span jhiTranslate="citrusSimulatorApp.scenarioParameter.detail.title">Scenario Parameter</span>
-      </h2>
-
-      <hr />
-
-      <app-alert-error></app-alert-error>
-
-      <app-alert></app-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailsId">{{ scenarioParameter.parameterId }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailsName">{{ scenarioParameter.name }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailsControlType">{{ scenarioParameter.controlType }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailsValue">{{ scenarioParameter.value }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.createdDate">Created Date</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailsCreatedDate">{{ scenarioParameter.createdDate }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.lastModifiedDate">Last Modified Date</span></dt>
-        <dd>
-          <span data-test="scenarioParameterDetailLastModifiedDate">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.scenarioExecution">Scenario Execution</span></dt>
-        <dd>
-          <div *ngIf="scenarioParameter.scenarioExecution" (click)="$event.stopPropagation()">
-            <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
-              scenarioParameter.scenarioExecution.scenarioName
-            }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-      </button>
-    </div>
+    @if (scenarioParameter) {
+      <div>
+        <h2 data-test="scenarioParameterDetailsHeading">
+          <span jhiTranslate="citrusSimulatorApp.scenarioParameter.detail.title">Scenario Parameter</span>
+        </h2>
+        <hr />
+        <app-alert-error></app-alert-error>
+        <app-alert></app-alert>
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailsId">{{ scenarioParameter.parameterId }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.name">Name</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailsName">{{ scenarioParameter.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.controlType">Control Type</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailsControlType">{{ scenarioParameter.controlType }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.value">Value</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailsValue">{{ scenarioParameter.value }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.createdDate">Created Date</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailsCreatedDate">{{ scenarioParameter.createdDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.lastModifiedDate">Last Modified Date</span></dt>
+          <dd>
+            <span data-test="scenarioParameterDetailLastModifiedDate">{{ scenarioParameter.lastModifiedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="citrusSimulatorApp.scenarioParameter.scenarioExecution">Scenario Execution</span></dt>
+          <dd>
+            @if (scenarioParameter.scenarioExecution) {
+              <div (click)="$event.stopPropagation()">
+                <a [routerLink]="['/scenario-execution', scenarioParameter.scenarioExecution.executionId, 'view']">{{
+                  scenarioParameter.scenarioExecution.scenarioName
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+        <button type="button" (click)="previousState()" class="btn btn-info" data-test="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+      </div>
+    }
   </div>
 </div>

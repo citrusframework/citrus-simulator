@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 
@@ -103,63 +103,68 @@ describe('ScenarioExecution Filter Component', () => {
       expect(component.filterForm.dirty).toBeTruthy();
     });
 
-    it('should subscribe to form value changes', fakeAsync(() => {
-      const filterFormValueChangesSubject = new Subject<{
-        nameContains: string;
-        statusIn: string;
-        fromDate: string;
-        toDate: string;
-        headerFilter: string;
-      }>();
-      jest.spyOn(filterFormValueChangesSubject, 'subscribe');
-      // @ts-expect-error: Override read-only property for testing
-      component.filterForm.valueChanges = filterFormValueChangesSubject;
+    it('should subscribe to form value changes', () => {
+      jest.useFakeTimers();
+      try {
+        const filterFormValueChangesSubject = new Subject<{
+          nameContains: string;
+          statusIn: string;
+          fromDate: string;
+          toDate: string;
+          headerFilter: string;
+        }>();
+        jest.spyOn(filterFormValueChangesSubject, 'subscribe');
+        // @ts-expect-error: Override read-only property for testing
+        component.filterForm.valueChanges = filterFormValueChangesSubject;
 
-      component.ngOnInit();
+        component.ngOnInit();
 
-      // VERIFY that the subscription has been made
+        // VERIFY that the subscription has been made
 
-      // @ts-expect-error: Access private property for testing
-      expect(component.valueChanged).toBeFalsy();
-      // @ts-expect-error: Access private property for testing
-      expect(component.filterFormValueChanges).not.toBeNull();
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
+        // @ts-expect-error: Access private property for testing
+        expect(component.valueChanged).toBeFalsy();
+        // @ts-expect-error: Access private property for testing
+        expect(component.filterFormValueChanges).not.toBeNull();
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        expect(filterFormValueChangesSubject.subscribe).toHaveBeenCalled();
 
-      expect(component.filterForm.getRawValue()).toEqual({
-        fromDate: null,
-        headerFilter: '',
-        nameContains: '',
-        statusIn: null,
-        toDate: null,
-      });
+        expect(component.filterForm.getRawValue()).toEqual({
+          fromDate: null,
+          headerFilter: '',
+          nameContains: '',
+          statusIn: null,
+          toDate: null,
+        });
 
-      // TRIGGER subscription and expect reload of data
+        // TRIGGER subscription and expect reload of data
 
-      const nameContains = 'nameContains';
-      const headerFilter = 'key=value';
-      filterFormValueChangesSubject.next({
-        nameContains,
-        statusIn: STATUS_SUCCESS.name,
-        fromDate: filterFormFromDate,
-        toDate: filterFormToDate,
-        headerFilter,
-      });
+        const nameContains = 'nameContains';
+        const headerFilter = 'key=value';
+        filterFormValueChangesSubject.next({
+          nameContains,
+          statusIn: STATUS_SUCCESS.name,
+          fromDate: filterFormFromDate,
+          toDate: filterFormToDate,
+          headerFilter,
+        });
 
-      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
+        dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
 
-      tick(DEBOUNCE_TIME_MILLIS);
+        jest.advanceTimersByTime(DEBOUNCE_TIME_MILLIS);
 
-      expect(router.navigate).toHaveBeenCalledWith([], {
-        queryParams: {
-          'filter[scenarioName.contains]': nameContains,
-          'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
-          'filter[status.equals]': STATUS_SUCCESS.id,
-          'filter[endDate.lessThanOrEqual]': queryParamEndDate,
-          'filter[headers]': headerFilter,
-        },
-      });
-    }));
+        expect(router.navigate).toHaveBeenCalledWith([], {
+          queryParams: {
+            'filter[scenarioName.contains]': nameContains,
+            'filter[startDate.greaterThanOrEqual]': queryParamStartDate,
+            'filter[status.equals]': STATUS_SUCCESS.id,
+            'filter[endDate.lessThanOrEqual]': queryParamEndDate,
+            'filter[headers]': headerFilter,
+          },
+        });
+      } finally {
+        jest.useRealTimers();
+      }
+    });
   });
 
   describe('ngOnDestroy', () => {

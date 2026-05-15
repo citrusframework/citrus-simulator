@@ -19,12 +19,9 @@ export class ProfileService {
 
   getSimulatorConfiguration(): Observable<SimulatorConfiguration> {
     return this.http.get<InfoResponse>(this.infoUrl).pipe(
-      map(
-        (response: InfoResponse) =>
-          ({
-            resetResultsEnabled: response.config?.['reset-results-enabled'].toLowerCase() === 'true',
-          }) as SimulatorConfiguration,
-      ),
+      map((response: InfoResponse) => ({
+        resetResultsEnabled: response.config?.['reset-results-enabled'].toLowerCase() === 'true',
+      })),
       shareReplay(),
     );
   }

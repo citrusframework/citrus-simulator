@@ -1,6 +1,6 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { InfoResponse } from 'app/layouts/profiles/profile-info.model';
@@ -36,7 +36,7 @@ describe('Home Component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch simulatorInfo on initialization', fakeAsync(() => {
+  it('should fetch simulatorInfo on initialization', () => {
     const mockInfoResponse: InfoResponse = {
       simulator: {
         name: 'Citrus Simulator',
@@ -50,8 +50,6 @@ describe('Home Component', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockInfoResponse);
 
-    tick();
-
     expect(component.simulatorInfo).toEqual(mockInfoResponse.simulator);
-  }));
+  });
 });
