@@ -40,7 +40,6 @@
     <logback.classic.version>1.5.32</logback.classic.version>
 
     <node.version>v22.21.1</node.version>
-    <npm.version>10.9.4</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>

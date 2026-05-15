@@ -89,42 +89,41 @@
         </configuration>
         <executions>
           <execution>
-            <id>node-npm-setup</id>
+            <id>install-node-and-corepack</id>
             <goals>
-              <goal>install-node-and-npm</goal>
+              <goal>install-node-and-corepack</goal>
             </goals>
             <configuration>
               <nodeVersion>${node.version}</nodeVersion>
-              <npmVersion>${npm.version}</npmVersion>
             </configuration>
           </execution>
           <execution>
-            <id>npm-install</id>
+            <id>pnpm-install</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>ci --cache .npm</arguments>
+              <arguments>pnpm install</arguments>
             </configuration>
           </execution>
           <execution>
             <id>npm-test</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <phase>test</phase>
             <configuration>
-              <arguments>test</arguments>
+              <arguments>pnpm run test</arguments>
             </configuration>
           </execution>
           <execution>
             <id>ng-build</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <phase>compile</phase>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>pnpm run build</arguments>
               <environmentVariables>
                 <APP_VERSION>${project.version}</APP_VERSION>
               </environmentVariables>

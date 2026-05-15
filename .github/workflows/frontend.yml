@@ -53,14 +53,23 @@ jobs:
         run: |
           node --version
           npm --version
-      - name: Install dependencies
-        run: npm ci --cache .npm
+      - uses: pnpm/action-setup@v6.0.8
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: 'pnpm'
+          node-version: 24
+      - name: Install Dependencies
+        run: pnpm install
         working-directory: simulator-ui
       - name: Prettier
-        run: npm run prettier:check
+        run: pnpm run prettier:check
         working-directory: simulator-ui
       - name: Frontend Tests
-        run: npm run ci:frontend:test
+        run: pnpm run ci:frontend:test
         working-directory: simulator-ui
   e2e:
     timeout-minutes: 60
@@ -70,14 +79,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
-        run: npm ci --cache .npm
+      - uses: pnpm/action-setup@v6.0.8
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: 'pnpm'
+          node-version: 24
+      - name: Install Dependencies
+        run: pnpm install
         working-directory: simulator-ui
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: simulator-ui
       - name: Run Playwright tests
-        run: npm run e2e
+        run: pnpm run e2e
         working-directory: simulator-ui
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
