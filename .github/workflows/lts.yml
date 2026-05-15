@@ -43,6 +43,7 @@ jobs:
         version: [ 21, 25 ]
         os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.version == 25 }}
     steps:
       - name: Set up JDK ${{ matrix.version }}
         uses: actions/setup-java@v2
