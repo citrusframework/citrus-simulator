@@ -25,25 +25,45 @@ import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
 import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
 import org.citrusframework.simulator.exception.SimulatorException;
 
-import java.util.Stack;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.lang.Thread.currentThread;
+import static java.util.Collections.synchronizedMap;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
 
     /**
-     * Internal im memory message channel
+     * Internal in-memory message channel.
      */
     private final LinkedBlockingQueue<Message> channel = new LinkedBlockingQueue<>();
 
     /**
-     * Stack of response futures to complete
+     * Futures for messages added but not yet consumed by {@link #receive}.
+     * Keyed by message identity so two messages with equal content never collide.
      */
-    private final Stack<CompletableFuture<Message>> responseFutures = new Stack<>();
+    private final Map<Message, CompletableFuture<Message>> pendingFutures =
+        synchronizedMap(new IdentityHashMap<>());
+
+    /**
+     * Futures for messages already consumed by {@link #receive}.
+     * Keyed by the {@link TestContext} that received the message, binding each send/fail to the correct caller.
+     */
+    private final Map<TestContext, CompletableFuture<Message>> activeFutures =
+        synchronizedMap(new IdentityHashMap<>());
+
+    /**
+     * FIFO queue of futures in arrival order, used by {@link #fail} which has no TestContext.
+     * Populated in {@link #receive}; may already be completed by {@link #send} when consumed.
+     */
+    private final Queue<CompletableFuture<Message>> orderedFutures = new LinkedBlockingQueue<>();
 
     /**
      * Default constructor using endpoint configuration.
@@ -60,8 +80,9 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
      * @param request
      */
     public void add(Message request, CompletableFuture<Message> future) {
-        responseFutures.push(future);
+        pendingFutures.put(request, future);
         channel.add(request);
+        orderedFutures.add(future);
     }
 
     @Override
@@ -88,6 +109,9 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
                 throw new SimulatorException("Failed to receive scenario inbound message");
             }
 
+            CompletableFuture<Message> future = pendingFutures.remove(message);
+            activeFutures.put(context, future);
+
             messageReceived(message, context);
 
             return message;
@@ -100,19 +124,28 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     @Override
     public void send(Message message, TestContext context) {
         messageSent(message, context);
-        completeNextResponseFuture(message);
+
+        CompletableFuture<Message> future = Optional.ofNullable(activeFutures.remove(context))
+            .orElseGet(() -> Optional.ofNullable(orderedFutures.poll())
+                .orElseThrow(() -> new SimulatorException("Failed to process scenario response message - missing response consumer!")));
+
+        future.complete(message);
     }
 
     void fail(Throwable e) {
-        completeNextResponseFuture(new SimulationFailedUnexpectedlyException(e));
-    }
-
-    private void completeNextResponseFuture(Message message) {
-        if (responseFutures.isEmpty()) {
-            throw new SimulatorException("Failed to process scenario response message - missing response consumer!");
-        } else {
-            responseFutures.pop().complete(message);
+        // Clean up any unreceived message lingering in the channel
+        Message unreceived = channel.poll();
+        if (nonNull(unreceived)) {
+            pendingFutures.remove(unreceived);
         }
+
+        CompletableFuture<Message> future = orderedFutures.poll();
+        if (nonNull(future)) {
+            future.complete(new SimulationFailedUnexpectedlyException(e));
+            return;
+        }
+
+        throw new SimulatorException("Failed to receive scenario inbound message");
     }
 
     private void messageSent(Message message, TestContext context) {
