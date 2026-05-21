@@ -126,5 +126,13 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
          * Specifies whether the test results shall be deletable or not. If you're working with a long-lived citrus-simulator and disable this, make sure to manually take care of housekeeping!
          */
         private boolean resetEnabled = true;
+
+        /**
+         * When enabled, only execution data of <em>failed</em> scenarios is persisted.
+         * Successful scenario executions (including their actions, messages and parameters) are deleted from the database right after completion, reducing persistence overhead significantly for high-throughput simulators.
+         * <p>
+         * Defaults to {@code false} so that all scenario execution data is persisted (existing behavior).
+         */
+        private boolean persistOnlyFailedScenarios = false;
     }
 }
