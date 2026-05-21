@@ -23,6 +23,7 @@ import org.citrusframework.TestCase;
 import org.citrusframework.TestResult;
 import org.citrusframework.actions.SleepAction;
 import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.service.ScenarioActionService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,11 +59,14 @@ class SimulatorStatusListenerTest {
     @Mock
     private ScenarioExecutionService scenarioExecutionServiceMock;
 
+    @Mock
+    private SimulatorConfigurationProperties simulatorConfigurationPropertiesMock;
+
     private SimulatorStatusListener fixture;
 
     @BeforeEach
     void setup() {
-        fixture = new SimulatorStatusListener(scenarioActionServiceMock, scenarioExecutionServiceMock);
+        fixture = new SimulatorStatusListener(scenarioActionServiceMock, scenarioExecutionServiceMock, simulatorConfigurationPropertiesMock);
     }
 
     @Nested
@@ -162,6 +166,9 @@ class SimulatorStatusListenerTest {
 
             var scenarioExecutionId = createAndGetScenarioExecutionId(defaultTestCaseMock);
 
+            var simulationResultsMock = new SimulatorConfigurationProperties.SimulationResults();
+            doReturn(simulationResultsMock).when(simulatorConfigurationPropertiesMock).getSimulationResults();
+
             // Act
             fixture.onTestSuccess(defaultTestCaseMock);
 
@@ -178,11 +185,34 @@ class SimulatorStatusListenerTest {
 
             var scenarioExecutionId = createAndGetScenarioExecutionId(testCaseMock);
 
+            var simulationResultsMock = new SimulatorConfigurationProperties.SimulationResults();
+            doReturn(simulationResultsMock).when(simulatorConfigurationPropertiesMock).getSimulationResults();
+
             // Act
             fixture.onTestSuccess(testCaseMock);
 
             // Assert
             verify(scenarioExecutionServiceMock).completeScenarioExecution(eq(scenarioExecutionId), argThat(r -> r.getStatus() == SUCCESS && r.getTestParameters().isEmpty()));
+        }
+
+        @Test
+        void shouldDeleteScenarioExecutionWhenPersistOnlyFailedScenariosIsEnabled() {
+            // Arrange
+            var simulationResults = new SimulatorConfigurationProperties.SimulationResults();
+            simulationResults.setPersistOnlyFailedScenarios(true);
+            doReturn(simulationResults).when(simulatorConfigurationPropertiesMock).getSimulationResults();
+
+            var testCaseMock = mock(TestCase.class);
+            doReturn("shouldDeleteScenarioExecutionWhenPersistOnlyFailedScenariosIsEnabled").when(testCaseMock).getName();
+            doReturn(getClass()).when(testCaseMock).getTestClass();
+
+            var scenarioExecutionId = createAndGetScenarioExecutionId(testCaseMock);
+
+            // Act
+            fixture.onTestSuccess(testCaseMock);
+
+            // Assert
+            verify(scenarioExecutionServiceMock).deleteScenarioExecution(scenarioExecutionId);
         }
     }
 

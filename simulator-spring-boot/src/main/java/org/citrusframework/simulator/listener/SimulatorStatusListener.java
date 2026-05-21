@@ -24,6 +24,7 @@ import org.citrusframework.actions.SleepAction;
 import org.citrusframework.common.Described;
 import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
+import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.service.ScenarioActionService;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.slf4j.Logger;
@@ -55,10 +56,12 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
 
     private final ScenarioActionService scenarioActionService;
     private final ScenarioExecutionService scenarioExecutionService;
+    private final SimulatorConfigurationProperties simulatorConfigurationProperties;
 
-    public SimulatorStatusListener(ScenarioActionService scenarioActionService, ScenarioExecutionService scenarioExecutionService) {
+    public SimulatorStatusListener(ScenarioActionService scenarioActionService, ScenarioExecutionService scenarioExecutionService, SimulatorConfigurationProperties simulatorConfigurationProperties) {
         this.scenarioActionService = scenarioActionService;
         this.scenarioExecutionService = scenarioExecutionService;
+        this.simulatorConfigurationProperties = simulatorConfigurationProperties;
     }
 
     @Override
@@ -84,9 +87,15 @@ public class SimulatorStatusListener extends AbstractTestListener implements Tes
             testResult = success(testCase.getName(), testCase.getTestClass().getSimpleName());
         }
 
-        scenarioExecutionService.completeScenarioExecution(getScenarioExecutionId(testCase), new org.citrusframework.simulator.model.TestResult(testResult));
+        long scenarioExecutionId = getScenarioExecutionId(testCase);
 
-        logger.info("Scenario succeeded: {}", testResult);
+        if (simulatorConfigurationProperties.getSimulationResults().isPersistOnlyFailedScenarios()) {
+            scenarioExecutionService.deleteScenarioExecution(scenarioExecutionId);
+            logger.info("Scenario succeeded and execution data discarded (persistOnlyFailedScenarios=true): {}", testResult);
+        } else {
+            scenarioExecutionService.completeScenarioExecution(scenarioExecutionId, new org.citrusframework.simulator.model.TestResult(testResult));
+            logger.info("Scenario succeeded: {}", testResult);
+        }
     }
 
     @Override
