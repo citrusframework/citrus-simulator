@@ -91,7 +91,7 @@
     "eslint-plugin-prettier": "5.5.5",
     "eslint-webpack-plugin": "6.0.0",
     "folder-hash": "4.1.2",
-    "generator-jhipster": "9.0.0",
+    "generator-jhipster": "9.1.0",
     "jest": "30.4.2",
     "jest-date-mock": "1.0.10",
     "jest-environment-jsdom": "30.4.1",
