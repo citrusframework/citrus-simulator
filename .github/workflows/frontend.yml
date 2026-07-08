@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Info
         run: |
           node --version
@@ -66,7 +66,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: 24
