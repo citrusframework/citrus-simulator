@@ -93,7 +93,7 @@ public class ScenarioActionQueryService extends QueryService<ScenarioAction> {
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<ScenarioAction> createSpecification(ScenarioActionCriteria criteria) {
-        Specification<ScenarioAction> specification = Specification.where(null);
+        Specification<ScenarioAction> specification = Specification.unrestricted();
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {

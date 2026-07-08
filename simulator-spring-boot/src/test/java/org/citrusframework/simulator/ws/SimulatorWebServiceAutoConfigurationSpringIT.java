@@ -32,14 +32,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Isolated
 @DirtiesContext
 @IntegrationTest
-@TestPropertySource(properties = {"citrus.simulator.ws.enabled=true", "spring.webservices.autoconfiguration.enabled=true"})
+@TestPropertySource(properties = {"citrus.simulator.ws.enabled=true"})
 class SimulatorWebServiceAutoConfigurationSpringIT {
 
     @Autowired
     private WsConfigurationSupport wsConfigurationSupport;
 
     @Autowired
-    @Qualifier("messageDispatcherServlet")
+    @Qualifier("simulatorServletRegistrationBean")
     private ServletRegistrationBean<MessageDispatcherServlet> messageDispatcherServlet;
 
     @Test

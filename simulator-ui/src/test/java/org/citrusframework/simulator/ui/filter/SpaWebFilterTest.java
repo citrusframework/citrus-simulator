@@ -34,6 +34,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -64,20 +65,20 @@ class SpaWebFilterTest {
 
     public static Stream<Arguments> shouldNotForwardPathToIndexHtml() {
         return Stream.of(
-            Arguments.of("/api", ""),
-            Arguments.of("/api/somepath", ""),
-            Arguments.of(ACTUATOR_PATH, ""),
-            Arguments.of(H2_CONSOLE_PATH, ""),
-            Arguments.of("/v3/api-docs", ""),
-            Arguments.of("/v3/api-docs/somepath", ""),
-            Arguments.of("/some/absolute/path.", ""),
-            Arguments.of("path/without/leading/slash", ""),
-            Arguments.of("/server-1/api", "/server-1"),
-            Arguments.of("/server-1/api/somepath", "/server-1"),
-            Arguments.of("/server-1/v3/api-docs", "/server-1"),
-            Arguments.of("/server-1/v3/api-docs/somepath", "/server-1"),
-            Arguments.of("/server-1/some/absolute/path.", "/server-1"),
-            Arguments.of("/server-1path/without/leading/slash", "/server-1")
+            arguments("/api", ""),
+            arguments("/api/somepath", ""),
+            arguments(ACTUATOR_PATH, ""),
+            arguments(H2_CONSOLE_PATH, ""),
+            arguments("/v3/api-docs", ""),
+            arguments("/v3/api-docs/somepath", ""),
+            arguments("/some/absolute/path.", ""),
+            arguments("path/without/leading/slash", ""),
+            arguments("/server-1/api", "/server-1"),
+            arguments("/server-1/api/somepath", "/server-1"),
+            arguments("/server-1/v3/api-docs", "/server-1"),
+            arguments("/server-1/v3/api-docs/somepath", "/server-1"),
+            arguments("/server-1/some/absolute/path.", "/server-1"),
+            arguments("/server-1path/without/leading/slash", "/server-1")
         );
     }
 

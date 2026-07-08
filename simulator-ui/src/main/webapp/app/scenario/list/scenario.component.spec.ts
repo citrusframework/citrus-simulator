@@ -6,8 +6,6 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { EMPTY, of, Subject, throwError } from 'rxjs';
 
-import { TranslateModule } from '@ngx-translate/core';
-
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 
 import { SortOrder, sortStateSignal } from 'app/shared/sort';
@@ -24,6 +22,7 @@ import { IScenarioParameter } from 'app/entities/scenario-parameter/scenario-par
 jest.mock('app/core/util/alert.service');
 
 import SpyInstance = jest.SpyInstance;
+import { provideTranslateService } from '@ngx-translate/core';
 
 describe('Scenario Management Component', () => {
   let activatedRoute: ActivatedRoute;
@@ -37,11 +36,12 @@ describe('Scenario Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ScenarioComponent, TranslateModule.forRoot()],
+      imports: [ScenarioComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([{ path: 'scenario', component: ScenarioComponent }]),
+        provideTranslateService(),
         {
           provide: ActivatedRoute,
           useValue: {

@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <artemis.version>2.30.0</artemis.version>
+    <artemis.version>2.55.0</artemis.version>
     <jakarta.activation.api.version>2.1.4</jakarta.activation.api.version>
     <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
     <jaxb.maven.plugin.version>3.1.0</jaxb.maven.plugin.version>
@@ -57,15 +57,9 @@
 
     <!-- ActiveMQ Artemis broker -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>artemis-jms-server</artifactId>
+      <groupId>org.apache.artemis</groupId>
+      <artifactId>artemis-jakarta-server</artifactId>
       <version>${artemis.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>artemis-jms-client</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

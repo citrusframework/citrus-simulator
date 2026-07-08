@@ -19,22 +19,21 @@ package org.citrusframework.simulator.ui.config;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,32 +45,32 @@ abstract class AbstractSecurityConfigurationIT {
 
     static Stream<Arguments> testRequest() {
         return Stream.of(
-            Arguments.of("Rest servlet", "/%context%/rest/my-rest-service", "/%context%/rest/my-rest-service", null, false),
-            Arguments.of("Classic servlet", "/%context%/rest/my-rest-service", "/%context%", "/rest/my-rest-service", false),
-            Arguments.of("Rest servlet with forward", "/service/rest/my-rest-service", "/service/rest/my-rest-service", null, true),
-            Arguments.of("Classic servlet with forward", "/service/rest/my-rest-service", "/service", "/rest/my-rest-service", true));
+            arguments("Rest servlet", "/%context%/rest/my-rest-service", "/%context%/rest/my-rest-service", null, false),
+            arguments("Classic servlet", "/%context%/rest/my-rest-service", "/%context%", "/rest/my-rest-service", false),
+            arguments("Rest servlet with forward", "/service/rest/my-rest-service", "/service/rest/my-rest-service", null, true),
+            arguments("Classic servlet with forward", "/service/rest/my-rest-service", "/service", "/rest/my-rest-service", true));
     }
 
-    @ParameterizedTest
     @MethodSource
+    @ParameterizedTest
     void testRequest(String name, String requestUri, String servletPath, String pathInfo, boolean forward) throws ServletException, IOException {
         SpaWebFilter spaWebFilter = (SpaWebFilter) filterChain.getFilters().stream().filter(oneFilter -> oneFilter instanceof SpaWebFilter).findFirst().orElseThrow();
 
         RequestDispatcher requestDispatcherMock = mock(RequestDispatcher.class);
-        HttpServletRequest requestMock = mock(HttpServletRequest.class);
-        doReturn(requestDispatcherMock).when(requestMock).getRequestDispatcher(any());
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("PUT", requestUri.replace("%context%", getContext())) {
+            @Override
+            public RequestDispatcher getRequestDispatcher(String path) {
+                return requestDispatcherMock;
+            }
+        };
+        mockHttpServletRequest.setServletPath(servletPath.replace("%context%", getContext()));
+        mockHttpServletRequest.setPathInfo(pathInfo);
+        mockHttpServletRequest.setContextPath("");
 
-        doReturn("PUT").when(requestMock).getMethod();
-        doReturn(requestUri.replace("%context%", getContext())).when(requestMock).getRequestURI();
-        doReturn(servletPath.replace("%context%", getContext())).when(requestMock).getServletPath();
-        doReturn(pathInfo).when(requestMock).getPathInfo();
-        doReturn("").when(requestMock).getContextPath();
-        doReturn(Collections.enumeration(List.of())).when(requestMock).getAttributeNames();
-
-        HttpServletResponse responseMock = mock(HttpServletResponse.class);
+        HttpServletResponse responseMock = new MockHttpServletResponse();
         FilterChain filterChainMock = mock(FilterChain.class);
 
-        spaWebFilter.doFilter(requestMock, responseMock, filterChainMock);
+        spaWebFilter.doFilter(mockHttpServletRequest, responseMock, filterChainMock);
 
         if (forward) {
             verify(requestDispatcherMock, times(1)).forward(any(), any());

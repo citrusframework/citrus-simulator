@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MissingTranslationHandler, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MissingTranslationHandler, provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { missingTranslationHandler } from '../../config/translation.config';
 
@@ -13,8 +13,8 @@ describe('Alert Service Test', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
+      providers: [
+        provideTranslateService({
           missingTranslationHandler: {
             provide: MissingTranslationHandler,
             useFactory: missingTranslationHandler,

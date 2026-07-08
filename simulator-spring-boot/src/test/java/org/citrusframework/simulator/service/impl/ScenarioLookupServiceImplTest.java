@@ -41,6 +41,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -69,9 +70,9 @@ public class ScenarioLookupServiceImplTest {
 
     static Stream<Arguments> evictAndReloadScenarioCacheIsIdempotent() {
         return Stream.of(
-            Arguments.of(
+            arguments(
                 (Consumer<ScenarioLookupServiceImpl>) ScenarioLookupServiceImpl::afterPropertiesSet),
-            Arguments.of(
+            arguments(
                 (Consumer<ScenarioLookupServiceImpl>) ScenarioLookupServiceImpl::evictAndReloadScenarioCache)
         );
     }

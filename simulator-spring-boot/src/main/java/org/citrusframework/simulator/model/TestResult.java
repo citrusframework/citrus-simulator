@@ -23,7 +23,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -115,14 +114,12 @@ public class TestResult extends AbstractAuditingEntity<TestResult, Long> impleme
     /**
      * Error message
      */
-    @Lob
     @Column(columnDefinition = "TEXT", updatable = false)
     private String errorMessage;
 
     /**
      * Failure stack trace
      */
-    @Lob
     @Column(columnDefinition = "TEXT", updatable = false)
     private String stackTrace;
 

@@ -69,7 +69,7 @@ class ResponseUtilTest {
         assertEquals(expectedBody, response.getBody());
 
         HttpHeaders responseHeaders = response.getHeaders();
-        assertTrue(responseHeaders.containsKey(headerKey));
+        assertTrue(responseHeaders.containsHeader(headerKey));
 
         List<String> testHeaders = responseHeaders.get(headerKey);
         assertNotNull(testHeaders);

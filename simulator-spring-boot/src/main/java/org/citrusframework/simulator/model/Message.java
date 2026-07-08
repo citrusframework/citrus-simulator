@@ -24,7 +24,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -84,7 +83,6 @@ public class Message extends AbstractAuditingEntity<Message, Long> implements Se
     @Column(nullable = false, updatable = false)
     private Integer direction = Direction.UNKNOWN.getId();
 
-    @Lob
     @Column(columnDefinition = "TEXT", updatable = false)
     private String payload;
 
