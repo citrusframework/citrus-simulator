@@ -1,12 +1,8 @@
-import dayjs from 'dayjs/esm';
-
 import { FilterOptions, IFilterOptions } from '../filter';
 
 import { formatDateTimeFilterOptions } from './format-date-time-filter-options';
 
-function mockDayJsUtc(date: Date): void {
-  dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(date));
-}
+const formatLocal = (date: Date): string => date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
 
 describe('formatDateTimeFilterOptions', () => {
   const expectFilterOptionsToContain = (formattedOptions: IFilterOptions, name: string, values: string[]): void => {
@@ -14,16 +10,14 @@ describe('formatDateTimeFilterOptions', () => {
     expect(formattedOptions.filterOptions[0]).toEqual({ name, values });
   };
 
-  it('should format single valid date value in filter options', () => {
+  it('should format single valid date value in filter options using the browser locale', () => {
     const initialOptions = new FilterOptions();
     const date = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date.toISOString());
 
-    mockDayJsUtc(date);
-
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
-    expectFilterOptionsToContain(formattedOptions, 'dateFilter', ['2023-11-16 00:00:00']);
+    expectFilterOptionsToContain(formattedOptions, 'dateFilter', [formatLocal(date)]);
   });
 
   it('should not alter non-date filter values', () => {
@@ -43,11 +37,9 @@ describe('formatDateTimeFilterOptions', () => {
     const date2 = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date1.toISOString(), date2.toISOString());
 
-    dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(date1)).mockReturnValueOnce(dayjs(date2));
-
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
-    expectFilterOptionsToContain(formattedOptions, 'dateFilter', ['2023-11-15 00:00:00', '2023-11-16 00:00:00']);
+    expectFilterOptionsToContain(formattedOptions, 'dateFilter', [formatLocal(date1), formatLocal(date2)]);
   });
 
   it('should ignore invalid date values', () => {
@@ -64,10 +56,8 @@ describe('formatDateTimeFilterOptions', () => {
     const date = new Date(2023, 10, 16);
     initialOptions.addFilter('dateFilter', date.toISOString(), 'invalidDate');
 
-    mockDayJsUtc(date);
-
     const formattedOptions = formatDateTimeFilterOptions(initialOptions);
 
-    expectFilterOptionsToContain(formattedOptions, 'dateFilter', ['2023-11-16 00:00:00', 'invalidDate']);
+    expectFilterOptionsToContain(formattedOptions, 'dateFilter', [formatLocal(date), 'invalidDate']);
   });
 });

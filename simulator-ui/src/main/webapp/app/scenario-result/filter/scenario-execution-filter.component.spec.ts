@@ -88,15 +88,16 @@ describe('ScenarioExecution Filter Component', () => {
         }),
       );
 
-      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(queryParamStartDate)).mockReturnValueOnce(dayjs(queryParamEndDate));
-
       component.ngOnInit();
 
+      const localeFormat = (isoDate: string): string =>
+        new Date(isoDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
+
       expect(component.filterForm.getRawValue()).toEqual({
-        fromDate: filterFormFromDate,
+        fromDate: localeFormat(queryParamStartDate),
         nameContains,
         statusIn: STATUS_SUCCESS.name,
-        toDate: filterFormToDate,
+        toDate: localeFormat(queryParamEndDate),
         headerFilter,
       });
 
@@ -148,8 +149,6 @@ describe('ScenarioExecution Filter Component', () => {
           headerFilter,
         });
 
-        dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
-
         jest.advanceTimersByTime(DEBOUNCE_TIME_MILLIS);
 
         expect(router.navigate).toHaveBeenCalledWith([], {
@@ -197,8 +196,6 @@ describe('ScenarioExecution Filter Component', () => {
         statusIn: STATUS_SUCCESS.name,
         headerFilter,
       });
-
-      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
 
       // @ts-expect-error: Access protected function for testing
       component.applyFilter();
