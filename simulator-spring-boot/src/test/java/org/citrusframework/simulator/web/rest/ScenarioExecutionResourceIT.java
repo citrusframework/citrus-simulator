@@ -16,7 +16,6 @@
 
 package org.citrusframework.simulator.web.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.citrusframework.simulator.IntegrationTest;
@@ -35,9 +34,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -509,7 +509,7 @@ public class ScenarioExecutionResourceIT {
         public static final TemporalUnitLessThanOffset LESS_THAN_5_SECONDS = new TemporalUnitLessThanOffset(5, SECONDS);
 
         @Autowired
-        private ObjectMapper objectMapper;
+        private JsonMapper jsonMapper;
 
         @Autowired
         private MockMvc mockMvc;
@@ -532,7 +532,7 @@ public class ScenarioExecutionResourceIT {
                 .getResponse()
                 .getContentAsString();
 
-            List<ScenarioExecution> scenarioExecutions = objectMapper.readValue(scenarioExecutionsResult, ScenarioExecutions.class);
+            List<ScenarioExecution> scenarioExecutions = jsonMapper.readValue(scenarioExecutionsResult, ScenarioExecutions.class);
 
             assertThat(scenarioExecutions)
                 .hasSize(1)

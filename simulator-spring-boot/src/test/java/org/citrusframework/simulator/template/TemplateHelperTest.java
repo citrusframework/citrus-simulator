@@ -27,6 +27,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class TemplateHelperTest {
 
@@ -34,37 +35,37 @@ class TemplateHelperTest {
 
     static Stream<Arguments> getFileResource() {
         return Stream.of(
-            Arguments.of("", "test", ".xml", false),
-            Arguments.of("/", "test", ".xml", false),
-            Arguments.of("/template", "test", ".xml", false),
-            Arguments.of("/template/xml", "test", ".xml", true),
-            Arguments.of("/template/xml/", "test", ".xml", true),
-            Arguments.of("/template/xml/", "test", "xml", true),
-            Arguments.of("/template/xml/", "aaaa", "xml", false)
+            arguments("", "test", ".xml", false),
+            arguments("/", "test", ".xml", false),
+            arguments("/template", "test", ".xml", false),
+            arguments("/template/xml", "test", ".xml", true),
+            arguments("/template/xml/", "test", ".xml", true),
+            arguments("/template/xml/", "test", "xml", true),
+            arguments("/template/xml/", "aaaa", "xml", false)
         );
     }
 
     static Stream<Arguments> getXmlMessageTemplate() {
         return Stream.of(
-            Arguments.of("", "test.xml", null),
-            Arguments.of("/", "test.xml", null),
-            Arguments.of("/template", "test.xml", null),
-            Arguments.of("/template/xml", "test.xml", CONTENT),
-            Arguments.of("/template/xml/", "test.xml", CONTENT),
-            Arguments.of("/template/xml/", "test", CONTENT),
-            Arguments.of("/template/xml/", "aaaa", null)
+            arguments("", "test.xml", null),
+            arguments("/", "test.xml", null),
+            arguments("/template", "test.xml", null),
+            arguments("/template/xml", "test.xml", CONTENT),
+            arguments("/template/xml/", "test.xml", CONTENT),
+            arguments("/template/xml/", "test", CONTENT),
+            arguments("/template/xml/", "aaaa", null)
         );
     }
 
     static Stream<Arguments> getJsonMessageTemplate() {
         return Stream.of(
-            Arguments.of("", "test.json", null),
-            Arguments.of("/", "test.json", null),
-            Arguments.of("/template", "test.json", null),
-            Arguments.of("/template/json", "test.json", CONTENT),
-            Arguments.of("/template/json/", "test.json", CONTENT),
-            Arguments.of("/template/json/", "test", CONTENT),
-            Arguments.of("/template/json/", "aaaa", null)
+            arguments("", "test.json", null),
+            arguments("/", "test.json", null),
+            arguments("/template", "test.json", null),
+            arguments("/template/json", "test.json", CONTENT),
+            arguments("/template/json/", "test.json", CONTENT),
+            arguments("/template/json/", "test", CONTENT),
+            arguments("/template/json/", "aaaa", null)
         );
     }
 

@@ -1,14 +1,14 @@
-import { NgModule, inject } from '@angular/core';
+import { inject, NgModule } from '@angular/core';
 
-import { MissingTranslationHandler, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MissingTranslationHandler, provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { missingTranslationHandler } from 'app/config/translation.config';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 
 @NgModule({
-  imports: [
-    TranslateModule.forRoot({
+  providers: [
+    provideTranslateService({
       loader: provideTranslateHttpLoader({ prefix: './i18n/', suffix: `.json?_=${I18N_HASH}` }),
       missingTranslationHandler: {
         provide: MissingTranslationHandler,

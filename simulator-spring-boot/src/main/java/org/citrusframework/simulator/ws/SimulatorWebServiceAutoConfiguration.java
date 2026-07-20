@@ -141,16 +141,13 @@ public class SimulatorWebServiceAutoConfiguration {
     }
 
     /**
-     * By registering an empty {@link WsConfigurationSupport} we make sure
-     * the {@link org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration} will be skipped. It
-     * is only conditionally enabled, based on the {@link WsConfigurationSupport} being present (disabled), or not
-     * (enabled).
+     * Registers a default {@link WsConfigurationSupport} bean to ensure Spring WS endpoint mapping is properly configured.
+     * In Spring Boot 4, {@code WebServicesAutoConfiguration} was removed, so Citrus Simulator always provides this bean when WS support is enabled.
      *
      * @return a default web service configuration support
-     * @see <a href="https://github.com/citrusframework/citrus-simulator/issues/210">Combined Sample of REST and WS</a>
      */
     @Bean
-    @ConditionalOnProperty(prefix = "spring.webservices.autoconfiguration", value = "enabled", havingValue = "false", matchIfMissing = true)
+    @ConditionalOnMissingBean(WsConfigurationSupport.class)
     public WsConfigurationSupport wsConfigurationSupport() {
         return new WsConfigurationSupport();
     }

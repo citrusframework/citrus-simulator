@@ -1,12 +1,12 @@
-import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { ApplicationConfig, LOCALE_ID, importProvidersFrom, inject, provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ApplicationConfig, importProvidersFrom, inject, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import {
   NavigationError,
+  provideRouter,
   Router,
   RouterFeatures,
   TitleStrategy,
-  provideRouter,
   withComponentInputBinding,
   withDebugTracing,
   withNavigationErrorHandler,
@@ -24,6 +24,7 @@ import routes from './app.routes';
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { httpInterceptorProviders } from './core/interceptor';
 import { DEBUG_INFO_ENABLED } from './app.constants';
+import { provideHighlightOptions } from 'ngx-highlightjs';
 
 const routerFeatures: RouterFeatures[] = [
   withComponentInputBinding(),
@@ -53,11 +54,14 @@ export const appConfig: ApplicationConfig = {
     // Set this to true to enable service worker (PWA)
     importProvidersFrom(ServiceWorkerModule.register('ngsw-worker.js', { enabled: false })),
     importProvidersFrom(TranslationModule),
-    provideHttpClient(withInterceptorsFromDi(), withFetch()),
+    provideHttpClient(withInterceptorsFromDi()),
     Title,
     { provide: LOCALE_ID, useValue: 'en' },
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
+    provideHighlightOptions({
+      fullLibraryLoader: () => import('highlight.js'),
+    }),
   ],
 };

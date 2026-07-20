@@ -246,7 +246,7 @@ public class ScenarioExecutionQueryService extends QueryService<ScenarioExecutio
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<ScenarioExecution> createSpecification(@Nullable ScenarioExecutionCriteria criteria) {
-        Specification<ScenarioExecution> specification = Specification.where(null);
+        Specification<ScenarioExecution> specification = Specification.unrestricted();
         if (isNull(criteria)) {
             return specification;
         }

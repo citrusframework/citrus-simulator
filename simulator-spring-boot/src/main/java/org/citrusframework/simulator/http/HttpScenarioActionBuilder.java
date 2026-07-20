@@ -16,24 +16,22 @@
 
 package org.citrusframework.simulator.http;
 
-import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.http.actions.HttpActionBuilder;
 import org.citrusframework.http.actions.HttpServerActionBuilder;
 import org.citrusframework.http.actions.HttpServerResponseActionBuilder.HttpMessageBuilderSupport;
 import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.json.JsonMapper;
+
+import static tools.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
 /**
  * @author Christoph Deppisch
  */
 public class HttpScenarioActionBuilder extends HttpActionBuilder {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(INDENT_OUTPUT);
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.builder().enable(INDENT_OUTPUT).build();
 
     /** Scenario endpoint */
     private final ScenarioEndpoint scenarioEndpoint;
@@ -75,10 +73,6 @@ public class HttpScenarioActionBuilder extends HttpActionBuilder {
      * @return
      */
     public HttpMessageBuilderSupport sendOkJson(Object jsonObject) {
-        try {
-            return sendOkJson(OBJECT_MAPPER.writeValueAsString(jsonObject));
-        } catch (JsonProcessingException e) {
-            throw new CitrusRuntimeException(e);
-        }
+        return sendOkJson(OBJECT_MAPPER.writeValueAsString(jsonObject));
     }
 }

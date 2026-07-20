@@ -6,8 +6,6 @@ import { Observable, of, Subject } from 'rxjs';
 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
-import { TranslateModule } from '@ngx-translate/core';
-
 import dayjs from 'dayjs/esm';
 
 import { DEBOUNCE_TIME_MILLIS } from 'app/config/input.constants';
@@ -24,6 +22,7 @@ import ScenarioExecutionFilterComponent, {
 
 import HeaderFilterHelpDialogComponent from './header-filter-help-dialog.component';
 import HeaderFilterDialogComponent, { ComparatorType, HeaderFilter, ValueType } from './header-filter-dialog.component';
+import { provideTranslateService } from '@ngx-translate/core';
 
 const queryParamStartDate = new Date(2023, 10, 15).toISOString();
 const queryParamEndDate = new Date(2023, 10, 16).toISOString();
@@ -50,7 +49,7 @@ describe('ScenarioExecution Filter Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule, TranslateModule.forRoot(), ScenarioExecutionFilterComponent],
+      imports: [SharedModule, ScenarioExecutionFilterComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -60,6 +59,7 @@ describe('ScenarioExecution Filter Component', () => {
           provide: Router,
           useValue: { navigate: jest.fn().mockReturnValueOnce(Promise.resolve()) },
         },
+        provideTranslateService(),
       ],
     })
       .overrideTemplate(ScenarioExecutionFilterComponent, '')
@@ -88,15 +88,16 @@ describe('ScenarioExecution Filter Component', () => {
         }),
       );
 
-      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(queryParamStartDate)).mockReturnValueOnce(dayjs(queryParamEndDate));
-
       component.ngOnInit();
 
+      const localeFormat = (isoDate: string): string =>
+        new Date(isoDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
+
       expect(component.filterForm.getRawValue()).toEqual({
-        fromDate: filterFormFromDate,
+        fromDate: localeFormat(queryParamStartDate),
         nameContains,
         statusIn: STATUS_SUCCESS.name,
-        toDate: filterFormToDate,
+        toDate: localeFormat(queryParamEndDate),
         headerFilter,
       });
 
@@ -148,8 +149,6 @@ describe('ScenarioExecution Filter Component', () => {
           headerFilter,
         });
 
-        dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
-
         jest.advanceTimersByTime(DEBOUNCE_TIME_MILLIS);
 
         expect(router.navigate).toHaveBeenCalledWith([], {
@@ -197,8 +196,6 @@ describe('ScenarioExecution Filter Component', () => {
         statusIn: STATUS_SUCCESS.name,
         headerFilter,
       });
-
-      dayjs.utc = jest.fn().mockReturnValueOnce(dayjs(filterFormFromDate)).mockReturnValueOnce(dayjs(filterFormToDate));
 
       // @ts-expect-error: Access protected function for testing
       component.applyFilter();

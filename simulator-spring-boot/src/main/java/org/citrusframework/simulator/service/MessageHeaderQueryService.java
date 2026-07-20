@@ -97,7 +97,7 @@ public class MessageHeaderQueryService extends QueryService<MessageHeader> {
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<MessageHeader> createSpecification(MessageHeaderCriteria criteria) {
-        Specification<MessageHeader> specification = Specification.where(null);
+        Specification<MessageHeader> specification = Specification.unrestricted();
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {

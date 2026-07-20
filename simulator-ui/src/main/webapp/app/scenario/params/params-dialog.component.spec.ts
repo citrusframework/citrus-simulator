@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ParamsDialogComponent } from './params-dialog.component';
 
 describe('ParamsDialogComponent', () => {
@@ -14,8 +14,8 @@ describe('ParamsDialogComponent', () => {
     } as unknown as NgbActiveModal;
 
     TestBed.configureTestingModule({
-      imports: [ParamsDialogComponent, TranslateModule.forRoot()],
-      providers: [{ provide: NgbActiveModal, useValue: mockActiveModal }],
+      imports: [ParamsDialogComponent],
+      providers: [provideTranslateService(), { provide: NgbActiveModal, useValue: mockActiveModal }],
     });
 
     component = TestBed.createComponent(ParamsDialogComponent).componentInstance;

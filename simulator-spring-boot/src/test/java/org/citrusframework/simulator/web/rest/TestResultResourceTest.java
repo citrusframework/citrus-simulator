@@ -1,13 +1,5 @@
 package org.citrusframework.simulator.web.rest;
 
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.service.TestResultQueryService;
 import org.citrusframework.simulator.service.TestResultService;
@@ -19,6 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @ExtendWith({MockitoExtension.class})
 class TestResultResourceTest {
@@ -69,12 +68,11 @@ class TestResultResourceTest {
             assertAll(
                 () -> assertThat(response.getStatusCode())
                     .isEqualTo(NOT_IMPLEMENTED),
-                () -> assertThat(response.getHeaders()).
-                    containsEntry(
+                () -> assertThat(response.getHeaders().toSingleValueMap())
+                    .containsEntry(
                         "message",
-                        singletonList(
-                            "Resetting TestResults is disabled on this simulator, see property 'citrus.simulator.simulation-results.reset-enabled' for more information!"))
-            );
+                        "Resetting TestResults is disabled on this simulator, see property 'citrus.simulator.simulation-results.reset-enabled' for more information!"
+                    ));
 
             verifyNoInteractions(testResultServiceMock);
         }
