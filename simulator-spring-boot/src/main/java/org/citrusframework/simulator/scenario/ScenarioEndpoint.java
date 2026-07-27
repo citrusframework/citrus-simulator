@@ -61,7 +61,7 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     /**
      * FIFO queue of futures in arrival order, used by {@link #fail} which has no TestContext.
-     * Populated in {@link #receive}; may already be completed by {@link #send} when consumed.
+     * Populated in {@link #add}; may already be completed by {@link #send} when consumed.
      */
     private final Queue<CompletableFuture<Message>> orderedFutures = new LinkedBlockingQueue<>();
 
@@ -83,6 +83,34 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
         pendingFutures.put(request, future);
         channel.add(request);
         orderedFutures.add(future);
+    }
+
+    /**
+     * Removes an in-flight response future from all internal collections.
+     *
+     * @param future future to remove
+     */
+    public void cancel(CompletableFuture<Message> future) {
+        if (isNull(future)) {
+            return;
+        }
+
+        orderedFutures.remove(future);
+
+        synchronized (pendingFutures) {
+            pendingFutures.entrySet().removeIf(entry -> {
+                if (entry.getValue() == future) {
+                    channel.removeIf(message -> message == entry.getKey());
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+        synchronized (activeFutures) {
+            activeFutures.entrySet().removeIf(entry -> entry.getValue() == future);
+        }
     }
 
     @Override
@@ -133,14 +161,9 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     void fail(Throwable e) {
-        // Clean up any unreceived message lingering in the channel
-        Message unreceived = channel.poll();
-        if (nonNull(unreceived)) {
-            pendingFutures.remove(unreceived);
-        }
-
         CompletableFuture<Message> future = orderedFutures.poll();
         if (nonNull(future)) {
+            cancel(future);
             future.complete(new SimulationFailedUnexpectedlyException(e));
             return;
         }
