@@ -154,6 +154,38 @@ class ScenarioEndpointTest {
             verifyNoMoreInteractions(params.responseFuture1(), params.responseFuture2());
         }
 
+        @Test
+        void shouldRemoveActiveFutureAfterReceive() {
+            var testContext = mockTestContext();
+            var request = mock(Message.class);
+            CompletableFuture<Message> responseFuture = mock();
+
+            fixture.add(request, responseFuture);
+            fixture.receive(testContext);
+
+            fixture.fail(mock(Throwable.class));
+
+            assertThatThrownBy(() -> fixture.send(mock(Message.class), testContext))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage("Failed to process scenario response message - missing response consumer!");
+        }
+    }
+
+    @Nested
+    class CancelTest {
+
+        @Test
+        void shouldRemovePendingFutureFromCollections() {
+            var request = mock(Message.class);
+            CompletableFuture<Message> responseFuture = mock();
+            fixture.add(request, responseFuture);
+
+            fixture.cancel(responseFuture);
+
+            assertThatThrownBy(() -> fixture.fail(new CitrusRuntimeException()))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage("Failed to receive scenario inbound message");
+        }
     }
 
     @Nested
