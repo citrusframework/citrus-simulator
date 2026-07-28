@@ -20,24 +20,24 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
     <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
-    <maven.sonatype.central.plugin.version>0.8.0</maven.sonatype.central.plugin.version>
+    <maven.sonatype.central.plugin.version>0.10.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.46</lombok.version>
-    <citrus.version>4.10.1</citrus.version>
+    <citrus.version>4.10.2</citrus.version>
 
-    <spring-boot.version>3.5.14</spring-boot.version>
+    <spring-boot.version>3.5.16</spring-boot.version>
     <testng.version>7.12.0</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
     <xstream.version>1.4.21</xstream.version>
 
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.5.14 -->
-    <log4j2.version>2.24.3</log4j2.version>
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.14 -->
-    <logback.classic.version>1.5.32</logback.classic.version>
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.5.16 -->
+    <log4j2.version>2.25.4</log4j2.version>
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.16 -->
+    <logback.classic.version>1.5.34</logback.classic.version>
 
     <node.version>v24.15.0</node.version>
     <npm.version>11.12.1</npm.version>
@@ -209,7 +209,7 @@
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
-        <version>1.10.11</version>
+        <version>1.10.17</version>
       </dependency>
 
       <dependency>
@@ -305,12 +305,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.0</version>
           <configuration>
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
@@ -320,12 +320,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -347,7 +347,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.4.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -361,7 +361,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.12.0</version>
           <configuration>
             <doclint>${javadoc.doclint}</doclint>
           </configuration>
@@ -378,7 +378,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.5</version>
           <configuration>
             <excludes>
               <exclude>**/*IT.java</exclude>
@@ -392,7 +392,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.5</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
@@ -437,12 +437,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.13</version>
+          <version>0.18</version>
           <configuration>
             <includes>
               <include>**/*.java</include>
