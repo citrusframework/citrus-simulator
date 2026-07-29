@@ -15,4 +15,19 @@
   <name>citrus-simulator-archetype-wsdl</name>
   <description>Archetype for Citrus WSDL auto generated SOAP simulator</description>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Do not deploy this module to Maven central -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+              <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
 </project>
