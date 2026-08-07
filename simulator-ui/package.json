@@ -76,7 +76,7 @@
     "@angular-eslint/eslint-plugin": "21.4.0",
     "@angular/cli": "21.2.11",
     "@angular/compiler-cli": "21.2.13",
-    "@angular/service-worker": "21.2.13",
+    "@angular/service-worker": "21.2.17",
     "@playwright/test": "1.60.0",
     "@types/jest": "30.0.0",
     "@types/node": "25.8.0",
