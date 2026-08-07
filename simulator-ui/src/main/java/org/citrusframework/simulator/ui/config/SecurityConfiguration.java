@@ -16,17 +16,7 @@
 
 package org.citrusframework.simulator.ui.config;
 
-import static java.util.Objects.nonNull;
-
-import jakarta.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import org.citrusframework.simulator.http.SimulatorRestAdapter;
-import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
-import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
-import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -42,33 +32,25 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 @Configuration
 public class SecurityConfiguration {
 
-    private final @Nullable SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
-    private final @Nullable SimulatorRestAdapter simulatorRestAdapter;
-
-    private final @Nullable SimulatorWebServiceConfigurationProperties  simulatorWebServiceConfigurationProperties;
-    private final @Nullable SimulatorWebServiceAdapter simulatorWebServiceAdapter;
-
+    private final SimulationMappings simulationMappings;
     private final String contentSecurityPolicy;
 
     private final String actuatorPath;
     private final String h2ConsolePath;
 
     public SecurityConfiguration(
+        SimulationMappings simulationMappings,
         SimulatorUiConfigurationProperties simulatorUiConfigurationProperties,
-        @Autowired(required = false) @Nullable SimulatorRestConfigurationProperties simulatorRestConfigurationProperties,
-        @Autowired(required = false) @Nullable SimulatorRestAdapter simulatorRestAdapter,
-        @Autowired(required = false) @Nullable SimulatorWebServiceConfigurationProperties simulatorWebServiceConfigurationProperties,
-        @Autowired(required = false) @Nullable SimulatorWebServiceAdapter simulatorWebServiceAdapter,
         @Value("${management.endpoints.web.base-path:/api/manage}") String actuatorPath,
         @Value("${spring.h2.console.path:/h2-console}") String h2ConsolePath
     ) {
-        this.simulatorRestConfigurationProperties = simulatorRestConfigurationProperties;
-        this.simulatorRestAdapter = simulatorRestAdapter;
-        this.simulatorWebServiceConfigurationProperties = simulatorWebServiceConfigurationProperties;
-        this.simulatorWebServiceAdapter = simulatorWebServiceAdapter;
+        this.simulationMappings = simulationMappings;
 
         this.contentSecurityPolicy = simulatorUiConfigurationProperties.getSecurity().getContentSecurityPolicy();
 
@@ -83,7 +65,7 @@ public class SecurityConfiguration {
      * {@link AntPathRequestMatcher} for matching.
      */
     private static AntPathRequestMatcher[] createMatchers(List<String> urlMappings) {
-        List<AntPathRequestMatcher> matchers =  urlMappings.stream()
+        List<AntPathRequestMatcher> matchers = urlMappings.stream()
             .map(AntPathRequestMatcher::new)
             .toList();
 
@@ -137,31 +119,11 @@ public class SecurityConfiguration {
     }
 
     private RequestMatcher getSimulationEndpointsRequestMatcher() {
-        List<String> urlMappings = new ArrayList<>();
-
-        addRestMatchers(urlMappings);
-        addWebServiceMatchers(urlMappings);
+        var urlMappings = Stream.of(
+            this.simulationMappings.getUrlMappings(),
+            this.simulationMappings.getServletMappings()
+        ).flatMap(List::stream).toList();
 
         return new OrRequestMatcher(createMatchers(urlMappings));
-    }
-
-    private void addWebServiceMatchers(List<String> urlMappings) {
-        if (nonNull(simulatorWebServiceConfigurationProperties)
-            && nonNull(simulatorWebServiceAdapter)
-            && simulatorWebServiceAdapter.servletMappings(simulatorWebServiceConfigurationProperties) != null) {
-            urlMappings.addAll(simulatorWebServiceAdapter.servletMappings(simulatorWebServiceConfigurationProperties));
-        } else if (nonNull(simulatorWebServiceConfigurationProperties)
-            && simulatorWebServiceConfigurationProperties.getServletMappings() != null) {
-            urlMappings.addAll(simulatorWebServiceConfigurationProperties.getServletMappings());
-        }
-    }
-
-    private void addRestMatchers(List<String> urlMappings) {
-        if (nonNull(simulatorRestConfigurationProperties)
-            && nonNull(simulatorRestAdapter)) {
-            urlMappings.addAll(simulatorRestAdapter.urlMappings(simulatorRestConfigurationProperties));
-        } else if (nonNull(simulatorRestConfigurationProperties)) {
-            urlMappings.addAll(simulatorRestConfigurationProperties.getUrlMappings());
-        }
     }
 }
