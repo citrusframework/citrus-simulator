@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static org.springframework.transaction.annotation.Isolation.SERIALIZABLE;
+
 /**
  * Service Implementation for managing {@link org.citrusframework.simulator.model.TestResult}.
  */
@@ -72,8 +74,15 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
     @Override
+    @Transactional(isolation = SERIALIZABLE)
     public void deleteAll() {
         logger.debug("Request to delete all TestResults");
-        testResultRepository.deleteAll();
+        testResultRepository.deleteAllMessageHeadersLinkedToTestResults();
+        testResultRepository.deleteAllMessagesLinkedToTestResults();
+        testResultRepository.deleteAllScenarioActionsLinkedToTestResults();
+        testResultRepository.deleteAllScenarioParametersLinkedToTestResults();
+        testResultRepository.deleteAllScenarioExecutionsLinkedToTestResults();
+        testResultRepository.deleteAllTestParameters();
+        testResultRepository.deleteAllTestResultsInBulk();
     }
 }
