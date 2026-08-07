@@ -51,7 +51,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Cache Maven packages
         uses: actions/cache@v6
         with:
