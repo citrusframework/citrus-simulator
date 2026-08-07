@@ -140,7 +140,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.11.2</version>
+            <version>2.2.1</version>
             <configuration>
               <connectionUrl>scm:git:git@github.com:citrusframework/citrus-simulator.git</connectionUrl>
               <developerConnectionUrl>scm:git:git@github.com:citrusframework/citrus-simulator.git</developerConnectionUrl>
