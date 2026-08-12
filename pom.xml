@@ -20,10 +20,10 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
     <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
-    <maven.sonatype.central.plugin.version>0.8.0</maven.sonatype.central.plugin.version>
+    <maven.sonatype.central.plugin.version>0.10.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.46</lombok.version>
     <citrus.version>5.0.0-M2</citrus.version>
@@ -209,7 +209,7 @@
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
-        <version>1.10.11</version>
+        <version>1.10.17</version>
       </dependency>
 
       <dependency>
@@ -305,12 +305,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.0</version>
           <configuration>
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
@@ -320,12 +320,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -347,7 +347,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.4.0</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -361,7 +361,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.12.0</version>
           <configuration>
             <doclint>${javadoc.doclint}</doclint>
           </configuration>
@@ -378,7 +378,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.5</version>
           <configuration>
             <excludes>
               <exclude>**/*IT.java</exclude>
@@ -392,7 +392,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.5</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
@@ -437,12 +437,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.13</version>
+          <version>0.18</version>
           <configuration>
             <includes>
               <include>**/*.java</include>
@@ -510,6 +510,7 @@
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>sonatype-central</publishingServerId>
+              <checksums>required</checksums>
               <excludeArtifacts>
                 <artifact>citrus-simulator-samples</artifact>
                 <artifact>citrus-simulator-sample-bank-service</artifact>
@@ -522,6 +523,13 @@
                 <artifact>citrus-simulator-sample-ws</artifact>
                 <artifact>citrus-simulator-sample-ws-client</artifact>
                 <artifact>citrus-simulator-sample-wsdl</artifact>
+                <artifact>citrus-simulator-archetypes</artifact>
+                <artifact>citrus-simulator-archetype-jms</artifact>
+                <artifact>citrus-simulator-archetype-mail</artifact>
+                <artifact>citrus-simulator-archetype-rest</artifact>
+                <artifact>citrus-simulator-archetype-swagger</artifact>
+                <artifact>citrus-simulator-archetype-ws</artifact>
+                <artifact>citrus-simulator-archetype-wsdl</artifact>
                 <artifact>citrus-simulator-docs</artifact>
               </excludeArtifacts>
             </configuration>

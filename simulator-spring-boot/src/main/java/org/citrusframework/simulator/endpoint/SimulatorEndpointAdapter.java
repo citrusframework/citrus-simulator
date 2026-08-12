@@ -24,6 +24,7 @@ import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
 import org.citrusframework.simulator.exception.SimulatorException;
+import org.citrusframework.simulator.scenario.ScenarioEndpoint;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();
         handler.getScenarioEndpoint().add(request, responseFuture);
 
-        return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName());
+        return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName(), handler.getScenarioEndpoint());
     }
 
     @Override
@@ -103,13 +104,14 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         try {
             scenarioExecutorService.run(scenario, scenarioName, emptyList());
         } catch (Exception e) {
+            scenario.getScenarioEndpoint().cancel(responseFuture);
             throw getResponseStatusException(e);
         }
 
-        return awaitResponseOrThrowException(responseFuture, scenarioName);
+        return awaitResponseOrThrowException(responseFuture, scenarioName, scenario.getScenarioEndpoint());
     }
 
-    private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName) {
+    private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName, ScenarioEndpoint scenarioEndpoint) {
         try {
             if (handleResponse) {
                 var message = responseFuture.get(simulatorConfiguration.getDefaultTimeout(), MILLISECONDS);
@@ -123,12 +125,15 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
                 return null;
             }
         } catch (TimeoutException e) {
+            scenarioEndpoint.cancel(responseFuture);
             logger.warn("No response for scenario '{}'", scenarioName);
             return null;
         } catch (InterruptedException e) {
+            scenarioEndpoint.cancel(responseFuture);
             currentThread().interrupt();
             throw new SimulatorException(e);
         } catch (ExecutionException e) {
+            scenarioEndpoint.cancel(responseFuture);
             throw new SimulatorException(e);
         }
     }
