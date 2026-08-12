@@ -20,6 +20,8 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
     testIdAttribute: 'data-test',
+    /* Static locale so date/time formatting assertions are deterministic. */
+    locale: 'en-US',
     /* Static timezone: https://playwright.dev/docs/api/class-testoptions#test-options-timezone-id */
     timezoneId: 'Europe/London',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */

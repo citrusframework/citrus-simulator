@@ -26,21 +26,21 @@
     <maven.sonatype.central.plugin.version>0.10.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.46</lombok.version>
-    <citrus.version>4.10.3</citrus.version>
+    <citrus.version>5.0.0-M2</citrus.version>
 
-    <spring-boot.version>3.5.16</spring-boot.version>
+    <spring-boot.version>4.1.0</spring-boot.version>
     <testng.version>7.12.0</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
     <xstream.version>1.4.21</xstream.version>
 
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/3.5.16 -->
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2/4.1.0/dependencies -->
     <log4j2.version>2.25.4</log4j2.version>
-    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/3.5.16 -->
+    <!-- see https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging/4.1.0/dependencies -->
     <logback.classic.version>1.5.34</logback.classic.version>
 
-    <node.version>v24.15.0</node.version>
-    <npm.version>11.12.1</npm.version>
+    <node.version>v24.18.0</node.version>
+    <npm.version>11.16.0</npm.version>
 
     <skip.gpg>false</skip.gpg>
     <reuseForks>true</reuseForks>
@@ -330,7 +330,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
-          <version>1.11.2</version>
+          <version>2.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

@@ -7,8 +7,9 @@ export const formatDateTimeFilterOptions = (filterOptions: IFilterOptions): IFil
   filterOptions.filterOptions.forEach(filterOption => {
     const values: string[] = [];
     for (const value of filterOption.values.slice()) {
-      if (isNaN(Number(value)) && dayjs(value).isValid()) {
-        values.push(dayjs.utc(value).format('YYYY-MM-DD HH:mm:ss'));
+      const parsedValue = dayjs(value);
+      if (isNaN(Number(value)) && parsedValue.isValid()) {
+        values.push(parsedValue.toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' }));
       } else {
         values.push(value);
       }

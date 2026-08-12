@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { HighlightAuto } from 'ngx-highlightjs';

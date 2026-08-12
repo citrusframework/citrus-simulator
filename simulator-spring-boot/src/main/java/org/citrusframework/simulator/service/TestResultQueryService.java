@@ -95,7 +95,7 @@ public class TestResultQueryService extends QueryService<TestResult> {
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<TestResult> createSpecification(TestResultCriteria criteria) {
-        Specification<TestResult> specification = Specification.where(null);
+        Specification<TestResult> specification = Specification.unrestricted();
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {

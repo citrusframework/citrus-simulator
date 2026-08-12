@@ -96,7 +96,7 @@ public class MessageQueryService extends QueryService<Message> {
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<Message> createSpecification(MessageCriteria criteria) {
-        Specification<Message> specification = Specification.where(null);
+        Specification<Message> specification = Specification.unrestricted();
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {

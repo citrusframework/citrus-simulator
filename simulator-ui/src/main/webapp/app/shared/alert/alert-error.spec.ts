@@ -1,12 +1,11 @@
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TranslateModule } from '@ngx-translate/core';
-
 import { AlertModel, AlertService } from 'app/core/util/alert.service';
 import { EventManager } from 'app/core/util/event-manager.service';
 
 import { AlertError } from './alert-error';
+import { provideTranslateService } from '@ngx-translate/core';
 
 describe('Alert Error Component', () => {
   let comp: AlertError;
@@ -16,8 +15,7 @@ describe('Alert Error Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
-      providers: [EventManager, AlertService],
+      providers: [provideTranslateService(), EventManager, AlertService],
     });
   });
 

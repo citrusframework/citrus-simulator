@@ -4,7 +4,7 @@ import { messageHeaderJson, messageJson, scenarioActionJson, scenarioExecutionJs
 import { EntityPageContentObject } from './helpers/helper-interfaces';
 import { mockBackendResponse } from './helpers/helper-functions';
 
-const exampleDate = '23 Aug 2024 09:25:31';
+const exampleDate = 'Aug 23, 2024, 9:25:31 AM';
 const entityPageContentMap: EntityPageContentObject[] = [
   {
     testName: 'should display table of messages and refresh button should work',

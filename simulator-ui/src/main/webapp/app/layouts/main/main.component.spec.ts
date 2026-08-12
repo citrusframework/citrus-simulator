@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { Component } from '@angular/core';
 import { of } from 'rxjs';
-import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import MainComponent from './main.component';
@@ -20,8 +20,8 @@ describe('MainComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), MainComponent],
-      providers: [Title, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
+      imports: [MainComponent],
+      providers: [provideTranslateService(), Title, { provide: TitleStrategy, useClass: AppPageTitleStrategy }],
     })
       .overrideTemplate(MainComponent, '')
       .compileComponents();
@@ -97,7 +97,7 @@ describe('MainComponent', () => {
     describe('language change', () => {
       it('should set page title to default title if pageTitle is missing on routes', () => {
         // WHEN
-        (translateService as any).store._onLangChange.next(langChangeEvent);
+        (translateService as any)._onLangChange.next(langChangeEvent);
 
         // THEN
         expect(document.title).toBe(defaultPageTitle + ' translated');
@@ -116,7 +116,7 @@ describe('MainComponent', () => {
         document.title = 'other title';
 
         // WHEN
-        (translateService as any).store._onLangChange.next(langChangeEvent);
+        (translateService as any)._onLangChange.next(langChangeEvent);
 
         // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
@@ -140,7 +140,7 @@ describe('MainComponent', () => {
         document.title = 'other title';
 
         // WHEN
-        (translateService as any).store._onLangChange.next(langChangeEvent);
+        (translateService as any)._onLangChange.next(langChangeEvent);
 
         // THEN
         expect(document.title).toBe(childRoutePageTitle + ' translated');
@@ -164,7 +164,7 @@ describe('MainComponent', () => {
         document.title = 'other title';
 
         // WHEN
-        (translateService as any).store._onLangChange.next(langChangeEvent);
+        (translateService as any)._onLangChange.next(langChangeEvent);
 
         // THEN
         expect(document.title).toBe(parentRoutePageTitle + ' translated');
@@ -178,13 +178,13 @@ describe('MainComponent', () => {
       comp.ngOnInit();
 
       // WHEN
-      (translateService as any).store._onLangChange.next({ lang: 'lang1', translations: {} });
+      (translateService as any)._onLangChange.next({ lang: 'lang1', translations: {} });
 
       // THEN
       expect(document.querySelector('html')?.getAttribute('lang')).toEqual('lang1');
 
       // WHEN
-      (translateService as any).store._onLangChange.next({ lang: 'lang2', translations: {} });
+      (translateService as any)._onLangChange.next({ lang: 'lang2', translations: {} });
 
       // THEN
       expect(document.querySelector('html')?.getAttribute('lang')).toEqual('lang2');

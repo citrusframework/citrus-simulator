@@ -24,16 +24,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class TestResultByStatusTest {
 
     static Stream<Arguments> constructorCalculatesTotal() {
         return Stream.of(
-            Arguments.of(0, 0, 0),
-            Arguments.of(0, 1, 1),
-            Arguments.of(1, 0, 1),
-            Arguments.of(1, 2, 3),
-            Arguments.of(2, 3, 5)
+            arguments(0, 0, 0),
+            arguments(0, 1, 1),
+            arguments(1, 0, 1),
+            arguments(1, 2, 3),
+            arguments(2, 3, 5)
         );
     }
 

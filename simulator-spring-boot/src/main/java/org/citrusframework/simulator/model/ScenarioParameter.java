@@ -23,7 +23,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -78,7 +77,6 @@ public class ScenarioParameter extends AbstractAuditingEntity<ScenarioParameter,
     @Column(nullable = false, updatable = false)
     private Integer controlType = ControlType.UNKNOWN.getId();
 
-    @Lob
     @NotEmpty
     @Column(columnDefinition = "TEXT", name = "parameter_value", nullable = false, updatable = false)
     private String value;

@@ -16,11 +16,7 @@
 
 package org.citrusframework.simulator.ui.config;
 
-import static java.util.Objects.nonNull;
-
 import jakarta.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import org.citrusframework.simulator.http.SimulatorRestAdapter;
 import org.citrusframework.simulator.http.SimulatorRestConfigurationProperties;
 import org.citrusframework.simulator.ui.filter.SpaWebFilter;
@@ -32,17 +28,24 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.nonNull;
+
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
 
     private final @Nullable SimulatorRestConfigurationProperties simulatorRestConfigurationProperties;
@@ -80,22 +83,22 @@ public class SecurityConfiguration {
      * Create request matchers from url mappings.
      * <p>
      * Note that the configured urlMappings for simulator are always absolute. Therefore, we use an
-     * {@link AntPathRequestMatcher} for matching.
+     * {@link PathPatternRequestMatcher} for matching.
      */
-    private static AntPathRequestMatcher[] createMatchers(List<String> urlMappings) {
-        List<AntPathRequestMatcher> matchers =  urlMappings.stream()
-            .map(AntPathRequestMatcher::new)
+    private static PathPatternRequestMatcher[] createMatchers(List<String> urlMappings) {
+        List<PathPatternRequestMatcher> matchers =  urlMappings.stream()
+            .map(urlMapping -> PathPatternRequestMatcher.withDefaults().matcher(urlMapping))
             .toList();
 
         if (matchers.isEmpty()) {
-            matchers.add(new AntPathRequestMatcher("/**/*"));
+            matchers.add(PathPatternRequestMatcher.withDefaults().matcher("/**/*"));
         }
 
-        return matchers.toArray(new AntPathRequestMatcher[0]);
+        return matchers.toArray(new PathPatternRequestMatcher[0]);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         RequestMatcher simulationEndpointsRequestMatcher = getSimulationEndpointsRequestMatcher();
 
         http

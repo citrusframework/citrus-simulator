@@ -93,7 +93,7 @@ public class ScenarioParameterQueryService extends QueryService<ScenarioParamete
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<ScenarioParameter> createSpecification(ScenarioParameterCriteria criteria) {
-        Specification<ScenarioParameter> specification = Specification.where(null);
+        Specification<ScenarioParameter> specification = Specification.unrestricted();
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null
             if (criteria.getDistinct() != null) {
