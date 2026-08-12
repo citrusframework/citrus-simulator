@@ -93,7 +93,7 @@
     "browser-sync": "3.0.4",
     "browser-sync-v3-webpack-plugin": "0.1.1",
     "buffer": "6.0.3",
-    "concurrently": "10.0.3",
+    "concurrently": "10.0.4",
     "copy-webpack-plugin": "14.0.0",
     "eslint": "10.7.0",
     "eslint-config-prettier": "10.1.8",
