@@ -147,9 +147,29 @@ citrus.simulator.simulation-results.reset-enabled=false
 ----
 
 .Example `application.yml`
+[source, yaml]
 ----
 citrus:
   simulator:
-    test-results:
-        reset-enabeld: false
+    simulation-results:
+      reset-enabled: false
+----
+
+Likewise, data growth in long-lived simulators is uncontrollable.
+You can reduce the amount of persisted data dramatically by persisting only failed scenarios.
+When enabled, successful scenario executions — including their actions, messages, and parameters — are deleted from the database immediately after completion, significantly reducing persistence overhead for high-throughput simulators.
+
+.Example `application.properties`
+[source, properties]
+----
+citrus.simulator.simulation-results.persist-only-failed-scenarios=true
+----
+
+.Example `application.yml`
+[source, yaml]
+----
+citrus:
+  simulator:
+    simulation-results:
+      persist-only-failed-scenarios: true
 ----
