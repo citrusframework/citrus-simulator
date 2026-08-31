@@ -30,7 +30,7 @@ import org.citrusframework.context.TestContext;
 import org.citrusframework.openapi.OpenApiSpecification;
 import org.citrusframework.openapi.model.OasModelHelper;
 import org.citrusframework.simulator.service.ScenarioLookupService;
-import org.citrusframework.spi.CitrusResourceWrapper;
+import org.citrusframework.spring.spi.CitrusResourceWrapper;
 import org.citrusframework.spi.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

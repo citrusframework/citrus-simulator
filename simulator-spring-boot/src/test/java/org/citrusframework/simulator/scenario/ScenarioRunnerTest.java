@@ -16,8 +16,8 @@
 
 package org.citrusframework.simulator.scenario;
 
-import org.citrusframework.DefaultTestActions;
-import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.dsl.DefaultTestActions;
+import org.citrusframework.base.DefaultTestCaseRunner;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessageProcessors;
 import org.citrusframework.validation.DefaultValidations;

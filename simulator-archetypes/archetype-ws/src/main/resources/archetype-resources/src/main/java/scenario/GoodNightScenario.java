@@ -19,7 +19,7 @@ package ${package}.scenario;
 import org.citrusframework.simulator.scenario.*;
 
 import org.citrusframework.context.TestContext;
-import org.citrusframework.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.citrusframework.xml.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import org.citrusframework.message.Message;
 
 @Scenario("GoodNight")

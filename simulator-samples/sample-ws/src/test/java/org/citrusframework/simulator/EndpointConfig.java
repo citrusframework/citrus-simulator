@@ -16,14 +16,14 @@
 
 package org.citrusframework.simulator;
 
-import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.api.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.message.ErrorHandlingStrategy;
 import org.citrusframework.simulator.sample.Simulator;
 import org.citrusframework.ws.client.WebServiceClient;
 import org.citrusframework.ws.interceptor.LoggingClientInterceptor;
-import org.citrusframework.xml.XsdSchemaRepository;
+import org.citrusframework.xml.schema.XsdSchemaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

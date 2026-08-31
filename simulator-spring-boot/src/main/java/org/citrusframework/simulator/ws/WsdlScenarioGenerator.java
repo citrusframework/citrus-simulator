@@ -25,7 +25,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.exception.SimulatorException;
-import org.citrusframework.spi.CitrusResourceWrapper;
+import org.citrusframework.spring.spi.CitrusResourceWrapper;
 import org.citrusframework.spi.Resource;
 import org.citrusframework.xml.schema.locator.JarWSDLLocator;
 import org.slf4j.Logger;

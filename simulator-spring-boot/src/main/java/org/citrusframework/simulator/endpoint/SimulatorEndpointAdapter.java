@@ -18,7 +18,7 @@ package org.citrusframework.simulator.endpoint;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.citrusframework.endpoint.adapter.RequestDispatchingEndpointAdapter;
+import org.citrusframework.base.endpoint.adapter.RequestDispatchingEndpointAdapter;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.correlation.CorrelationHandler;

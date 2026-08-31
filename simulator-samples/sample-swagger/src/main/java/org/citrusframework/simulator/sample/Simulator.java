@@ -18,7 +18,7 @@ package org.citrusframework.simulator.sample;
 
 import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
-import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
+import org.citrusframework.base.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.openapi.OpenApiRepository;

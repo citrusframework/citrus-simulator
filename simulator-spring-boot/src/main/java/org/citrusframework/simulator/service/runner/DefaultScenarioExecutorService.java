@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static java.lang.String.format;
-import static org.citrusframework.annotations.CitrusAnnotations.injectAll;
+import static org.citrusframework.base.annotations.CitrusAnnotations.injectAll;
 import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
 
 /**

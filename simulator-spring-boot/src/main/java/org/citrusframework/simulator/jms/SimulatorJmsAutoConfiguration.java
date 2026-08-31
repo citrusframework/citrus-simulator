@@ -21,7 +21,7 @@ import jakarta.jms.ConnectionFactory;
 import lombok.Getter;
 import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.endpoint.EndpointAdapter;
-import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.base.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.jms.endpoint.JmsEndpoint;
 import org.citrusframework.jms.endpoint.JmsEndpointConfiguration;
 import org.citrusframework.jms.endpoint.JmsSyncEndpoint;

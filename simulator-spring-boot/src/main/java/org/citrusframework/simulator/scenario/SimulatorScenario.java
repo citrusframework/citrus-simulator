@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.scenario;
 
 import jakarta.annotation.Nullable;
-import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.base.DefaultTestCaseRunner;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.simulator.exception.SimulatorException;

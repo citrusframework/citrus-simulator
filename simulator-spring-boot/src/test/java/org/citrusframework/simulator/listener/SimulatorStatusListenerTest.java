@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.listener;
 
 import org.assertj.core.api.Condition;
-import org.citrusframework.DefaultTestCase;
+import org.citrusframework.base.DefaultTestCase;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.TestResult;

@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.sample.jms.async.scenario;
 
-import org.citrusframework.message.builder.MarshallingPayloadBuilder;
+import org.citrusframework.xml.message.builder.MarshallingPayloadBuilder;
 import org.citrusframework.simulator.sample.jms.async.model.FaxStatusEnumType;
 import org.citrusframework.simulator.sample.jms.async.variables.Variables;
 import org.citrusframework.simulator.scenario.Scenario;
@@ -24,7 +24,7 @@ import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
 import static org.citrusframework.dsl.MessageSupport.MessageBodySupport.fromBody;
-import static org.citrusframework.dsl.XpathSupport.xpath;
+import static org.citrusframework.xml.dsl.XpathSupport.xpath;
 
 /**
  * @author Martin Maher

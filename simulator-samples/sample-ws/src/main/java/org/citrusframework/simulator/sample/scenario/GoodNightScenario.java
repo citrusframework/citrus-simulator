@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.sample.scenario;
 
 import org.citrusframework.context.TestContext;
-import org.citrusframework.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.citrusframework.xml.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;

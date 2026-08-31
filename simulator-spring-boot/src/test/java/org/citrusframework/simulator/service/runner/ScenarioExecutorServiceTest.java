@@ -18,7 +18,7 @@ package org.citrusframework.simulator.service.runner;
 
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusContext;
-import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.base.DefaultTestCaseRunner;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.report.TestListeners;

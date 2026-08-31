@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.http;
 
 import org.citrusframework.CitrusInstanceManager;
-import org.citrusframework.context.SpringBeanReferenceResolver;
+import org.citrusframework.spring.context.SpringBeanReferenceResolver;
 import org.citrusframework.openapi.OpenApiSpecification;
 import org.citrusframework.openapi.OpenApiSpecificationProcessor;
 import org.citrusframework.spi.ReferenceResolver;

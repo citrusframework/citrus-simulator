@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
-import static org.citrusframework.validation.xml.XmlMessageValidationContext.Builder.xml;
+import static org.citrusframework.validation.context.xml.XmlMessageValidationContext.Builder.xml;
 import static org.citrusframework.ws.actions.SoapActionBuilder.soap;
 
 /**

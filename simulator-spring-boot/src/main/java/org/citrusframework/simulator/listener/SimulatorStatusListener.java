@@ -16,12 +16,12 @@
 
 package org.citrusframework.simulator.listener;
 
-import org.citrusframework.DefaultTestCase;
+import org.citrusframework.base.DefaultTestCase;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestCase;
 import org.citrusframework.TestResult;
 import org.citrusframework.actions.SleepAction;
-import org.citrusframework.common.Described;
+import org.citrusframework.api.common.Described;
 import org.citrusframework.report.AbstractTestListener;
 import org.citrusframework.report.TestActionListener;
 import org.citrusframework.simulator.service.ScenarioActionService;

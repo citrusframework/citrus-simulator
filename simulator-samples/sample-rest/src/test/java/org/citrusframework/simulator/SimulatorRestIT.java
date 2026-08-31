@@ -17,13 +17,13 @@
 package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
-import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.api.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.simulator.sample.RestSimulator;
 import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
-import org.citrusframework.xml.XsdSchemaRepository;
+import org.citrusframework.xml.schema.XsdSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;

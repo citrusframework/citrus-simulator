@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.citrusframework.actions.EchoAction.Builder.echo;
-import static org.citrusframework.dsl.XpathSupport.xpath;
+import static org.citrusframework.xml.dsl.XpathSupport.xpath;
 
 /**
  * @author Christoph Deppisch

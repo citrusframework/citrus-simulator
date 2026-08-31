@@ -17,7 +17,7 @@
 package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
-import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.api.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 
 import static java.lang.String.format;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
-import static org.citrusframework.validation.json.JsonPathMessageValidationContext.Builder.jsonPath;
+import static org.citrusframework.validation.context.json.JsonPathMessageValidationContext.Builder.jsonPath;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;

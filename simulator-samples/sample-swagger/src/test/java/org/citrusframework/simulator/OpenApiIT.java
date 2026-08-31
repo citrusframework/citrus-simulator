@@ -17,7 +17,7 @@
 package org.citrusframework.simulator;
 
 import org.citrusframework.annotations.CitrusTest;
-import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.api.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;

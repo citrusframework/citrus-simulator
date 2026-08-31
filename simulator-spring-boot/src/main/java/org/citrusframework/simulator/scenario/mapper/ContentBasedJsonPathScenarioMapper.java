@@ -16,7 +16,7 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import org.citrusframework.endpoint.adapter.mapping.JsonPayloadMappingKeyExtractor;
+import org.citrusframework.json.endpoint.adapter.mapping.JsonPayloadMappingKeyExtractor;
 import org.citrusframework.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

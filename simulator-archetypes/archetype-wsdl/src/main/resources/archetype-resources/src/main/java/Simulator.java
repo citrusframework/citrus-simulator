@@ -20,7 +20,7 @@ import static java.util.Collections.singletonList;
 
 import java.util.List;
 import org.citrusframework.endpoint.EndpointAdapter;
-import org.citrusframework.endpoint.adapter.StaticEndpointAdapter;
+import org.citrusframework.base.endpoint.adapter.StaticEndpointAdapter;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.ws.SimulatorWebServiceAdapter;
 import org.citrusframework.simulator.ws.SimulatorWebServiceConfigurationProperties;

@@ -17,8 +17,8 @@
 package org.citrusframework.simulator.scenario;
 
 import lombok.Getter;
-import org.citrusframework.DefaultTestActions;
-import org.citrusframework.DefaultTestCaseRunner;
+import org.citrusframework.dsl.DefaultTestActions;
+import org.citrusframework.base.DefaultTestCaseRunner;
 import org.citrusframework.GherkinTestActionRunner;
 import org.citrusframework.TestAction;
 import org.citrusframework.TestActionBuilder;
@@ -31,6 +31,8 @@ import org.citrusframework.actions.ReceiveMessageAction;
 import org.citrusframework.actions.SendMessageAction;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessageProcessors;
+import org.citrusframework.message.DefaultPayloadBuilders;
+import org.citrusframework.message.PayloadBuilders;
 import org.citrusframework.message.Processors;
 import org.citrusframework.simulator.correlation.CorrelationHandlerBuilder;
 import org.citrusframework.simulator.http.HttpScenarioActionBuilder;
@@ -101,6 +103,11 @@ public class ScenarioRunner implements GherkinTestActionRunner {
     @Override
     public Processors processor() {
         return new DefaultMessageProcessors();
+    }
+
+    @Override
+    public PayloadBuilders buildPayload() {
+        return new DefaultPayloadBuilders();
     }
 
     public TestCaseRunner getTestCaseRunner() {

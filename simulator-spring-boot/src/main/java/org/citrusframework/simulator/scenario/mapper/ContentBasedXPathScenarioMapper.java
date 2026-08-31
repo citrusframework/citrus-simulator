@@ -16,9 +16,9 @@
 
 package org.citrusframework.simulator.scenario.mapper;
 
-import org.citrusframework.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
+import org.citrusframework.xml.endpoint.adapter.mapping.XPathPayloadMappingKeyExtractor;
 import org.citrusframework.message.Message;
-import org.citrusframework.xml.namespace.NamespaceContextBuilder;
+import org.citrusframework.api.xml.namespace.NamespaceContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

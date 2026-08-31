@@ -18,12 +18,12 @@ package org.citrusframework.simulator;
 
 import static java.lang.String.format;
 import static org.citrusframework.http.actions.HttpActionBuilder.http;
-import static org.citrusframework.validation.json.JsonMessageValidationContext.Builder.json;
+import static org.citrusframework.validation.context.json.JsonMessageValidationContext.Builder.json;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 
 import org.citrusframework.annotations.CitrusTest;
-import org.citrusframework.container.BeforeSuite;
+import org.citrusframework.api.container.BeforeSuite;
 import org.citrusframework.container.SequenceBeforeSuite;
 import org.citrusframework.dsl.endpoint.CitrusEndpoints;
 import org.citrusframework.http.client.HttpClient;

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import org.citrusframework.endpoint.EndpointAdapter;
-import org.citrusframework.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.base.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.http.controller.HttpMessageController;
 import org.citrusframework.http.interceptor.LoggingHandlerInterceptor;
 import org.citrusframework.http.message.DelegatingHttpEntityMessageConverter;

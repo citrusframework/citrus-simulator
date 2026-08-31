@@ -23,8 +23,8 @@ import org.citrusframework.simulator.sample.jms.async.model.FaxStatusType;
 import org.citrusframework.simulator.sample.jms.async.model.FaxType;
 import org.citrusframework.simulator.sample.jms.async.model.ObjectFactory;
 import org.citrusframework.simulator.sample.jms.async.model.SendFaxType;
-import org.citrusframework.xml.Jaxb2Marshaller;
-import org.citrusframework.xml.Marshaller;
+import org.citrusframework.base.xml.Jaxb2Marshaller;
+import org.citrusframework.api.xml.Marshaller;
 
 /**
  * @author Martin Maher

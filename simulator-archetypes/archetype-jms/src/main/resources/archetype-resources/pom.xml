@@ -11,13 +11,13 @@
   <packaging>war</packaging>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <citrus.version>4.10.3</citrus.version>
+    <citrus.version>5.0.1</citrus.version>
     <citrus.simulator.version>3.2.0-SNAPSHOT</citrus.simulator.version>
-    <spring.boot.version>3.5.16</spring.boot.version>
-    <artemis.version>2.30.0</artemis.version>
+    <spring.boot.version>4.1.0</spring.boot.version>
+    <artemis.version>2.55.0</artemis.version>
     <testng.version>7.12.0</testng.version>
   </properties>
 
