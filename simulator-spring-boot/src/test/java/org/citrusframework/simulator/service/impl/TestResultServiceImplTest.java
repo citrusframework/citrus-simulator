@@ -95,6 +95,13 @@ class TestResultServiceImplTest {
     @Test
     void delete() {
         fixture.deleteAll();
-        verify(testResultRepositoryMock).deleteAll();
+
+        verify(testResultRepositoryMock).deleteAllMessageHeadersLinkedToTestResults();
+        verify(testResultRepositoryMock).deleteAllMessagesLinkedToTestResults();
+        verify(testResultRepositoryMock).deleteAllScenarioActionsLinkedToTestResults();
+        verify(testResultRepositoryMock).deleteAllScenarioParametersLinkedToTestResults();
+        verify(testResultRepositoryMock).deleteAllScenarioExecutionsLinkedToTestResults();
+        verify(testResultRepositoryMock).deleteAllTestParameters();
+        verify(testResultRepositoryMock).deleteAllTestResultsInBulk();
     }
 }

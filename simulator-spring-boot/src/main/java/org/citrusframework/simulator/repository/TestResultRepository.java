@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -54,4 +55,32 @@ public interface TestResultRepository extends JpaRepository<TestResult, Long>, J
     @Query("FROM TestResult WHERE id IN :testResultIds")
     @EntityGraph(attributePaths = {"testParameters"})
     List<TestResult> findAllWhereIdIn(@Param("testResultIds") List<Long> testResultIds, Sort sort);
+
+    @Modifying
+    @Query("DELETE FROM MessageHeader mh WHERE mh.message IN (SELECT m FROM Message m WHERE m.scenarioExecution IN (SELECT se FROM ScenarioExecution se WHERE se.testResult IS NOT NULL))")
+    void deleteAllMessageHeadersLinkedToTestResults();
+
+    @Modifying
+    @Query("DELETE FROM Message m WHERE m.scenarioExecution IN (SELECT se FROM ScenarioExecution se WHERE se.testResult IS NOT NULL)")
+    void deleteAllMessagesLinkedToTestResults();
+
+    @Modifying
+    @Query("DELETE FROM ScenarioAction sa WHERE sa.scenarioExecution IN (SELECT se FROM ScenarioExecution se WHERE se.testResult IS NOT NULL)")
+    void deleteAllScenarioActionsLinkedToTestResults();
+
+    @Modifying
+    @Query("DELETE FROM ScenarioParameter sp WHERE sp.scenarioExecution IN (SELECT se FROM ScenarioExecution se WHERE se.testResult IS NOT NULL)")
+    void deleteAllScenarioParametersLinkedToTestResults();
+
+    @Modifying
+    @Query("DELETE FROM ScenarioExecution se WHERE se.testResult IS NOT NULL")
+    void deleteAllScenarioExecutionsLinkedToTestResults();
+
+    @Modifying
+    @Query("DELETE FROM TestParameter")
+    void deleteAllTestParameters();
+
+    @Modifying
+    @Query("DELETE FROM TestResult")
+    void deleteAllTestResultsInBulk();
 }
