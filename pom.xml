@@ -20,7 +20,7 @@
 
     <javadoc.doclint>none</javadoc.doclint>
 
-    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
     <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
     <maven.sonatype.central.plugin.version>0.10.0</maven.sonatype.central.plugin.version>
