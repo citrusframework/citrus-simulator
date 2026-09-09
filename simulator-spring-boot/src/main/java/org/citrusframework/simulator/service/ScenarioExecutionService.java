@@ -80,4 +80,12 @@ public interface ScenarioExecutionService {
      * @return the updated entity.
      */
     ScenarioExecution completeScenarioExecution(long scenarioExecutionId, TestResult testResult);
+
+    /**
+     * Delete a {@link ScenarioExecution} and all of its associated data (actions, messages,
+     * parameters) by execution id.
+     *
+     * @param scenarioExecutionId the id of the entity to delete.
+     */
+    void deleteScenarioExecution(long scenarioExecutionId);
 }

@@ -114,4 +114,10 @@ public class ScenarioExecutionServiceImpl implements ScenarioExecutionService {
 
         return scenarioExecutionRepository.save(scenarioExecution);
     }
+
+    @Override
+    public void deleteScenarioExecution(long scenarioExecutionId) {
+        logger.debug("Request to delete ScenarioExecution : {}", scenarioExecutionId);
+        scenarioExecutionRepository.deleteById(scenarioExecutionId);
+    }
 }
