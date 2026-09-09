@@ -17,11 +17,18 @@
 package org.citrusframework.simulator.service.impl;
 
 import org.citrusframework.simulator.model.TestResult;
+import org.citrusframework.simulator.repository.MessageHeaderRepository;
+import org.citrusframework.simulator.repository.MessageRepository;
+import org.citrusframework.simulator.repository.ScenarioActionRepository;
+import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
+import org.citrusframework.simulator.repository.ScenarioParameterRepository;
+import org.citrusframework.simulator.repository.TestParameterRepository;
 import org.citrusframework.simulator.repository.TestResultRepository;
 import org.citrusframework.simulator.service.dto.TestResultByStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -32,6 +39,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -41,11 +49,37 @@ class TestResultServiceImplTest {
     @Mock
     private TestResultRepository testResultRepositoryMock;
 
+    @Mock
+    private TestParameterRepository testParameterRepositoryMock;
+
+    @Mock
+    private ScenarioExecutionRepository scenarioExecutionRepositoryMock;
+
+    @Mock
+    private ScenarioActionRepository scenarioActionRepositoryMock;
+
+    @Mock
+    private ScenarioParameterRepository scenarioParameterRepositoryMock;
+
+    @Mock
+    private MessageRepository messageRepositoryMock;
+
+    @Mock
+    private MessageHeaderRepository messageHeaderRepositoryMock;
+
     private TestResultServiceImpl fixture;
 
     @BeforeEach
     void beforeEachSetup() {
-        fixture = new TestResultServiceImpl(testResultRepositoryMock);
+        fixture = new TestResultServiceImpl(
+            testResultRepositoryMock,
+            testParameterRepositoryMock,
+            scenarioExecutionRepositoryMock,
+            scenarioActionRepositoryMock,
+            scenarioParameterRepositoryMock,
+            messageRepositoryMock,
+            messageHeaderRepositoryMock
+        );
     }
 
     @Test
@@ -95,6 +129,23 @@ class TestResultServiceImplTest {
     @Test
     void delete() {
         fixture.deleteAll();
-        verify(testResultRepositoryMock).deleteAll();
+
+        InOrder inOrder = inOrder(
+            messageHeaderRepositoryMock,
+            messageRepositoryMock,
+            scenarioParameterRepositoryMock,
+            scenarioActionRepositoryMock,
+            testParameterRepositoryMock,
+            scenarioExecutionRepositoryMock,
+            testResultRepositoryMock
+        );
+
+        inOrder.verify(messageHeaderRepositoryMock).deleteAllInBatch();
+        inOrder.verify(messageRepositoryMock).deleteAllInBatch();
+        inOrder.verify(scenarioParameterRepositoryMock).deleteAllInBatch();
+        inOrder.verify(scenarioActionRepositoryMock).deleteAllInBatch();
+        inOrder.verify(testParameterRepositoryMock).deleteAllInBatch();
+        inOrder.verify(scenarioExecutionRepositoryMock).deleteAllInBatch();
+        inOrder.verify(testResultRepositoryMock).deleteAllInBatch();
     }
 }
