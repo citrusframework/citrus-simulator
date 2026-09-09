@@ -17,6 +17,12 @@
 package org.citrusframework.simulator.service.impl;
 
 import org.citrusframework.simulator.model.TestResult;
+import org.citrusframework.simulator.repository.MessageHeaderRepository;
+import org.citrusframework.simulator.repository.MessageRepository;
+import org.citrusframework.simulator.repository.ScenarioActionRepository;
+import org.citrusframework.simulator.repository.ScenarioExecutionRepository;
+import org.citrusframework.simulator.repository.ScenarioParameterRepository;
+import org.citrusframework.simulator.repository.TestParameterRepository;
 import org.citrusframework.simulator.repository.TestResultRepository;
 import org.citrusframework.simulator.service.TestResultService;
 import org.citrusframework.simulator.service.dto.TestResultByStatus;
@@ -39,9 +45,28 @@ public class TestResultServiceImpl implements TestResultService {
     private static final Logger logger = LoggerFactory.getLogger(TestResultServiceImpl.class);
 
     private final TestResultRepository testResultRepository;
+    private final TestParameterRepository testParameterRepository;
+    private final ScenarioExecutionRepository scenarioExecutionRepository;
+    private final ScenarioActionRepository scenarioActionRepository;
+    private final ScenarioParameterRepository scenarioParameterRepository;
+    private final MessageRepository messageRepository;
+    private final MessageHeaderRepository messageHeaderRepository;
 
-    public TestResultServiceImpl(TestResultRepository testResultRepository) {
+    public TestResultServiceImpl(
+        TestResultRepository testResultRepository,
+        TestParameterRepository testParameterRepository,
+        ScenarioExecutionRepository scenarioExecutionRepository,
+        ScenarioActionRepository scenarioActionRepository,
+        ScenarioParameterRepository scenarioParameterRepository,
+        MessageRepository messageRepository,
+        MessageHeaderRepository messageHeaderRepository) {
         this.testResultRepository = testResultRepository;
+        this.testParameterRepository = testParameterRepository;
+        this.scenarioExecutionRepository = scenarioExecutionRepository;
+        this.scenarioActionRepository = scenarioActionRepository;
+        this.scenarioParameterRepository = scenarioParameterRepository;
+        this.messageRepository = messageRepository;
+        this.messageHeaderRepository = messageHeaderRepository;
     }
 
     @Override
@@ -74,6 +99,15 @@ public class TestResultServiceImpl implements TestResultService {
     @Override
     public void deleteAll() {
         logger.debug("Request to delete all TestResults");
-        testResultRepository.deleteAll();
+
+        // Bulk-delete every related table with a single statement.
+        // Deletion order respects foreign-key dependencies (children before parents).
+        messageHeaderRepository.deleteAllInBatch();
+        messageRepository.deleteAllInBatch();
+        scenarioParameterRepository.deleteAllInBatch();
+        scenarioActionRepository.deleteAllInBatch();
+        testParameterRepository.deleteAllInBatch();
+        scenarioExecutionRepository.deleteAllInBatch();
+        testResultRepository.deleteAllInBatch();
     }
 }
