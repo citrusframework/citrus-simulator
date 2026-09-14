@@ -1,0 +1,80 @@
+@startuml
+
+!theme vibrant
+skinparam linetype ortho
+
+class message {
+   direction: integer
+   created_date: timestamp(6) with time zone
+   last_modified_date: timestamp(6) with time zone
+   scenario_execution_execution_id: bigint
+   citrus_message_id: varchar(255)
+   payload: text
+   message_id: bigint
+}
+
+class message_header {
+   created_date: timestamp(6) with time zone
+   last_modified_date: timestamp(6) with time zone
+   message_id: bigint
+   header_value: varchar(255)
+   name: varchar(255)
+   header_id: bigint
+}
+
+class scenario_action {
+   end_date: timestamp(6) with time zone
+   scenario_execution_execution_id: bigint
+   start_date: timestamp(6) with time zone
+   name: varchar(255)
+   action_id: bigint
+}
+
+class scenario_execution {
+   end_date: timestamp(6) with time zone
+   start_date: timestamp(6) with time zone
+   test_result_id: bigint
+   scenario_name: varchar(255)
+   execution_id: bigint
+}
+
+class scenario_parameter {
+   control_type: integer
+   required: boolean
+   created_date: timestamp(6) with time zone
+   last_modified_date: timestamp(6) with time zone
+   scenario_execution_execution_id: bigint
+   label: varchar(255)
+   name: varchar(255)
+   parameter_value: text
+   parameter_id: bigint
+}
+
+class test_parameter {
+   created_date: timestamp(6) with time zone
+   last_modified_date: timestamp(6) with time zone
+   parameter_value: varchar(255)
+   test_result_id: bigint
+   parameter_key: varchar(255)
+}
+
+class test_result {
+   status: integer
+   created_date: timestamp(6) with time zone
+   last_modified_date: timestamp(6) with time zone
+   class_name: varchar(255)
+   failure_type: varchar(255)
+   test_name: varchar(255)
+   error_message: text
+   stack_trace: text
+   id: bigint
+}
+
+message             -[#595959,plain]up-*  scenario_execution : "scenario_execution_execution_id:execution_id"
+message_header      -[#595959,plain]up-*  message            : "message_id"
+scenario_action     -[#595959,plain]up-*  scenario_execution : "scenario_execution_execution_id:execution_id"
+scenario_execution  -[#595959,plain]up-*  test_result        : "test_result_id:id"
+scenario_parameter  -[#595959,plain]up-*  scenario_execution : "scenario_execution_execution_id:execution_id"
+test_parameter      -[#595959,plain]up-*  test_result        : "test_result_id:id"
+
+@enduml
