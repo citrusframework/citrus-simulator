@@ -15,6 +15,7 @@
   <packaging>pom</packaging>
 
   <properties>
+    <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
     <project.docs.version>${project.version}</project.docs.version>
   </properties>
 
@@ -23,7 +24,7 @@
       <plugin>
         <groupId>org.asciidoctor</groupId>
         <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>${asciidoctor.maven.plugin.version}</version>
         <inherited>false</inherited>
         <configuration>
           <sourceDirectory>src/main/asciidoc</sourceDirectory>
@@ -32,7 +33,6 @@
             <icons>font</icons>
             <pagenums/>
             <version>${project.docs.version}</version>
-            <plugindir>${project.basedir}/plugin</plugindir>
             <idprefix/>
             <idseparator>-</idseparator>
             <allow-uri-read>true</allow-uri-read>
@@ -56,6 +56,12 @@
 
     <profile>
       <id>docs-html</id>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>bintray</id>
+          <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+      </pluginRepositories>
       <build>
         <plugins>
           <plugin>
@@ -84,7 +90,7 @@
                   <attributes>
                     <toc>left</toc>
                     <linkcss>false</linkcss>
-                    <source-highlighter>coderay</source-highlighter>
+                    <source-highlighter>highlight.js</source-highlighter>
                   </attributes>
                 </configuration>
               </execution>
@@ -123,7 +129,7 @@
               <dependency>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctorj-pdf</artifactId>
-                <version>3.2.0</version>
+                <version>1.5.3</version>
               </dependency>
             </dependencies>
           </plugin>
