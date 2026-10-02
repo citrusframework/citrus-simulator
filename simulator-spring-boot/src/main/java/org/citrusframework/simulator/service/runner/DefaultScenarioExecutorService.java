@@ -109,6 +109,15 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
         return scenarioExecution.getExecutionId();
     }
 
+    /**
+     * Scenarios are executed on the calling thread, {@link #run} therefore only returns once the scenario has completed.
+     * Subclasses executing scenarios on another thread must override this method.
+     */
+    @Override
+    public boolean isSynchronous() {
+        return true;
+    }
+
     protected void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         logger.info("Starting scenario : {}", name);
 

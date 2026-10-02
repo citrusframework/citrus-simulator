@@ -51,4 +51,14 @@ public interface ScenarioExecutorService  {
      * @return the scenario execution id
      */
     Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters);
+
+    /**
+     * Indicates whether {@link #run} only returns once the scenario has completed. Callers may then rely on any
+     * response being available as soon as {@link #run} returns, instead of waiting for it.
+     *
+     * @return {@code true} if scenarios are executed on the calling thread, {@code false} otherwise
+     */
+    default boolean isSynchronous() {
+        return false;
+    }
 }

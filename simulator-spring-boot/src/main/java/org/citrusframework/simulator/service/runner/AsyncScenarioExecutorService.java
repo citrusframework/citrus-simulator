@@ -101,6 +101,14 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
     }
 
     /**
+     * Scenarios are executed on the executor service, {@link #run} returns before they have completed.
+     */
+    @Override
+    public boolean isSynchronous() {
+        return false;
+    }
+
+    /**
      * Overrides the {@link DefaultScenarioExecutorService#startScenario(Long, String, SimulatorScenario, List)} method
      * to execute the scenario asynchronously using the executor service.
      *

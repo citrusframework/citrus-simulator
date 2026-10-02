@@ -78,6 +78,12 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
     }
 
     @Test
+    void isNotSynchronous() {
+        assertThat(fixture.isSynchronous())
+            .isFalse();
+    }
+
+    @Test
     void constructorCreatesThreadPool() {
         assertThat(new AsyncScenarioExecutorService(applicationContextMock, citrusMock, scenarioExecutionServiceMock, propertiesMock))
             .hasNoNullFieldsOrProperties()

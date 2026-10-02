@@ -35,12 +35,15 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -138,6 +141,37 @@ class SimulatorEndpointAdapterTest {
                 .isInstanceOf(ResponseStatusException.class);
 
             verify(scenarioEndpointMock).cancel(anyFuture());
+        }
+
+        @Test
+        void shouldNotAwaitResponse_ifSynchronousScenarioCompletedWithoutResponse() {
+            var fixture = createFixture();
+
+            when(scenarioExecutorServiceMock.isSynchronous()).thenReturn(true);
+
+            assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .isNull();
+
+            verify(scenarioEndpointMock).cancel(anyFuture());
+            verify(simulatorConfigurationMock, never()).getDefaultTimeout();
+        }
+
+        @Test
+        void shouldReturnResponse_ifSynchronousScenarioCompletedWithResponse() {
+            var fixture = createFixture();
+            var responseMessageMock = mock(Message.class);
+
+            when(scenarioExecutorServiceMock.isSynchronous()).thenReturn(true);
+            when(simulatorConfigurationMock.getDefaultTimeout()).thenReturn(50L);
+            doAnswer(invocation -> {
+                invocation.<CompletableFuture<Message>>getArgument(1).complete(responseMessageMock);
+                return null;
+            }).when(scenarioEndpointMock).add(eq(requestMessageMokc), anyFuture());
+
+            assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .isSameAs(responseMessageMock);
+
+            verify(scenarioEndpointMock, never()).cancel(anyFuture());
         }
 
         private SimulatorEndpointAdapter createFixture() {

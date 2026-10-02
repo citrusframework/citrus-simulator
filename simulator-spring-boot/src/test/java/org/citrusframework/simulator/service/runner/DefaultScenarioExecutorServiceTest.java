@@ -118,6 +118,12 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         verify(simulatorScenarioMock).registerException(cause);
     }
 
+    @Test
+    void isSynchronous() {
+        assertThat(fixture.isSynchronous())
+            .isTrue();
+    }
+
     private void verifyScenarioExecution(Long executionId, @Nullable Long result, SimulatorScenario simulatorScenario, TestListeners testListenersMock) {
         if (!isNull(result)) {
             assertEquals(executionId, result);

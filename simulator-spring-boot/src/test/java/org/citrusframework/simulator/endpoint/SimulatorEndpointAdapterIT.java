@@ -17,6 +17,7 @@
 package org.citrusframework.simulator.endpoint;
 
 import org.assertj.core.api.ThrowingConsumer;
+import org.citrusframework.TestAction;
 import org.citrusframework.context.TestContextFactory;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.Message;
@@ -35,6 +36,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.citrusframework.actions.FailAction.Builder.fail;
 import static org.assertj.core.api.InstanceOfAssertFactories.throwable;
 
 @IntegrationTest
@@ -46,12 +48,13 @@ abstract class SimulatorEndpointAdapterIT {
     private static final String NO_RESPONSE_SCENARIO_NAME = "SimulatorEndpointAdapterIT:no-response-scenario";
     private static final String SUCCESS_SCENARIO_NAME = "SimulatorEndpointAdapterIT:success-scenario";
     private static final String FAIL_SCENARIO_NAME = "SimulatorEndpointAdapterIT:fail-scenario";
+    protected static final String FAILING_ACTION_SCENARIO_NAME = "SimulatorEndpointAdapterIT:failing-action-scenario";
 
     @Mock
-    private Message messageMock;
+    protected Message messageMock;
 
     @Autowired
-    private SimulatorEndpointAdapter fixture;
+    protected SimulatorEndpointAdapter fixture;
 
     @Test
     void dispatchMessage_returnsNull_withoutResponse() {
@@ -96,6 +99,16 @@ abstract class SimulatorEndpointAdapterIT {
         public void run(ScenarioRunner runner) {
             var context = testContextFactory.getObject();
             getScenarioEndpoint().send(new DefaultMessage(), context);
+        }
+    }
+
+    @Scenario(FAILING_ACTION_SCENARIO_NAME)
+    private static class FailingActionScenario extends AbstractSimulatorScenario {
+
+        @Override
+        public void run(ScenarioRunner runner) {
+            runner.$((TestAction) context -> getScenarioEndpoint().receive(context));
+            runner.$(fail(FAIL_WITH_PURPOSE));
         }
     }
 

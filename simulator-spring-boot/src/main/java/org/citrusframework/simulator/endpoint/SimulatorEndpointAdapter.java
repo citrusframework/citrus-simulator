@@ -108,6 +108,13 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
             throw getResponseStatusException(e);
         }
 
+        if (scenarioExecutorService.isSynchronous() && !responseFuture.isDone()) {
+            // The scenario has already completed without responding, waiting would only block the calling thread
+            scenario.getScenarioEndpoint().cancel(responseFuture);
+            logger.warn("No response for scenario '{}'", scenarioName);
+            return null;
+        }
+
         return awaitResponseOrThrowException(responseFuture, scenarioName, scenario.getScenarioEndpoint());
     }
 
