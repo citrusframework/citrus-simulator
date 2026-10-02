@@ -54,6 +54,10 @@ export const headerFilterFormToString = (headerFilter: FormGroup<HeaderFilter>):
   return `${filterString}${headerFilter.get('value')?.value}`;
 };
 
+const comparatorTypesByValue = new Map<string, ComparatorType>(
+  Object.values(ComparatorType).map(comparatorType => [comparatorType, comparatorType]),
+);
+
 export const headerFilterStringToForm = (headerFilter: string): FormGroup<HeaderFilter> | false => {
   const formGroup = new FormGroup<HeaderFilter>({
     key: new FormControl<string>(''),
@@ -75,7 +79,7 @@ export const headerFilterStringToForm = (headerFilter: string): FormGroup<Header
     formGroup.controls.key.setValue(parts[0]);
     formGroup.controls.key.markAsDirty();
 
-    formGroup.controls.valueComparator.setValue(parts[1] as ComparatorType);
+    formGroup.controls.valueComparator.setValue(comparatorTypesByValue.get(parts[1]) ?? ComparatorType.EQUALS);
     formGroup.controls.valueComparator.markAsDirty();
 
     formGroup.controls.value.setValue(parts[2]);
