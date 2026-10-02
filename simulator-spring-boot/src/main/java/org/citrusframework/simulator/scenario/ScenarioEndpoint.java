@@ -171,6 +171,22 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
         throw new SimulatorException("Failed to receive scenario inbound message");
     }
 
+    /**
+     * Fails the response future of the request received within the given {@link TestContext}. Does nothing if that
+     * request has already been answered or no request has been received in this context, so that concurrent
+     * executions sharing this endpoint are never affected.
+     *
+     * @param context the test context of the failed scenario execution
+     * @param e       the cause of the failure
+     */
+    public void fail(TestContext context, Throwable e) {
+        CompletableFuture<Message> future = activeFutures.remove(context);
+        if (nonNull(future)) {
+            cancel(future);
+            future.complete(new SimulationFailedUnexpectedlyException(e));
+        }
+    }
+
     private void messageSent(Message message, TestContext context) {
         getEndpointMessageHandler(context).handleSentMessage(message, context);
     }

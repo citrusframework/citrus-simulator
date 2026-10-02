@@ -27,6 +27,7 @@ import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.citrusframework.actions.FailAction.Builder.fail;
@@ -48,13 +50,13 @@ abstract class SimulatorEndpointAdapterIT {
     private static final String NO_RESPONSE_SCENARIO_NAME = "SimulatorEndpointAdapterIT:no-response-scenario";
     private static final String SUCCESS_SCENARIO_NAME = "SimulatorEndpointAdapterIT:success-scenario";
     private static final String FAIL_SCENARIO_NAME = "SimulatorEndpointAdapterIT:fail-scenario";
-    protected static final String FAILING_ACTION_SCENARIO_NAME = "SimulatorEndpointAdapterIT:failing-action-scenario";
+    private static final String FAILING_ACTION_SCENARIO_NAME = "SimulatorEndpointAdapterIT:failing-action-scenario";
 
     @Mock
-    protected Message messageMock;
+    private Message messageMock;
 
     @Autowired
-    protected SimulatorEndpointAdapter fixture;
+    private SimulatorEndpointAdapter fixture;
 
     @Test
     void dispatchMessage_returnsNull_withoutResponse() {
@@ -68,6 +70,22 @@ abstract class SimulatorEndpointAdapterIT {
         var result = fixture.dispatchMessage(messageMock, SUCCESS_SCENARIO_NAME);
         assertThat(result)
             .isInstanceOf(DefaultMessage.class);
+    }
+
+    /**
+     * A failing test action must answer immediately, instead of blocking until the default timeout (5 seconds).
+     */
+    @Test
+    @Timeout(value = 2, unit = SECONDS)
+    void dispatchMessage_throwsResponseStatusExceptionImmediately_ifTestActionFails() {
+        assertThatThrownBy(() -> fixture.dispatchMessage(messageMock, FAILING_ACTION_SCENARIO_NAME))
+            .asInstanceOf(throwable(ResponseStatusException.class))
+            .satisfies(
+                e -> assertThat(e).extracting(ResponseStatusException::getStatusCode)
+                    .isEqualTo(HttpStatusCode.valueOf(555)),
+                e -> assertThat(e).rootCause()
+                    .hasMessageContaining(FAIL_WITH_PURPOSE)
+            );
     }
 
     void verifyFailingScenarioThrowsResponseStatusException(ThrowingConsumer<ResponseStatusException> exceptionAssert) {

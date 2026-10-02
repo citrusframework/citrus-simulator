@@ -156,6 +156,7 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
             scenario.run(runner);
         } catch (TestCaseFailedException e) {
             logger.error("Registered forced failure of scenario: {}!", name, e);
+            scenario.getScenarioEndpoint().fail(context, e);
         } catch (Exception e) {
             logger.error("Scenario completed with error: {}!", name, e);
             scenario.registerException(e);

@@ -19,10 +19,8 @@ package org.citrusframework.simulator.endpoint;
 import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.springframework.web.server.ResponseStatusException;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.throwable;
 
@@ -37,17 +35,5 @@ class SynchronousSimulatorEndpointAdapterIT extends SimulatorEndpointAdapterIT {
                 .asInstanceOf(throwable(SimulatorException.class))
                 .hasMessage(FAIL_WITH_PURPOSE)
         );
-    }
-
-    /**
-     * The scenario has already completed when the synchronous execution returns. Without a response there is nothing
-     * to wait for, so the request must be answered immediately instead of after the default timeout (5 seconds).
-     */
-    @Test
-    @Timeout(value = 2, unit = SECONDS)
-    void dispatchMessage_returnsNullImmediately_ifTestActionFails() {
-        var result = fixture.dispatchMessage(messageMock, FAILING_ACTION_SCENARIO_NAME);
-        assertThat(result)
-            .isNull();
     }
 }

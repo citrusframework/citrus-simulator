@@ -189,6 +189,64 @@ class ScenarioEndpointTest {
     }
 
     @Nested
+    class FailWithContext {
+
+        @Test
+        void shouldFailResponseFutureOfReceivedRequest() throws Exception {
+            var testContext = mockTestContext();
+            var cause = new CitrusRuntimeException("boom");
+            var responseFuture = new CompletableFuture<Message>();
+
+            fixture.add(mock(Message.class), responseFuture);
+            fixture.receive(testContext);
+
+            fixture.fail(testContext, cause);
+
+            assertThat(responseFuture.get(0, MILLISECONDS))
+                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
+                .extracting(message -> message.getPayload(Throwable.class))
+                .isSameAs(cause);
+        }
+
+        @Test
+        void shouldNotTouchResponseFuturesOfOtherContexts() {
+            var params = addAndReceiveTwoMessagesInOrder();
+
+            fixture.fail(params.testContext2(), new CitrusRuntimeException());
+
+            verify(params.responseFuture2()).complete(any(SimulationFailedUnexpectedlyException.class));
+            verifyNoInteractions(params.responseFuture1());
+        }
+
+        @Test
+        void shouldDoNothing_ifResponseHasAlreadyBeenSent() {
+            var testContext = mockTestContext();
+            var response = mock(Message.class);
+            CompletableFuture<Message> responseFuture = mock();
+
+            fixture.add(mock(Message.class), responseFuture);
+            fixture.receive(testContext);
+            fixture.send(response, testContext);
+
+            fixture.fail(testContext, new CitrusRuntimeException());
+
+            verify(responseFuture).complete(response);
+            verifyNoMoreInteractions(responseFuture);
+        }
+
+        @Test
+        void shouldDoNothing_ifNoRequestHasBeenReceivedInContext() {
+            CompletableFuture<Message> responseFuture = mock();
+
+            fixture.add(mock(Message.class), responseFuture);
+
+            fixture.fail(mock(TestContext.class), new CitrusRuntimeException());
+
+            verifyNoInteractions(responseFuture);
+        }
+    }
+
+    @Nested
     class Send {
 
         @Test

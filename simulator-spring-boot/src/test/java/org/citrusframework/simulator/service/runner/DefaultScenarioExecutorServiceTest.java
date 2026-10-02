@@ -18,6 +18,8 @@ package org.citrusframework.simulator.service.runner;
 
 import jakarta.annotation.Nullable;
 import org.citrusframework.TestCase;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.report.TestListeners;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.model.ScenarioExecution;
@@ -39,6 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -122,6 +125,24 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
     void isSynchronous() {
         assertThat(fixture.isSynchronous())
             .isTrue();
+    }
+
+    @Test
+    void failedTestActionFailsResponseOfExecution() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+
+        var testContextMock = mockCitrusTestContext();
+
+        // Passed on as is, so that callers can distinguish failed test actions from exceptions thrown by the scenario
+        var testCaseFailedException = new TestCaseFailedException(new CitrusRuntimeException("Fail with purpose!"));
+        doThrow(testCaseFailedException).when(simulatorScenarioMock).run(any(ScenarioRunner.class));
+
+        fixture.run(simulatorScenarioMock, scenarioName, parameters);
+
+        verify(scenarioEndpointMock).fail(testContextMock, testCaseFailedException);
+        verify(simulatorScenarioMock, never()).registerException(any(Throwable.class));
     }
 
     private void verifyScenarioExecution(Long executionId, @Nullable Long result, SimulatorScenario simulatorScenario, TestListeners testListenersMock) {

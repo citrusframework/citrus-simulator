@@ -1,6 +1,6 @@
 # Scenario response handling: analysis and plan
 
-Status: analysis complete, step A implemented (sample ITs pending), steps B–D open.
+Status: analysis complete, steps A and A2 implemented (sample ITs pending), steps B–D open.
 
 ## Problem
 
@@ -49,12 +49,12 @@ either the response is already there or it never will be.
 1. **Sync mode waits for nothing.** `dispatchMessage` always calls `future.get(defaultTimeout)`, even when the scenario
    already completed on the same thread without sending a response. Visible in
    `SimulatorEndpointAdapterIT.dispatchMessage_returnsNull_withoutResponse`, which takes the full timeout in both modes.
-2. **Forced failures (`fail(...)` action, failing validation) block until the timeout.** `DefaultTestCase.executeAction`
-   wraps every action failure in `TestCaseFailedException`; `DefaultScenarioExecutorService` deliberately only logs it.
-   By design (`fix(#271)`, asserted by `SimulatorRestIT.testSimulationFailingExpectantly`) such a scenario answers with
-   *no response*, i.e. Citrus' `HttpMessageController` returns `defaultStatusCode` (200) with an empty body, while only
-   exceptions thrown from the scenario code itself answer with 555. The semantics are fine — but the "no response" is
-   only produced after the request thread waited `default-timeout`, because nothing ever completes the future.
+2. **Failing test actions (`fail(...)`, failed validation, …) never complete the future.**
+   `DefaultTestCase.executeAction` wraps every action failure in `TestCaseFailedException`;
+   `DefaultScenarioExecutorService` only logged it. The request thread therefore waited `default-timeout` and the
+   client then received `defaultStatusCode` (200) with an empty body — a failed simulation looking like a success.
+   The #271 fix had documented that as intended ("fail on purpose = successful simulation"); this has been revised:
+   a failing simulation answers 555, regardless of whether an exception or a failing action caused it.
 3. **`ScenarioEndpoint.fail(Throwable)` completes the oldest future (FIFO).** With a shared singleton endpoint and
    concurrent requests this can fail *another* request's future. In async mode a generic exception additionally calls
    `registerException` twice (once in `createAndRunScenarioRunner`, once via `exceptionally(...)`).
@@ -72,16 +72,36 @@ either the response is already there or it never will be.
 - `SimulatorEndpointAdapter.dispatchMessage`: if the executor is synchronous and the future is not done after `run()`
   returned, cancel it and return `null` immediately instead of waiting `default-timeout`.
 
-Observable behaviour (sync mode only): scenarios that complete without a response — including forced failures —
-answer immediately with the same result as before (`null` → `defaultStatusCode`), instead of after `default-timeout`.
-Responses, 555 for exceptions, correlation, async mode, JMS `handleResponse=false` and starters are unchanged.
+Observable behaviour (sync mode only): scenarios that complete without sending a response answer immediately
+instead of after `default-timeout`.
 
-Verification: `./mvnw -pl simulator-spring-boot verify` green; in `SynchronousSimulatorEndpointAdapterIT` "no response"
-dropped from ~6 s to ~0.04 s and a forced failure answers in ~0.1 s. The sample ITs (`simulator-samples`) still need to
-be run — they bind to port 8080.
+### A2. Failing test actions answer 555 (both modes) — **implemented**
 
-> An earlier draft of this plan also completed the future with a 555 on forced failures. That contradicts the
-> intended #271 semantics above and was dropped.
+- `ScenarioEndpoint#fail(TestContext, Throwable)` (new): fails only the future of the request received in the given
+  execution's `TestContext`. No FIFO fallback, so concurrent requests on singleton scenarios are never affected; a
+  no-op if the response has already been sent.
+- `DefaultScenarioExecutorService` calls it on `TestCaseFailedException`, so a failed action answers 555
+  immediately — in sync *and* async mode (async mode no longer waits `default-timeout` in this case either).
+- **Custom fallback endpoint adapters keep precedence for failed test actions.** `ws-support.adoc` and
+  `rest-support.adoc` document the configurer's `fallbackEndpointAdapter()` as the handler for "unmatched requests or
+  validation errors"; Citrus' `AbstractEndpointAdapter` delegates to it whenever `dispatchMessage` returns no response,
+  which is what a failed test action used to produce. Therefore, if a failed test action (recognised by its
+  `TestCaseFailedException`, which the executor passes on unwrapped) meets a fallback that is not the default
+  `EmptyResponseEndpointAdapter`, `SimulatorEndpointAdapter` returns no response and Citrus hands the request to the
+  fallback (e.g. the WSDL sample's `HELLO:ERROR-1001` SOAP fault). Everyone else gets 555. Exceptions thrown by the
+  scenario code always answer 555, as established by #271.
+- `FailScenario`/`ThrowScenario` Javadoc, `SimulatorRestIT.testSimulationFailingExpectantly` and
+  `simulation-errors-handling.adoc` updated accordingly.
+
+Behaviour change for the release notes (minor release): **a scenario whose test action fails before it has
+responded now answers with HTTP 555 instead of an empty `defaultStatusCode` (200) response after `default-timeout`,
+unless a custom fallback endpoint adapter is configured, which then handles the request (immediately) as before.**
+
+Known limitation: an action failing *before* the scenario received its request has no context-bound future to fail.
+Sync mode then answers "no response" immediately (A), async mode still waits `default-timeout` (see C).
+
+Alternatives considered: always 555 (would break the documented fallback contract for users with a custom fallback),
+and reverting A2 (failed simulations would keep looking successful for everyone else).
 
 ### B. True synchronous request handling (minor release)
 
@@ -97,9 +117,8 @@ Bypass queue and futures for the initiating request in sync mode:
 ### C. Async mode hardening (minor release)
 
 - Bounded executor queue with rejection → 503, instead of silent queueing until timeout.
-- Stop blocking on forced failures / missing responses in async mode (finding 2): when an execution ends, complete the
-  future bound to *its* `TestContext` (`activeFutures`) with "no response" if it is still open. Context-bound, so
-  concurrent requests on singleton scenarios are unaffected.
+- Stop blocking on missing responses in async mode: when an execution ends without responding, complete the future
+  bound to *its* `TestContext` with "no response". Also covers actions failing before the request was received.
 - Fix the double `registerException` / FIFO `fail(Throwable)` for generic exceptions (finding 3) by failing the
   context-bound future instead of the oldest one.
 - Optional: for HTTP, return the future to Spring MVC (servlet async, `CompletableFuture<ResponseEntity<?>>`) instead

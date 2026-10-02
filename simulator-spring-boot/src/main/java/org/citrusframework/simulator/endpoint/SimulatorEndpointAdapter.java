@@ -16,9 +16,13 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
+import org.citrusframework.base.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.base.endpoint.adapter.RequestDispatchingEndpointAdapter;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.correlation.CorrelationHandler;
@@ -118,13 +122,37 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         return awaitResponseOrThrowException(responseFuture, scenarioName, scenario.getScenarioEndpoint());
     }
 
+    /**
+     * Answers a failed simulation with the custom HTTP status code 555. Failed test actions (e.g. a failed request
+     * validation) are handed to a custom fallback endpoint adapter instead, if one has been configured: returning no
+     * response makes {@link org.citrusframework.base.endpoint.AbstractEndpointAdapter#handleMessage} delegate to it.
+     * Exceptions thrown by the scenario code itself always answer 555.
+     *
+     * @param cause the cause of the failed simulation
+     * @return {@code null}, if the request is to be handled by the fallback endpoint adapter
+     * @throws ResponseStatusException with status code 555 otherwise
+     */
+    private @Nullable Message handleSimulationFailure(Throwable cause) {
+        if (cause instanceof TestCaseFailedException && hasCustomFallbackEndpointAdapter()) {
+            logger.debug("Simulation failed with a failing test action - delegating to fallback endpoint adapter", cause);
+            return null;
+        }
+
+        throw getResponseStatusException(cause);
+    }
+
+    private boolean hasCustomFallbackEndpointAdapter() {
+        EndpointAdapter fallbackEndpointAdapter = getFallbackEndpointAdapter();
+        return nonNull(fallbackEndpointAdapter) && !(fallbackEndpointAdapter instanceof EmptyResponseEndpointAdapter);
+    }
+
     private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName, ScenarioEndpoint scenarioEndpoint) {
         try {
             if (handleResponse) {
                 var message = responseFuture.get(simulatorConfiguration.getDefaultTimeout(), MILLISECONDS);
 
                 if (EXCEPTION_TYPE.equals(message.getType())) {
-                    throw getResponseStatusException(message.getPayload(Throwable.class));
+                    return handleSimulationFailure(message.getPayload(Throwable.class));
                 }
 
                 return message;

@@ -16,6 +16,10 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import org.citrusframework.base.endpoint.adapter.EmptyResponseEndpointAdapter;
+import org.citrusframework.endpoint.EndpointAdapter;
+import org.citrusframework.exceptions.CitrusRuntimeException;
+import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.correlation.CorrelationHandlerRegistry;
@@ -30,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.concurrent.CompletableFuture;
@@ -37,6 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.throwable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -72,6 +78,13 @@ class SimulatorEndpointAdapterTest {
 
     @Mock
     private Message requestMessageMokc;
+
+    @Mock
+    private EndpointAdapter customFallbackEndpointAdapterMock;
+
+    private static Message failedTestActionResponse() {
+        return new SimulationFailedUnexpectedlyException(new TestCaseFailedException(new CitrusRuntimeException("Fail with purpose!")));
+    }
 
     @AfterEach
     void clearInterruptedStatus() {
@@ -172,6 +185,38 @@ class SimulatorEndpointAdapterTest {
                 .isSameAs(responseMessageMock);
 
             verify(scenarioEndpointMock, never()).cancel(anyFuture());
+        }
+
+        @Test
+        void shouldDelegateFailedTestActionToCustomFallbackEndpointAdapter() {
+            var fixture = createFixture();
+            fixture.setFallbackEndpointAdapter(customFallbackEndpointAdapterMock);
+
+            when(simulatorConfigurationMock.getDefaultTimeout()).thenReturn(50L);
+            doAnswer(invocation -> {
+                invocation.<CompletableFuture<Message>>getArgument(1).complete(failedTestActionResponse());
+                return null;
+            }).when(scenarioEndpointMock).add(eq(requestMessageMokc), anyFuture());
+
+            assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .isNull();
+        }
+
+        @Test
+        void shouldThrowResponseStatusException_ifTestActionFailed_withoutCustomFallbackEndpointAdapter() {
+            var fixture = createFixture();
+            fixture.setFallbackEndpointAdapter(new EmptyResponseEndpointAdapter());
+
+            when(simulatorConfigurationMock.getDefaultTimeout()).thenReturn(50L);
+            doAnswer(invocation -> {
+                invocation.<CompletableFuture<Message>>getArgument(1).complete(failedTestActionResponse());
+                return null;
+            }).when(scenarioEndpointMock).add(eq(requestMessageMokc), anyFuture());
+
+            assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .asInstanceOf(throwable(ResponseStatusException.class))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatusCode.valueOf(555));
         }
 
         private SimulatorEndpointAdapter createFixture() {
