@@ -102,7 +102,7 @@ Key points:
   releases unanswered requests once the execution has ended (`ScenarioEndpoint#release`), so nobody waits for a
   response that will never come. In sync mode the response is therefore available as soon as `run()` returns. Async
   executions waiting for a thread can be bounded with `citrus.simulator.executor-queue-capacity` (503 when full).
-  Background: [`SCENARIO_RESPONSE_HANDLING.md`](SCENARIO_RESPONSE_HANDLING.md).
+  Background: [`scenario-response-handling.md`](simulator-docs/design/scenario-response-handling.md).
 
 ### Persistence and recording
 

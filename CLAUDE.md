@@ -8,7 +8,9 @@ Citrus Simulator: a Spring Boot auto-configuration library that simulates HTTP/R
 using Citrus test scenarios, plus an Angular UI to inspect executions. Java 17, Spring Boot 4, Citrus 5, Angular 22.
 
 Read @ARCHITECTURE.md before making non-trivial changes. Project metadata, branch and commit conventions for the
-OSS helper tooling live in `.oss-ai-helper-rules/`. Module-specific rules are in `.claude/rules/`.
+OSS helper tooling live in `.oss-ai-helper-rules/`. Module-specific rules are in `.claude/rules/`; they load
+automatically for matching paths. Before touching request dispatching, scenario execution, `ScenarioEndpoint` or the
+executors, read `.claude/rules/scenario-execution.md` (invariants, response semantics, Citrus behaviour relied upon).
 
 ## Modules
 
