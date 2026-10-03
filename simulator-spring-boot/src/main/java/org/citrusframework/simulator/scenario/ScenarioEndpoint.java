@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.scenario;
 
+import jakarta.annotation.Nullable;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.endpoint.AbstractEndpoint;
 import org.citrusframework.message.Message;
@@ -24,6 +25,8 @@ import org.citrusframework.messaging.Producer;
 import org.citrusframework.simulator.endpoint.EndpointMessageHandler;
 import org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException;
 import org.citrusframework.simulator.exception.SimulatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -39,6 +42,8 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Consumer {
+
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioEndpoint.class);
 
     /**
      * Internal in-memory message channel.
@@ -66,6 +71,12 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     private final Queue<CompletableFuture<Message>> orderedFutures = new LinkedBlockingQueue<>();
 
     /**
+     * Requests bound to the {@link TestContext} of a synchronous scenario execution, see {@link #bind}. These bypass the
+     * message channel and the futures above entirely.
+     */
+    private final Map<TestContext, Exchange> exchanges = synchronizedMap(new IdentityHashMap<>());
+
+    /**
      * Default constructor using endpoint configuration.
      *
      * @param endpointConfiguration
@@ -83,6 +94,37 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
         pendingFutures.put(request, future);
         channel.add(request);
         orderedFutures.add(future);
+    }
+
+    /**
+     * Binds a request to the {@link TestContext} of a scenario execution that runs on the calling thread. The first
+     * {@link #receive} within that context consumes the request, the first {@link #send} answers it. The response is
+     * collected using {@link #unbind} once the execution has completed; nobody waits for it.
+     * <p>
+     * Requests are matched by context identity, so concurrent executions sharing this endpoint never see each other's
+     * messages.
+     *
+     * @param context the test context of the scenario execution
+     * @param request the request to be handled by the scenario execution
+     */
+    public void bind(TestContext context, Message request) {
+        exchanges.put(context, new Exchange(request));
+    }
+
+    /**
+     * Removes the request bound to the given {@link TestContext} using {@link #bind}.
+     *
+     * @param context the test context of the completed scenario execution, may be {@code null}
+     * @return the response sent within that context, a {@link SimulationFailedUnexpectedlyException} if the execution
+     * failed before responding, or {@code null} if the request has not been answered
+     */
+    public @Nullable Message unbind(@Nullable TestContext context) {
+        if (isNull(context)) {
+            return null;
+        }
+
+        Exchange exchange = exchanges.remove(context);
+        return nonNull(exchange) ? exchange.getResponse() : null;
     }
 
     /**
@@ -130,6 +172,15 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     @Override
     public Message receive(TestContext context, long timeout) {
+        Message boundRequest = Optional.ofNullable(exchanges.get(context))
+            .map(Exchange::receive)
+            .orElse(null);
+
+        if (nonNull(boundRequest)) {
+            messageReceived(boundRequest, context);
+            return boundRequest;
+        }
+
         try {
             Message message = channel.poll(timeout, MILLISECONDS);
 
@@ -153,11 +204,25 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     public void send(Message message, TestContext context) {
         messageSent(message, context);
 
-        CompletableFuture<Message> future = Optional.ofNullable(activeFutures.remove(context))
-            .orElseGet(() -> Optional.ofNullable(orderedFutures.poll())
-                .orElseThrow(() -> new SimulatorException("Failed to process scenario response message - missing response consumer!")));
+        // Intermediate messages received from the channel take precedence over the bound request
+        CompletableFuture<Message> future = activeFutures.remove(context);
+        if (nonNull(future)) {
+            future.complete(message);
+            return;
+        }
 
-        future.complete(message);
+        Exchange exchange = exchanges.get(context);
+        if (nonNull(exchange)) {
+            if (!exchange.respond(message)) {
+                logger.debug("Request bound to scenario execution has already been answered, ignoring response");
+            }
+
+            return;
+        }
+
+        Optional.ofNullable(orderedFutures.poll())
+            .orElseThrow(() -> new SimulatorException("Failed to process scenario response message - missing response consumer!"))
+            .complete(message);
     }
 
     void fail(Throwable e) {
@@ -172,19 +237,30 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     /**
-     * Fails the response future of the request received within the given {@link TestContext}. Does nothing if that
-     * request has already been answered or no request has been received in this context, so that concurrent
-     * executions sharing this endpoint are never affected.
+     * Fails the request handled within the given {@link TestContext}: either the request received from the message
+     * channel, or the request bound using {@link #bind}. Does nothing if that request has already been answered, so
+     * that concurrent executions sharing this endpoint are never affected.
      *
      * @param context the test context of the failed scenario execution
      * @param e       the cause of the failure
+     * @return {@code true} if the failure could be attributed to a request of the given context, {@code false} if no
+     * such request is known
      */
-    public void fail(TestContext context, Throwable e) {
+    public boolean fail(TestContext context, Throwable e) {
         CompletableFuture<Message> future = activeFutures.remove(context);
         if (nonNull(future)) {
             cancel(future);
             future.complete(new SimulationFailedUnexpectedlyException(e));
+            return true;
         }
+
+        Exchange exchange = exchanges.get(context);
+        if (nonNull(exchange)) {
+            exchange.respond(new SimulationFailedUnexpectedlyException(e));
+            return true;
+        }
+
+        return false;
     }
 
     private void messageSent(Message message, TestContext context) {
@@ -197,5 +273,49 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
 
     private EndpointMessageHandler getEndpointMessageHandler(TestContext context) {
         return context.getReferenceResolver().resolve(EndpointMessageHandler.class);
+    }
+
+    /**
+     * A request bound to a scenario execution and its response. Synchronized, because test action containers may
+     * execute actions of the same {@link TestContext} on different threads.
+     */
+    private static final class Exchange {
+
+        private final Message request;
+
+        private boolean received = false;
+        private @Nullable Message response;
+
+        private Exchange(Message request) {
+            this.request = request;
+        }
+
+        /**
+         * @return the request on the first invocation, {@code null} afterwards
+         */
+        synchronized @Nullable Message receive() {
+            if (received) {
+                return null;
+            }
+
+            received = true;
+            return request;
+        }
+
+        /**
+         * @return {@code true} if the response has been accepted, {@code false} if the request has already been answered
+         */
+        synchronized boolean respond(Message response) {
+            if (nonNull(this.response)) {
+                return false;
+            }
+
+            this.response = response;
+            return true;
+        }
+
+        synchronized @Nullable Message getResponse() {
+            return response;
+        }
     }
 }

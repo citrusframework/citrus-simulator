@@ -33,8 +33,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.citrusframework.base.annotations.CitrusAnnotations.injectAll;
 import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
 
@@ -63,6 +65,13 @@ import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID
 public class DefaultScenarioExecutorService implements ScenarioExecutorService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultScenarioExecutorService.class);
+
+    /**
+     * Test context initializer of the execution currently being started on this thread, see
+     * {@link #run(SimulatorScenario, String, List, Consumer)}. Consumed by the first test context created afterwards,
+     * which keeps {@link #startScenario} free of it and therefore backwards compatible for subclasses.
+     */
+    private static final ThreadLocal<Consumer<TestContext>> TEST_CONTEXT_INITIALIZER = new ThreadLocal<>();
 
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
@@ -110,8 +119,30 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
     }
 
     /**
+     * Executes the given {@link SimulatorScenario} like {@link #run(SimulatorScenario, String, List)}, invoking the
+     * {@code testContextInitializer} with the test context of the execution before the scenario runs.
+     *
+     * @param scenario               the {@link SimulatorScenario} to execute
+     * @param name                   the name of the scenario, used for logging and tracking purposes
+     * @param scenarioParameters     a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param testContextInitializer invoked with the test context of the execution, before the scenario runs
+     * @return the unique identifier of the scenario execution
+     */
+    @Override
+    public Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, Consumer<TestContext> testContextInitializer) {
+        TEST_CONTEXT_INITIALIZER.set(testContextInitializer);
+
+        try {
+            return run(scenario, name, scenarioParameters);
+        } finally {
+            TEST_CONTEXT_INITIALIZER.remove();
+        }
+    }
+
+    /**
      * Scenarios are executed on the calling thread, {@link #run} therefore only returns once the scenario has completed.
-     * Subclasses executing scenarios on another thread must override this method.
+     * Subclasses executing scenarios on another thread must override this method, as well as
+     * {@link #run(SimulatorScenario, String, List, Consumer)}.
      */
     @Override
     public boolean isSynchronous() {
@@ -136,7 +167,16 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
     }
 
     private TestContext createTestContext() {
-        return citrus.getCitrusContext().createTestContext();
+        var context = citrus.getCitrusContext().createTestContext();
+
+        var testContextInitializer = TEST_CONTEXT_INITIALIZER.get();
+        if (nonNull(testContextInitializer)) {
+            // Consume, so that nested executions started from within the scenario are not initialized as well
+            TEST_CONTEXT_INITIALIZER.remove();
+            testContextInitializer.accept(context);
+        }
+
+        return context;
     }
 
     private void createAndRunScenarioRunner(TestContext context, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {

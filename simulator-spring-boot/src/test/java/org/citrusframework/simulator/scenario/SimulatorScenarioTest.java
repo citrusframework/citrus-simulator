@@ -32,8 +32,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.captor;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -83,6 +85,7 @@ class SimulatorScenarioTest {
 
             fixture.registerException(cause);
 
+            verify(scenarioEndpointMock).fail(testContextMock, cause);
             verify(scenarioEndpointMock).fail(cause);
 
             ArgumentCaptor<CitrusRuntimeException> exceptionArgumentCaptor = captor();
@@ -91,6 +94,26 @@ class SimulatorScenarioTest {
             assertThat(exceptionArgumentCaptor.getValue())
                 .cause()
                 .isEqualTo(cause);
+        }
+    }
+
+    @Nested
+    class RegisterExceptionWithinExecutionContext {
+
+        @Test
+        void failsRequestOfExecutionContext_withoutFallingBackToOldestRequest() {
+            var testCaseRunnerMock = mock(DefaultTestCaseRunner.class);
+            var testContextMock = mock(TestContext.class);
+            doReturn(testContextMock).when(testCaseRunnerMock).getContext();
+
+            var cause = mock(CitrusRuntimeException.class);
+            doReturn(true).when(scenarioEndpointMock).fail(testContextMock, cause);
+
+            new TestSimulatorScenario(testCaseRunnerMock).registerException(cause);
+
+            verify(scenarioEndpointMock).fail(testContextMock, cause);
+            verify(scenarioEndpointMock, never()).fail(cause);
+            verify(testContextMock).addException(any(CitrusRuntimeException.class));
         }
     }
 

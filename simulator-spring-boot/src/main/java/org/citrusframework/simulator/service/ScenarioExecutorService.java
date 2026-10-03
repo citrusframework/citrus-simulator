@@ -17,10 +17,12 @@
 package org.citrusframework.simulator.service;
 
 import jakarta.annotation.Nullable;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Service capable of executing test executables. It takes care on setting up the executable before execution. The given
@@ -53,8 +55,27 @@ public interface ScenarioExecutorService  {
     Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters);
 
     /**
+     * Starts a new scenario instance like {@link #run(SimulatorScenario, String, List)}, but lets the caller initialize
+     * the {@link TestContext} of the execution before the scenario runs. Used to hand inbound requests to synchronous
+     * executions, see {@link #isSynchronous()}.
+     *
+     * @param scenario               the scenario to start
+     * @param name                   the name of the scenario to start
+     * @param scenarioParameters     the list of parameters to pass to the scenario when starting
+     * @param testContextInitializer invoked with the test context of the execution, before the scenario runs
+     * @return the scenario execution id
+     * @throws UnsupportedOperationException if this executor does not support test context initialization
+     */
+    default Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, Consumer<TestContext> testContextInitializer) {
+        throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support test context initialization");
+    }
+
+    /**
      * Indicates whether {@link #run} only returns once the scenario has completed. Callers may then rely on any
      * response being available as soon as {@link #run} returns, instead of waiting for it.
+     * <p>
+     * Implementations returning {@code true} must support
+     * {@link #run(SimulatorScenario, String, List, Consumer) test context initialization}.
      *
      * @return {@code true} if scenarios are executed on the calling thread, {@code false} otherwise
      */

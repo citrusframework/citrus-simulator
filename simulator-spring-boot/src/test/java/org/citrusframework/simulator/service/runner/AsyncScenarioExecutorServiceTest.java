@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,6 +76,16 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         assertThat(fixture)
             .isInstanceOf(ScenarioExecutorService.class)
             .isInstanceOf(DefaultScenarioExecutorService.class);
+    }
+
+    @Test
+    void runWithTestContextInitializerIsNotSupported() {
+        var simulatorScenarioMock = mock(SimulatorScenario.class);
+
+        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters, context -> {
+        }))
+            .isInstanceOf(UnsupportedOperationException.class)
+            .hasMessage("Test context initialization is not supported in asynchronous mode");
     }
 
     @Test

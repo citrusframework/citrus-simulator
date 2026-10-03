@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -200,7 +201,8 @@ class ScenarioEndpointTest {
             fixture.add(mock(Message.class), responseFuture);
             fixture.receive(testContext);
 
-            fixture.fail(testContext, cause);
+            assertThat(fixture.fail(testContext, cause))
+                .isTrue();
 
             assertThat(responseFuture.get(0, MILLISECONDS))
                 .isInstanceOf(SimulationFailedUnexpectedlyException.class)
@@ -240,9 +242,203 @@ class ScenarioEndpointTest {
 
             fixture.add(mock(Message.class), responseFuture);
 
-            fixture.fail(mock(TestContext.class), new CitrusRuntimeException());
+            assertThat(fixture.fail(mock(TestContext.class), new CitrusRuntimeException()))
+                .isFalse();
 
             verifyNoInteractions(responseFuture);
+        }
+    }
+
+    @Nested
+    class BoundRequest {
+
+        @Test
+        void shouldReceiveBoundRequest_withoutMessageChannel() {
+            var testContext = mockTestContext();
+            var request = mock(Message.class);
+
+            fixture.bind(testContext, request);
+
+            assertThat(fixture.receive(testContext, 0))
+                .isSameAs(request);
+
+            verify(endpointMessageHandlerMock).handleReceivedMessage(request, testContext);
+        }
+
+        @Test
+        void shouldReceiveBoundRequestOnlyOnce() {
+            var testContext = mockTestContext();
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.receive(testContext, 0);
+
+            assertThatThrownBy(() -> fixture.receive(testContext, 0))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage("Failed to receive scenario inbound message");
+        }
+
+        @Test
+        void shouldNotReceiveRequestBoundToOtherContext() {
+            fixture.bind(mock(TestContext.class), mock(Message.class));
+
+            assertThatThrownBy(() -> fixture.receive(mock(TestContext.class), 0))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage("Failed to receive scenario inbound message");
+        }
+
+        @Test
+        void shouldReturnResponse_onUnbind() {
+            var testContext = mockTestContext();
+            var response = mock(Message.class);
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.receive(testContext, 0);
+            fixture.send(response, testContext);
+
+            assertThat(fixture.unbind(testContext))
+                .isSameAs(response);
+            assertThat(fixture.unbind(testContext))
+                .isNull();
+
+            verify(endpointMessageHandlerMock).handleSentMessage(response, testContext);
+        }
+
+        @Test
+        void shouldReturnNull_onUnbind_withoutResponse() {
+            var testContext = mockTestContext();
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.receive(testContext, 0);
+
+            assertThat(fixture.unbind(testContext))
+                .isNull();
+        }
+
+        @Test
+        void shouldReturnNull_onUnbind_withoutContext() {
+            assertThat(fixture.unbind(null))
+                .isNull();
+        }
+
+        @Test
+        void shouldKeepFirstResponse() {
+            var testContext = mockTestContext();
+            var response = mock(Message.class);
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.send(response, testContext);
+            fixture.send(mock(Message.class), testContext);
+
+            assertThat(fixture.unbind(testContext))
+                .isSameAs(response);
+        }
+
+        @Test
+        void shouldNotAnswerQueuedRequests() {
+            var testContext = mockTestContext();
+            CompletableFuture<Message> queuedResponseFuture = mock();
+
+            fixture.add(mock(Message.class), queuedResponseFuture);
+            fixture.bind(testContext, mock(Message.class));
+
+            fixture.send(mock(Message.class), testContext);
+
+            verifyNoInteractions(queuedResponseFuture);
+        }
+
+        @Test
+        void shouldAnswerIntermediateRequestBeforeBoundRequest() {
+            var testContext = mockTestContext();
+            var boundResponse = mock(Message.class);
+            var intermediateResponse = mock(Message.class);
+            CompletableFuture<Message> intermediateResponseFuture = mock();
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.receive(testContext, 0);
+            fixture.send(boundResponse, testContext);
+
+            fixture.add(mock(Message.class), intermediateResponseFuture);
+            fixture.receive(testContext, 0);
+            fixture.send(intermediateResponse, testContext);
+
+            verify(intermediateResponseFuture).complete(intermediateResponse);
+            assertThat(fixture.unbind(testContext))
+                .isSameAs(boundResponse);
+        }
+
+        @Test
+        void shouldFailBoundRequest() {
+            var testContext = mockTestContext();
+            var cause = new CitrusRuntimeException("boom");
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.receive(testContext, 0);
+
+            assertThat(fixture.fail(testContext, cause))
+                .isTrue();
+
+            assertThat(fixture.unbind(testContext))
+                .isInstanceOf(SimulationFailedUnexpectedlyException.class)
+                .extracting(message -> message.getPayload(Throwable.class))
+                .isSameAs(cause);
+        }
+
+        @Test
+        void shouldNotOverrideResponse_onFail() {
+            var testContext = mockTestContext();
+            var response = mock(Message.class);
+
+            fixture.bind(testContext, mock(Message.class));
+            fixture.send(response, testContext);
+
+            assertThat(fixture.fail(testContext, new CitrusRuntimeException()))
+                .isTrue();
+
+            assertThat(fixture.unbind(testContext))
+                .isSameAs(response);
+        }
+
+        @Test
+        void shouldIsolateConcurrentExecutions() throws InterruptedException {
+            var threadCount = 10;
+            var executorService = newFixedThreadPool(threadCount);
+
+            try {
+                var latch = new CountDownLatch(threadCount);
+                var mismatches = new AtomicInteger();
+
+                for (int i = 0; i < threadCount; i++) {
+                    var testContext = mockTestContext();
+                    var request = mock(Message.class);
+                    var response = mock(Message.class);
+
+                    executorService.submit(() -> {
+                        try {
+                            fixture.bind(testContext, request);
+
+                            if (fixture.receive(testContext, 0) != request) {
+                                mismatches.incrementAndGet();
+                            }
+
+                            parkNanos(Duration.ofMillis(ThreadLocalRandom.current().nextInt(10, 50)).toNanos());
+                            fixture.send(response, testContext);
+
+                            if (fixture.unbind(testContext) != response) {
+                                mismatches.incrementAndGet();
+                            }
+                        } finally {
+                            latch.countDown();
+                        }
+                    });
+                }
+
+                assertThat(latch.await(500, MILLISECONDS))
+                    .isTrue();
+                assertThat(mismatches)
+                    .hasValue(0);
+            } finally {
+                executorService.shutdownNow();
+            }
         }
     }
 

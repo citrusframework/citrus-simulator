@@ -1,6 +1,6 @@
 # Scenario response handling: analysis and plan
 
-Status: analysis complete, steps A and A2 implemented (sample ITs pending), steps B–D open.
+Status: analysis complete, steps A, A2 and B implemented, steps C–D open.
 
 ## Problem
 
@@ -103,16 +103,37 @@ Sync mode then answers "no response" immediately (A), async mode still waits `de
 Alternatives considered: always 555 (would break the documented fallback contract for users with a custom fallback),
 and reverting A2 (failed simulations would keep looking successful for everyone else).
 
-### B. True synchronous request handling (minor release)
+### B. True synchronous request handling (minor release) — **implemented**
 
-Bypass queue and futures for the initiating request in sync mode:
+In sync mode the initiating request no longer goes through the message channel, futures or any waiting:
 
-- Pass the request into the execution's `TestContext` (new default overload, e.g.
-  `ScenarioExecutorService.run(scenario, name, params, Consumer<TestContext> contextInitializer)`).
-- `ScenarioEndpoint.receive(context)` takes the request from the context; `send(response, context)` stores the
-  response in the context; the adapter reads it after `run()` returns.
-- Removes the cross-thread hand-off entirely for sync mode and eliminates any cross-talk on singleton scenarios.
-- Fail fast with a clear message when `correlation()` is used in sync mode (it cannot work there).
+- `ScenarioExecutorService#run(scenario, name, params, Consumer<TestContext>)` (new default method, throws
+  `UnsupportedOperationException`): lets the caller initialize the execution's `TestContext` before the scenario runs.
+  `DefaultScenarioExecutorService` implements it, `AsyncScenarioExecutorService` rejects it. Executors returning
+  `isSynchronous() == true` must implement it. The initializer reaches `createTestContext()` via a consume-once
+  thread-local, so the protected `startScenario(...)` hook keeps its signature for existing subclasses.
+- `ScenarioEndpoint#bind(TestContext, Message)` / `#unbind(TestContext)` (new): the request is bound to the
+  execution's context. The first `receive` in that context consumes it, the first `send` answers it, `fail(context, e)`
+  fails it; `unbind` returns the response (or a `SimulationFailedUnexpectedlyException`, or `null`). Matching is by
+  context identity, so concurrent executions of singleton (OpenAPI/WSDL) scenarios cannot see each other's messages.
+- `SimulatorEndpointAdapter`: if the executor is synchronous it binds the request, runs the scenario and returns the
+  unbound response. The step-A "is the future done?" check is gone, as sync mode no longer creates a future.
+- `SimulatorScenario#registerException` fails the request of the execution's own context first and only falls back to
+  the oldest queued request (FIFO) if the failure cannot be attributed. This also fixes the cross-talk part of
+  finding 3 for exceptions thrown after the request has been received.
+- Unchanged: intermediate messages (`correlation()`) still use the channel and futures, and take precedence over the
+  bound request in `send`. Async mode is unchanged.
+
+Behaviour notes:
+
+- A scenario must send its response within its own execution `TestContext`, as every DSL action does. Code that
+  calls `getScenarioEndpoint().send(message, someOtherContext)` with a self-made context no longer answers the request
+  in sync mode (`SimulatorEndpointAdapterIT.SuccessScenario` did that and was adjusted).
+- The proposed "fail fast when `correlation()` is used in sync mode" was not implemented: correlation keeps behaving as
+  before in sync mode, and failing it would be a breaking change of its own.
+
+Verification (A, A2 and B together): `./mvnw -pl simulator-spring-boot install` and
+`./mvnw -f simulator-samples/pom.xml verify` green.
 
 ### C. Async mode hardening (minor release)
 

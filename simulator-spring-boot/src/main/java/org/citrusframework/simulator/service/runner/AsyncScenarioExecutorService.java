@@ -17,7 +17,9 @@
 package org.citrusframework.simulator.service.runner;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import jakarta.annotation.Nullable;
 import org.citrusframework.Citrus;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.model.ScenarioParameter;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -98,6 +101,16 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
         shutdownExecutor();
+    }
+
+    /**
+     * Test context initialization is not supported, because scenarios are executed on the executor service.
+     *
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    public Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, Consumer<TestContext> testContextInitializer) {
+        throw new UnsupportedOperationException("Test context initialization is not supported in asynchronous mode");
     }
 
     /**

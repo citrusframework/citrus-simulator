@@ -18,6 +18,7 @@ package org.citrusframework.simulator.service.runner;
 
 import jakarta.annotation.Nullable;
 import org.citrusframework.TestCase;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.exceptions.TestCaseFailedException;
 import org.citrusframework.report.TestListeners;
@@ -30,7 +31,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.function.Consumer;
 
 import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +44,7 @@ import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -143,6 +148,37 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
         verify(scenarioEndpointMock).fail(testContextMock, testCaseFailedException);
         verify(simulatorScenarioMock, never()).registerException(any(Throwable.class));
+    }
+
+    @Test
+    void runScenarioWithTestContextInitializer() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+
+        var testContextMock = mockCitrusTestContext();
+        Consumer<TestContext> testContextInitializerMock = mock();
+
+        fixture.run(simulatorScenarioMock, scenarioName, parameters, testContextInitializerMock);
+
+        InOrder inOrder = inOrder(testContextInitializerMock, simulatorScenarioMock);
+        inOrder.verify(testContextInitializerMock).accept(testContextMock);
+        inOrder.verify(simulatorScenarioMock).run(any(ScenarioRunner.class));
+    }
+
+    @Test
+    void testContextInitializerIsOnlyAppliedToItsOwnExecution() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+
+        mockCitrusTestContext();
+        Consumer<TestContext> testContextInitializerMock = mock();
+
+        fixture.run(simulatorScenarioMock, scenarioName, parameters, testContextInitializerMock);
+        fixture.run(simulatorScenarioMock, scenarioName, parameters);
+
+        verify(testContextInitializerMock, times(1)).accept(any(TestContext.class));
     }
 
     private void verifyScenarioExecution(Long executionId, @Nullable Long result, SimulatorScenario simulatorScenario, TestListeners testListenersMock) {

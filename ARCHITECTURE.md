@@ -68,7 +68,8 @@ Defaults for Spring properties live in `META-INF/citrus-simulator.properties`.
    ScenarioEndpoint               → Spring bean lookup (fallback: citrus.simulator.default-scenario)
                     │                   │
                     │                   ▼
-                    │            message + CompletableFuture queued on ScenarioEndpoint
+                    │            message + CompletableFuture queued on ScenarioEndpoint (async mode;
+                    │            sync mode binds the message to the execution's TestContext instead)
                     │            ScenarioExecutorService.run(scenario, name, params)
                     │                   │
                     │                   ▼
@@ -96,9 +97,10 @@ Key points:
   `ScenarioParameter`s.
 - **Execution mode** is selected by `citrus.simulator.mode`: `sync` (default, one scenario at a time) or `async`
   (thread pool of `citrus.simulator.executor-threads`, required for scenarios with intermediate messages).
-  In sync mode the scenario has completed when `run()` returns (`ScenarioExecutorService#isSynchronous`), so the
-  adapter does not wait for the future and answers "no response" immediately if none was sent. Background and
-  follow-up plan: [`SCENARIO_RESPONSE_HANDLING.md`](SCENARIO_RESPONSE_HANDLING.md).
+  In sync mode (`ScenarioExecutorService#isSynchronous`) the diagram's queue/future hand-off is skipped: the adapter
+  binds the request to the execution's `TestContext` (`ScenarioEndpoint#bind`), runs the scenario on the request
+  thread and reads the response afterwards (`ScenarioEndpoint#unbind`) — nothing waits. Background and follow-up
+  plan: [`SCENARIO_RESPONSE_HANDLING.md`](SCENARIO_RESPONSE_HANDLING.md).
 
 ### Persistence and recording
 
