@@ -40,12 +40,18 @@ This mode is suitable for more complex simulations where scenarios do not depend
 ==== Configuration
 
 To enable asynchronous mode, set the `citrus.simulator.mode` property to `async`.
-Additionally, you can configure the number of executor threads that handle the parallel execution of scenarios through the `citrus.simulator.executor.threads` property.
+Additionally, you can configure the number of executor threads that handle the parallel execution of scenarios through the `citrus.simulator.executor-threads` property.
+
+Scenario executions waiting for a free executor thread are queued.
+The queue is unbounded by default: under sustained overload, requests then wait until they time out (see `citrus.simulator.default-timeout`).
+Set `citrus.simulator.executor-queue-capacity` to limit the queue.
+Requests exceeding it are rejected right away, with HTTP status 503 (Service Unavailable).
 
 .Example `application.properties`
 ----
 citrus.simulator.mode=async
-citrus.simulator.executor.threads=10
+citrus.simulator.executor-threads=10
+citrus.simulator.executor-queue-capacity=100
 ----
 
 .Example `application.yml`
@@ -53,9 +59,12 @@ citrus.simulator.executor.threads=10
 citrus:
   simulator:
     mode: async
-    executor:
-      threads: 10
+    executor-threads: 10
+    executor-queue-capacity: 100
 ----
+
+A request is answered as soon as its scenario sends the response, fails, or ends without responding, in both execution modes.
+Only if none of that happens within `citrus.simulator.default-timeout`, the request is answered without response.
 
 [[advanced-concepts-execution-custom-mode]]
 === Custom Executors

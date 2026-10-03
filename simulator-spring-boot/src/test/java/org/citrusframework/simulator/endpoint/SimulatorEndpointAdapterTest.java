@@ -16,6 +16,7 @@
 
 package org.citrusframework.simulator.endpoint;
 
+import jakarta.annotation.Nullable;
 import org.citrusframework.base.endpoint.adapter.EmptyResponseEndpointAdapter;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.endpoint.EndpointAdapter;
@@ -40,6 +41,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -51,6 +53,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -192,6 +195,34 @@ class SimulatorEndpointAdapterTest {
                 .isEqualTo(HttpStatusCode.valueOf(555));
         }
 
+        @Test
+        void shouldNotAwaitResponse_ifSynchronousExecutorCompletedWithoutResponse() {
+            var fixture = createFixture();
+
+            when(scenarioExecutorServiceMock.isSynchronous()).thenReturn(true);
+
+            assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .isNull();
+
+            verify(scenarioEndpointMock).cancel(anyFuture());
+            verify(simulatorConfigurationMock, never()).getDefaultTimeout();
+        }
+
+        @Test
+        void shouldThrowServiceUnavailable_andCancelFuture_ifExecutionIsRejected() {
+            var fixture = createFixture();
+
+            doThrow(new RejectedExecutionException("queue is full"))
+                .when(scenarioExecutorServiceMock).run(eq(scenarioMock), eq(SCENARIO_NAME), anyList());
+
+            assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .asInstanceOf(throwable(ResponseStatusException.class))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatusCode.valueOf(503));
+
+            verify(scenarioEndpointMock).cancel(anyFuture());
+        }
+
         private SimulatorEndpointAdapter createFixture() {
             when(applicationContextMock.containsBean(SCENARIO_NAME)).thenReturn(true);
             when(applicationContextMock.getBean(SCENARIO_NAME, SimulatorScenario.class)).thenReturn(scenarioMock);
@@ -199,14 +230,10 @@ class SimulatorEndpointAdapterTest {
 
             return new SimulatorEndpointAdapter(applicationContextMock, handlerRegistryMock, scenarioExecutorServiceMock, simulatorConfigurationMock);
         }
-
-        private static CompletableFuture<Message> anyFuture() {
-            return any();
-        }
     }
 
     @Nested
-    class DispatchMessageSynchronouslyTest {
+    class DispatchMessageToExecutionTest {
 
         @Mock
         private TestContext testContextMock;
@@ -221,51 +248,57 @@ class SimulatorEndpointAdapterTest {
             when(applicationContextMock.containsBean(SCENARIO_NAME)).thenReturn(true);
             when(applicationContextMock.getBean(SCENARIO_NAME, SimulatorScenario.class)).thenReturn(scenarioMock);
             when(scenarioMock.getScenarioEndpoint()).thenReturn(scenarioEndpointMock);
-            when(scenarioExecutorServiceMock.isSynchronous()).thenReturn(true);
+            when(scenarioExecutorServiceMock.supportsTestContextInitialization()).thenReturn(true);
+            lenient().when(simulatorConfigurationMock.getDefaultTimeout()).thenReturn(50L);
 
             fixture = new SimulatorEndpointAdapter(applicationContextMock, handlerRegistryMock, scenarioExecutorServiceMock, simulatorConfigurationMock);
         }
 
         @Test
         void shouldBindRequestToExecutionContext_andReturnResponse() {
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(responseMessageMock);
+            mockScenarioExecutionAnsweringWith(responseMessageMock);
 
             assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .isSameAs(responseMessageMock);
 
-            verify(scenarioEndpointMock).bind(testContextMock, requestMessageMokc);
-            verifyNoAsynchronousHandOff();
+            verify(scenarioEndpointMock).bind(eq(testContextMock), eq(requestMessageMokc), anyFuture());
+            verifyNoChannelHandOff();
         }
 
         @Test
-        void shouldReturnNull_withoutResponse() {
+        void shouldReturnNull_ifExecutionEndedWithoutResponse() {
+            mockScenarioExecutionAnsweringWith(null);
+
+            assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .isNull();
+
+            verifyNoChannelHandOff();
+        }
+
+        @Test
+        void shouldReturnNull_afterDefaultTimeout_ifExecutionIsStillRunning() {
             mockScenarioExecution();
 
             assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .isNull();
 
-            verify(scenarioEndpointMock).unbind(testContextMock);
-            verifyNoAsynchronousHandOff();
+            verify(simulatorConfigurationMock).getDefaultTimeout();
+            verifyNoChannelHandOff();
         }
 
         @Test
         void shouldReturnNull_ifResponseShouldNotBeHandled() {
-            mockScenarioExecution();
+            mockScenarioExecutionAnsweringWith(responseMessageMock);
             fixture.setHandleResponse(false);
 
             assertThat(fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .isNull();
-
-            verify(scenarioEndpointMock).unbind(testContextMock);
         }
 
         @Test
         void shouldThrowResponseStatusException_ifExecutionFailed() {
-            var cause = new IllegalStateException("action-failed");
-
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(new SimulationFailedUnexpectedlyException(cause));
+            var cause = new IllegalStateException("thrown");
+            mockScenarioExecutionAnsweringWith(new SimulationFailedUnexpectedlyException(cause));
 
             assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .asInstanceOf(throwable(ResponseStatusException.class))
@@ -277,8 +310,7 @@ class SimulatorEndpointAdapterTest {
 
         @Test
         void shouldThrowResponseStatusException_ifTestActionFailed_withoutFallbackEndpointAdapter() {
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(failedTestActionResponse());
+            mockScenarioExecutionAnsweringWith(failedTestActionResponse());
 
             assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .asInstanceOf(throwable(ResponseStatusException.class))
@@ -291,9 +323,7 @@ class SimulatorEndpointAdapterTest {
         @Test
         void shouldThrowResponseStatusException_ifTestActionFailed_withDefaultFallbackEndpointAdapter() {
             fixture.setFallbackEndpointAdapter(new EmptyResponseEndpointAdapter());
-
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(failedTestActionResponse());
+            mockScenarioExecutionAnsweringWith(failedTestActionResponse());
 
             assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .asInstanceOf(throwable(ResponseStatusException.class))
@@ -308,9 +338,7 @@ class SimulatorEndpointAdapterTest {
 
             fixture.setFallbackEndpointAdapter(customFallbackEndpointAdapterMock);
             fixture.setMappingKeyExtractor(request -> SCENARIO_NAME);
-
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(failedTestActionResponse());
+            mockScenarioExecutionAnsweringWith(failedTestActionResponse());
 
             assertThat(fixture.handleMessage(requestMessageMokc))
                 .isSameAs(fallbackResponseMock);
@@ -319,9 +347,7 @@ class SimulatorEndpointAdapterTest {
         @Test
         void shouldThrowResponseStatusException_ifScenarioThrows_evenWithCustomFallbackEndpointAdapter() {
             fixture.setFallbackEndpointAdapter(customFallbackEndpointAdapterMock);
-
-            mockScenarioExecution();
-            when(scenarioEndpointMock.unbind(testContextMock)).thenReturn(new SimulationFailedUnexpectedlyException(new IllegalStateException("thrown")));
+            mockScenarioExecutionAnsweringWith(new SimulationFailedUnexpectedlyException(new IllegalStateException("thrown")));
 
             assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
                 .asInstanceOf(throwable(ResponseStatusException.class))
@@ -332,10 +358,10 @@ class SimulatorEndpointAdapterTest {
         }
 
         @Test
-        void shouldThrowResponseStatusException_andUnbindRequest_ifRunThrows() {
+        void shouldThrowResponseStatusException_andReleaseRequest_ifRunThrows() {
             doAnswer(invocation -> {
                 invocation.<Consumer<TestContext>>getArgument(3).accept(testContextMock);
-                throw new IllegalStateException("sync-run-failed");
+                throw new IllegalStateException("run-failed");
             }).when(scenarioExecutorServiceMock).run(eq(scenarioMock), eq(SCENARIO_NAME), anyList(), anyTestContextInitializer());
 
             assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
@@ -343,10 +369,26 @@ class SimulatorEndpointAdapterTest {
                 .extracting(ResponseStatusException::getStatusCode)
                 .isEqualTo(HttpStatusCode.valueOf(555));
 
-            verify(scenarioEndpointMock).unbind(testContextMock);
-            verifyNoAsynchronousHandOff();
+            verify(scenarioEndpointMock).release(testContextMock);
+            verifyNoChannelHandOff();
         }
 
+        @Test
+        void shouldThrowServiceUnavailable_ifExecutionIsRejected() {
+            doThrow(new RejectedExecutionException("queue is full"))
+                .when(scenarioExecutorServiceMock).run(eq(scenarioMock), eq(SCENARIO_NAME), anyList(), anyTestContextInitializer());
+
+            assertThatThrownBy(() -> fixture.dispatchMessage(requestMessageMokc, SCENARIO_NAME))
+                .asInstanceOf(throwable(ResponseStatusException.class))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatusCode.valueOf(503));
+
+            verifyNoChannelHandOff();
+        }
+
+        /**
+         * Simulates an execution that has started, but not answered the request yet.
+         */
         private void mockScenarioExecution() {
             doAnswer(invocation -> {
                 invocation.<Consumer<TestContext>>getArgument(3).accept(testContextMock);
@@ -354,15 +396,31 @@ class SimulatorEndpointAdapterTest {
             }).when(scenarioExecutorServiceMock).run(eq(scenarioMock), eq(SCENARIO_NAME), anyList(), anyTestContextInitializer());
         }
 
-        private void verifyNoAsynchronousHandOff() {
+        /**
+         * Simulates an execution that has answered the request with the given response, or {@code null} if it has been
+         * released without response.
+         */
+        private void mockScenarioExecutionAnsweringWith(@Nullable Message response) {
+            mockScenarioExecution();
+
+            doAnswer(invocation -> {
+                invocation.<CompletableFuture<Message>>getArgument(2).complete(response);
+                return null;
+            }).when(scenarioEndpointMock).bind(eq(testContextMock), eq(requestMessageMokc), anyFuture());
+        }
+
+        private void verifyNoChannelHandOff() {
             verify(scenarioEndpointMock, never()).add(any(), any());
             verify(scenarioEndpointMock, never()).cancel(any());
             verify(scenarioExecutorServiceMock, never()).run(any(SimulatorScenario.class), any(), anyList());
-            verify(simulatorConfigurationMock, never()).getDefaultTimeout();
         }
+    }
 
-        private static Consumer<TestContext> anyTestContextInitializer() {
-            return any();
-        }
+    private static CompletableFuture<Message> anyFuture() {
+        return any();
+    }
+
+    private static Consumer<TestContext> anyTestContextInitializer() {
+        return any();
     }
 }

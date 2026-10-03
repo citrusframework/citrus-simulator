@@ -83,6 +83,13 @@ public class SimulatorConfigurationProperties implements EnvironmentAware, Initi
     private int executorThreads = 10;
 
     /**
+     * Defines how many scenario executions may wait for a free executor thread in asynchronous mode. Further requests
+     * are answered with HTTP status 503 (Service Unavailable) right away, instead of queueing up until they time out.
+     * Defaults to unbounded.
+     */
+    private int executorQueueCapacity = Integer.MAX_VALUE;
+
+    /**
      * Optional inbound XML data dictionary mapping file which gets automatically loaded when default inbound data dictionaries are enabled. Used in generated scenarios in order to manipulate generated test data.
      */
     private String inboundXmlDictionary = "inbound-xml-dictionary.xml";

@@ -17,10 +17,12 @@
 package org.citrusframework.simulator.service.runner;
 
 import org.citrusframework.TestCase;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.report.TestListeners;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.exception.SimulatorException;
 import org.citrusframework.simulator.model.ScenarioExecution;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutorService;
@@ -33,18 +35,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.event.ContextClosedEvent;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -52,6 +58,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
 
     private static final int THREAD_POOL_SIZE = 1234;
+    private static final int QUEUE_CAPACITY = 42;
 
     @Mock
     private ExecutorService executorServiceMock;
@@ -66,6 +73,7 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         super.beforeEachSetup();
 
         doReturn(THREAD_POOL_SIZE).when(propertiesMock).getExecutorThreads();
+        doReturn(QUEUE_CAPACITY).when(propertiesMock).getExecutorQueueCapacity();
 
         fixture = new AsyncScenarioExecutorService(applicationContextMock, citrusMock, scenarioExecutionServiceMock, propertiesMock);
         setField(fixture, "executorService", executorServiceMock, ExecutorService.class);
@@ -79,13 +87,53 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
     }
 
     @Test
-    void runWithTestContextInitializerIsNotSupported() {
+    void supportsTestContextInitialization() {
+        assertThat(fixture.supportsTestContextInitialization())
+            .isTrue();
+    }
+
+    @Test
+    void handsTestContextInitializerOverToExecutorThread() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+        Consumer<TestContext> testContextInitializerMock = mock();
+
+        fixture.run(simulatorScenarioMock, scenarioName, parameters, testContextInitializerMock);
+
+        // Not applied on the calling thread
+        verifyNoInteractions(testContextInitializerMock);
+
+        ArgumentCaptor<Runnable> scenarioRunnableArgumentCaptor = captor();
+        verify(executorServiceMock).execute(scenarioRunnableArgumentCaptor.capture());
+
+        var testContextMock = mockCitrusTestContext();
+
+        // This invokes the scenario execution with the captured runnable, as the executor thread would
+        scenarioRunnableArgumentCaptor.getValue().run();
+
+        verify(testContextInitializerMock).accept(testContextMock);
+        verify(scenarioEndpointMock).release(testContextMock);
+    }
+
+    @Test
+    void completesExecutionAsFailed_andRethrows_ifExecutorQueueIsFull() {
+        Long executionId = mockScenarioExecutionCreation();
+
         var simulatorScenarioMock = mock(SimulatorScenario.class);
 
-        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters, context -> {
-        }))
-            .isInstanceOf(UnsupportedOperationException.class)
-            .hasMessage("Test context initialization is not supported in asynchronous mode");
+        var rejectedExecutionException = new RejectedExecutionException("queue is full");
+        doThrow(rejectedExecutionException).when(executorServiceMock).execute(any(Runnable.class));
+
+        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters))
+            .isSameAs(rejectedExecutionException);
+
+        ArgumentCaptor<TestResult> testResultArgumentCaptor = captor();
+        verify(scenarioExecutionServiceMock).completeScenarioExecution(eq(executionId), testResultArgumentCaptor.capture());
+
+        assertThat(testResultArgumentCaptor.getValue())
+            .extracting(TestResult::getStatus)
+            .isEqualTo(TestResult.Status.FAILURE);
     }
 
     @Test
@@ -101,7 +149,9 @@ class AsyncScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
             .extracting("executorService")
             .isInstanceOf(ThreadPoolExecutor.class)
             .hasFieldOrPropertyWithValue("corePoolSize", THREAD_POOL_SIZE)
-            .hasFieldOrPropertyWithValue("maximumPoolSize", THREAD_POOL_SIZE);
+            .hasFieldOrPropertyWithValue("maximumPoolSize", THREAD_POOL_SIZE)
+            .extracting(executor -> ((ThreadPoolExecutor) executor).getQueue().remainingCapacity())
+            .isEqualTo(QUEUE_CAPACITY);
     }
 
     @Test

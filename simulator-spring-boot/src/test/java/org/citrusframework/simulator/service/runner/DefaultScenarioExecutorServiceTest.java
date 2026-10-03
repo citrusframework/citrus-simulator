@@ -42,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -124,6 +125,43 @@ class DefaultScenarioExecutorServiceTest extends ScenarioExecutorServiceTest {
         verifyScenarioExecution(executionId, null, simulatorScenarioMock, testListenersMock);
 
         verify(simulatorScenarioMock).registerException(cause);
+    }
+
+    @Test
+    void supportsTestContextInitialization() {
+        assertThat(fixture.supportsTestContextInitialization())
+            .isTrue();
+    }
+
+    @Test
+    void releasesRequestsOfExecution_whenExecutionEnds() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+
+        var testContextMock = mockCitrusTestContext();
+
+        fixture.run(simulatorScenarioMock, scenarioName, parameters);
+
+        verify(scenarioEndpointMock).release(testContextMock);
+    }
+
+    @Test
+    void failsAndReleasesRequestsOfExecution_whenExecutionThrows() {
+        mockScenarioExecutionCreation();
+
+        var simulatorScenarioMock = getSimulatorScenarioMock();
+
+        var testContextMock = mockCitrusTestContext();
+
+        doThrow(new SimulatorException("Fail with purpose!")).when(simulatorScenarioMock).run(any(ScenarioRunner.class));
+
+        assertThatThrownBy(() -> fixture.run(simulatorScenarioMock, scenarioName, parameters))
+            .isInstanceOf(RuntimeException.class);
+
+        InOrder inOrder = inOrder(scenarioEndpointMock);
+        inOrder.verify(scenarioEndpointMock).fail(eq(testContextMock), any(RuntimeException.class));
+        inOrder.verify(scenarioEndpointMock).release(testContextMock);
     }
 
     @Test

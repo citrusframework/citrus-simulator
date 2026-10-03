@@ -56,8 +56,8 @@ public interface ScenarioExecutorService  {
 
     /**
      * Starts a new scenario instance like {@link #run(SimulatorScenario, String, List)}, but lets the caller initialize
-     * the {@link TestContext} of the execution before the scenario runs. Used to hand inbound requests to synchronous
-     * executions, see {@link #isSynchronous()}.
+     * the {@link TestContext} of the execution before the scenario runs. Used to hand inbound requests to their
+     * execution, see {@link #supportsTestContextInitialization()}.
      *
      * @param scenario               the scenario to start
      * @param name                   the name of the scenario to start
@@ -65,17 +65,27 @@ public interface ScenarioExecutorService  {
      * @param testContextInitializer invoked with the test context of the execution, before the scenario runs
      * @return the scenario execution id
      * @throws UnsupportedOperationException if this executor does not support test context initialization
+     * @see #supportsTestContextInitialization()
      */
     default Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, Consumer<TestContext> testContextInitializer) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support test context initialization");
     }
 
     /**
+     * Indicates whether this executor supports {@link #run(SimulatorScenario, String, List, Consumer) test context
+     * initialization}. Implementations returning {@code true} must invoke the initializer on the test context of the
+     * execution, and release the requests of that context once the execution has ended, see
+     * {@link org.citrusframework.simulator.scenario.ScenarioEndpoint#release}.
+     *
+     * @return {@code true} if test context initialization is supported, {@code false} otherwise
+     */
+    default boolean supportsTestContextInitialization() {
+        return false;
+    }
+
+    /**
      * Indicates whether {@link #run} only returns once the scenario has completed. Callers may then rely on any
      * response being available as soon as {@link #run} returns, instead of waiting for it.
-     * <p>
-     * Implementations returning {@code true} must support
-     * {@link #run(SimulatorScenario, String, List, Consumer) test context initialization}.
      *
      * @return {@code true} if scenarios are executed on the calling thread, {@code false} otherwise
      */

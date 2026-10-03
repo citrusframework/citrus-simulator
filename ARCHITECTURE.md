@@ -68,16 +68,17 @@ Defaults for Spring properties live in `META-INF/citrus-simulator.properties`.
    ScenarioEndpoint               → Spring bean lookup (fallback: citrus.simulator.default-scenario)
                     │                   │
                     │                   ▼
-                    │            message + CompletableFuture queued on ScenarioEndpoint (async mode;
-                    │            sync mode binds the message to the execution's TestContext instead)
+                    │            message + response future bound to the execution's TestContext
+                    │            (ScenarioEndpoint#bind; custom executors: queued on the endpoint channel)
                     │            ScenarioExecutorService.run(scenario, name, params)
                     │                   │
                     │                   ▼
                     │            ScenarioExecution persisted, ScenarioRunner created,
                     │            scenario.run(runner) executes Citrus actions
-                    │            (receive() consumes the queued message, send() completes the future)
+                    │            (receive() consumes the bound message, send() completes the future,
+                    │            the executor releases unanswered requests once the execution has ended)
                     ▼                   ▼
-          SimulatorEndpointAdapter awaits future (citrus.simulator.default-timeout)
+          SimulatorEndpointAdapter awaits future (immediate in sync mode; at most citrus.simulator.default-timeout)
                               │
                               ▼
                  response returned to the transport
@@ -97,10 +98,11 @@ Key points:
   `ScenarioParameter`s.
 - **Execution mode** is selected by `citrus.simulator.mode`: `sync` (default, one scenario at a time) or `async`
   (thread pool of `citrus.simulator.executor-threads`, required for scenarios with intermediate messages).
-  In sync mode (`ScenarioExecutorService#isSynchronous`) the diagram's queue/future hand-off is skipped: the adapter
-  binds the request to the execution's `TestContext` (`ScenarioEndpoint#bind`), runs the scenario on the request
-  thread and reads the response afterwards (`ScenarioEndpoint#unbind`) — nothing waits. Background and follow-up
-  plan: [`SCENARIO_RESPONSE_HANDLING.md`](SCENARIO_RESPONSE_HANDLING.md).
+  In both modes the request is bound to the execution's `TestContext` (`ScenarioEndpoint#bind`) and the executor
+  releases unanswered requests once the execution has ended (`ScenarioEndpoint#release`), so nobody waits for a
+  response that will never come. In sync mode the response is therefore available as soon as `run()` returns. Async
+  executions waiting for a thread can be bounded with `citrus.simulator.executor-queue-capacity` (503 when full).
+  Background: [`SCENARIO_RESPONSE_HANDLING.md`](SCENARIO_RESPONSE_HANDLING.md).
 
 ### Persistence and recording
 

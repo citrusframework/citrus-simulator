@@ -1,6 +1,6 @@
 # Scenario response handling: analysis and plan
 
-Status: analysis complete, steps A, A2 and B implemented, steps C–D open.
+Status: analysis complete, steps A, A2, B and C implemented (C without the optional servlet-async part), step D not planned.
 
 ## Problem
 
@@ -135,15 +135,43 @@ Behaviour notes:
 Verification (A, A2 and B together): `./mvnw -pl simulator-spring-boot install` and
 `./mvnw -f simulator-samples/pom.xml verify` green.
 
-### C. Async mode hardening (minor release)
+### C. Async mode hardening (minor release) — **implemented**
 
-- Bounded executor queue with rejection → 503, instead of silent queueing until timeout.
-- Stop blocking on missing responses in async mode: when an execution ends without responding, complete the future
-  bound to *its* `TestContext` with "no response". Also covers actions failing before the request was received.
-- Fix the double `registerException` / FIFO `fail(Throwable)` for generic exceptions (finding 3) by failing the
-  context-bound future instead of the oldest one.
-- Optional: for HTTP, return the future to Spring MVC (servlet async, `CompletableFuture<ResponseEntity<?>>`) instead
-  of the blocking Citrus `HttpMessageController`, freeing Tomcat threads while waiting. SOAP and JMS stay blocking.
+Async mode now binds the initiating request to its execution as well, exactly like sync mode (B); the message channel
+and its futures remain in use for intermediate messages (`correlation()`) only.
+
+- `DefaultScenarioExecutorService#supportsTestContextInitialization()` returns `true`, also for
+  `AsyncScenarioExecutorService`: the test context initializer is taken from the calling thread and handed over to the
+  executor thread (`takeTestContextInitializer()` / `runWithTestContextInitializer(...)`, protected for subclasses).
+  `ScenarioExecutorService#supportsTestContextInitialization()` (new default method, `false`) tells callers whether
+  they can rely on that; custom executors keep the previous channel-based hand-off.
+- `ScenarioEndpoint#bind(context, request, responseFuture)` / `#release(context)` replace B's `bind`/`unbind` (B is
+  unreleased). The executor releases the requests of an execution once it has ended — in a `finally`, after
+  `runner.stop()` — so unanswered requests (bound or intermediate) are completed with "no response" right away.
+  Exceptions escaping the execution fail its unanswered requests first (555).
+- `SimulatorEndpointAdapter` uses one code path for both modes: bind, run, await the future. In sync mode the future is
+  already completed when the executor returns; in async mode it is completed as soon as the scenario responds, fails or
+  ends. Only executions still running after `default-timeout` are answered without response, as before.
+- **Finding 3 fixed:** `AsyncScenarioExecutorService` no longer calls `registerException` a second time from
+  `exceptionally(...)`, which could fail the oldest queued request of *another* execution. Failures are registered
+  within the execution, attributed to its own requests; failures escaping it are logged.
+- **Finding 4 fixed (opt-in):** `citrus.simulator.executor-queue-capacity` (new, default unbounded = previous
+  behaviour) bounds the executor queue. Rejected executions are completed as failed in the database and answered with
+  HTTP 503 (Service Unavailable) right away, instead of queueing up until the caller times out.
+- Not done (optional): returning the future to Spring MVC (servlet async) for HTTP, to free Tomcat threads while
+  waiting in async mode. With immediate completion on response/failure/end, the remaining wait is the scenario's own
+  run time, so the benefit is smaller now; worth it only for long-running async scenarios under high load.
+
+Non-breaking: the new property defaults to the previous behaviour, new interface methods have defaults, custom executors
+keep working through the channel path. Observable changes (async mode): requests whose scenario ends without
+responding are answered immediately instead of after `default-timeout`.
+
+Also fixed in passing: `concepts-advanced.adoc` documented a non-existent `citrus.simulator.executor.threads` property
+(actual: `executor-threads`).
+
+Verification: `./mvnw -pl simulator-spring-boot install` (388 unit, 336 integration tests) and
+`./mvnw -f simulator-samples/pom.xml verify` (all 11 samples) green. `AsynchronousSimulatorEndpointAdapterIT`
+"no response": ~6 s → ~1.2 s.
 
 ### D. Sync only (major release, not recommended)
 

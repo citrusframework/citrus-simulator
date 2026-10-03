@@ -39,6 +39,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -49,6 +50,7 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.citrusframework.simulator.endpoint.SimulationFailedUnexpectedlyException.EXCEPTION_TYPE;
 import static org.citrusframework.util.StringUtils.hasText;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter {
 
@@ -74,6 +76,10 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         return new ResponseStatusException(555, "Simulation failed with an Exception!", e);
     }
 
+    private static ResponseStatusException getServiceUnavailableException(RejectedExecutionException e) {
+        return new ResponseStatusException(SERVICE_UNAVAILABLE, "Simulator is busy, no scenario executor available!", e);
+    }
+
     @Override
     protected Message handleMessageInternal(Message message) {
         CorrelationHandler handler = handlerRegistry.findHandlerFor(message);
@@ -89,7 +95,7 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         CompletableFuture<Message> responseFuture = new CompletableFuture<>();
         handler.getScenarioEndpoint().add(request, responseFuture);
 
-        return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName(), handler.getScenarioEndpoint());
+        return awaitResponseOrThrowException(responseFuture, handler.getScenarioEndpoint().getName(), () -> handler.getScenarioEndpoint().cancel(responseFuture));
     }
 
     @Override
@@ -105,58 +111,69 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
 
         scenario.getScenarioEndpoint().setName(scenarioName);
 
-        if (scenarioExecutorService.isSynchronous()) {
-            return dispatchMessageSynchronously(message, scenario, scenarioName);
+        if (scenarioExecutorService.supportsTestContextInitialization()) {
+            return dispatchMessageToExecution(message, scenario, scenarioName);
         }
 
-        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
-        scenario.getScenarioEndpoint().add(message, responseFuture);
-
-        try {
-            scenarioExecutorService.run(scenario, scenarioName, emptyList());
-        } catch (Exception e) {
-            scenario.getScenarioEndpoint().cancel(responseFuture);
-            throw getResponseStatusException(e);
-        }
-
-        return awaitResponseOrThrowException(responseFuture, scenarioName, scenario.getScenarioEndpoint());
+        return dispatchMessageThroughChannel(message, scenario, scenarioName);
     }
 
     /**
-     * Executes the scenario on the calling thread, handing over the request bound to the test context of the execution.
-     * The scenario has completed once the executor returns, so its response is available right away - no message
-     * queue, no future and no waiting involved.
+     * Hands the request to its scenario execution, bound to the test context of that execution. The executor releases
+     * the request once the execution has ended, so the response future is completed at the latest then - nobody waits
+     * for a response that will never be sent. For synchronous executions it has already been completed when the
+     * executor returns.
      */
-    private @Nullable Message dispatchMessageSynchronously(Message request, SimulatorScenario scenario, String scenarioName) {
+    private @Nullable Message dispatchMessageToExecution(Message request, SimulatorScenario scenario, String scenarioName) {
         ScenarioEndpoint scenarioEndpoint = scenario.getScenarioEndpoint();
+        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
         AtomicReference<TestContext> executionContext = new AtomicReference<>();
 
-        Message response;
         try {
             scenarioExecutorService.run(scenario, scenarioName, emptyList(), context -> {
                 executionContext.set(context);
-                scenarioEndpoint.bind(context, request);
+                scenarioEndpoint.bind(context, request, responseFuture);
             });
+        } catch (RejectedExecutionException e) {
+            throw getServiceUnavailableException(e);
         } catch (Exception e) {
+            scenarioEndpoint.release(executionContext.get());
             throw getResponseStatusException(e);
-        } finally {
-            response = scenarioEndpoint.unbind(executionContext.get());
         }
 
-        if (!handleResponse) {
-            return null;
+        // Late responses after a timeout are discarded with the request, once the execution releases it
+        return awaitResponseOrThrowException(responseFuture, scenarioName, () -> {
+        });
+    }
+
+    /**
+     * Hands the request to its scenario execution through the message channel of the scenario endpoint. Used for
+     * executors not supporting {@link ScenarioExecutorService#supportsTestContextInitialization() test context
+     * initialization}.
+     */
+    private @Nullable Message dispatchMessageThroughChannel(Message request, SimulatorScenario scenario, String scenarioName) {
+        ScenarioEndpoint scenarioEndpoint = scenario.getScenarioEndpoint();
+        CompletableFuture<Message> responseFuture = new CompletableFuture<>();
+        scenarioEndpoint.add(request, responseFuture);
+
+        try {
+            scenarioExecutorService.run(scenario, scenarioName, emptyList());
+        } catch (RejectedExecutionException e) {
+            scenarioEndpoint.cancel(responseFuture);
+            throw getServiceUnavailableException(e);
+        } catch (Exception e) {
+            scenarioEndpoint.cancel(responseFuture);
+            throw getResponseStatusException(e);
         }
 
-        if (isNull(response)) {
+        if (scenarioExecutorService.isSynchronous() && !responseFuture.isDone()) {
+            // The scenario has already completed without responding, waiting would only block the calling thread
+            scenarioEndpoint.cancel(responseFuture);
             logger.warn("No response for scenario '{}'", scenarioName);
             return null;
         }
 
-        if (EXCEPTION_TYPE.equals(response.getType())) {
-            return handleSimulationFailure(response.getPayload(Throwable.class));
-        }
-
-        return response;
+        return awaitResponseOrThrowException(responseFuture, scenarioName, () -> scenarioEndpoint.cancel(responseFuture));
     }
 
     /**
@@ -183,10 +200,15 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
         return nonNull(fallbackEndpointAdapter) && !(fallbackEndpointAdapter instanceof EmptyResponseEndpointAdapter);
     }
 
-    private Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName, ScenarioEndpoint scenarioEndpoint) {
+    private @Nullable Message awaitResponseOrThrowException(CompletableFuture<Message> responseFuture, String scenarioName, Runnable cancellation) {
         try {
             if (handleResponse) {
                 var message = responseFuture.get(simulatorConfiguration.getDefaultTimeout(), MILLISECONDS);
+
+                if (isNull(message)) {
+                    logger.warn("No response for scenario '{}'", scenarioName);
+                    return null;
+                }
 
                 if (EXCEPTION_TYPE.equals(message.getType())) {
                     return handleSimulationFailure(message.getPayload(Throwable.class));
@@ -197,15 +219,15 @@ public class SimulatorEndpointAdapter extends RequestDispatchingEndpointAdapter 
                 return null;
             }
         } catch (TimeoutException e) {
-            scenarioEndpoint.cancel(responseFuture);
+            cancellation.run();
             logger.warn("No response for scenario '{}'", scenarioName);
             return null;
         } catch (InterruptedException e) {
-            scenarioEndpoint.cancel(responseFuture);
+            cancellation.run();
             currentThread().interrupt();
             throw new SimulatorException(e);
         } catch (ExecutionException e) {
-            scenarioEndpoint.cancel(responseFuture);
+            cancellation.run();
             throw new SimulatorException(e);
         }
     }

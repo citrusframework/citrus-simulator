@@ -71,8 +71,8 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     private final Queue<CompletableFuture<Message>> orderedFutures = new LinkedBlockingQueue<>();
 
     /**
-     * Requests bound to the {@link TestContext} of a synchronous scenario execution, see {@link #bind}. These bypass the
-     * message channel and the futures above entirely.
+     * Requests bound to the {@link TestContext} of their scenario execution, see {@link #bind}. These bypass the message
+     * channel and the futures above, which remain in use for intermediate messages only.
      */
     private final Map<TestContext, Exchange> exchanges = synchronizedMap(new IdentityHashMap<>());
 
@@ -97,34 +97,43 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     /**
-     * Binds a request to the {@link TestContext} of a scenario execution that runs on the calling thread. The first
-     * {@link #receive} within that context consumes the request, the first {@link #send} answers it. The response is
-     * collected using {@link #unbind} once the execution has completed; nobody waits for it.
+     * Binds a request to the {@link TestContext} of the scenario execution handling it. The first {@link #receive} within
+     * that context consumes the request, the first {@link #send} completes the {@code responseFuture} with the
+     * response, {@link #fail(TestContext, Throwable)} completes it with a {@link SimulationFailedUnexpectedlyException}.
+     * Once the execution has ended, {@link #release} completes it with {@code null} if it has not been answered.
      * <p>
      * Requests are matched by context identity, so concurrent executions sharing this endpoint never see each other's
      * messages.
      *
-     * @param context the test context of the scenario execution
-     * @param request the request to be handled by the scenario execution
+     * @param context        the test context of the scenario execution
+     * @param request        the request to be handled by the scenario execution
+     * @param responseFuture completed with the response to the request
      */
-    public void bind(TestContext context, Message request) {
-        exchanges.put(context, new Exchange(request));
+    public void bind(TestContext context, Message request, CompletableFuture<Message> responseFuture) {
+        exchanges.put(context, new Exchange(request, responseFuture));
     }
 
     /**
-     * Removes the request bound to the given {@link TestContext} using {@link #bind}.
+     * Releases all requests of the given {@link TestContext}, once its scenario execution has ended: the request bound
+     * using {@link #bind} as well as an intermediate message received from the message channel. Requests that have
+     * not been answered are completed with {@code null}, i.e. "no response", so that nobody waits for a response that
+     * will never be sent.
      *
-     * @param context the test context of the completed scenario execution, may be {@code null}
-     * @return the response sent within that context, a {@link SimulationFailedUnexpectedlyException} if the execution
-     * failed before responding, or {@code null} if the request has not been answered
+     * @param context the test context of the ended scenario execution, may be {@code null}
      */
-    public @Nullable Message unbind(@Nullable TestContext context) {
+    public void release(@Nullable TestContext context) {
         if (isNull(context)) {
-            return null;
+            return;
         }
 
-        Exchange exchange = exchanges.remove(context);
-        return nonNull(exchange) ? exchange.getResponse() : null;
+        Optional.ofNullable(activeFutures.remove(context))
+            .ifPresent(future -> {
+                cancel(future);
+                future.complete(null);
+            });
+
+        Optional.ofNullable(exchanges.remove(context))
+            .ifPresent(Exchange::release);
     }
 
     /**
@@ -237,9 +246,9 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     /**
-     * Fails the request handled within the given {@link TestContext}: either the request received from the message
-     * channel, or the request bound using {@link #bind}. Does nothing if that request has already been answered, so
-     * that concurrent executions sharing this endpoint are never affected.
+     * Fails the requests handled within the given {@link TestContext}: the request bound using {@link #bind} as well as
+     * an intermediate message received from the message channel. Requests that have already been answered are not
+     * affected, neither are concurrent executions sharing this endpoint.
      *
      * @param context the test context of the failed scenario execution
      * @param e       the cause of the failure
@@ -247,20 +256,22 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
      * such request is known
      */
     public boolean fail(TestContext context, Throwable e) {
+        boolean attributed = false;
+
         CompletableFuture<Message> future = activeFutures.remove(context);
         if (nonNull(future)) {
             cancel(future);
             future.complete(new SimulationFailedUnexpectedlyException(e));
-            return true;
+            attributed = true;
         }
 
         Exchange exchange = exchanges.get(context);
         if (nonNull(exchange)) {
             exchange.respond(new SimulationFailedUnexpectedlyException(e));
-            return true;
+            attributed = true;
         }
 
-        return false;
+        return attributed;
     }
 
     private void messageSent(Message message, TestContext context) {
@@ -276,18 +287,19 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
     }
 
     /**
-     * A request bound to a scenario execution and its response. Synchronized, because test action containers may
-     * execute actions of the same {@link TestContext} on different threads.
+     * A request bound to a scenario execution and the future of its response. Synchronized, because test action
+     * containers may execute actions of the same {@link TestContext} on different threads.
      */
     private static final class Exchange {
 
         private final Message request;
+        private final CompletableFuture<Message> responseFuture;
 
         private boolean received = false;
-        private @Nullable Message response;
 
-        private Exchange(Message request) {
+        private Exchange(Message request, CompletableFuture<Message> responseFuture) {
             this.request = request;
+            this.responseFuture = responseFuture;
         }
 
         /**
@@ -305,17 +317,15 @@ public class ScenarioEndpoint extends AbstractEndpoint implements Producer, Cons
         /**
          * @return {@code true} if the response has been accepted, {@code false} if the request has already been answered
          */
-        synchronized boolean respond(Message response) {
-            if (nonNull(this.response)) {
-                return false;
-            }
-
-            this.response = response;
-            return true;
+        boolean respond(Message response) {
+            return responseFuture.complete(response);
         }
 
-        synchronized @Nullable Message getResponse() {
-            return response;
+        /**
+         * Answers the request with "no response", unless it has already been answered.
+         */
+        void release() {
+            responseFuture.complete(null);
         }
     }
 }

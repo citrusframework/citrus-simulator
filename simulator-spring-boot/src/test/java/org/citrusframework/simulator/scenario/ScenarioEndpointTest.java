@@ -45,6 +45,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentCaptor.captor;
 import static org.mockito.ArgumentMatchers.any;
@@ -257,7 +258,7 @@ class ScenarioEndpointTest {
             var testContext = mockTestContext();
             var request = mock(Message.class);
 
-            fixture.bind(testContext, request);
+            fixture.bind(testContext, request, new CompletableFuture<>());
 
             assertThat(fixture.receive(testContext, 0))
                 .isSameAs(request);
@@ -269,7 +270,7 @@ class ScenarioEndpointTest {
         void shouldReceiveBoundRequestOnlyOnce() {
             var testContext = mockTestContext();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), new CompletableFuture<>());
             fixture.receive(testContext, 0);
 
             assertThatThrownBy(() -> fixture.receive(testContext, 0))
@@ -279,7 +280,7 @@ class ScenarioEndpointTest {
 
         @Test
         void shouldNotReceiveRequestBoundToOtherContext() {
-            fixture.bind(mock(TestContext.class), mock(Message.class));
+            fixture.bind(mock(TestContext.class), mock(Message.class), new CompletableFuture<>());
 
             assertThatThrownBy(() -> fixture.receive(mock(TestContext.class), 0))
                 .isInstanceOf(SimulatorException.class)
@@ -287,50 +288,33 @@ class ScenarioEndpointTest {
         }
 
         @Test
-        void shouldReturnResponse_onUnbind() {
+        void shouldCompleteResponseFuture_onSend() {
             var testContext = mockTestContext();
             var response = mock(Message.class);
+            var responseFuture = new CompletableFuture<Message>();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), responseFuture);
             fixture.receive(testContext, 0);
             fixture.send(response, testContext);
 
-            assertThat(fixture.unbind(testContext))
-                .isSameAs(response);
-            assertThat(fixture.unbind(testContext))
-                .isNull();
+            assertThat(responseFuture)
+                .isCompletedWithValue(response);
 
             verify(endpointMessageHandlerMock).handleSentMessage(response, testContext);
-        }
-
-        @Test
-        void shouldReturnNull_onUnbind_withoutResponse() {
-            var testContext = mockTestContext();
-
-            fixture.bind(testContext, mock(Message.class));
-            fixture.receive(testContext, 0);
-
-            assertThat(fixture.unbind(testContext))
-                .isNull();
-        }
-
-        @Test
-        void shouldReturnNull_onUnbind_withoutContext() {
-            assertThat(fixture.unbind(null))
-                .isNull();
         }
 
         @Test
         void shouldKeepFirstResponse() {
             var testContext = mockTestContext();
             var response = mock(Message.class);
+            var responseFuture = new CompletableFuture<Message>();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), responseFuture);
             fixture.send(response, testContext);
             fixture.send(mock(Message.class), testContext);
 
-            assertThat(fixture.unbind(testContext))
-                .isSameAs(response);
+            assertThat(responseFuture)
+                .isCompletedWithValue(response);
         }
 
         @Test
@@ -339,7 +323,7 @@ class ScenarioEndpointTest {
             CompletableFuture<Message> queuedResponseFuture = mock();
 
             fixture.add(mock(Message.class), queuedResponseFuture);
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), new CompletableFuture<>());
 
             fixture.send(mock(Message.class), testContext);
 
@@ -351,9 +335,10 @@ class ScenarioEndpointTest {
             var testContext = mockTestContext();
             var boundResponse = mock(Message.class);
             var intermediateResponse = mock(Message.class);
+            var boundResponseFuture = new CompletableFuture<Message>();
             CompletableFuture<Message> intermediateResponseFuture = mock();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), boundResponseFuture);
             fixture.receive(testContext, 0);
             fixture.send(boundResponse, testContext);
 
@@ -362,22 +347,23 @@ class ScenarioEndpointTest {
             fixture.send(intermediateResponse, testContext);
 
             verify(intermediateResponseFuture).complete(intermediateResponse);
-            assertThat(fixture.unbind(testContext))
-                .isSameAs(boundResponse);
+            assertThat(boundResponseFuture)
+                .isCompletedWithValue(boundResponse);
         }
 
         @Test
-        void shouldFailBoundRequest() {
+        void shouldFailBoundRequest() throws Exception {
             var testContext = mockTestContext();
             var cause = new CitrusRuntimeException("boom");
+            var responseFuture = new CompletableFuture<Message>();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), responseFuture);
             fixture.receive(testContext, 0);
 
             assertThat(fixture.fail(testContext, cause))
                 .isTrue();
 
-            assertThat(fixture.unbind(testContext))
+            assertThat(responseFuture.get(0, MILLISECONDS))
                 .isInstanceOf(SimulationFailedUnexpectedlyException.class)
                 .extracting(message -> message.getPayload(Throwable.class))
                 .isSameAs(cause);
@@ -387,15 +373,35 @@ class ScenarioEndpointTest {
         void shouldNotOverrideResponse_onFail() {
             var testContext = mockTestContext();
             var response = mock(Message.class);
+            var responseFuture = new CompletableFuture<Message>();
 
-            fixture.bind(testContext, mock(Message.class));
+            fixture.bind(testContext, mock(Message.class), responseFuture);
             fixture.send(response, testContext);
 
             assertThat(fixture.fail(testContext, new CitrusRuntimeException()))
                 .isTrue();
 
-            assertThat(fixture.unbind(testContext))
-                .isSameAs(response);
+            assertThat(responseFuture)
+                .isCompletedWithValue(response);
+        }
+
+        @Test
+        void shouldFailBoundAndIntermediateRequest() {
+            var testContext = mockTestContext();
+            var boundResponseFuture = new CompletableFuture<Message>();
+            CompletableFuture<Message> intermediateResponseFuture = mock();
+
+            fixture.bind(testContext, mock(Message.class), boundResponseFuture);
+            fixture.receive(testContext, 0);
+
+            fixture.add(mock(Message.class), intermediateResponseFuture);
+            fixture.receive(testContext, 0);
+
+            fixture.fail(testContext, new CitrusRuntimeException());
+
+            verify(intermediateResponseFuture).complete(any(SimulationFailedUnexpectedlyException.class));
+            assertThat(boundResponseFuture.getNow(null))
+                .isInstanceOf(SimulationFailedUnexpectedlyException.class);
         }
 
         @Test
@@ -411,10 +417,11 @@ class ScenarioEndpointTest {
                     var testContext = mockTestContext();
                     var request = mock(Message.class);
                     var response = mock(Message.class);
+                    var responseFuture = new CompletableFuture<Message>();
 
                     executorService.submit(() -> {
                         try {
-                            fixture.bind(testContext, request);
+                            fixture.bind(testContext, request, responseFuture);
 
                             if (fixture.receive(testContext, 0) != request) {
                                 mismatches.incrementAndGet();
@@ -422,8 +429,9 @@ class ScenarioEndpointTest {
 
                             parkNanos(Duration.ofMillis(ThreadLocalRandom.current().nextInt(10, 50)).toNanos());
                             fixture.send(response, testContext);
+                            fixture.release(testContext);
 
-                            if (fixture.unbind(testContext) != response) {
+                            if (responseFuture.getNow(null) != response) {
                                 mismatches.incrementAndGet();
                             }
                         } finally {
@@ -439,6 +447,99 @@ class ScenarioEndpointTest {
             } finally {
                 executorService.shutdownNow();
             }
+        }
+    }
+
+    @Nested
+    class Release {
+
+        @Test
+        void shouldAnswerUnansweredBoundRequestWithoutResponse() {
+            var testContext = mockTestContext();
+            var responseFuture = new CompletableFuture<Message>();
+
+            fixture.bind(testContext, mock(Message.class), responseFuture);
+            fixture.receive(testContext, 0);
+
+            fixture.release(testContext);
+
+            assertThat(responseFuture)
+                .isCompletedWithValue(null);
+        }
+
+        @Test
+        void shouldAnswerBoundRequestThatHasNeverBeenReceivedWithoutResponse() {
+            var testContext = mock(TestContext.class);
+            var responseFuture = new CompletableFuture<Message>();
+
+            fixture.bind(testContext, mock(Message.class), responseFuture);
+
+            fixture.release(testContext);
+
+            assertThat(responseFuture)
+                .isCompletedWithValue(null);
+        }
+
+        @Test
+        void shouldNotOverrideResponse() {
+            var testContext = mockTestContext();
+            var response = mock(Message.class);
+            var responseFuture = new CompletableFuture<Message>();
+
+            fixture.bind(testContext, mock(Message.class), responseFuture);
+            fixture.send(response, testContext);
+
+            fixture.release(testContext);
+
+            assertThat(responseFuture)
+                .isCompletedWithValue(response);
+        }
+
+        @Test
+        void shouldRemoveBoundRequest() {
+            var testContext = mock(TestContext.class);
+            var responseFuture = new CompletableFuture<Message>();
+
+            fixture.bind(testContext, mock(Message.class), responseFuture);
+            fixture.release(testContext);
+
+            assertThatThrownBy(() -> fixture.receive(testContext, 0))
+                .isInstanceOf(SimulatorException.class)
+                .hasMessage("Failed to receive scenario inbound message");
+        }
+
+        @Test
+        void shouldAnswerUnansweredIntermediateRequestWithoutResponse() {
+            var testContext = mockTestContext();
+            CompletableFuture<Message> intermediateResponseFuture = mock();
+
+            fixture.add(mock(Message.class), intermediateResponseFuture);
+            fixture.receive(testContext, 0);
+
+            fixture.release(testContext);
+
+            verify(intermediateResponseFuture).complete(null);
+        }
+
+        @Test
+        void shouldNotTouchRequestsOfOtherContexts() {
+            var responseFuture = new CompletableFuture<Message>();
+            CompletableFuture<Message> queuedResponseFuture = mock();
+
+            fixture.bind(mock(TestContext.class), mock(Message.class), responseFuture);
+            fixture.add(mock(Message.class), queuedResponseFuture);
+
+            fixture.release(mock(TestContext.class));
+
+            assertThat(responseFuture)
+                .isNotDone();
+            verifyNoInteractions(queuedResponseFuture);
+        }
+
+        @Test
+        void shouldIgnoreMissingContext() {
+            assertThatCode(() -> fixture.release(null))
+                .doesNotThrowAnyException();
         }
     }
 
