@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.citrusframework.Citrus;
 import org.citrusframework.simulator.config.SimulatorConfigurationProperties;
 import org.citrusframework.simulator.model.ScenarioParameter;
+import org.citrusframework.simulator.model.TestResult;
 import org.citrusframework.simulator.scenario.SimulatorScenario;
 import org.citrusframework.simulator.service.ScenarioExecutionService;
 import org.slf4j.Logger;
@@ -33,9 +34,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.citrusframework.TestResult.failed;
 
 /**
  * Provides an asynchronous implementation of the {@link org.citrusframework.simulator.service.ScenarioExecutorService}
@@ -46,7 +52,8 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
  * This service is conditionally enabled when the {@code citrus.simulator.mode} property is set to {@code async},
  * providing a more flexible and non-blocking way to handle scenario executions. It leverages a fixed thread pool, the
  * size of which is determined by the {@code executorThreads} property from {@link SimulatorConfigurationProperties}, to
- * manage and execute scenario tasks.
+ * manage and execute scenario tasks. Executions waiting for a free thread are queued, up to the
+ * {@code executorQueueCapacity}; further executions are rejected with a {@link RejectedExecutionException}.
  * <p>
  * This class also implements {@link ApplicationListener} for {@link ContextClosedEvent} and {@link DisposableBean} to
  * ensure proper shutdown of the executor service during application shutdown, preventing potential memory leaks or
@@ -66,13 +73,19 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncScenarioExecutorService.class);
 
+    private final ScenarioExecutionService scenarioExecutionService;
     private final ExecutorService executorService;
 
     public AsyncScenarioExecutorService(ApplicationContext applicationContext, Citrus citrus, ScenarioExecutionService scenarioExecutionService, SimulatorConfigurationProperties properties) {
         super(applicationContext, citrus, scenarioExecutionService);
 
-        this.executorService = newFixedThreadPool(
+        this.scenarioExecutionService = scenarioExecutionService;
+        this.executorService = new ThreadPoolExecutor(
             properties.getExecutorThreads(),
+            properties.getExecutorThreads(),
+            0L,
+            MILLISECONDS,
+            new LinkedBlockingQueue<>(properties.getExecutorQueueCapacity()),
             new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("execution-svc-thread-%d")
@@ -101,6 +114,14 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
     }
 
     /**
+     * Scenarios are executed on the executor service, {@link #run} returns before they have completed.
+     */
+    @Override
+    public boolean isSynchronous() {
+        return false;
+    }
+
+    /**
      * Overrides the {@link DefaultScenarioExecutorService#startScenario(Long, String, SimulatorScenario, List)} method
      * to execute the scenario asynchronously using the executor service.
      *
@@ -115,16 +136,32 @@ public class AsyncScenarioExecutorService extends DefaultScenarioExecutorService
     }
 
     /**
-     * Submits the scenario execution task to the executor service for asynchronous execution.
+     * Submits the scenario execution task to the executor service for asynchronous execution, handing over the test
+     * context initializer of the calling thread, if any.
+     * <p>
+     * Failures are registered within the execution itself, attributed to its own requests. Failures escaping the
+     * execution are only logged here, as they cannot be attributed to a request anymore.
      *
      * @param executionId          the unique identifier for the scenario execution
      * @param name                 the name of the scenario to start
      * @param scenario             the scenario instance to execute
      * @param scenarioParameters   the list of parameters to pass to the scenario when starting
+     * @throws RejectedExecutionException if the executor queue is full, the execution is then completed as failed
      */
     private void startScenarioAsync(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
-       runAsync(() -> super.startScenario(executionId, name, scenario, scenarioParameters), executorService)
-           .exceptionally(scenario::registerException);
+        var testContextInitializer = takeTestContextInitializer();
+
+        try {
+            runAsync(() -> runWithTestContextInitializer(testContextInitializer, () -> super.startScenario(executionId, name, scenario, scenarioParameters)), executorService)
+                .exceptionally(e -> {
+                    logger.error("Scenario execution failed: {}!", name, e);
+                    return null;
+                });
+        } catch (RejectedExecutionException e) {
+            logger.warn("Rejected scenario '{}', executor queue is full", name);
+            scenarioExecutionService.completeScenarioExecution(executionId, new TestResult(failed(format("Scenario(%s)", name), getClass().getSimpleName(), e)));
+            throw e;
+        }
     }
 
     private void shutdownExecutor() {
