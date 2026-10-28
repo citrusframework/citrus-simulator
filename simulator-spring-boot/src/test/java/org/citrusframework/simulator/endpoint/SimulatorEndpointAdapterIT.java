@@ -17,7 +17,7 @@
 package org.citrusframework.simulator.endpoint;
 
 import org.assertj.core.api.ThrowingConsumer;
-import org.citrusframework.context.TestContextFactory;
+import org.citrusframework.TestAction;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.Message;
 import org.citrusframework.simulator.IntegrationTest;
@@ -26,6 +26,7 @@ import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
 import org.citrusframework.simulator.scenario.ScenarioRunner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,8 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.citrusframework.actions.FailAction.Builder.fail;
 import static org.assertj.core.api.InstanceOfAssertFactories.throwable;
 
 @IntegrationTest
@@ -46,6 +49,7 @@ abstract class SimulatorEndpointAdapterIT {
     private static final String NO_RESPONSE_SCENARIO_NAME = "SimulatorEndpointAdapterIT:no-response-scenario";
     private static final String SUCCESS_SCENARIO_NAME = "SimulatorEndpointAdapterIT:success-scenario";
     private static final String FAIL_SCENARIO_NAME = "SimulatorEndpointAdapterIT:fail-scenario";
+    private static final String FAILING_ACTION_SCENARIO_NAME = "SimulatorEndpointAdapterIT:failing-action-scenario";
 
     @Mock
     private Message messageMock;
@@ -67,6 +71,22 @@ abstract class SimulatorEndpointAdapterIT {
             .isInstanceOf(DefaultMessage.class);
     }
 
+    /**
+     * A failing test action must answer immediately, instead of blocking until the default timeout (5 seconds).
+     */
+    @Test
+    @Timeout(value = 2, unit = SECONDS)
+    void dispatchMessage_throwsResponseStatusExceptionImmediately_ifTestActionFails() {
+        assertThatThrownBy(() -> fixture.dispatchMessage(messageMock, FAILING_ACTION_SCENARIO_NAME))
+            .asInstanceOf(throwable(ResponseStatusException.class))
+            .satisfies(
+                e -> assertThat(e).extracting(ResponseStatusException::getStatusCode)
+                    .isEqualTo(HttpStatusCode.valueOf(555)),
+                e -> assertThat(e).rootCause()
+                    .hasMessageContaining(FAIL_WITH_PURPOSE)
+            );
+    }
+
     void verifyFailingScenarioThrowsResponseStatusException(ThrowingConsumer<ResponseStatusException> exceptionAssert) {
         assertThatThrownBy(() -> fixture.dispatchMessage(messageMock, FAIL_SCENARIO_NAME))
             .asInstanceOf(throwable(ResponseStatusException.class))
@@ -86,16 +106,19 @@ abstract class SimulatorEndpointAdapterIT {
     @Scenario(SUCCESS_SCENARIO_NAME)
     private static class SuccessScenario extends AbstractSimulatorScenario {
 
-        private final TestContextFactory testContextFactory;
-
-        private SuccessScenario(TestContextFactory testContextFactory) {
-            this.testContextFactory = testContextFactory;
+        @Override
+        public void run(ScenarioRunner runner) {
+            runner.$((TestAction) context -> getScenarioEndpoint().send(new DefaultMessage(), context));
         }
+    }
+
+    @Scenario(FAILING_ACTION_SCENARIO_NAME)
+    private static class FailingActionScenario extends AbstractSimulatorScenario {
 
         @Override
         public void run(ScenarioRunner runner) {
-            var context = testContextFactory.getObject();
-            getScenarioEndpoint().send(new DefaultMessage(), context);
+            runner.$((TestAction) context -> getScenarioEndpoint().receive(context));
+            runner.$(fail(FAIL_WITH_PURPOSE));
         }
     }
 

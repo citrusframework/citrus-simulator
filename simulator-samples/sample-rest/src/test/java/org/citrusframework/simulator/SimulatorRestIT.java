@@ -262,8 +262,8 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     }
 
     /**
-     * Sends a request to the server, expecting it to purposefully fail a simulation. The response code must therefore
-     * be {@link HttpStatus#OK}.
+     * Sends a request to the server, expecting it to purposefully fail a simulation. The response should indicate the
+     * failed simulation, returning the custom HTTP status code 555 (asserted as {@link HttpStatus#INTERNAL_SERVER_ERROR}).
      *
      * @see org.citrusframework.simulator.sample.scenario.FailScenario
      */
@@ -271,11 +271,25 @@ public class SimulatorRestIT extends TestNGCitrusSpringSupport {
     public void testSimulationFailingExpectantly() {
         $(http().client(simulatorClient)
             .send()
-            .get("fail"));
+            .get("fail")
+            .message()
+            .accept(APPLICATION_JSON_VALUE));
 
         $(http().client(simulatorClient)
             .receive()
-            .response(OK));
+            .response(INTERNAL_SERVER_ERROR)
+            .message()
+            .body(
+                // language=json
+                """
+                    {
+                      "timestamp":"@ignore@",
+                      "status":555,
+                      "error":"Http Status 555",
+                      "path":"/services/rest/simulator/fail"
+                    }
+                    """
+            ));
 
         // Make sure we receive exactly one record using "count" resources
         $(http().client(apiClient)

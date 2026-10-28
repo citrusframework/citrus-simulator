@@ -27,12 +27,11 @@ import static org.citrusframework.actions.EchoAction.Builder.echo;
 import static org.citrusframework.actions.FailAction.Builder.fail;
 
 /**
- * This scenario fails expectantly, using the {@link org.citrusframework.actions.FailAction.Builder#fail(String)}
- * method. From the view point of a {@link SimulatorScenario}, there is nothing wrong with it. It should therefore be
- * viewed as a "successful simulation".
+ * This scenario fails on purpose, using the {@link org.citrusframework.actions.FailAction.Builder#fail(String)}
+ * method. Like any failing test action (e.g. a failed message validation), this results in a failed
+ * {@link SimulatorScenario}, answered with the custom HTTP status code 555.
  * <p>
- * In contrary to this, the {@link ThrowScenario} does fail in an "uncontrolled" manner (by throwing an exception at
- * runtime), therefore results in a "failed simulation".
+ * See {@link ThrowScenario} for a scenario failing with an exception at runtime, which results in the same response.
  */
 @Scenario("Fail")
 @RequestMapping(value = "/services/rest/simulator/fail", method = RequestMethod.GET)

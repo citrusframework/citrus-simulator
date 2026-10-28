@@ -27,9 +27,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import static org.citrusframework.actions.EchoAction.Builder.echo;
 
 /**
- * This scenario fails at runtime, unexpectedly. It must therefore be reported as failed {@link SimulatorScenario}.
+ * This scenario fails at runtime, unexpectedly. It must therefore be reported as failed {@link SimulatorScenario},
+ * answered with the custom HTTP status code 555.
  * <p>
- * On the other hand, if a simulation fails on purpose, see {@link FailScenario}, it must be a "successful simulation".
+ * See {@link FailScenario} for a scenario failing on purpose, using a failing test action.
  */
 @Scenario("Throw")
 @RequestMapping(value = "/services/rest/simulator/throw", method = RequestMethod.GET)

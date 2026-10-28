@@ -33,8 +33,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.citrusframework.base.annotations.CitrusAnnotations.injectAll;
 import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID;
 
@@ -63,6 +65,13 @@ import static org.citrusframework.simulator.model.ScenarioExecution.EXECUTION_ID
 public class DefaultScenarioExecutorService implements ScenarioExecutorService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultScenarioExecutorService.class);
+
+    /**
+     * Test context initializer of the execution currently being started on this thread, see
+     * {@link #run(SimulatorScenario, String, List, Consumer)}. Consumed by the first test context created afterwards,
+     * which keeps {@link #startScenario} free of it and therefore backwards compatible for subclasses.
+     */
+    private static final ThreadLocal<Consumer<TestContext>> TEST_CONTEXT_INITIALIZER = new ThreadLocal<>();
 
     private final ApplicationContext applicationContext;
     private final Citrus citrus;
@@ -109,6 +118,46 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
         return scenarioExecution.getExecutionId();
     }
 
+    /**
+     * Executes the given {@link SimulatorScenario} like {@link #run(SimulatorScenario, String, List)}, invoking the
+     * {@code testContextInitializer} with the test context of the execution before the scenario runs.
+     *
+     * @param scenario               the {@link SimulatorScenario} to execute
+     * @param name                   the name of the scenario, used for logging and tracking purposes
+     * @param scenarioParameters     a list of {@link ScenarioParameter}s to pass to the scenario, may be {@code null}
+     * @param testContextInitializer invoked with the test context of the execution, before the scenario runs
+     * @return the unique identifier of the scenario execution
+     */
+    @Override
+    public Long run(SimulatorScenario scenario, String name, @Nullable List<ScenarioParameter> scenarioParameters, Consumer<TestContext> testContextInitializer) {
+        TEST_CONTEXT_INITIALIZER.set(testContextInitializer);
+
+        try {
+            return run(scenario, name, scenarioParameters);
+        } finally {
+            TEST_CONTEXT_INITIALIZER.remove();
+        }
+    }
+
+    /**
+     * Test context initialization is supported, also by {@link AsyncScenarioExecutorService}. Subclasses executing
+     * scenarios on another thread must hand the initializer over, see {@link #takeTestContextInitializer()} and
+     * {@link #runWithTestContextInitializer(Consumer, Runnable)}.
+     */
+    @Override
+    public boolean supportsTestContextInitialization() {
+        return true;
+    }
+
+    /**
+     * Scenarios are executed on the calling thread, {@link #run} therefore only returns once the scenario has completed.
+     * Subclasses executing scenarios on another thread must override this method.
+     */
+    @Override
+    public boolean isSynchronous() {
+        return true;
+    }
+
     protected void startScenario(Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
         logger.info("Starting scenario : {}", name);
 
@@ -126,8 +175,48 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
     protected void prepareBeforeExecution(SimulatorScenario scenario) {
     }
 
+    /**
+     * Takes the test context initializer of the execution currently being started on this thread, so that it can be
+     * handed over to the thread actually executing the scenario.
+     *
+     * @return the test context initializer, or {@code null} if there is none
+     */
+    protected static @Nullable Consumer<TestContext> takeTestContextInitializer() {
+        var testContextInitializer = TEST_CONTEXT_INITIALIZER.get();
+        TEST_CONTEXT_INITIALIZER.remove();
+        return testContextInitializer;
+    }
+
+    /**
+     * Runs the given scenario execution on the current thread, applying the test context initializer taken from the
+     * starting thread using {@link #takeTestContextInitializer()}.
+     *
+     * @param testContextInitializer the test context initializer, may be {@code null}
+     * @param execution              the scenario execution, e.g. {@link #startScenario}
+     */
+    protected static void runWithTestContextInitializer(@Nullable Consumer<TestContext> testContextInitializer, Runnable execution) {
+        if (nonNull(testContextInitializer)) {
+            TEST_CONTEXT_INITIALIZER.set(testContextInitializer);
+        }
+
+        try {
+            execution.run();
+        } finally {
+            TEST_CONTEXT_INITIALIZER.remove();
+        }
+    }
+
     private TestContext createTestContext() {
-        return citrus.getCitrusContext().createTestContext();
+        var context = citrus.getCitrusContext().createTestContext();
+
+        var testContextInitializer = TEST_CONTEXT_INITIALIZER.get();
+        if (nonNull(testContextInitializer)) {
+            // Consume, so that nested executions started from within the scenario are not initialized as well
+            TEST_CONTEXT_INITIALIZER.remove();
+            testContextInitializer.accept(context);
+        }
+
+        return context;
     }
 
     private void createAndRunScenarioRunner(TestContext context, Long executionId, String name, SimulatorScenario scenario, List<ScenarioParameter> scenarioParameters) {
@@ -139,20 +228,30 @@ public class DefaultScenarioExecutorService implements ScenarioExecutorService {
         runner.variable(EXECUTION_ID, executionId);
         runner.name(format("Scenario(%s)", name));
 
-        injectAll(scenario, citrus);
-
         try {
-            runner.start();
-            scenario.setTestCaseRunner(runner.getTestCaseRunner());
-            scenario.run(runner);
-        } catch (TestCaseFailedException e) {
-            logger.error("Registered forced failure of scenario: {}!", name, e);
-        } catch (Exception e) {
-            logger.error("Scenario completed with error: {}!", name, e);
-            scenario.registerException(e);
+            injectAll(scenario, citrus);
+
+            try {
+                runner.start();
+                scenario.setTestCaseRunner(runner.getTestCaseRunner());
+                scenario.run(runner);
+            } catch (TestCaseFailedException e) {
+                logger.error("Registered forced failure of scenario: {}!", name, e);
+                scenario.getScenarioEndpoint().fail(context, e);
+            } catch (Exception e) {
+                logger.error("Scenario completed with error: {}!", name, e);
+                scenario.registerException(e);
+                throw e;
+            } finally {
+                runner.stop();
+            }
+        } catch (RuntimeException e) {
+            // Does not affect requests that have already been answered or failed above
+            scenario.getScenarioEndpoint().fail(context, e);
             throw e;
         } finally {
-            runner.stop();
+            // Nothing can answer the requests of this execution anymore
+            scenario.getScenarioEndpoint().release(context);
         }
     }
 }

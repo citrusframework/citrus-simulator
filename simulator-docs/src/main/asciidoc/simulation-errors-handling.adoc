@@ -7,6 +7,20 @@ It could as well be, that someone just **wanted** this simulation to respond wit
 
 That's why we've invented the custom HTTP 555 status code: Simulation failed with an Exception!
 
+A simulation fails, and is therefore answered with 555, when
+
+* the scenario code throws an exception, or
+* a test action of the scenario fails, e.g. a failed message validation or an explicit `fail(...)` action.
+
+If a custom fallback endpoint adapter has been configured (see `fallbackEndpointAdapter()` of the simulator
+configurers, e.g. for <<rest,REST>> or <<web-service,SOAP>>), failing test actions - typically a
+failed request validation - are handed to that fallback instead.
+Exceptions thrown by the scenario code itself always result in 555.
+
+The 555 response is only sent if the scenario has not already responded to the request.
+A test action failing _after_ the response has been sent still marks the scenario execution as failed, but the
+already sent response is not changed.
+
 The error can be asserted from the client side, the body containing more detailed information.
 
 [source,java]

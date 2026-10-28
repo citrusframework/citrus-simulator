@@ -38,6 +38,7 @@ nb-configuration.xml
 .camel-jbang/
 
 # Claude Code
+.claude/*
 settings.local.json
 
 ### Angular ###
