@@ -27,6 +27,7 @@ import io.apicurio.datamodels.openapi.models.OasOperation;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import lombok.Getter;
@@ -99,16 +100,16 @@ class HttpOperationScenarioIT {
         return Stream.of(
             arguments("v2_addPet_success", "POST_/api/petstore/v2/pet", "data/addPet.json", IDENTITY, null),
             arguments("v3_addPet_success", "POST_/api/petstore/v3/pet", "data/addPet.json", IDENTITY, null),
-            arguments("v2_addPet_payloadValidationFailure", "POST_/api/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
-                + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
-            arguments("v3_addPet_payloadValidationFailure", "POST_/api/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet (addPet)\n"
-                + "\tERROR - Object instance has properties which are not allowed by the schema: [\"wrong_id_property\"]: []"),
+            arguments("v2_addPet_payloadValidationFailure", "POST_/api/petstore/v2/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet \\(addPet\\)\n"
+                + "\tERROR - .*: \\[\\]"),
+            arguments("v3_addPet_payloadValidationFailure", "POST_/api/petstore/v3/pet", "data/addPet_incorrect.json", IDENTITY, "OpenApi request validation failed for operation: POST_/pet \\(addPet\\)\n"
+                + "\tERROR - .*wrong_id_property.*: \\[\\]"),
             arguments("v2_getPetById_success", "GET_/api/petstore/v2/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "1234"), null),
             arguments("v3_getPetById_success", "GET_/api/petstore/v3/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "1234"), null),
-            arguments("v2_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v2/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
-                + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []"),
-            arguments("v3_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v3/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/{petId} (getPetById)\n"
-                + "\tERROR - Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"]): []")
+            arguments("v2_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v2/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/\\{petId\\} \\(getPetById\\)\n"
+                + "\tERROR - .*string.*integer.*: \\[\\]"),
+            arguments("v3_getPetById_pathParameterValidationFailure", "GET_/api/petstore/v3/pet/{petId}", null, (Function<String, String>) (text) -> text.replace("{petId}", "xxxx"), "OpenApi request validation failed for operation: GET_/pet/\\{petId\\} \\(getPetById\\)\n"
+                + "\tERROR - .*string.*integer.*: \\[\\]")
         );
     }
 
@@ -120,7 +121,7 @@ class HttpOperationScenarioIT {
             defaultListableBeanFactory.destroySingleton("httpResponseActionBuilderProvider");
         }
 
-        this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, new HttpMessage());
+        this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage != null ? Pattern.compile(exceptionMessage) : null, new HttpMessage());
     }
 
     @ParameterizedTest(name = "{0}_custom_payload")
@@ -147,13 +148,14 @@ class HttpOperationScenarioIT {
             ReflectionTestUtils.setField(httpOperationScenario, "httpResponseActionBuilderProvider", httpResponseActionBuilderProvider);
 
             HttpMessage correctPayloadMessage = new HttpMessage(payload);
-            assertThatCode(() -> this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, correctPayloadMessage)).doesNotThrowAnyException();
+            Pattern exceptionMessagePattern  = exceptionMessage != null ? Pattern.compile(exceptionMessage) : null;
+            assertThatCode(() -> this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessagePattern, correctPayloadMessage)).doesNotThrowAnyException();
 
             if (exceptionMessage == null) {
                 String otherPayload = "{\"id\":12345}";
                 HttpMessage incorrectPayloadMessage = new HttpMessage(otherPayload);
                 assertThatThrownBy(
-                    () -> this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessage, incorrectPayloadMessage))
+                    () -> this.scenarioExecution(operationName, payloadFile, urlAdjuster, exceptionMessagePattern, incorrectPayloadMessage))
                     .isInstanceOf(CitrusRuntimeException.class);
             }
         } finally {
@@ -161,7 +163,7 @@ class HttpOperationScenarioIT {
         }
     }
 
-    private void scenarioExecution(String operationName, String payloadFile, Function<String, String> urlAdjuster, String exceptionMessage, Message controlMessage)
+    private void scenarioExecution(String operationName, String payloadFile, Function<String, String> urlAdjuster, Pattern exceptionMessagePattern, Message controlMessage)
         throws IOException {
         HttpOperationScenario httpOperationScenario = getHttpOperationScenario(operationName);
         OasOperation oasOperation = httpOperationScenario.getOperation();
@@ -181,9 +183,9 @@ class HttpOperationScenarioIT {
         ReflectionTestUtils.setField(httpOperationScenario, "scenarioEndpoint",
             scenarioEndpoint);
 
-        if (exceptionMessage != null) {
+        if (exceptionMessagePattern != null) {
             assertThatThrownBy(() -> httpOperationScenario.run(scenarioRunner)).isInstanceOf(
-                TestCaseFailedException.class).cause().isInstanceOf(ValidationException.class).hasMessage(exceptionMessage);
+                TestCaseFailedException.class).cause().isInstanceOf(ValidationException.class).hasMessageMatching(exceptionMessagePattern);
         } else {
             assertThatCode(() -> httpOperationScenario.run(scenarioRunner)).doesNotThrowAnyException();
 

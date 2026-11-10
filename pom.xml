@@ -14,7 +14,7 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -26,9 +26,10 @@
     <maven.sonatype.central.plugin.version>0.11.0</maven.sonatype.central.plugin.version>
 
     <lombok.version>1.18.46</lombok.version>
-    <citrus.version>5.0.2</citrus.version>
+    <citrus.version>5.2.0-PF-RC2</citrus.version>
 
     <spring-boot.version>4.1.1</spring-boot.version>
+    <swagger.parser.version>2.1.48</swagger.parser.version>
     <testng.version>7.12.0</testng.version>
     <wsdl4j.version>1.6.3</wsdl4j.version>
     <xerces.version>2.12.2</xerces.version>
@@ -179,6 +180,11 @@
 
       <!-- Citrus Simulator -->
       <dependency>
+          <groupId>org.citrusframework</groupId>
+          <artifactId>citrus-openapi-validator-shaded</artifactId>
+          <version>${citrus.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.citrusframework</groupId>
         <artifactId>citrus-spring-boot-simulator</artifactId>
         <version>${project.version}</version>
@@ -226,7 +232,18 @@
       <dependency>
         <groupId>io.swagger.parser.v3</groupId>
         <artifactId>swagger-parser</artifactId>
-        <version>2.1.24</version>
+        <version>${swagger.parser.version}</version>
+        <exclusions>
+            <!-- same as for com.atlassian.oai:openapi-request-validator-core above -->
+            <exclusion>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>mailapi</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+            </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
